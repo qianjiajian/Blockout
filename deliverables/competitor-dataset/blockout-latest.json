@@ -1,0 +1,122 @@
+[
+  {
+    "level_id": "Level 1",
+    "target_coins": 1000,
+    "time_limit": 180,
+    "clear_time_s": 4,
+    "difficulty_tag": "normal",
+    "board_cols": 5,
+    "board_rows": 5,
+    "color_count": 3,
+    "number_elements": [],
+    "mechanism": ["方向出口"]
+  },
+  {
+    "level_id": "Level 2",
+    "target_coins": 1000,
+    "time_limit": 180,
+    "clear_time_s": 12,
+    "difficulty_tag": "normal",
+    "board_cols": 5,
+    "board_rows": 7,
+    "color_count": 5,
+    "number_elements": [],
+    "mechanism": ["方向出口"]
+  },
+  {
+    "level_id": "Level 3",
+    "target_coins": 1000,
+    "time_limit": 180,
+    "clear_time_s": 27,
+    "difficulty_tag": "normal",
+    "board_cols": 6,
+    "board_rows": 6,
+    "color_count": 5,
+    "number_elements": [],
+    "mechanism": ["方向出口"]
+  },
+  {
+    "level_id": "Level 4",
+    "target_coins": 1000,
+    "time_limit": 180,
+    "clear_time_s": 45,
+    "difficulty_tag": "normal",
+    "board_cols": 6,
+    "board_rows": 6,
+    "color_count": 8,
+    "number_elements": [],
+    "mechanism": ["方向出口"]
+  },
+  {
+    "level_id": "Level 5",
+    "target_coins": 1020,
+    "time_limit": 120,
+    "clear_time_s": 72,
+    "difficulty_tag": "normal",
+    "board_cols": 4,
+    "board_rows": 6,
+    "color_count": 3,
+    "number_elements": [],
+    "mechanism": ["方向出口"]
+  },
+  {
+    "level_id": "Level 6",
+    "target_coins": 1040,
+    "time_limit": 120,
+    "clear_time_s": 122,
+    "difficulty_tag": "normal",
+    "board_cols": 5,
+    "board_rows": 5,
+    "color_count": 4,
+    "number_elements": [10, 10, 5],
+    "mechanism": ["方向出口", "数字边栏"]
+  },
+  {
+    "level_id": "Level 7",
+    "target_coins": 1060,
+    "time_limit": 120,
+    "clear_time_s": 163,
+    "difficulty_tag": "normal",
+    "board_cols": 5,
+    "board_rows": 8,
+    "color_count": 3,
+    "number_elements": [10, 4],
+    "mechanism": ["方向出口", "数字边栏"]
+  },
+  {
+    "level_id": "Level 8",
+    "target_coins": 1080,
+    "time_limit": 105,
+    "clear_time_s": 218,
+    "difficulty_tag": "normal",
+    "board_cols": 6,
+    "board_rows": 8,
+    "color_count": 4,
+    "number_elements": [17, 9],
+    "mechanism": ["方向出口", "数字边栏", "异形通道"]
+  },
+  {
+    "level_id": "Level 9",
+    "target_coins": 1100,
+    "time_limit": 105,
+    "clear_time_s": 259,
+    "difficulty_tag": "normal",
+    "board_cols": 6,
+    "board_rows": 8,
+    "color_count": 5,
+    "number_elements": [6, 8, 4, 2],
+    "mechanism": ["方向出口", "数字边栏", "中部缺口通道"]
+  },
+  {
+    "level_id": "Level 10",
+    "target_coins": 1170,
+    "time_limit": 150,
+    "clear_time_s": 301,
+    "difficulty_tag": "normal",
+    "board_cols": 6,
+    "board_rows": 9,
+    "color_count": 4,
+    "number_elements": [22, 22, 19, 20, 21, 13, 4, 12, 19, 19, 11, 19, 13],
+    "mechanism": ["方向出口", "数字方块", "数字边栏"]
+  }
+]

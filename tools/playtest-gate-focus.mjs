@@ -1,0 +1,136 @@
+import { mkdir } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
+import { resolve } from "node:path";
+import { chromium } from "playwright";
+
+const output = fileURLToPath(new URL("../playtest-results/", import.meta.url));
+const playtestUrl = process.env.PLAYTEST_URL ?? "http://127.0.0.1:5173/";
+await mkdir(output, { recursive: true });
+
+const save = (reducedMotion = false) => ({
+  schemaVersion: 1,
+  currentLevel: 3,
+  highestLevel: 100,
+  coins: 1000,
+  sound: false,
+  haptic: false,
+  reducedMotion,
+  featureSeen: ["basics", "ice-door", "ice-block", "layer", "shutter", "generator", "elevator", "conveyor", "star"],
+  boosters: { time: 3, rocket: 3, pulse: 3 },
+  bestStars: {},
+  bestMoves: {},
+  rewardedLevels: [],
+  dailyStreak: 0,
+  lastDailyCompletedDay: "",
+  lastSeenUpdate: "2026-09-05-r95",
+});
+
+const debug = (page) => page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
+const toScreen = (page, logical) => {
+  const viewport = page.viewportSize();
+  const scale = Math.min(viewport.width / 496, viewport.height / 1078);
+  return {
+    x: (viewport.width - 496 * scale) / 2 + logical.x * scale,
+    y: (viewport.height - 1078 * scale) / 2 + logical.y * scale,
+  };
+};
+const blockPoint = (page, state, block) => {
+  const [dx, dy] = block.shape[0];
+  return toScreen(page, {
+    x: state.board.innerX + (block.x + dx + 0.5) * state.board.cell,
+    y: state.board.innerY + (block.y + dy + 0.5) * state.board.cell,
+  });
+};
+const expectedGateIds = (state, block) => {
+  const activeColor = block.layers[0] ?? block.color;
+  return state.puzzle.gates
+    .filter((gate) => gate.frozen <= 0 && gate.color === activeColor && (!block.star || gate.star))
+    .map((gate) => gate.id)
+    .sort();
+};
+const seed = async (page, reducedMotion = false) => {
+  await page.goto(playtestUrl, { waitUntil: "networkidle" });
+  await page.evaluate((value) => localStorage.setItem("color-escape-save-v1", JSON.stringify(value)), save(reducedMotion));
+  await page.reload({ waitUntil: "networkidle" });
+  await page.waitForTimeout(180);
+};
+const openLevel = async (page, levelId) => {
+  await page.evaluate((id) => window.__COLOR_ESCAPE__.loadLevel(id, true), levelId);
+  await page.waitForTimeout(160);
+  const state = await debug(page);
+  if (state.screen !== "playing" || state.level.id !== levelId) throw new Error(`Gate-focus E2E: failed to open Lv${levelId}`);
+  return state;
+};
+const assertFocus = (state, block, context) => {
+  const expected = expectedGateIds(state, block);
+  const actual = state.targetGateFocus.map((gate) => gate.id).sort();
+  if (expected.length === 0 || JSON.stringify(actual) !== JSON.stringify(expected)) {
+    throw new Error(`Gate-focus E2E ${context}: expected ${expected.join(",")}, received ${actual.join(",")}`);
+  }
+};
+const isActive = (state, block) => block.frozen <= 0
+  && (!block.shutterId || (state.puzzle.shutters.find((shutter) => shutter.id === block.shutterId)?.count ?? 0) <= 0);
+
+const browser = await chromium.launch({ headless: true });
+const errors = [];
+const createPage = async (viewport, reducedMotion = false) => {
+  const page = await browser.newPage({ viewport });
+  page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
+  page.on("pageerror", (error) => errors.push(error.message));
+  await seed(page, reducedMotion);
+  return page;
+};
+
+const standard = await createPage({ width: 720, height: 1584 });
+let state = await openLevel(standard, 3);
+let block = state.puzzle.blocks.find((candidate) => isActive(state, candidate) && expectedGateIds(state, candidate).length > 0);
+if (!block) throw new Error("Gate-focus E2E: Lv3 has no active block with an available target");
+let point = blockPoint(standard, state, block);
+await standard.mouse.move(point.x, point.y);
+await standard.mouse.down();
+await standard.waitForTimeout(220);
+state = await debug(standard);
+assertFocus(state, block, "Lv3 held");
+await standard.screenshot({ path: resolve(output, "round65-gate-focus-level-003-720x1584.png") });
+await standard.mouse.up();
+await standard.waitForTimeout(120);
+state = await debug(standard);
+if (state.targetGateFocus.length !== 0) throw new Error("Gate-focus E2E: focus remained after release");
+
+state = await openLevel(standard, 100);
+block = state.puzzle.blocks.find((candidate) => candidate.star && isActive(state, candidate));
+if (!block) throw new Error("Gate-focus E2E: Lv100 has no active star block");
+const activeColor = block.layers[0] ?? block.color;
+const matchingStarGates = state.puzzle.gates.filter((gate) => gate.color === activeColor && gate.star);
+if (matchingStarGates.length === 0 || matchingStarGates.some((gate) => gate.frozen <= 0)) {
+  throw new Error("Gate-focus E2E: Lv100 no longer provides the frozen-star-gate fixture");
+}
+point = blockPoint(standard, state, block);
+await standard.mouse.move(point.x, point.y);
+await standard.mouse.down();
+await standard.waitForTimeout(220);
+state = await debug(standard);
+if (state.selectedId !== block.id || state.targetGateFocus.length !== 0) {
+  throw new Error("Gate-focus E2E: star block falsely focused an ordinary or still-frozen star gate");
+}
+await standard.screenshot({ path: resolve(output, "round65-gate-focus-frozen-star-level-100-720x1584.png") });
+await standard.mouse.up();
+await standard.close();
+
+const mobile = await createPage({ width: 320, height: 568 }, true);
+state = await openLevel(mobile, 3);
+block = state.puzzle.blocks.find((candidate) => isActive(state, candidate) && expectedGateIds(state, candidate).length > 0);
+if (!block) throw new Error("Gate-focus E2E: reduced-motion Lv3 has no targetable block");
+point = blockPoint(mobile, state, block);
+await mobile.mouse.move(point.x, point.y);
+await mobile.mouse.down();
+await mobile.waitForTimeout(120);
+state = await debug(mobile);
+assertFocus(state, block, "320x568 reduced-motion held");
+await mobile.screenshot({ path: resolve(output, "round65-gate-focus-level-003-320x568.png") });
+await mobile.mouse.up();
+await mobile.close();
+
+await browser.close();
+if (errors.length > 0) throw new Error(`Gate-focus browser errors:\n${errors.join("\n")}`);
+console.log("Selected-block target gate focus passed Lv3, star-only Lv100, release cleanup, reduced motion, and 320x568.");

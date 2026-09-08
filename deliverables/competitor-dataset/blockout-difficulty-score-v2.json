@@ -1,0 +1,2540 @@
+{
+  "source": "C:\\Users\\Administrator\\Documents\\ChatGPT\\Block Out!\\deliverables\\competitor-dataset\\blockout-lv001-lv100.json",
+  "formula_version": "D-v2.0",
+  "formula": "D_v2 = 0.18E + 0.10G + 0.12P + 0.10C + 0.30N2 + 0.20M",
+  "notes": [
+    "difficulty_tag 仅用于校准验证，不作为公式输入。",
+    "E、G、P、C、M 沿用 D-v1 定义。",
+    "N2 使用数字元素数量的饱和 S 曲线，突出 7 个以上数字元素带来的结构负担。"
+  ],
+  "old_weights": {
+    "solve_time": 0.3,
+    "coins": 0.1,
+    "time_pressure": 0.2,
+    "colors": 0.15,
+    "number_elements": 0.1,
+    "mechanisms": 0.15
+  },
+  "new_weights": {
+    "solve_time": 0.18,
+    "coins": 0.1,
+    "time_pressure": 0.12,
+    "colors": 0.1,
+    "number_elements": 0.3,
+    "mechanisms": 0.2
+  },
+  "grouped_weights": {
+    "D_v1": {
+      "time_total": 0.5,
+      "coins": 0.1,
+      "structure_total": 0.4
+    },
+    "D_v2": {
+      "time_total": 0.3,
+      "coins": 0.1,
+      "structure_total": 0.6
+    }
+  },
+  "N2_definition": {
+    "sigma": "sigma(x)=1/(1+exp(-x))",
+    "formula": "100*(sigma(1.25*(n-7))-sigma(-8.75))/(sigma(1.25*(19-7))-sigma(-8.75))",
+    "center": 7,
+    "slope": 1.25,
+    "observed_max_number_element_count": 19
+  },
+  "color_count_audit": [
+    {
+      "level_id": 35,
+      "original": 1,
+      "corrected": 1,
+      "result": "保持",
+      "evidence": "棋盘内仅见蓝色色块；红/黄为出口，紫色为侧边装置。"
+    },
+    {
+      "level_id": 70,
+      "original": 1,
+      "corrected": 1,
+      "result": "保持",
+      "evidence": "棋盘内仅见绿色色块；其余有色区域属于出口、数字边栏或形状计数装置。"
+    }
+  ],
+  "calibration": {
+    "definition": "每个标签关与同章前后紧邻的普通关均值比较；再对16个标签关取均值。章节中位数按该章10关计算。",
+    "D_v1": {
+      "label_count": 16,
+      "label_mean": 65.72,
+      "adjacent_normal_mean": 67.19,
+      "label_vs_adjacent_lift": -1.48,
+      "all_normal_mean": 59.58,
+      "label_vs_all_normal_lift": 6.13,
+      "above_chapter_median_count": 7,
+      "above_chapter_median_levels": [
+        29,
+        39,
+        49,
+        59,
+        69,
+        79,
+        99
+      ],
+      "not_above_chapter_median_levels": [
+        14,
+        19,
+        24,
+        44,
+        54,
+        64,
+        74,
+        84,
+        94
+      ],
+      "hard_mean": null,
+      "super_hard_mean": null,
+      "details": [
+        {
+          "level_id": 14,
+          "difficulty_tag": "Hard Level",
+          "D": 48.56,
+          "adjacent_normal_levels": [
+            13,
+            15
+          ],
+          "adjacent_normal_mean": 52.94,
+          "adjacent_lift": -4.38,
+          "chapter_median": 52.33,
+          "above_chapter_median": false
+        },
+        {
+          "level_id": 19,
+          "difficulty_tag": "Super Hard",
+          "D": 50.48,
+          "adjacent_normal_levels": [
+            18,
+            20
+          ],
+          "adjacent_normal_mean": 69.22,
+          "adjacent_lift": -18.74,
+          "chapter_median": 52.33,
+          "above_chapter_median": false
+        },
+        {
+          "level_id": 24,
+          "difficulty_tag": "Hard Level",
+          "D": 54.57,
+          "adjacent_normal_levels": [
+            23,
+            25
+          ],
+          "adjacent_normal_mean": 61.46,
+          "adjacent_lift": -6.89,
+          "chapter_median": 58.2,
+          "above_chapter_median": false
+        },
+        {
+          "level_id": 29,
+          "difficulty_tag": "Super Hard",
+          "D": 62.47,
+          "adjacent_normal_levels": [
+            28,
+            30
+          ],
+          "adjacent_normal_mean": 60.7,
+          "adjacent_lift": 1.77,
+          "chapter_median": 58.2,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 39,
+          "difficulty_tag": "Super Hard",
+          "D": 65.77,
+          "adjacent_normal_levels": [
+            38,
+            40
+          ],
+          "adjacent_normal_mean": 63.51,
+          "adjacent_lift": 2.26,
+          "chapter_median": 59.84,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 44,
+          "difficulty_tag": "Hard Level",
+          "D": 59.53,
+          "adjacent_normal_levels": [
+            43,
+            45
+          ],
+          "adjacent_normal_mean": 60.4,
+          "adjacent_lift": -0.87,
+          "chapter_median": 60.4,
+          "above_chapter_median": false
+        },
+        {
+          "level_id": 49,
+          "difficulty_tag": "Super Hard",
+          "D": 67.51,
+          "adjacent_normal_levels": [
+            48,
+            50
+          ],
+          "adjacent_normal_mean": 63.41,
+          "adjacent_lift": 4.1,
+          "chapter_median": 60.4,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 54,
+          "difficulty_tag": "Hard Level",
+          "D": 59.85,
+          "adjacent_normal_levels": [
+            53,
+            55
+          ],
+          "adjacent_normal_mean": 69.05,
+          "adjacent_lift": -9.2,
+          "chapter_median": 62.22,
+          "above_chapter_median": false
+        },
+        {
+          "level_id": 59,
+          "difficulty_tag": "Super Hard",
+          "D": 70.96,
+          "adjacent_normal_levels": [
+            58,
+            60
+          ],
+          "adjacent_normal_mean": 62.71,
+          "adjacent_lift": 8.25,
+          "chapter_median": 62.22,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 64,
+          "difficulty_tag": "Hard Level",
+          "D": 65.88,
+          "adjacent_normal_levels": [
+            63,
+            65
+          ],
+          "adjacent_normal_mean": 73.99,
+          "adjacent_lift": -8.11,
+          "chapter_median": 68.01,
+          "above_chapter_median": false
+        },
+        {
+          "level_id": 69,
+          "difficulty_tag": "Super Hard",
+          "D": 68.72,
+          "adjacent_normal_levels": [
+            68,
+            70
+          ],
+          "adjacent_normal_mean": 66.37,
+          "adjacent_lift": 2.35,
+          "chapter_median": 68.01,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 74,
+          "difficulty_tag": "Hard Level",
+          "D": 68.75,
+          "adjacent_normal_levels": [
+            73,
+            75
+          ],
+          "adjacent_normal_mean": 78.94,
+          "adjacent_lift": -10.19,
+          "chapter_median": 71.5,
+          "above_chapter_median": false
+        },
+        {
+          "level_id": 79,
+          "difficulty_tag": "Super Hard",
+          "D": 75.25,
+          "adjacent_normal_levels": [
+            78,
+            80
+          ],
+          "adjacent_normal_mean": 65.14,
+          "adjacent_lift": 10.11,
+          "chapter_median": 71.5,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 84,
+          "difficulty_tag": "Hard Level",
+          "D": 74.04,
+          "adjacent_normal_levels": [
+            83,
+            85
+          ],
+          "adjacent_normal_mean": 76.91,
+          "adjacent_lift": -2.87,
+          "chapter_median": 74.58,
+          "above_chapter_median": false
+        },
+        {
+          "level_id": 94,
+          "difficulty_tag": "Hard Level",
+          "D": 74.91,
+          "adjacent_normal_levels": [
+            93,
+            95
+          ],
+          "adjacent_normal_mean": 80.29,
+          "adjacent_lift": -5.38,
+          "chapter_median": 75.18,
+          "above_chapter_median": false
+        },
+        {
+          "level_id": 99,
+          "difficulty_tag": "Super Hard",
+          "D": 84.19,
+          "adjacent_normal_levels": [
+            98,
+            100
+          ],
+          "adjacent_normal_mean": 70.05,
+          "adjacent_lift": 14.14,
+          "chapter_median": 75.18,
+          "above_chapter_median": true
+        }
+      ]
+    },
+    "D_v2": {
+      "label_count": 16,
+      "label_mean": 68.92,
+      "adjacent_normal_mean": 58.18,
+      "label_vs_adjacent_lift": 10.74,
+      "all_normal_mean": 53.59,
+      "label_vs_all_normal_lift": 15.33,
+      "above_chapter_median_count": 13,
+      "above_chapter_median_levels": [
+        19,
+        24,
+        29,
+        39,
+        44,
+        49,
+        59,
+        69,
+        74,
+        79,
+        84,
+        94,
+        99
+      ],
+      "not_above_chapter_median_levels": [
+        14,
+        54,
+        64
+      ],
+      "hard_mean": null,
+      "super_hard_mean": null,
+      "details": [
+        {
+          "level_id": 14,
+          "difficulty_tag": "Hard Level",
+          "D": 33.07,
+          "adjacent_normal_levels": [
+            13,
+            15
+          ],
+          "adjacent_normal_mean": 45.9,
+          "adjacent_lift": -12.83,
+          "chapter_median": 52.34,
+          "above_chapter_median": false
+        },
+        {
+          "level_id": 19,
+          "difficulty_tag": "Super Hard",
+          "D": 59.93,
+          "adjacent_normal_levels": [
+            18,
+            20
+          ],
+          "adjacent_normal_mean": 62.38,
+          "adjacent_lift": -2.45,
+          "chapter_median": 52.34,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 24,
+          "difficulty_tag": "Hard Level",
+          "D": 50.2,
+          "adjacent_normal_levels": [
+            23,
+            25
+          ],
+          "adjacent_normal_mean": 48.55,
+          "adjacent_lift": 1.65,
+          "chapter_median": 41.61,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 29,
+          "difficulty_tag": "Super Hard",
+          "D": 47.52,
+          "adjacent_normal_levels": [
+            28,
+            30
+          ],
+          "adjacent_normal_mean": 40.3,
+          "adjacent_lift": 7.23,
+          "chapter_median": 41.61,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 39,
+          "difficulty_tag": "Super Hard",
+          "D": 74.8,
+          "adjacent_normal_levels": [
+            38,
+            40
+          ],
+          "adjacent_normal_mean": 58.53,
+          "adjacent_lift": 16.27,
+          "chapter_median": 48.52,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 44,
+          "difficulty_tag": "Hard Level",
+          "D": 68.4,
+          "adjacent_normal_levels": [
+            43,
+            45
+          ],
+          "adjacent_normal_mean": 42.82,
+          "adjacent_lift": 25.58,
+          "chapter_median": 49.14,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 49,
+          "difficulty_tag": "Super Hard",
+          "D": 75.71,
+          "adjacent_normal_levels": [
+            48,
+            50
+          ],
+          "adjacent_normal_mean": 58.53,
+          "adjacent_lift": 17.18,
+          "chapter_median": 49.14,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 54,
+          "difficulty_tag": "Hard Level",
+          "D": 67.49,
+          "adjacent_normal_levels": [
+            53,
+            55
+          ],
+          "adjacent_normal_mean": 75.71,
+          "adjacent_lift": -8.22,
+          "chapter_median": 71.06,
+          "above_chapter_median": false
+        },
+        {
+          "level_id": 59,
+          "difficulty_tag": "Super Hard",
+          "D": 73.06,
+          "adjacent_normal_levels": [
+            58,
+            60
+          ],
+          "adjacent_normal_mean": 57.93,
+          "adjacent_lift": 15.13,
+          "chapter_median": 71.06,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 64,
+          "difficulty_tag": "Hard Level",
+          "D": 70.08,
+          "adjacent_normal_levels": [
+            63,
+            65
+          ],
+          "adjacent_normal_mean": 58.2,
+          "adjacent_lift": 11.88,
+          "chapter_median": 71.78,
+          "above_chapter_median": false
+        },
+        {
+          "level_id": 69,
+          "difficulty_tag": "Super Hard",
+          "D": 74.21,
+          "adjacent_normal_levels": [
+            68,
+            70
+          ],
+          "adjacent_normal_mean": 59.63,
+          "adjacent_lift": 14.58,
+          "chapter_median": 71.78,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 74,
+          "difficulty_tag": "Hard Level",
+          "D": 74.46,
+          "adjacent_normal_levels": [
+            73,
+            75
+          ],
+          "adjacent_normal_mean": 82.9,
+          "adjacent_lift": -8.44,
+          "chapter_median": 71.99,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 79,
+          "difficulty_tag": "Super Hard",
+          "D": 79.93,
+          "adjacent_normal_levels": [
+            78,
+            80
+          ],
+          "adjacent_normal_mean": 48.08,
+          "adjacent_lift": 31.86,
+          "chapter_median": 71.99,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 84,
+          "difficulty_tag": "Hard Level",
+          "D": 80.44,
+          "adjacent_normal_levels": [
+            83,
+            85
+          ],
+          "adjacent_normal_mean": 67.39,
+          "adjacent_lift": 13.05,
+          "chapter_median": 74.23,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 94,
+          "difficulty_tag": "Hard Level",
+          "D": 83.59,
+          "adjacent_normal_levels": [
+            93,
+            95
+          ],
+          "adjacent_normal_mean": 73.23,
+          "adjacent_lift": 10.36,
+          "chapter_median": 79.11,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 99,
+          "difficulty_tag": "Super Hard",
+          "D": 89.83,
+          "adjacent_normal_levels": [
+            98,
+            100
+          ],
+          "adjacent_normal_mean": 50.78,
+          "adjacent_lift": 39.05,
+          "chapter_median": 79.11,
+          "above_chapter_median": true
+        }
+      ]
+    }
+  },
+  "chapter_summary": [
+    {
+      "chapter": 1,
+      "levels": "1-10",
+      "D_v1_mean": 35.83,
+      "D_v2_min": 8.8,
+      "D_v2_mean": 25.14,
+      "D_v2_median": 22.59,
+      "D_v2_max": 58.48
+    },
+    {
+      "chapter": 2,
+      "levels": "11-20",
+      "D_v1_mean": 53.77,
+      "D_v2_min": 33.07,
+      "D_v2_mean": 51.08,
+      "D_v2_median": 52.34,
+      "D_v2_max": 68.78
+    },
+    {
+      "chapter": 3,
+      "levels": "21-30",
+      "D_v1_mean": 57.37,
+      "D_v2_min": 27.37,
+      "D_v2_mean": 42.33,
+      "D_v2_median": 41.61,
+      "D_v2_max": 60.35
+    },
+    {
+      "chapter": 4,
+      "levels": "31-40",
+      "D_v1_mean": 57.99,
+      "D_v2_min": 30.61,
+      "D_v2_mean": 50.41,
+      "D_v2_median": 48.52,
+      "D_v2_max": 74.8
+    },
+    {
+      "chapter": 5,
+      "levels": "41-50",
+      "D_v1_mean": 58.36,
+      "D_v2_min": 31.98,
+      "D_v2_mean": 54.57,
+      "D_v2_median": 49.14,
+      "D_v2_max": 82.04
+    },
+    {
+      "chapter": 6,
+      "levels": "51-60",
+      "D_v1_mean": 61.71,
+      "D_v2_min": 36.19,
+      "D_v2_mean": 63.77,
+      "D_v2_median": 71.06,
+      "D_v2_max": 79.67
+    },
+    {
+      "chapter": 7,
+      "levels": "61-70",
+      "D_v1_mean": 66.97,
+      "D_v2_min": 45.4,
+      "D_v2_mean": 66.48,
+      "D_v2_median": 71.78,
+      "D_v2_max": 79.15
+    },
+    {
+      "chapter": 8,
+      "levels": "71-80",
+      "D_v1_mean": 68.53,
+      "D_v2_min": 41.01,
+      "D_v2_mean": 68.98,
+      "D_v2_median": 71.99,
+      "D_v2_max": 83.91
+    },
+    {
+      "chapter": 9,
+      "levels": "81-90",
+      "D_v1_mean": 71.54,
+      "D_v2_min": 34.99,
+      "D_v2_mean": 67.59,
+      "D_v2_median": 74.23,
+      "D_v2_max": 90.41
+    },
+    {
+      "chapter": 10,
+      "levels": "91-100",
+      "D_v1_mean": 73.56,
+      "D_v2_min": 33.95,
+      "D_v2_mean": 70.07,
+      "D_v2_median": 79.11,
+      "D_v2_max": 89.83
+    }
+  ],
+  "per_level": [
+    {
+      "level_id": 1,
+      "chapter": 1,
+      "chapter_position": 1,
+      "difficulty_tag": "normal",
+      "color_count": 3,
+      "number_element_count": 0,
+      "D_v1": 14.19,
+      "D_v2": 8.8,
+      "delta": -5.39,
+      "components_v2": {
+        "solve_time": 31.52,
+        "coins": 0,
+        "time_pressure": 2.22,
+        "colors": 28.57,
+        "number_elements": 0,
+        "mechanisms": 0
+      }
+    },
+    {
+      "level_id": 2,
+      "chapter": 1,
+      "chapter_position": 2,
+      "difficulty_tag": "normal",
+      "color_count": 5,
+      "number_element_count": 0,
+      "D_v1": 22.37,
+      "D_v2": 13.99,
+      "delta": -8.38,
+      "components_v2": {
+        "solve_time": 43.03,
+        "coins": 0,
+        "time_pressure": 4.44,
+        "colors": 57.14,
+        "number_elements": 0,
+        "mechanisms": 0
+      }
+    },
+    {
+      "level_id": 3,
+      "chapter": 1,
+      "chapter_position": 3,
+      "difficulty_tag": "normal",
+      "color_count": 5,
+      "number_element_count": 0,
+      "D_v1": 26.53,
+      "D_v2": 16.49,
+      "delta": -10.04,
+      "components_v2": {
+        "solve_time": 54.3,
+        "coins": 0,
+        "time_pressure": 8.33,
+        "colors": 57.14,
+        "number_elements": 0,
+        "mechanisms": 0
+      }
+    },
+    {
+      "level_id": 4,
+      "chapter": 1,
+      "chapter_position": 4,
+      "difficulty_tag": "normal",
+      "color_count": 8,
+      "number_element_count": 0,
+      "D_v1": 34.3,
+      "D_v2": 21.58,
+      "delta": -12.72,
+      "components_v2": {
+        "solve_time": 57.67,
+        "coins": 0,
+        "time_pressure": 10,
+        "colors": 100,
+        "number_elements": 0,
+        "mechanisms": 0
+      }
+    },
+    {
+      "level_id": 5,
+      "chapter": 1,
+      "chapter_position": 5,
+      "difficulty_tag": "normal",
+      "color_count": 3,
+      "number_element_count": 0,
+      "D_v1": 28.39,
+      "D_v2": 17.33,
+      "delta": -11.06,
+      "components_v2": {
+        "solve_time": 65.26,
+        "coins": 0.31,
+        "time_pressure": 22.5,
+        "colors": 28.57,
+        "number_elements": 0,
+        "mechanisms": 0
+      }
+    },
+    {
+      "level_id": 6,
+      "chapter": 1,
+      "chapter_position": 6,
+      "difficulty_tag": "normal",
+      "color_count": 4,
+      "number_element_count": 3,
+      "D_v1": 45.05,
+      "D_v2": 26.74,
+      "delta": -18.31,
+      "components_v2": {
+        "solve_time": 77,
+        "coins": 0.61,
+        "time_pressure": 41.67,
+        "colors": 42.86,
+        "number_elements": 0.65,
+        "mechanisms": 16.67
+      }
+    },
+    {
+      "level_id": 7,
+      "chapter": 1,
+      "chapter_position": 7,
+      "difficulty_tag": "normal",
+      "color_count": 3,
+      "number_element_count": 2,
+      "D_v1": 39.34,
+      "D_v2": 23.61,
+      "delta": -15.73,
+      "components_v2": {
+        "solve_time": 73.2,
+        "coins": 0.92,
+        "time_pressure": 34.17,
+        "colors": 28.57,
+        "number_elements": 0.18,
+        "mechanisms": 16.67
+      }
+    },
+    {
+      "level_id": 8,
+      "chapter": 1,
+      "chapter_position": 8,
+      "difficulty_tag": "normal",
+      "color_count": 4,
+      "number_element_count": 2,
+      "D_v1": 50.1,
+      "D_v2": 32.6,
+      "delta": -17.5,
+      "components_v2": {
+        "solve_time": 78.84,
+        "coins": 1.23,
+        "time_pressure": 52.38,
+        "colors": 42.86,
+        "number_elements": 0.18,
+        "mechanisms": 38.33
+      }
+    },
+    {
+      "level_id": 9,
+      "chapter": 1,
+      "chapter_position": 9,
+      "difficulty_tag": "normal",
+      "color_count": 5,
+      "number_element_count": 4,
+      "D_v1": 49.37,
+      "D_v2": 31.75,
+      "delta": -17.62,
+      "components_v2": {
+        "solve_time": 73.2,
+        "coins": 1.54,
+        "time_pressure": 39.05,
+        "colors": 57.14,
+        "number_elements": 2.28,
+        "mechanisms": 36.67
+      }
+    },
+    {
+      "level_id": 10,
+      "chapter": 1,
+      "chapter_position": 10,
+      "difficulty_tag": "normal",
+      "color_count": 4,
+      "number_element_count": 13,
+      "D_v1": 48.7,
+      "D_v2": 58.48,
+      "delta": 9.78,
+      "components_v2": {
+        "solve_time": 73.66,
+        "coins": 2.61,
+        "time_pressure": 28,
+        "colors": 42.86,
+        "number_elements": 99.94,
+        "mechanisms": 36.67
+      }
+    },
+    {
+      "level_id": 11,
+      "chapter": 2,
+      "chapter_position": 1,
+      "difficulty_tag": "normal",
+      "color_count": 5,
+      "number_element_count": 10,
+      "D_v1": 32.49,
+      "D_v2": 48.72,
+      "delta": 16.23,
+      "components_v2": {
+        "solve_time": 31.52,
+        "coins": 2.92,
+        "time_pressure": 3.33,
+        "colors": 57.14,
+        "number_elements": 97.7,
+        "mechanisms": 36.67
+      }
+    },
+    {
+      "level_id": 12,
+      "chapter": 2,
+      "chapter_position": 2,
+      "difficulty_tag": "normal",
+      "color_count": 4,
+      "number_element_count": 7,
+      "D_v1": 51.69,
+      "D_v2": 48.27,
+      "delta": -3.42,
+      "components_v2": {
+        "solve_time": 74.98,
+        "coins": 3.22,
+        "time_pressure": 37.5,
+        "colors": 42.86,
+        "number_elements": 49.99,
+        "mechanisms": 53.33
+      }
+    },
+    {
+      "level_id": 13,
+      "chapter": 2,
+      "chapter_position": 3,
+      "difficulty_tag": "normal",
+      "color_count": 6,
+      "number_element_count": 8,
+      "D_v1": 54.48,
+      "D_v2": 56.5,
+      "delta": 2.02,
+      "components_v2": {
+        "solve_time": 75.82,
+        "coins": 3.53,
+        "time_pressure": 39.17,
+        "colors": 71.43,
+        "number_elements": 77.73,
+        "mechanisms": 36.67
+      }
+    },
+    {
+      "level_id": 14,
+      "chapter": 2,
+      "chapter_position": 4,
+      "difficulty_tag": "Hard Level",
+      "color_count": 4,
+      "number_element_count": 2,
+      "D_v1": 48.56,
+      "D_v2": 33.07,
+      "delta": -15.49,
+      "components_v2": {
+        "solve_time": 75.82,
+        "coins": 3.84,
+        "time_pressure": 39.17,
+        "colors": 42.86,
+        "number_elements": 0.18,
+        "mechanisms": 50
+      }
+    },
+    {
+      "level_id": 15,
+      "chapter": 2,
+      "chapter_position": 5,
+      "difficulty_tag": "normal",
+      "color_count": 5,
+      "number_element_count": 4,
+      "D_v1": 51.41,
+      "D_v2": 35.3,
+      "delta": -16.11,
+      "components_v2": {
+        "solve_time": 72.73,
+        "coins": 4.76,
+        "time_pressure": 33.33,
+        "colors": 57.14,
+        "number_elements": 2.28,
+        "mechanisms": 56.67
+      }
+    },
+    {
+      "level_id": 16,
+      "chapter": 2,
+      "chapter_position": 6,
+      "difficulty_tag": "normal",
+      "color_count": 5,
+      "number_element_count": 4,
+      "D_v1": 52.96,
+      "D_v2": 37.9,
+      "delta": -15.06,
+      "components_v2": {
+        "solve_time": 75.41,
+        "coins": 5.07,
+        "time_pressure": 25.7,
+        "colors": 57.14,
+        "number_elements": 2.28,
+        "mechanisms": 71.67
+      }
+    },
+    {
+      "level_id": 17,
+      "chapter": 2,
+      "chapter_position": 7,
+      "difficulty_tag": "normal",
+      "color_count": 6,
+      "number_element_count": 11,
+      "D_v1": 57.21,
+      "D_v2": 66.31,
+      "delta": 9.1,
+      "components_v2": {
+        "solve_time": 74.98,
+        "coins": 5.37,
+        "time_pressure": 33.33,
+        "colors": 71.43,
+        "number_elements": 99.33,
+        "mechanisms": 56.67
+      }
+    },
+    {
+      "level_id": 18,
+      "chapter": 2,
+      "chapter_position": 8,
+      "difficulty_tag": "normal",
+      "color_count": 5,
+      "number_element_count": 7,
+      "D_v1": 67.18,
+      "D_v2": 55.97,
+      "delta": -11.21,
+      "components_v2": {
+        "solve_time": 85.33,
+        "coins": 5.68,
+        "time_pressure": 100,
+        "colors": 57.14,
+        "number_elements": 49.99,
+        "mechanisms": 36.67
+      }
+    },
+    {
+      "level_id": 19,
+      "chapter": 2,
+      "chapter_position": 9,
+      "difficulty_tag": "Super Hard",
+      "color_count": 7,
+      "number_element_count": 10,
+      "D_v1": 50.48,
+      "D_v2": 59.93,
+      "delta": 9.45,
+      "components_v2": {
+        "solve_time": 65.95,
+        "coins": 5.99,
+        "time_pressure": 18.67,
+        "colors": 85.71,
+        "number_elements": 97.7,
+        "mechanisms": 36.67
+      }
+    },
+    {
+      "level_id": 20,
+      "chapter": 2,
+      "chapter_position": 10,
+      "difficulty_tag": "normal",
+      "color_count": 5,
+      "number_element_count": 8,
+      "D_v1": 71.26,
+      "D_v2": 68.78,
+      "delta": -2.48,
+      "components_v2": {
+        "solve_time": 87.01,
+        "coins": 7.52,
+        "time_pressure": 100,
+        "colors": 57.14,
+        "number_elements": 77.73,
+        "mechanisms": 56.67
+      }
+    },
+    {
+      "level_id": 21,
+      "chapter": 3,
+      "chapter_position": 1,
+      "difficulty_tag": "normal",
+      "color_count": 5,
+      "number_element_count": 6,
+      "D_v1": 32.79,
+      "D_v2": 27.37,
+      "delta": -5.42,
+      "components_v2": {
+        "solve_time": 35.09,
+        "coins": 7.83,
+        "time_pressure": 4.55,
+        "colors": 57.14,
+        "number_elements": 22.26,
+        "mechanisms": 36.67
+      }
+    },
+    {
+      "level_id": 22,
+      "chapter": 3,
+      "chapter_position": 2,
+      "difficulty_tag": "normal",
+      "color_count": 3,
+      "number_element_count": 4,
+      "D_v1": 58.76,
+      "D_v2": 37.36,
+      "delta": -21.4,
+      "components_v2": {
+        "solve_time": 82.35,
+        "coins": 8.14,
+        "time_pressure": 90.41,
+        "colors": 28.57,
+        "number_elements": 2.28,
+        "mechanisms": 36.67
+      }
+    },
+    {
+      "level_id": 23,
+      "chapter": 3,
+      "chapter_position": 3,
+      "difficulty_tag": "normal",
+      "color_count": 5,
+      "number_element_count": 4,
+      "D_v1": 53.37,
+      "D_v2": 36.75,
+      "delta": -16.62,
+      "components_v2": {
+        "solve_time": 73.2,
+        "coins": 11.52,
+        "time_pressure": 39.05,
+        "colors": 57.14,
+        "number_elements": 2.28,
+        "mechanisms": 56.67
+      }
+    },
+    {
+      "level_id": 24,
+      "chapter": 3,
+      "chapter_position": 4,
+      "difficulty_tag": "Hard Level",
+      "color_count": 3,
+      "number_element_count": 7,
+      "D_v1": 54.57,
+      "D_v2": 50.2,
+      "delta": -4.37,
+      "components_v2": {
+        "solve_time": 83.21,
+        "coins": 11.82,
+        "time_pressure": 46,
+        "colors": 28.57,
+        "number_elements": 49.99,
+        "mechanisms": 53.33
+      }
+    },
+    {
+      "level_id": 25,
+      "chapter": 3,
+      "chapter_position": 5,
+      "difficulty_tag": "normal",
+      "color_count": 7,
+      "number_element_count": 7,
+      "D_v1": 69.55,
+      "D_v2": 60.35,
+      "delta": -9.2,
+      "components_v2": {
+        "solve_time": 84.82,
+        "coins": 12.74,
+        "time_pressure": 71.43,
+        "colors": 85.71,
+        "number_elements": 49.99,
+        "mechanisms": 58.33
+      }
+    },
+    {
+      "level_id": 26,
+      "chapter": 3,
+      "chapter_position": 6,
+      "difficulty_tag": "normal",
+      "color_count": 5,
+      "number_element_count": 5,
+      "D_v1": 57.65,
+      "D_v2": 40.78,
+      "delta": -16.87,
+      "components_v2": {
+        "solve_time": 80.51,
+        "coins": 13.05,
+        "time_pressure": 44.44,
+        "colors": 57.14,
+        "number_elements": 7.57,
+        "mechanisms": 58.33
+      }
+    },
+    {
+      "level_id": 27,
+      "chapter": 3,
+      "chapter_position": 7,
+      "difficulty_tag": "normal",
+      "color_count": 2,
+      "number_element_count": 4,
+      "D_v1": 63.12,
+      "D_v2": 42.43,
+      "delta": -20.69,
+      "components_v2": {
+        "solve_time": 85.07,
+        "coins": 13.36,
+        "time_pressure": 100,
+        "colors": 14.29,
+        "number_elements": 2.28,
+        "mechanisms": 58.33
+      }
+    },
+    {
+      "level_id": 28,
+      "chapter": 3,
+      "chapter_position": 8,
+      "difficulty_tag": "normal",
+      "color_count": 5,
+      "number_element_count": 3,
+      "D_v1": 55.22,
+      "D_v2": 35.7,
+      "delta": -19.52,
+      "components_v2": {
+        "solve_time": 72.73,
+        "coins": 13.66,
+        "time_pressure": 66.67,
+        "colors": 57.14,
+        "number_elements": 0.65,
+        "mechanisms": 36.67
+      }
+    },
+    {
+      "level_id": 29,
+      "chapter": 3,
+      "chapter_position": 9,
+      "difficulty_tag": "Super Hard",
+      "color_count": 3,
+      "number_element_count": 6,
+      "D_v1": 62.47,
+      "D_v2": 47.52,
+      "delta": -14.95,
+      "components_v2": {
+        "solve_time": 78.48,
+        "coins": 13.97,
+        "time_pressure": 90,
+        "colors": 28.57,
+        "number_elements": 22.26,
+        "mechanisms": 58.33
+      }
+    },
+    {
+      "level_id": 30,
+      "chapter": 3,
+      "chapter_position": 10,
+      "difficulty_tag": "normal",
+      "color_count": 3,
+      "number_element_count": 2,
+      "D_v1": 66.18,
+      "D_v2": 44.89,
+      "delta": -21.29,
+      "components_v2": {
+        "solve_time": 93.1,
+        "coins": 15.51,
+        "time_pressure": 100,
+        "colors": 28.57,
+        "number_elements": 0.18,
+        "mechanisms": 58.33
+      }
+    },
+    {
+      "level_id": 31,
+      "chapter": 4,
+      "chapter_position": 1,
+      "difficulty_tag": "normal",
+      "color_count": 5,
+      "number_element_count": 7,
+      "D_v1": 34.79,
+      "D_v2": 36.94,
+      "delta": 2.15,
+      "components_v2": {
+        "solve_time": 35.09,
+        "coins": 15.81,
+        "time_pressure": 8.33,
+        "colors": 57.14,
+        "number_elements": 49.99,
+        "mechanisms": 36.67
+      }
+    },
+    {
+      "level_id": 32,
+      "chapter": 4,
+      "chapter_position": 2,
+      "difficulty_tag": "normal",
+      "color_count": 4,
+      "number_element_count": 9,
+      "D_v1": 68.46,
+      "D_v2": 71.52,
+      "delta": 3.06,
+      "components_v2": {
+        "solve_time": 80.51,
+        "coins": 16.89,
+        "time_pressure": 100,
+        "colors": 42.86,
+        "number_elements": 92.41,
+        "mechanisms": 56.67
+      }
+    },
+    {
+      "level_id": 33,
+      "chapter": 4,
+      "chapter_position": 3,
+      "difficulty_tag": "normal",
+      "color_count": 6,
+      "number_element_count": 5,
+      "D_v1": 56.31,
+      "D_v2": 38.09,
+      "delta": -18.22,
+      "components_v2": {
+        "solve_time": 74.55,
+        "coins": 17.2,
+        "time_pressure": 48.89,
+        "colors": 71.43,
+        "number_elements": 7.57,
+        "mechanisms": 38.33
+      }
+    },
+    {
+      "level_id": 34,
+      "chapter": 4,
+      "chapter_position": 4,
+      "difficulty_tag": "normal",
+      "color_count": 3,
+      "number_element_count": 7,
+      "D_v1": 62.2,
+      "D_v2": 53.17,
+      "delta": -9.03,
+      "components_v2": {
+        "solve_time": 80.19,
+        "coins": 17.5,
+        "time_pressure": 98.33,
+        "colors": 28.57,
+        "number_elements": 49.99,
+        "mechanisms": 36.67
+      }
+    },
+    {
+      "level_id": 35,
+      "chapter": 4,
+      "chapter_position": 5,
+      "difficulty_tag": "normal",
+      "color_count": 1,
+      "number_element_count": 2,
+      "D_v1": 56.18,
+      "D_v2": 34.87,
+      "delta": -21.31,
+      "components_v2": {
+        "solve_time": 90.58,
+        "coins": 18.42,
+        "time_pressure": 100,
+        "colors": 0,
+        "number_elements": 0.18,
+        "mechanisms": 23.33
+      }
+    },
+    {
+      "level_id": 36,
+      "chapter": 4,
+      "chapter_position": 6,
+      "difficulty_tag": "normal",
+      "color_count": 4,
+      "number_element_count": 3,
+      "D_v1": 46.33,
+      "D_v2": 30.61,
+      "delta": -15.72,
+      "components_v2": {
+        "solve_time": 68.48,
+        "coins": 18.73,
+        "time_pressure": 35.56,
+        "colors": 42.86,
+        "number_elements": 0.65,
+        "mechanisms": 38.33
+      }
+    },
+    {
+      "level_id": 37,
+      "chapter": 4,
+      "chapter_position": 7,
+      "difficulty_tag": "normal",
+      "color_count": 6,
+      "number_element_count": 5,
+      "D_v1": 62.85,
+      "D_v2": 47.04,
+      "delta": -15.81,
+      "components_v2": {
+        "solve_time": 73.66,
+        "coins": 19.04,
+        "time_pressure": 48.28,
+        "colors": 71.43,
+        "number_elements": 7.57,
+        "mechanisms": 83.33
+      }
+    },
+    {
+      "level_id": 38,
+      "chapter": 4,
+      "chapter_position": 8,
+      "difficulty_tag": "normal",
+      "color_count": 4,
+      "number_element_count": 10,
+      "D_v1": 57.49,
+      "D_v2": 67.05,
+      "delta": 9.56,
+      "components_v2": {
+        "solve_time": 77.39,
+        "coins": 20.88,
+        "time_pressure": 42.5,
+        "colors": 42.86,
+        "number_elements": 97.7,
+        "mechanisms": 61.67
+      }
+    },
+    {
+      "level_id": 39,
+      "chapter": 4,
+      "chapter_position": 9,
+      "difficulty_tag": "Super Hard",
+      "color_count": 5,
+      "number_element_count": 14,
+      "D_v1": 65.77,
+      "D_v2": 74.8,
+      "delta": 9.03,
+      "components_v2": {
+        "solve_time": 80.83,
+        "coins": 21.19,
+        "time_pressure": 45.19,
+        "colors": 57.14,
+        "number_elements": 99.98,
+        "mechanisms": 85
+      }
+    },
+    {
+      "level_id": 40,
+      "chapter": 4,
+      "chapter_position": 10,
+      "difficulty_tag": "normal",
+      "color_count": 5,
+      "number_element_count": 6,
+      "D_v1": 69.53,
+      "D_v2": 50.01,
+      "delta": -19.52,
+      "components_v2": {
+        "solve_time": 88.98,
+        "coins": 22.72,
+        "time_pressure": 100,
+        "colors": 57.14,
+        "number_elements": 22.26,
+        "mechanisms": 36.67
+      }
+    },
+    {
+      "level_id": 41,
+      "chapter": 5,
+      "chapter_position": 1,
+      "difficulty_tag": "normal",
+      "color_count": 2,
+      "number_element_count": 9,
+      "D_v1": 32.84,
+      "D_v2": 50.66,
+      "delta": 17.82,
+      "components_v2": {
+        "solve_time": 35.09,
+        "coins": 23.03,
+        "time_pressure": 4.65,
+        "colors": 14.29,
+        "number_elements": 92.41,
+        "mechanisms": 61.67
+      }
+    },
+    {
+      "level_id": 42,
+      "chapter": 5,
+      "chapter_position": 2,
+      "difficulty_tag": "normal",
+      "color_count": 4,
+      "number_element_count": 0,
+      "D_v1": 47.97,
+      "D_v2": 31.98,
+      "delta": -15.99,
+      "components_v2": {
+        "solve_time": 82.05,
+        "coins": 23.34,
+        "time_pressure": 60.47,
+        "colors": 42.86,
+        "number_elements": 0,
+        "mechanisms": 16.67
+      }
+    },
+    {
+      "level_id": 43,
+      "chapter": 5,
+      "chapter_position": 3,
+      "difficulty_tag": "normal",
+      "color_count": 4,
+      "number_element_count": 6,
+      "D_v1": 61.07,
+      "D_v2": 45.2,
+      "delta": -15.87,
+      "components_v2": {
+        "solve_time": 83.48,
+        "coins": 23.65,
+        "time_pressure": 73.68,
+        "colors": 42.86,
+        "number_elements": 22.26,
+        "mechanisms": 40
+      }
+    },
+    {
+      "level_id": 44,
+      "chapter": 5,
+      "chapter_position": 4,
+      "difficulty_tag": "Hard Level",
+      "color_count": 4,
+      "number_element_count": 10,
+      "D_v1": 59.53,
+      "D_v2": 68.4,
+      "delta": 8.87,
+      "components_v2": {
+        "solve_time": 73.66,
+        "coins": 23.95,
+        "time_pressure": 56.76,
+        "colors": 42.86,
+        "number_elements": 97.7,
+        "mechanisms": 61.67
+      }
+    },
+    {
+      "level_id": 45,
+      "chapter": 5,
+      "chapter_position": 5,
+      "difficulty_tag": "normal",
+      "color_count": 6,
+      "number_element_count": 5,
+      "D_v1": 59.73,
+      "D_v2": 40.44,
+      "delta": -19.29,
+      "components_v2": {
+        "solve_time": 83.76,
+        "coins": 29.39,
+        "time_pressure": 47.33,
+        "colors": 71.43,
+        "number_elements": 7.57,
+        "mechanisms": 36.67
+      }
+    },
+    {
+      "level_id": 46,
+      "chapter": 5,
+      "chapter_position": 6,
+      "difficulty_tag": "normal",
+      "color_count": 6,
+      "number_element_count": 5,
+      "D_v1": 63.42,
+      "D_v2": 47.62,
+      "delta": -15.8,
+      "components_v2": {
+        "solve_time": 76.62,
+        "coins": 29.69,
+        "time_pressure": 42.61,
+        "colors": 71.43,
+        "number_elements": 7.57,
+        "mechanisms": 81.67
+      }
+    },
+    {
+      "level_id": 47,
+      "chapter": 5,
+      "chapter_position": 7,
+      "difficulty_tag": "normal",
+      "color_count": 6,
+      "number_element_count": 8,
+      "D_v1": 64.76,
+      "D_v2": 68.67,
+      "delta": 3.91,
+      "components_v2": {
+        "solve_time": 79.52,
+        "coins": 30,
+        "time_pressure": 38,
+        "colors": 71.43,
+        "number_elements": 77.73,
+        "mechanisms": 81.67
+      }
+    },
+    {
+      "level_id": 48,
+      "chapter": 5,
+      "chapter_position": 8,
+      "difficulty_tag": "normal",
+      "color_count": 4,
+      "number_element_count": 10,
+      "D_v1": 74.71,
+      "D_v2": 82.04,
+      "delta": 7.33,
+      "components_v2": {
+        "solve_time": 86.31,
+        "coins": 31.84,
+        "time_pressure": 81,
+        "colors": 42.86,
+        "number_elements": 97.7,
+        "mechanisms": 100
+      }
+    },
+    {
+      "level_id": 49,
+      "chapter": 5,
+      "chapter_position": 9,
+      "difficulty_tag": "Super Hard",
+      "color_count": 4,
+      "number_element_count": 10,
+      "D_v1": 67.51,
+      "D_v2": 75.71,
+      "delta": 8.2,
+      "components_v2": {
+        "solve_time": 82.05,
+        "coins": 32.15,
+        "time_pressure": 65,
+        "colors": 42.86,
+        "number_elements": 97.7,
+        "mechanisms": 81.67
+      }
+    },
+    {
+      "level_id": 50,
+      "chapter": 5,
+      "chapter_position": 10,
+      "difficulty_tag": "normal",
+      "color_count": 5,
+      "number_element_count": 0,
+      "D_v1": 52.11,
+      "D_v2": 35.02,
+      "delta": -17.09,
+      "components_v2": {
+        "solve_time": 89.6,
+        "coins": 33.69,
+        "time_pressure": 53.93,
+        "colors": 57.14,
+        "number_elements": 0,
+        "mechanisms": 16.67
+      }
+    },
+    {
+      "level_id": 51,
+      "chapter": 6,
+      "chapter_position": 1,
+      "difficulty_tag": "normal",
+      "color_count": 6,
+      "number_element_count": 7,
+      "D_v1": 43.14,
+      "D_v2": 46.86,
+      "delta": 3.72,
+      "components_v2": {
+        "solve_time": 35.09,
+        "coins": 33.99,
+        "time_pressure": 2.78,
+        "colors": 71.43,
+        "number_elements": 49.99,
+        "mechanisms": 73.33
+      }
+    },
+    {
+      "level_id": 52,
+      "chapter": 6,
+      "chapter_position": 2,
+      "difficulty_tag": "normal",
+      "color_count": 6,
+      "number_element_count": 5,
+      "D_v1": 52.14,
+      "D_v2": 36.34,
+      "delta": -15.8,
+      "components_v2": {
+        "solve_time": 71.24,
+        "coins": 49.65,
+        "time_pressure": 20.56,
+        "colors": 71.43,
+        "number_elements": 7.57,
+        "mechanisms": 33.33
+      }
+    },
+    {
+      "level_id": 53,
+      "chapter": 6,
+      "chapter_position": 3,
+      "difficulty_tag": "normal",
+      "color_count": 7,
+      "number_element_count": 10,
+      "D_v1": 64.59,
+      "D_v2": 74.18,
+      "delta": 9.59,
+      "components_v2": {
+        "solve_time": 75.41,
+        "coins": 49.96,
+        "time_pressure": 25.56,
+        "colors": 85.71,
+        "number_elements": 97.7,
+        "mechanisms": 73.33
+      }
+    },
+    {
+      "level_id": 54,
+      "chapter": 6,
+      "chapter_position": 4,
+      "difficulty_tag": "Hard Level",
+      "color_count": 6,
+      "number_element_count": 11,
+      "D_v1": 59.85,
+      "D_v2": 67.49,
+      "delta": 7.64,
+      "components_v2": {
+        "solve_time": 78.84,
+        "coins": 50.27,
+        "time_pressure": 33.33,
+        "colors": 71.43,
+        "number_elements": 99.33,
+        "mechanisms": 36.67
+      }
+    },
+    {
+      "level_id": 55,
+      "chapter": 6,
+      "chapter_position": 5,
+      "difficulty_tag": "normal",
+      "color_count": 6,
+      "number_element_count": 10,
+      "D_v1": 73.51,
+      "D_v2": 77.24,
+      "delta": 3.73,
+      "components_v2": {
+        "solve_time": 94.09,
+        "coins": 51.19,
+        "time_pressure": 67.22,
+        "colors": 71.43,
+        "number_elements": 97.7,
+        "mechanisms": 53.33
+      }
+    },
+    {
+      "level_id": 56,
+      "chapter": 6,
+      "chapter_position": 6,
+      "difficulty_tag": "normal",
+      "color_count": 7,
+      "number_element_count": 10,
+      "D_v1": 69.2,
+      "D_v2": 77.56,
+      "delta": 8.36,
+      "components_v2": {
+        "solve_time": 81.45,
+        "coins": 51.5,
+        "time_pressure": 35,
+        "colors": 85.71,
+        "number_elements": 97.7,
+        "mechanisms": 78.33
+      }
+    },
+    {
+      "level_id": 57,
+      "chapter": 6,
+      "chapter_position": 7,
+      "difficulty_tag": "normal",
+      "color_count": 4,
+      "number_element_count": 11,
+      "D_v1": 58.26,
+      "D_v2": 69.06,
+      "delta": 10.8,
+      "components_v2": {
+        "solve_time": 77.76,
+        "coins": 51.8,
+        "time_pressure": 28.89,
+        "colors": 42.86,
+        "number_elements": 99.33,
+        "mechanisms": 61.67
+      }
+    },
+    {
+      "level_id": 58,
+      "chapter": 6,
+      "chapter_position": 8,
+      "difficulty_tag": "normal",
+      "color_count": 7,
+      "number_element_count": 16,
+      "D_v1": 72.06,
+      "D_v2": 79.67,
+      "delta": 7.61,
+      "components_v2": {
+        "solve_time": 82.35,
+        "coins": 52.11,
+        "time_pressure": 36.67,
+        "colors": 85.71,
+        "number_elements": 100,
+        "mechanisms": 83.33
+      }
+    },
+    {
+      "level_id": 59,
+      "chapter": 6,
+      "chapter_position": 9,
+      "difficulty_tag": "Super Hard",
+      "color_count": 7,
+      "number_element_count": 8,
+      "D_v1": 70.96,
+      "D_v2": 73.06,
+      "delta": 2.1,
+      "components_v2": {
+        "solve_time": 84.82,
+        "coins": 52.42,
+        "time_pressure": 41.67,
+        "colors": 85.71,
+        "number_elements": 77.73,
+        "mechanisms": 78.33
+      }
+    },
+    {
+      "level_id": 60,
+      "chapter": 6,
+      "chapter_position": 10,
+      "difficulty_tag": "normal",
+      "color_count": 4,
+      "number_element_count": 0,
+      "D_v1": 53.36,
+      "D_v2": 36.19,
+      "delta": -17.17,
+      "components_v2": {
+        "solve_time": 91.52,
+        "coins": 57.02,
+        "time_pressure": 58.89,
+        "colors": 42.86,
+        "number_elements": 0,
+        "mechanisms": 13.33
+      }
+    },
+    {
+      "level_id": 61,
+      "chapter": 7,
+      "chapter_position": 1,
+      "difficulty_tag": "normal",
+      "color_count": 6,
+      "number_element_count": 8,
+      "D_v1": 45.36,
+      "D_v2": 56.84,
+      "delta": 11.48,
+      "components_v2": {
+        "solve_time": 35.09,
+        "coins": 57.33,
+        "time_pressure": 2.78,
+        "colors": 71.43,
+        "number_elements": 77.73,
+        "mechanisms": 70
+      }
+    },
+    {
+      "level_id": 62,
+      "chapter": 7,
+      "chapter_position": 2,
+      "difficulty_tag": "normal",
+      "color_count": 7,
+      "number_element_count": 8,
+      "D_v1": 73.37,
+      "D_v2": 75.4,
+      "delta": 2.03,
+      "components_v2": {
+        "solve_time": 85.33,
+        "coins": 70.21,
+        "time_pressure": 42.78,
+        "colors": 85.71,
+        "number_elements": 77.73,
+        "mechanisms": 80
+      }
+    },
+    {
+      "level_id": 63,
+      "chapter": 7,
+      "chapter_position": 3,
+      "difficulty_tag": "normal",
+      "color_count": 8,
+      "number_element_count": 7,
+      "D_v1": 75.73,
+      "D_v2": 65.95,
+      "delta": -9.78,
+      "components_v2": {
+        "solve_time": 90.96,
+        "coins": 70.52,
+        "time_pressure": 57.22,
+        "colors": 100,
+        "number_elements": 49.99,
+        "mechanisms": 53.33
+      }
+    },
+    {
+      "level_id": 64,
+      "chapter": 7,
+      "chapter_position": 4,
+      "difficulty_tag": "Hard Level",
+      "color_count": 5,
+      "number_element_count": 9,
+      "D_v1": 65.88,
+      "D_v2": 70.08,
+      "delta": 4.2,
+      "components_v2": {
+        "solve_time": 87.91,
+        "coins": 70.83,
+        "time_pressure": 53.33,
+        "colors": 57.14,
+        "number_elements": 92.41,
+        "mechanisms": 36.67
+      }
+    },
+    {
+      "level_id": 65,
+      "chapter": 7,
+      "chapter_position": 5,
+      "difficulty_tag": "normal",
+      "color_count": 7,
+      "number_element_count": 1,
+      "D_v1": 72.25,
+      "D_v2": 50.46,
+      "delta": -21.79,
+      "components_v2": {
+        "solve_time": 95.78,
+        "coins": 71.75,
+        "time_pressure": 73.33,
+        "colors": 85.71,
+        "number_elements": 0.04,
+        "mechanisms": 43.33
+      }
+    },
+    {
+      "level_id": 66,
+      "chapter": 7,
+      "chapter_position": 6,
+      "difficulty_tag": "normal",
+      "color_count": 6,
+      "number_element_count": 10,
+      "D_v1": 65.24,
+      "D_v2": 73.48,
+      "delta": 8.24,
+      "components_v2": {
+        "solve_time": 80.51,
+        "coins": 72.06,
+        "time_pressure": 33.33,
+        "colors": 71.43,
+        "number_elements": 97.7,
+        "mechanisms": 56.67
+      }
+    },
+    {
+      "level_id": 67,
+      "chapter": 7,
+      "chapter_position": 7,
+      "difficulty_tag": "normal",
+      "color_count": 6,
+      "number_element_count": 10,
+      "D_v1": 70.39,
+      "D_v2": 79.15,
+      "delta": 8.76,
+      "components_v2": {
+        "solve_time": 82.93,
+        "coins": 72.36,
+        "time_pressure": 37.78,
+        "colors": 71.43,
+        "number_elements": 97.7,
+        "mechanisms": 80
+      }
+    },
+    {
+      "level_id": 68,
+      "chapter": 7,
+      "chapter_position": 8,
+      "difficulty_tag": "normal",
+      "color_count": 5,
+      "number_element_count": 10,
+      "D_v1": 65.44,
+      "D_v2": 73.85,
+      "delta": 8.41,
+      "components_v2": {
+        "solve_time": 83.76,
+        "coins": 72.67,
+        "time_pressure": 37.37,
+        "colors": 57.14,
+        "number_elements": 97.7,
+        "mechanisms": 60
+      }
+    },
+    {
+      "level_id": 69,
+      "chapter": 7,
+      "chapter_position": 9,
+      "difficulty_tag": "Super Hard",
+      "color_count": 6,
+      "number_element_count": 9,
+      "D_v1": 68.72,
+      "D_v2": 74.21,
+      "delta": 5.49,
+      "components_v2": {
+        "solve_time": 85.82,
+        "coins": 72.98,
+        "time_pressure": 43.89,
+        "colors": 71.43,
+        "number_elements": 92.41,
+        "mechanisms": 56.67
+      }
+    },
+    {
+      "level_id": 70,
+      "chapter": 7,
+      "chapter_position": 10,
+      "difficulty_tag": "normal",
+      "color_count": 1,
+      "number_element_count": 4,
+      "D_v1": 67.3,
+      "D_v2": 45.4,
+      "delta": -21.9,
+      "components_v2": {
+        "solve_time": 100,
+        "coins": 74.51,
+        "time_pressure": 91.11,
+        "colors": 0,
+        "number_elements": 2.28,
+        "mechanisms": 41.67
+      }
+    },
+    {
+      "level_id": 71,
+      "chapter": 8,
+      "chapter_position": 1,
+      "difficulty_tag": "normal",
+      "color_count": 5,
+      "number_element_count": 10,
+      "D_v1": 47.95,
+      "D_v2": 66.13,
+      "delta": 18.18,
+      "components_v2": {
+        "solve_time": 35.09,
+        "coins": 77.89,
+        "time_pressure": 2.78,
+        "colors": 57.14,
+        "number_elements": 97.7,
+        "mechanisms": 83.33
+      }
+    },
+    {
+      "level_id": 72,
+      "chapter": 8,
+      "chapter_position": 2,
+      "difficulty_tag": "normal",
+      "color_count": 8,
+      "number_element_count": 9,
+      "D_v1": 74.69,
+      "D_v2": 78.47,
+      "delta": 3.78,
+      "components_v2": {
+        "solve_time": 87.01,
+        "coins": 78.2,
+        "time_pressure": 46.67,
+        "colors": 100,
+        "number_elements": 92.41,
+        "mechanisms": 58.33
+      }
+    },
+    {
+      "level_id": 73,
+      "chapter": 8,
+      "chapter_position": 3,
+      "difficulty_tag": "normal",
+      "color_count": 6,
+      "number_element_count": 12,
+      "D_v1": 77.42,
+      "D_v2": 83.91,
+      "delta": 6.49,
+      "components_v2": {
+        "solve_time": 90.39,
+        "coins": 78.5,
+        "time_pressure": 55.87,
+        "colors": 71.43,
+        "number_elements": 99.81,
+        "mechanisms": 80
+      }
+    },
+    {
+      "level_id": 74,
+      "chapter": 8,
+      "chapter_position": 4,
+      "difficulty_tag": "Hard Level",
+      "color_count": 6,
+      "number_element_count": 9,
+      "D_v1": 68.75,
+      "D_v2": 74.46,
+      "delta": 5.71,
+      "components_v2": {
+        "solve_time": 85.07,
+        "coins": 78.81,
+        "time_pressure": 42.22,
+        "colors": 71.43,
+        "number_elements": 92.41,
+        "mechanisms": 56.67
+      }
+    },
+    {
+      "level_id": 75,
+      "chapter": 8,
+      "chapter_position": 5,
+      "difficulty_tag": "normal",
+      "color_count": 6,
+      "number_element_count": 9,
+      "D_v1": 80.46,
+      "D_v2": 81.89,
+      "delta": 1.43,
+      "components_v2": {
+        "solve_time": 97.33,
+        "coins": 79.73,
+        "time_pressure": 79.44,
+        "colors": 71.43,
+        "number_elements": 92.41,
+        "mechanisms": 60
+      }
+    },
+    {
+      "level_id": 76,
+      "chapter": 8,
+      "chapter_position": 6,
+      "difficulty_tag": "normal",
+      "color_count": 4,
+      "number_element_count": 8,
+      "D_v1": 57.59,
+      "D_v2": 59.3,
+      "delta": 1.71,
+      "components_v2": {
+        "solve_time": 83.48,
+        "coins": 80.04,
+        "time_pressure": 38.89,
+        "colors": 42.86,
+        "number_elements": 77.73,
+        "mechanisms": 20
+      }
+    },
+    {
+      "level_id": 77,
+      "chapter": 8,
+      "chapter_position": 7,
+      "difficulty_tag": "normal",
+      "color_count": 6,
+      "number_element_count": 7,
+      "D_v1": 72.93,
+      "D_v2": 69.52,
+      "delta": -3.41,
+      "components_v2": {
+        "solve_time": 82.64,
+        "coins": 80.35,
+        "time_pressure": 37.22,
+        "colors": 71.43,
+        "number_elements": 49.99,
+        "mechanisms": 100
+      }
+    },
+    {
+      "level_id": 78,
+      "chapter": 8,
+      "chapter_position": 8,
+      "difficulty_tag": "normal",
+      "color_count": 7,
+      "number_element_count": 6,
+      "D_v1": 70.07,
+      "D_v2": 55.14,
+      "delta": -14.93,
+      "components_v2": {
+        "solve_time": 85.33,
+        "coins": 80.65,
+        "time_pressure": 42.78,
+        "colors": 85.71,
+        "number_elements": 22.26,
+        "mechanisms": 56.67
+      }
+    },
+    {
+      "level_id": 79,
+      "chapter": 8,
+      "chapter_position": 9,
+      "difficulty_tag": "Super Hard",
+      "color_count": 5,
+      "number_element_count": 19,
+      "D_v1": 75.25,
+      "D_v2": 79.93,
+      "delta": 4.68,
+      "components_v2": {
+        "solve_time": 86.54,
+        "coins": 80.96,
+        "time_pressure": 65.6,
+        "colors": 57.14,
+        "number_elements": 100,
+        "mechanisms": 63.33
+      }
+    },
+    {
+      "level_id": 80,
+      "chapter": 8,
+      "chapter_position": 10,
+      "difficulty_tag": "normal",
+      "color_count": 4,
+      "number_element_count": 2,
+      "D_v1": 60.22,
+      "D_v2": 41.01,
+      "delta": -19.21,
+      "components_v2": {
+        "solve_time": 89.39,
+        "coins": 82.5,
+        "time_pressure": 52.78,
+        "colors": 42.86,
+        "number_elements": 0.18,
+        "mechanisms": 30
+      }
+    },
+    {
+      "level_id": 81,
+      "chapter": 9,
+      "chapter_position": 1,
+      "difficulty_tag": "normal",
+      "color_count": 4,
+      "number_element_count": 5,
+      "D_v1": 42.05,
+      "D_v2": 34.99,
+      "delta": -7.06,
+      "components_v2": {
+        "solve_time": 35.09,
+        "coins": 82.8,
+        "time_pressure": 4.17,
+        "colors": 42.86,
+        "number_elements": 7.57,
+        "mechanisms": 66.67
+      }
+    },
+    {
+      "level_id": 82,
+      "chapter": 9,
+      "chapter_position": 2,
+      "difficulty_tag": "normal",
+      "color_count": 8,
+      "number_element_count": 9,
+      "D_v1": 78.4,
+      "D_v2": 84.19,
+      "delta": 5.79,
+      "components_v2": {
+        "solve_time": 80.51,
+        "coins": 83.11,
+        "time_pressure": 50,
+        "colors": 100,
+        "number_elements": 92.41,
+        "mechanisms": 88.33
+      }
+    },
+    {
+      "level_id": 83,
+      "chapter": 9,
+      "chapter_position": 3,
+      "difficulty_tag": "normal",
+      "color_count": 5,
+      "number_element_count": 8,
+      "D_v1": 75.11,
+      "D_v2": 78.89,
+      "delta": 3.78,
+      "components_v2": {
+        "solve_time": 85.33,
+        "coins": 83.42,
+        "time_pressure": 51.33,
+        "colors": 57.14,
+        "number_elements": 77.73,
+        "mechanisms": 100
+      }
+    },
+    {
+      "level_id": 84,
+      "chapter": 9,
+      "chapter_position": 4,
+      "difficulty_tag": "Hard Level",
+      "color_count": 5,
+      "number_element_count": 9,
+      "D_v1": 74.04,
+      "D_v2": 80.44,
+      "delta": 6.4,
+      "components_v2": {
+        "solve_time": 87.46,
+        "coins": 83.72,
+        "time_pressure": 54.6,
+        "colors": 57.14,
+        "number_elements": 92.41,
+        "mechanisms": 81.67
+      }
+    },
+    {
+      "level_id": 85,
+      "chapter": 9,
+      "chapter_position": 5,
+      "difficulty_tag": "normal",
+      "color_count": 6,
+      "number_element_count": 5,
+      "D_v1": 78.72,
+      "D_v2": 55.88,
+      "delta": -22.84,
+      "components_v2": {
+        "solve_time": 96.5,
+        "coins": 84.65,
+        "time_pressure": 83.03,
+        "colors": 71.43,
+        "number_elements": 7.57,
+        "mechanisms": 53.33
+      }
+    },
+    {
+      "level_id": 86,
+      "chapter": 9,
+      "chapter_position": 6,
+      "difficulty_tag": "normal",
+      "color_count": 6,
+      "number_element_count": 6,
+      "D_v1": 66.48,
+      "D_v2": 51.92,
+      "delta": -14.56,
+      "components_v2": {
+        "solve_time": 84.82,
+        "coins": 84.95,
+        "time_pressure": 41.67,
+        "colors": 71.43,
+        "number_elements": 22.26,
+        "mechanisms": 46.67
+      }
+    },
+    {
+      "level_id": 87,
+      "chapter": 9,
+      "chapter_position": 7,
+      "difficulty_tag": "normal",
+      "color_count": 6,
+      "number_element_count": 11,
+      "D_v1": 72.94,
+      "D_v2": 83.71,
+      "delta": 10.77,
+      "components_v2": {
+        "solve_time": 79.86,
+        "coins": 85.26,
+        "time_pressure": 32.22,
+        "colors": 71.43,
+        "number_elements": 99.33,
+        "mechanisms": 100
+      }
+    },
+    {
+      "level_id": 88,
+      "chapter": 9,
+      "chapter_position": 8,
+      "difficulty_tag": "normal",
+      "color_count": 6,
+      "number_element_count": 7,
+      "D_v1": 75.74,
+      "D_v2": 69.58,
+      "delta": -6.16,
+      "components_v2": {
+        "solve_time": 88.98,
+        "coins": 85.57,
+        "time_pressure": 51.67,
+        "colors": 71.43,
+        "number_elements": 49.99,
+        "mechanisms": 83.33
+      }
+    },
+    {
+      "level_id": 89,
+      "chapter": 9,
+      "chapter_position": 9,
+      "difficulty_tag": "normal",
+      "color_count": 7,
+      "number_element_count": 10,
+      "D_v1": 87.71,
+      "D_v2": 90.41,
+      "delta": 2.7,
+      "components_v2": {
+        "solve_time": 96.21,
+        "coins": 85.87,
+        "time_pressure": 85.71,
+        "colors": 85.71,
+        "number_elements": 97.7,
+        "mechanisms": 81.67
+      }
+    },
+    {
+      "level_id": 90,
+      "chapter": 9,
+      "chapter_position": 10,
+      "difficulty_tag": "normal",
+      "color_count": 2,
+      "number_element_count": 4,
+      "D_v1": 64.2,
+      "D_v2": 45.92,
+      "delta": -18.28,
+      "components_v2": {
+        "solve_time": 89.19,
+        "coins": 88.95,
+        "time_pressure": 62.67,
+        "colors": 14.29,
+        "number_elements": 2.28,
+        "mechanisms": 56.67
+      }
+    },
+    {
+      "level_id": 91,
+      "chapter": 10,
+      "chapter_position": 1,
+      "difficulty_tag": "normal",
+      "color_count": 5,
+      "number_element_count": 2,
+      "D_v1": 42.26,
+      "D_v2": 33.95,
+      "delta": -8.31,
+      "components_v2": {
+        "solve_time": 38.11,
+        "coins": 89.25,
+        "time_pressure": 3.33,
+        "colors": 57.14,
+        "number_elements": 0.18,
+        "mechanisms": 60
+      }
+    },
+    {
+      "level_id": 92,
+      "chapter": 10,
+      "chapter_position": 2,
+      "difficulty_tag": "normal",
+      "color_count": 5,
+      "number_element_count": 9,
+      "D_v1": 74.76,
+      "D_v2": 80.92,
+      "delta": 6.16,
+      "components_v2": {
+        "solve_time": 89.6,
+        "coins": 89.56,
+        "time_pressure": 53.33,
+        "colors": 57.14,
+        "number_elements": 92.41,
+        "mechanisms": 80
+      }
+    },
+    {
+      "level_id": 93,
+      "chapter": 10,
+      "chapter_position": 3,
+      "difficulty_tag": "normal",
+      "color_count": 3,
+      "number_element_count": 10,
+      "D_v1": 74.98,
+      "D_v2": 82.06,
+      "delta": 7.08,
+      "components_v2": {
+        "solve_time": 91.52,
+        "coins": 96.01,
+        "time_pressure": 70.67,
+        "colors": 28.57,
+        "number_elements": 97.7,
+        "mechanisms": 76.67
+      }
+    },
+    {
+      "level_id": 94,
+      "chapter": 10,
+      "chapter_position": 4,
+      "difficulty_tag": "Hard Level",
+      "color_count": 5,
+      "number_element_count": 10,
+      "D_v1": 74.91,
+      "D_v2": 83.59,
+      "delta": 8.68,
+      "components_v2": {
+        "solve_time": 82.05,
+        "coins": 96.32,
+        "time_pressure": 54.17,
+        "colors": 57.14,
+        "number_elements": 97.7,
+        "mechanisms": 88.33
+      }
+    },
+    {
+      "level_id": 95,
+      "chapter": 10,
+      "chapter_position": 5,
+      "difficulty_tag": "normal",
+      "color_count": 5,
+      "number_element_count": 5,
+      "D_v1": 85.6,
+      "D_v2": 64.41,
+      "delta": -21.19,
+      "components_v2": {
+        "solve_time": 92.76,
+        "coins": 97.24,
+        "time_pressure": 100,
+        "colors": 57.14,
+        "number_elements": 7.57,
+        "mechanisms": 90
+      }
+    },
+    {
+      "level_id": 96,
+      "chapter": 10,
+      "chapter_position": 6,
+      "difficulty_tag": "normal",
+      "color_count": 8,
+      "number_element_count": 8,
+      "D_v1": 75.38,
+      "D_v2": 77.3,
+      "delta": 1.92,
+      "components_v2": {
+        "solve_time": 82.35,
+        "coins": 97.54,
+        "time_pressure": 36.67,
+        "colors": 100,
+        "number_elements": 77.73,
+        "mechanisms": 75
+      }
+    },
+    {
+      "level_id": 97,
+      "chapter": 10,
+      "chapter_position": 7,
+      "difficulty_tag": "normal",
+      "color_count": 5,
+      "number_element_count": 12,
+      "D_v1": 83.41,
+      "D_v2": 87.04,
+      "delta": 3.63,
+      "components_v2": {
+        "solve_time": 98.13,
+        "coins": 97.85,
+        "time_pressure": 82.78,
+        "colors": 57.14,
+        "number_elements": 99.81,
+        "mechanisms": 70
+      }
+    },
+    {
+      "level_id": 98,
+      "chapter": 10,
+      "chapter_position": 8,
+      "difficulty_tag": "normal",
+      "color_count": 7,
+      "number_element_count": 6,
+      "D_v1": 75.62,
+      "D_v2": 59.72,
+      "delta": -15.9,
+      "components_v2": {
+        "solve_time": 89.19,
+        "coins": 98.16,
+        "time_pressure": 52.22,
+        "colors": 85.71,
+        "number_elements": 22.26,
+        "mechanisms": 61.67
+      }
+    },
+    {
+      "level_id": 99,
+      "chapter": 10,
+      "chapter_position": 9,
+      "difficulty_tag": "Super Hard",
+      "color_count": 7,
+      "number_element_count": 12,
+      "D_v1": 84.19,
+      "D_v2": 89.83,
+      "delta": 5.64,
+      "components_v2": {
+        "solve_time": 89.6,
+        "coins": 98.46,
+        "time_pressure": 64,
+        "colors": 85.71,
+        "number_elements": 99.81,
+        "mechanisms": 88.33
+      }
+    },
+    {
+      "level_id": 100,
+      "chapter": 10,
+      "chapter_position": 10,
+      "difficulty_tag": "normal",
+      "color_count": 3,
+      "number_element_count": 3,
+      "D_v1": 64.47,
+      "D_v2": 41.85,
+      "delta": -22.62,
+      "components_v2": {
+        "solve_time": 95.92,
+        "coins": 100,
+        "time_pressure": 73.89,
+        "colors": 28.57,
+        "number_elements": 0.65,
+        "mechanisms": 13.33
+      }
+    }
+  ]
+}

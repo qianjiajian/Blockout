@@ -1,0 +1,82 @@
+{
+  "version": 2,
+  "status": "coarse-starts-second-pass-reviewed-from-complete-5-second-timelines",
+  "sourceIndex": "https://novaspuzzleden.com/games/Block-Out-Updated0626",
+  "notes": [
+    "Each coarseStartSeconds value is the first five-second sample judged to belong to that level, not yet the final pristine initial frame.",
+    "Fine capture must inspect the surrounding seconds and reject ads, completion cards, loading states, and boards after the first move.",
+    "The YouTube recordings are 640x360 with a centered portrait game feed; board geometry is measured from the portrait feed, not the black side bars or player controls."
+  ],
+  "segments": [
+    {
+      "levels": "001-010",
+      "youtubeId": "LlOMtgdGOQA",
+      "url": "https://www.youtube.com/watch?v=LlOMtgdGOQA",
+      "durationSeconds": 344.781,
+      "coarseStartSeconds": [5, 15, 30, 45, 75, 125, 165, 220, 260, 305]
+    },
+    {
+      "levels": "011-020",
+      "youtubeId": "b5mFsyrvCws",
+      "url": "https://www.youtube.com/watch?v=b5mFsyrvCws",
+      "durationSeconds": 488.881,
+      "coarseStartSeconds": [5, 50, 100, 145, 185, 230, 275, 350, 380, 465]
+    },
+    {
+      "levels": "021-030",
+      "youtubeId": "MOpt7j6VyEI",
+      "url": "https://www.youtube.com/watch?v=MOpt7j6VyEI",
+      "durationSeconds": 645.781,
+      "coarseStartSeconds": [5, 75, 115, 185, 260, 320, 395, 435, 490, 605]
+    },
+    {
+      "levels": "031-040",
+      "youtubeId": "hthuKdxZ8-4",
+      "url": "https://www.youtube.com/watch?v=hthuKdxZ8-4",
+      "durationSeconds": 603.661,
+      "coarseStartSeconds": [5, 65, 110, 170, 270, 305, 345, 395, 455, 550]
+    },
+    {
+      "levels": "041-050",
+      "youtubeId": "ay2_zRTnAak",
+      "url": "https://www.youtube.com/watch?v=ay2_zRTnAak",
+      "durationSeconds": 636.881,
+      "coarseStartSeconds": [5, 70, 140, 185, 255, 305, 360, 440, 505, 605]
+    },
+    {
+      "levels": "051-060",
+      "youtubeId": "cNTbp1ZY_iA",
+      "url": "https://www.youtube.com/watch?v=cNTbp1ZY_iA",
+      "durationSeconds": 664.301,
+      "coarseStartSeconds": [5, 45, 90, 145, 265, 330, 380, 445, 520, 630]
+    },
+    {
+      "levels": "061-070",
+      "youtubeId": "KDHW-MJHbVI",
+      "url": "https://www.youtube.com/watch?v=KDHW-MJHbVI",
+      "durationSeconds": 903.321,
+      "coarseStartSeconds": [5, 85, 185, 270, 405, 465, 535, 605, 685, 850]
+    },
+    {
+      "levels": "071-080",
+      "youtubeId": "E0PQvJBPLHA",
+      "url": "https://www.youtube.com/watch?v=E0PQvJBPLHA",
+      "durationSeconds": 845.981,
+      "coarseStartSeconds": [5, 90, 190, 265, 410, 480, 545, 625, 705, 800]
+    },
+    {
+      "levels": "081-090",
+      "youtubeId": "z84HxyHQX-4",
+      "url": "https://www.youtube.com/watch?v=z84HxyHQX-4",
+      "durationSeconds": 907.121,
+      "coarseStartSeconds": [5, 65, 145, 230, 360, 440, 500, 595, 725, 820]
+    },
+    {
+      "levels": "091-100",
+      "youtubeId": "rGzYQi1ljnM",
+      "url": "https://www.youtube.com/watch?v=rGzYQi1ljnM",
+      "durationSeconds": 958.661,
+      "coarseStartSeconds": [5, 105, 210, 275, 390, 455, 600, 695, 795, 925]
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "input": "C:\\Users\\Administrator\\Documents\\ChatGPT\\Block Out!\\deliverables\\original-levels\\blockout-original-levels-101-120-completed.json",
+  "rules": "C:\\Users\\Administrator\\Documents\\ChatGPT\\Block Out!\\docs\\original-levels-solver-rules.md",
+  "algorithm": "宏动作内部 BFS + 外层 A*（逐格步数为代价，启发式可采纳）",
+  "max_states_per_level": 10000,
+  "selected_range": {
+    "from": 101,
+    "to": 101
+  },
+  "results": [
+    {
+      "status": "未判定",
+      "solved": false,
+      "exact": false,
+      "minimum_steps": null,
+      "estimated_clear_time_s": null,
+      "expected_clear_time_s": 11,
+      "deviation_s": null,
+      "time_limit_sec": 120,
+      "explored_states": 10000,
+      "deadlock": {
+        "cleared_blocks": 8,
+        "remaining_blocks": 3,
+        "state": "-1,-1|0,4|-1,-1|-1,-1|2,3|-1,-1|-1,-1|-1,-1|-1,-1|-1,-1|3,4",
+        "inactive_blocks": [],
+        "numeric_or_pattern_locked_blocks": []
+      },
+      "reason": "达到 10000 状态上限；当前最好状态已清除 8/11 块",
+      "level_id": 101,
+      "runtime_ms": 6045
+    }
+  ]
+}

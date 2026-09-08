@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="5" stdDeviation="12" flood-color="#1D2A44" flood-opacity="0.10"/>
+    </filter>
+    <clipPath id="plot-clip">
+      <rect x="108" y="205" width="1422" height="583" rx="14"/>
+    </clipPath>
+    <style>
+      text { font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif; fill: #25324A; }
+      .title { font-size: 38px; font-weight: 700; letter-spacing: 0.5px; }
+      .subtitle { font-size: 18px; fill: #718096; }
+      .metric-label { font-size: 15px; fill: #718096; }
+      .metric-value { font-size: 23px; font-weight: 700; }
+      .chapter { font-size: 14px; font-weight: 600; fill: #7B879C; }
+      .grid { stroke: #DCE3ED; stroke-width: 1; }
+      .chapter-divider { stroke: #BCC7D6; stroke-width: 1; stroke-dasharray: 5 7; }
+      .axis { stroke: #9BA9BC; stroke-width: 1.5; }
+      .tick { stroke: #9BA9BC; stroke-width: 1.25; }
+      .axis-label { font-size: 15px; fill: #718096; }
+      .axis-title { font-size: 16px; font-weight: 600; fill: #52627A; }
+      .raw-competitor { fill: none; stroke: #F59E0B; stroke-width: 1.8; opacity: 0.26; }
+      .raw-original { fill: none; stroke: #2563EB; stroke-width: 1.8; opacity: 0.24; }
+      .smooth-competitor { fill: none; stroke: #E87900; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+      .smooth-original { fill: none; stroke: #1769E0; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+      .competitor-marker { fill: #FFFFFF; stroke: #E87900; stroke-width: 3; }
+      .original-marker { fill: #FFFFFF; stroke: #1769E0; stroke-width: 3; }
+      .legend { font-size: 16px; font-weight: 600; }
+      .note { font-size: 14px; fill: #7B879C; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="900" fill="#F3F6FA"/>
+  <text x="108" y="58" class="title">Block Out 难度曲线对比（Lv1–100）</text>
+  <text x="108" y="91" class="subtitle">统一采用 Block Out 四维难度评分（0–100）；粗线为五关滑动平均</text>
+
+  <g transform="translate(108, 112)">
+    <rect width="216" height="50" rx="12" fill="#FFF7E8"/>
+    <circle cx="22" cy="25" r="7" fill="#E87900"/>
+    <text x="40" y="21" class="metric-label">竞品平均难度</text>
+    <text x="177" y="33" text-anchor="end" class="metric-value" fill="#C96800">56.0</text>
+  </g>
+  <g transform="translate(340, 112)">
+    <rect width="216" height="50" rx="12" fill="#EAF2FF"/>
+    <circle cx="22" cy="25" r="7" fill="#1769E0"/>
+    <text x="40" y="21" class="metric-label">本项目平均难度</text>
+    <text x="177" y="33" text-anchor="end" class="metric-value" fill="#1769E0">58.5</text>
+  </g>
+  <g transform="translate(572, 112)">
+    <rect width="270" height="50" rx="12" fill="#EEF2F7"/>
+    <text x="20" y="21" class="metric-label">曲线显示</text>
+    <text x="20" y="41" class="note">细线＝逐关值　粗线＝整体趋势</text>
+  </g>
+
+  <rect x="108" y="205" width="1422" height="583" rx="14"
+    fill="#FFFFFF" filter="url(#shadow)"/>
+  <text x="179.10" y="190" text-anchor="middle"
+    class="chapter">第1章</text><text x="321.30" y="190" text-anchor="middle"
+    class="chapter">第2章</text><text x="463.50" y="190" text-anchor="middle"
+    class="chapter">第3章</text><text x="605.70" y="190" text-anchor="middle"
+    class="chapter">第4章</text><text x="747.90" y="190" text-anchor="middle"
+    class="chapter">第5章</text><text x="890.10" y="190" text-anchor="middle"
+    class="chapter">第6章</text><text x="1032.30" y="190" text-anchor="middle"
+    class="chapter">第7章</text><text x="1174.50" y="190" text-anchor="middle"
+    class="chapter">第8章</text><text x="1316.70" y="190" text-anchor="middle"
+    class="chapter">第9章</text><text x="1458.90" y="190" text-anchor="middle"
+    class="chapter">第10章</text>
+
+  <g clip-path="url(#plot-clip)">
+    <rect x="108.00" y="205" width="142.20" height="583"
+    fill="#F7F9FC"/><rect x="250.20" y="205" width="142.20" height="583"
+    fill="#FFFFFF"/><rect x="392.40" y="205" width="142.20" height="583"
+    fill="#F7F9FC"/><rect x="534.60" y="205" width="142.20" height="583"
+    fill="#FFFFFF"/><rect x="676.80" y="205" width="142.20" height="583"
+    fill="#F7F9FC"/><rect x="819.00" y="205" width="142.20" height="583"
+    fill="#FFFFFF"/><rect x="961.20" y="205" width="142.20" height="583"
+    fill="#F7F9FC"/><rect x="1103.40" y="205" width="142.20" height="583"
+    fill="#FFFFFF"/><rect x="1245.60" y="205" width="142.20" height="583"
+    fill="#F7F9FC"/><rect x="1387.80" y="205" width="142.20" height="583"
+    fill="#FFFFFF"/>
+    <line x1="108" y1="788.00" x2="1530" y2="788.00"
+    class="grid"/><line x1="108" y1="729.70" x2="1530" y2="729.70"
+    class="grid"/><line x1="108" y1="671.40" x2="1530" y2="671.40"
+    class="grid"/><line x1="108" y1="613.10" x2="1530" y2="613.10"
+    class="grid"/><line x1="108" y1="554.80" x2="1530" y2="554.80"
+    class="grid"/><line x1="108" y1="496.50" x2="1530" y2="496.50"
+    class="grid"/><line x1="108" y1="438.20" x2="1530" y2="438.20"
+    class="grid"/><line x1="108" y1="379.90" x2="1530" y2="379.90"
+    class="grid"/><line x1="108" y1="321.60" x2="1530" y2="321.60"
+    class="grid"/><line x1="108" y1="263.30" x2="1530" y2="263.30"
+    class="grid"/><line x1="108" y1="205.00" x2="1530" y2="205.00"
+    class="grid"/>
+    <line x1="250.20" y1="205" x2="250.20" y2="788" class="chapter-divider"/><line x1="392.40" y1="205" x2="392.40" y2="788" class="chapter-divider"/><line x1="534.60" y1="205" x2="534.60" y2="788" class="chapter-divider"/><line x1="676.80" y1="205" x2="676.80" y2="788" class="chapter-divider"/><line x1="819.00" y1="205" x2="819.00" y2="788" class="chapter-divider"/><line x1="961.20" y1="205" x2="961.20" y2="788" class="chapter-divider"/><line x1="1103.40" y1="205" x2="1103.40" y2="788" class="chapter-divider"/><line x1="1245.60" y1="205" x2="1245.60" y2="788" class="chapter-divider"/><line x1="1387.80" y1="205" x2="1387.80" y2="788" class="chapter-divider"/>
+    <path d="M108.00,736.70 L122.36,706.44 L136.73,691.86 L151.09,662.19 L165.45,686.97 L179.82,632.11 L194.18,650.35 L208.55,597.94 L222.91,602.90 L237.27,447.06 L251.64,503.96 L266.00,506.59 L280.36,458.61 L294.73,595.20 L309.09,582.20 L323.45,567.04 L337.82,401.41 L352.18,461.69 L366.55,438.61 L380.91,387.01 L395.27,628.43 L409.64,570.19 L424.00,573.75 L438.36,495.33 L452.73,436.16 L467.09,550.25 L481.45,540.63 L495.82,579.87 L510.18,510.96 L524.55,526.29 L538.91,572.64 L553.27,371.04 L567.64,565.94 L582.00,478.02 L596.36,584.71 L610.73,609.54 L625.09,513.76 L639.45,397.10 L653.82,351.92 L668.18,496.44 L682.55,492.65 L696.91,601.56 L711.27,524.48 L725.64,389.23 L740.00,552.23 L754.36,510.38 L768.73,387.65 L783.09,309.71 L797.45,346.61 L811.82,583.83 L826.18,514.81 L840.55,576.14 L854.91,355.53 L869.27,394.53 L883.64,337.69 L898.00,335.83 L912.36,385.38 L926.73,323.52 L941.09,362.06 L955.45,577.01 L969.82,456.62 L984.18,348.42 L998.55,403.51 L1012.91,379.43 L1027.27,493.82 L1041.64,359.61 L1056.00,326.56 L1070.36,357.45 L1084.73,355.36 L1099.09,523.32 L1113.45,402.46 L1127.82,330.52 L1142.18,298.80 L1156.55,353.90 L1170.91,310.58 L1185.27,442.28 L1199.64,382.70 L1214.00,466.53 L1228.36,322.01 L1242.73,548.91 L1257.09,584.01 L1271.45,297.17 L1285.82,328.07 L1300.18,319.03 L1314.55,462.22 L1328.91,485.31 L1343.27,299.97 L1357.64,382.35 L1372.00,260.91 L1386.36,520.29 L1400.73,590.07 L1415.09,316.24 L1429.45,309.59 L1443.82,300.67 L1458.18,412.49 L1472.55,337.34 L1486.91,280.56 L1501.27,439.83 L1515.64,264.29 L1530.00,544.01" class="raw-competitor"/>
+    <path d="M108.00,650.24 L122.36,506.88 L136.73,518.07 L151.09,518.60 L165.45,523.61 L179.82,378.85 L194.18,367.66 L208.55,355.53 L222.91,347.72 L237.27,338.62 L251.64,521.39 L266.00,488.34 L280.36,522.74 L294.73,509.91 L309.09,523.32 L323.45,515.10 L337.82,524.13 L352.18,504.08 L366.55,456.21 L380.91,503.73 L395.27,524.72 L409.64,523.55 L424.00,507.34 L438.36,521.86 L452.73,514.51 L467.09,521.51 L481.45,503.61 L495.82,521.92 L510.18,520.29 L524.55,521.63 L538.91,515.97 L553.27,467.87 L567.64,494.75 L582.00,524.13 L596.36,484.84 L610.73,513.87 L625.09,431.09 L639.45,473.18 L653.82,446.71 L668.18,474.00 L682.55,524.72 L696.91,506.59 L711.27,418.96 L725.64,468.87 L740.00,496.67 L754.36,493.58 L768.73,435.40 L783.09,466.30 L797.45,380.07 L811.82,512.71 L826.18,490.96 L840.55,428.52 L854.91,372.09 L869.27,413.77 L883.64,456.91 L898.00,367.60 L912.36,462.04 L926.73,341.95 L941.09,448.99 L955.45,471.55 L969.82,467.18 L984.18,478.14 L998.55,408.29 L1012.91,413.89 L1027.27,523.67 L1041.64,388.64 L1056.00,463.15 L1070.36,347.78 L1084.73,428.81 L1099.09,523.61 L1113.45,465.08 L1127.82,377.68 L1142.18,341.48 L1156.55,430.91 L1170.91,458.61 L1185.27,331.16 L1199.64,434.12 L1214.00,320.49 L1228.36,462.34 L1242.73,411.67 L1257.09,430.15 L1271.45,417.45 L1285.82,354.13 L1300.18,381.53 L1314.55,416.34 L1328.91,323.29 L1343.27,422.28 L1357.64,306.85 L1372.00,456.45 L1386.36,452.25 L1400.73,412.72 L1415.09,356.29 L1429.45,362.88 L1443.82,374.19 L1458.18,384.33 L1472.55,314.37 L1486.91,398.15 L1501.27,305.28 L1515.64,393.66 L1530.00,401.30" class="raw-original"/>
+    <path d="M108.00,711.69 L122.36,699.33 L136.73,696.82 L151.09,675.89 L165.45,664.70 L179.82,645.92 L194.18,634.03 L208.55,586.05 L222.91,560.46 L237.27,531.71 L251.64,503.85 L266.00,502.27 L280.36,529.32 L294.73,541.92 L309.09,520.87 L323.45,521.51 L337.82,490.20 L352.18,451.14 L366.55,463.44 L380.91,497.20 L395.27,519.59 L409.64,530.96 L424.00,540.75 L438.36,525.13 L452.73,519.24 L467.09,520.46 L481.45,523.55 L495.82,541.62 L510.18,546.06 L524.55,512.18 L538.91,509.38 L553.27,502.80 L567.64,514.46 L582.00,521.86 L596.36,550.37 L610.73,516.61 L625.09,491.43 L639.45,473.76 L653.82,450.38 L668.18,467.93 L682.55,493.41 L696.91,500.87 L711.27,512.01 L725.64,515.56 L740.00,472.77 L754.36,429.86 L768.73,421.29 L783.09,427.65 L797.45,428.52 L811.82,466.24 L826.18,475.40 L840.55,484.96 L854.91,435.75 L869.27,399.96 L883.64,361.77 L898.00,355.41 L912.36,348.88 L926.73,396.75 L941.09,420.94 L955.45,413.54 L969.82,429.51 L984.18,433.01 L998.55,416.34 L1012.91,396.98 L1027.27,392.61 L1041.64,383.40 L1056.00,378.56 L1070.36,384.45 L1084.73,393.02 L1099.09,393.83 L1113.45,382.12 L1127.82,381.82 L1142.18,339.26 L1156.55,347.19 L1170.91,357.63 L1185.27,391.21 L1199.64,384.80 L1214.00,432.49 L1228.36,460.82 L1242.73,443.74 L1257.09,416.05 L1271.45,415.46 L1285.82,398.09 L1300.18,378.38 L1314.55,378.91 L1328.91,389.75 L1343.27,378.15 L1357.64,389.75 L1372.00,410.74 L1386.36,413.95 L1400.73,399.43 L1415.09,407.36 L1429.45,385.79 L1443.82,335.24 L1458.18,328.13 L1472.55,354.19 L1486.91,346.90 L1501.27,373.20 L1515.64,382.17 L1530.00,416.05" class="smooth-competitor"/>
+    <path d="M108.00,558.41 L122.36,548.45 L136.73,543.49 L151.09,489.21 L165.45,461.35 L179.82,428.87 L194.18,394.65 L208.55,357.69 L222.91,386.20 L237.27,410.33 L251.64,443.74 L266.00,476.21 L280.36,513.12 L294.73,511.89 L309.09,519.00 L323.45,515.33 L337.82,504.60 L352.18,500.64 L366.55,502.56 L380.91,502.45 L395.27,503.09 L409.64,516.21 L424.00,518.36 L438.36,517.72 L452.73,513.76 L467.09,516.67 L481.45,516.38 L495.82,517.78 L510.18,516.67 L524.55,509.56 L538.91,504.08 L553.27,504.90 L567.64,497.49 L582.00,497.08 L596.36,489.74 L610.73,485.42 L625.09,469.92 L639.45,467.76 L653.82,469.97 L668.18,485.07 L682.55,474.17 L696.91,478.66 L711.27,483.15 L725.64,476.91 L740.00,462.69 L754.36,472.19 L768.73,454.41 L783.09,457.61 L797.45,457.09 L811.82,455.69 L826.18,436.86 L840.55,443.62 L854.91,432.43 L869.27,407.77 L883.64,414.47 L898.00,408.47 L912.36,415.52 L926.73,418.44 L941.09,438.37 L955.45,441.58 L969.82,454.82 L984.18,447.82 L998.55,458.26 L1012.91,442.51 L1027.27,439.54 L1041.64,427.41 L1056.00,430.39 L1070.36,430.39 L1084.73,445.66 L1099.09,428.58 L1113.45,427.36 L1127.82,427.76 L1142.18,414.76 L1156.55,388.00 L1170.91,399.26 L1185.27,395.06 L1199.64,401.35 L1214.00,391.97 L1228.36,411.73 L1242.73,408.41 L1257.09,415.17 L1271.45,398.96 L1285.82,399.90 L1300.18,378.56 L1314.55,379.55 L1328.91,370.05 L1343.27,385.03 L1357.64,392.20 L1372.00,410.10 L1386.36,396.92 L1400.73,408.12 L1415.09,391.68 L1429.45,378.09 L1443.82,358.39 L1458.18,366.78 L1472.55,355.24 L1486.91,359.15 L1501.27,362.53 L1515.64,374.59 L1530.00,366.78" class="smooth-original"/>
+    
+      <circle cx="237.27" cy="531.71" r="5.5" class="competitor-marker"/>
+      <circle cx="237.27" cy="410.33" r="5.5" class="original-marker"/>
+      <circle cx="380.91" cy="497.20" r="5.5" class="competitor-marker"/>
+      <circle cx="380.91" cy="502.45" r="5.5" class="original-marker"/>
+      <circle cx="524.55" cy="512.18" r="5.5" class="competitor-marker"/>
+      <circle cx="524.55" cy="509.56" r="5.5" class="original-marker"/>
+      <circle cx="668.18" cy="467.93" r="5.5" class="competitor-marker"/>
+      <circle cx="668.18" cy="485.07" r="5.5" class="original-marker"/>
+      <circle cx="811.82" cy="466.24" r="5.5" class="competitor-marker"/>
+      <circle cx="811.82" cy="455.69" r="5.5" class="original-marker"/>
+      <circle cx="955.45" cy="413.54" r="5.5" class="competitor-marker"/>
+      <circle cx="955.45" cy="441.58" r="5.5" class="original-marker"/>
+      <circle cx="1099.09" cy="393.83" r="5.5" class="competitor-marker"/>
+      <circle cx="1099.09" cy="428.58" r="5.5" class="original-marker"/>
+      <circle cx="1242.73" cy="443.74" r="5.5" class="competitor-marker"/>
+      <circle cx="1242.73" cy="408.41" r="5.5" class="original-marker"/>
+      <circle cx="1386.36" cy="413.95" r="5.5" class="competitor-marker"/>
+      <circle cx="1386.36" cy="396.92" r="5.5" class="original-marker"/>
+      <circle cx="1530.00" cy="416.05" r="5.5" class="competitor-marker"/>
+      <circle cx="1530.00" cy="366.78" r="5.5" class="original-marker"/>
+  </g>
+
+  <line x1="108" y1="788" x2="1530" y2="788" class="axis"/>
+  <line x1="108" y1="205" x2="108" y2="788" class="axis"/>
+  <text x="88" y="794.00" text-anchor="end" class="axis-label">0</text><text x="88" y="735.70" text-anchor="end" class="axis-label">10</text><text x="88" y="677.40" text-anchor="end" class="axis-label">20</text><text x="88" y="619.10" text-anchor="end" class="axis-label">30</text><text x="88" y="560.80" text-anchor="end" class="axis-label">40</text><text x="88" y="502.50" text-anchor="end" class="axis-label">50</text><text x="88" y="444.20" text-anchor="end" class="axis-label">60</text><text x="88" y="385.90" text-anchor="end" class="axis-label">70</text><text x="88" y="327.60" text-anchor="end" class="axis-label">80</text><text x="88" y="269.30" text-anchor="end" class="axis-label">90</text><text x="88" y="211.00" text-anchor="end" class="axis-label">100</text>
+  
+    <line x1="108.00" y1="788" x2="108.00" y2="796"
+      class="tick"/>
+    <text x="108.00" y="822" text-anchor="middle" class="axis-label">1</text>
+    <line x1="237.27" y1="788" x2="237.27" y2="796"
+      class="tick"/>
+    <text x="237.27" y="822" text-anchor="middle" class="axis-label">10</text>
+    <line x1="380.91" y1="788" x2="380.91" y2="796"
+      class="tick"/>
+    <text x="380.91" y="822" text-anchor="middle" class="axis-label">20</text>
+    <line x1="524.55" y1="788" x2="524.55" y2="796"
+      class="tick"/>
+    <text x="524.55" y="822" text-anchor="middle" class="axis-label">30</text>
+    <line x1="668.18" y1="788" x2="668.18" y2="796"
+      class="tick"/>
+    <text x="668.18" y="822" text-anchor="middle" class="axis-label">40</text>
+    <line x1="811.82" y1="788" x2="811.82" y2="796"
+      class="tick"/>
+    <text x="811.82" y="822" text-anchor="middle" class="axis-label">50</text>
+    <line x1="955.45" y1="788" x2="955.45" y2="796"
+      class="tick"/>
+    <text x="955.45" y="822" text-anchor="middle" class="axis-label">60</text>
+    <line x1="1099.09" y1="788" x2="1099.09" y2="796"
+      class="tick"/>
+    <text x="1099.09" y="822" text-anchor="middle" class="axis-label">70</text>
+    <line x1="1242.73" y1="788" x2="1242.73" y2="796"
+      class="tick"/>
+    <text x="1242.73" y="822" text-anchor="middle" class="axis-label">80</text>
+    <line x1="1386.36" y1="788" x2="1386.36" y2="796"
+      class="tick"/>
+    <text x="1386.36" y="822" text-anchor="middle" class="axis-label">90</text>
+    <line x1="1530.00" y1="788" x2="1530.00" y2="796"
+      class="tick"/>
+    <text x="1530.00" y="822" text-anchor="middle" class="axis-label">100</text>
+
+  <text x="35" y="496.5" text-anchor="middle" class="axis-title"
+    transform="rotate(-90 35 496.5)">难度分</text>
+  <text x="819" y="870" text-anchor="middle" class="axis-title">关卡编号</text>
+
+  <g transform="translate(1095, 132)">
+    <line x1="0" y1="0" x2="38" y2="0" class="smooth-competitor"/>
+    <text x="52" y="6" class="legend">竞品新版 Lv1–100</text>
+    <line x1="245" y1="0" x2="283" y2="0" class="smooth-original"/>
+    <text x="297" y="6" class="legend">本项目原创 Lv1–100</text>
+  </g>
+</svg>

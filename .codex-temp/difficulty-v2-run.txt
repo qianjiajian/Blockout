@@ -1,0 +1,581 @@
+{
+  "outputJson": "C:\\Users\\Administrator\\Documents\\ChatGPT\\Block Out!\\deliverables\\competitor-dataset\\blockout-difficulty-score-v2.json",
+  "outputCsv": "C:\\Users\\Administrator\\Documents\\ChatGPT\\Block Out!\\deliverables\\competitor-dataset\\blockout-difficulty-score-v1-v2.csv",
+  "calibration": {
+    "definition": "每个标签关与同章前后紧邻的普通关均值比较；再对16个标签关取均值。章节中位数按该章10关计算。",
+    "D_v1": {
+      "label_count": 16,
+      "label_mean": 65.72,
+      "adjacent_normal_mean": 67.19,
+      "label_vs_adjacent_lift": -1.48,
+      "all_normal_mean": 59.58,
+      "label_vs_all_normal_lift": 6.13,
+      "above_chapter_median_count": 7,
+      "above_chapter_median_levels": [
+        29,
+        39,
+        49,
+        59,
+        69,
+        79,
+        99
+      ],
+      "not_above_chapter_median_levels": [
+        14,
+        19,
+        24,
+        44,
+        54,
+        64,
+        74,
+        84,
+        94
+      ],
+      "hard_mean": null,
+      "super_hard_mean": null,
+      "details": [
+        {
+          "level_id": 14,
+          "difficulty_tag": "Hard Level",
+          "D": 48.56,
+          "adjacent_normal_levels": [
+            13,
+            15
+          ],
+          "adjacent_normal_mean": 52.94,
+          "adjacent_lift": -4.38,
+          "chapter_median": 52.33,
+          "above_chapter_median": false
+        },
+        {
+          "level_id": 19,
+          "difficulty_tag": "Super Hard",
+          "D": 50.48,
+          "adjacent_normal_levels": [
+            18,
+            20
+          ],
+          "adjacent_normal_mean": 69.22,
+          "adjacent_lift": -18.74,
+          "chapter_median": 52.33,
+          "above_chapter_median": false
+        },
+        {
+          "level_id": 24,
+          "difficulty_tag": "Hard Level",
+          "D": 54.57,
+          "adjacent_normal_levels": [
+            23,
+            25
+          ],
+          "adjacent_normal_mean": 61.46,
+          "adjacent_lift": -6.89,
+          "chapter_median": 58.2,
+          "above_chapter_median": false
+        },
+        {
+          "level_id": 29,
+          "difficulty_tag": "Super Hard",
+          "D": 62.47,
+          "adjacent_normal_levels": [
+            28,
+            30
+          ],
+          "adjacent_normal_mean": 60.7,
+          "adjacent_lift": 1.77,
+          "chapter_median": 58.2,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 39,
+          "difficulty_tag": "Super Hard",
+          "D": 65.77,
+          "adjacent_normal_levels": [
+            38,
+            40
+          ],
+          "adjacent_normal_mean": 63.51,
+          "adjacent_lift": 2.26,
+          "chapter_median": 59.84,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 44,
+          "difficulty_tag": "Hard Level",
+          "D": 59.53,
+          "adjacent_normal_levels": [
+            43,
+            45
+          ],
+          "adjacent_normal_mean": 60.4,
+          "adjacent_lift": -0.87,
+          "chapter_median": 60.4,
+          "above_chapter_median": false
+        },
+        {
+          "level_id": 49,
+          "difficulty_tag": "Super Hard",
+          "D": 67.51,
+          "adjacent_normal_levels": [
+            48,
+            50
+          ],
+          "adjacent_normal_mean": 63.41,
+          "adjacent_lift": 4.1,
+          "chapter_median": 60.4,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 54,
+          "difficulty_tag": "Hard Level",
+          "D": 59.85,
+          "adjacent_normal_levels": [
+            53,
+            55
+          ],
+          "adjacent_normal_mean": 69.05,
+          "adjacent_lift": -9.2,
+          "chapter_median": 62.22,
+          "above_chapter_median": false
+        },
+        {
+          "level_id": 59,
+          "difficulty_tag": "Super Hard",
+          "D": 70.96,
+          "adjacent_normal_levels": [
+            58,
+            60
+          ],
+          "adjacent_normal_mean": 62.71,
+          "adjacent_lift": 8.25,
+          "chapter_median": 62.22,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 64,
+          "difficulty_tag": "Hard Level",
+          "D": 65.88,
+          "adjacent_normal_levels": [
+            63,
+            65
+          ],
+          "adjacent_normal_mean": 73.99,
+          "adjacent_lift": -8.11,
+          "chapter_median": 68.01,
+          "above_chapter_median": false
+        },
+        {
+          "level_id": 69,
+          "difficulty_tag": "Super Hard",
+          "D": 68.72,
+          "adjacent_normal_levels": [
+            68,
+            70
+          ],
+          "adjacent_normal_mean": 66.37,
+          "adjacent_lift": 2.35,
+          "chapter_median": 68.01,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 74,
+          "difficulty_tag": "Hard Level",
+          "D": 68.75,
+          "adjacent_normal_levels": [
+            73,
+            75
+          ],
+          "adjacent_normal_mean": 78.94,
+          "adjacent_lift": -10.19,
+          "chapter_median": 71.5,
+          "above_chapter_median": false
+        },
+        {
+          "level_id": 79,
+          "difficulty_tag": "Super Hard",
+          "D": 75.25,
+          "adjacent_normal_levels": [
+            78,
+            80
+          ],
+          "adjacent_normal_mean": 65.14,
+          "adjacent_lift": 10.11,
+          "chapter_median": 71.5,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 84,
+          "difficulty_tag": "Hard Level",
+          "D": 74.04,
+          "adjacent_normal_levels": [
+            83,
+            85
+          ],
+          "adjacent_normal_mean": 76.91,
+          "adjacent_lift": -2.87,
+          "chapter_median": 74.58,
+          "above_chapter_median": false
+        },
+        {
+          "level_id": 94,
+          "difficulty_tag": "Hard Level",
+          "D": 74.91,
+          "adjacent_normal_levels": [
+            93,
+            95
+          ],
+          "adjacent_normal_mean": 80.29,
+          "adjacent_lift": -5.38,
+          "chapter_median": 75.18,
+          "above_chapter_median": false
+        },
+        {
+          "level_id": 99,
+          "difficulty_tag": "Super Hard",
+          "D": 84.19,
+          "adjacent_normal_levels": [
+            98,
+            100
+          ],
+          "adjacent_normal_mean": 70.05,
+          "adjacent_lift": 14.14,
+          "chapter_median": 75.18,
+          "above_chapter_median": true
+        }
+      ]
+    },
+    "D_v2": {
+      "label_count": 16,
+      "label_mean": 68.92,
+      "adjacent_normal_mean": 58.18,
+      "label_vs_adjacent_lift": 10.74,
+      "all_normal_mean": 53.59,
+      "label_vs_all_normal_lift": 15.33,
+      "above_chapter_median_count": 13,
+      "above_chapter_median_levels": [
+        19,
+        24,
+        29,
+        39,
+        44,
+        49,
+        59,
+        69,
+        74,
+        79,
+        84,
+        94,
+        99
+      ],
+      "not_above_chapter_median_levels": [
+        14,
+        54,
+        64
+      ],
+      "hard_mean": null,
+      "super_hard_mean": null,
+      "details": [
+        {
+          "level_id": 14,
+          "difficulty_tag": "Hard Level",
+          "D": 33.07,
+          "adjacent_normal_levels": [
+            13,
+            15
+          ],
+          "adjacent_normal_mean": 45.9,
+          "adjacent_lift": -12.83,
+          "chapter_median": 52.34,
+          "above_chapter_median": false
+        },
+        {
+          "level_id": 19,
+          "difficulty_tag": "Super Hard",
+          "D": 59.93,
+          "adjacent_normal_levels": [
+            18,
+            20
+          ],
+          "adjacent_normal_mean": 62.38,
+          "adjacent_lift": -2.45,
+          "chapter_median": 52.34,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 24,
+          "difficulty_tag": "Hard Level",
+          "D": 50.2,
+          "adjacent_normal_levels": [
+            23,
+            25
+          ],
+          "adjacent_normal_mean": 48.55,
+          "adjacent_lift": 1.65,
+          "chapter_median": 41.61,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 29,
+          "difficulty_tag": "Super Hard",
+          "D": 47.52,
+          "adjacent_normal_levels": [
+            28,
+            30
+          ],
+          "adjacent_normal_mean": 40.3,
+          "adjacent_lift": 7.23,
+          "chapter_median": 41.61,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 39,
+          "difficulty_tag": "Super Hard",
+          "D": 74.8,
+          "adjacent_normal_levels": [
+            38,
+            40
+          ],
+          "adjacent_normal_mean": 58.53,
+          "adjacent_lift": 16.27,
+          "chapter_median": 48.52,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 44,
+          "difficulty_tag": "Hard Level",
+          "D": 68.4,
+          "adjacent_normal_levels": [
+            43,
+            45
+          ],
+          "adjacent_normal_mean": 42.82,
+          "adjacent_lift": 25.58,
+          "chapter_median": 49.14,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 49,
+          "difficulty_tag": "Super Hard",
+          "D": 75.71,
+          "adjacent_normal_levels": [
+            48,
+            50
+          ],
+          "adjacent_normal_mean": 58.53,
+          "adjacent_lift": 17.18,
+          "chapter_median": 49.14,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 54,
+          "difficulty_tag": "Hard Level",
+          "D": 67.49,
+          "adjacent_normal_levels": [
+            53,
+            55
+          ],
+          "adjacent_normal_mean": 75.71,
+          "adjacent_lift": -8.22,
+          "chapter_median": 71.06,
+          "above_chapter_median": false
+        },
+        {
+          "level_id": 59,
+          "difficulty_tag": "Super Hard",
+          "D": 73.06,
+          "adjacent_normal_levels": [
+            58,
+            60
+          ],
+          "adjacent_normal_mean": 57.93,
+          "adjacent_lift": 15.13,
+          "chapter_median": 71.06,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 64,
+          "difficulty_tag": "Hard Level",
+          "D": 70.08,
+          "adjacent_normal_levels": [
+            63,
+            65
+          ],
+          "adjacent_normal_mean": 58.2,
+          "adjacent_lift": 11.88,
+          "chapter_median": 71.78,
+          "above_chapter_median": false
+        },
+        {
+          "level_id": 69,
+          "difficulty_tag": "Super Hard",
+          "D": 74.21,
+          "adjacent_normal_levels": [
+            68,
+            70
+          ],
+          "adjacent_normal_mean": 59.63,
+          "adjacent_lift": 14.58,
+          "chapter_median": 71.78,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 74,
+          "difficulty_tag": "Hard Level",
+          "D": 74.46,
+          "adjacent_normal_levels": [
+            73,
+            75
+          ],
+          "adjacent_normal_mean": 82.9,
+          "adjacent_lift": -8.44,
+          "chapter_median": 71.99,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 79,
+          "difficulty_tag": "Super Hard",
+          "D": 79.93,
+          "adjacent_normal_levels": [
+            78,
+            80
+          ],
+          "adjacent_normal_mean": 48.08,
+          "adjacent_lift": 31.86,
+          "chapter_median": 71.99,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 84,
+          "difficulty_tag": "Hard Level",
+          "D": 80.44,
+          "adjacent_normal_levels": [
+            83,
+            85
+          ],
+          "adjacent_normal_mean": 67.39,
+          "adjacent_lift": 13.05,
+          "chapter_median": 74.23,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 94,
+          "difficulty_tag": "Hard Level",
+          "D": 83.59,
+          "adjacent_normal_levels": [
+            93,
+            95
+          ],
+          "adjacent_normal_mean": 73.23,
+          "adjacent_lift": 10.36,
+          "chapter_median": 79.11,
+          "above_chapter_median": true
+        },
+        {
+          "level_id": 99,
+          "difficulty_tag": "Super Hard",
+          "D": 89.83,
+          "adjacent_normal_levels": [
+            98,
+            100
+          ],
+          "adjacent_normal_mean": 50.78,
+          "adjacent_lift": 39.05,
+          "chapter_median": 79.11,
+          "above_chapter_median": true
+        }
+      ]
+    }
+  },
+  "chapterSummary": [
+    {
+      "chapter": 1,
+      "levels": "1-10",
+      "D_v1_mean": 35.83,
+      "D_v2_min": 8.8,
+      "D_v2_mean": 25.14,
+      "D_v2_median": 22.59,
+      "D_v2_max": 58.48
+    },
+    {
+      "chapter": 2,
+      "levels": "11-20",
+      "D_v1_mean": 53.77,
+      "D_v2_min": 33.07,
+      "D_v2_mean": 51.08,
+      "D_v2_median": 52.34,
+      "D_v2_max": 68.78
+    },
+    {
+      "chapter": 3,
+      "levels": "21-30",
+      "D_v1_mean": 57.37,
+      "D_v2_min": 27.37,
+      "D_v2_mean": 42.33,
+      "D_v2_median": 41.61,
+      "D_v2_max": 60.35
+    },
+    {
+      "chapter": 4,
+      "levels": "31-40",
+      "D_v1_mean": 57.99,
+      "D_v2_min": 30.61,
+      "D_v2_mean": 50.41,
+      "D_v2_median": 48.52,
+      "D_v2_max": 74.8
+    },
+    {
+      "chapter": 5,
+      "levels": "41-50",
+      "D_v1_mean": 58.36,
+      "D_v2_min": 31.98,
+      "D_v2_mean": 54.57,
+      "D_v2_median": 49.14,
+      "D_v2_max": 82.04
+    },
+    {
+      "chapter": 6,
+      "levels": "51-60",
+      "D_v1_mean": 61.71,
+      "D_v2_min": 36.19,
+      "D_v2_mean": 63.77,
+      "D_v2_median": 71.06,
+      "D_v2_max": 79.67
+    },
+    {
+      "chapter": 7,
+      "levels": "61-70",
+      "D_v1_mean": 66.97,
+      "D_v2_min": 45.4,
+      "D_v2_mean": 66.48,
+      "D_v2_median": 71.78,
+      "D_v2_max": 79.15
+    },
+    {
+      "chapter": 8,
+      "levels": "71-80",
+      "D_v1_mean": 68.53,
+      "D_v2_min": 41.01,
+      "D_v2_mean": 68.98,
+      "D_v2_median": 71.99,
+      "D_v2_max": 83.91
+    },
+    {
+      "chapter": 9,
+      "levels": "81-90",
+      "D_v1_mean": 71.54,
+      "D_v2_min": 34.99,
+      "D_v2_mean": 67.59,
+      "D_v2_median": 74.23,
+      "D_v2_max": 90.41
+    },
+    {
+      "chapter": 10,
+      "levels": "91-100",
+      "D_v1_mean": 73.56,
+      "D_v2_min": 33.95,
+      "D_v2_mean": 70.07,
+      "D_v2_median": 79.11,
+      "D_v2_max": 89.83
+    }
+  ]
+}

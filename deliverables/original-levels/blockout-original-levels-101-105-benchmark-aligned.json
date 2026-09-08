@@ -1,0 +1,226 @@
+[
+  {
+    "level_id": 101,
+    "benchmark_level": "L11",
+    "chapter_position": 1,
+    "difficulty_tag": "normal",
+    "board": "AA..B.CC\n.D..B...\n.D.EEE.F\nGG....HF\n..II..H.\nJ...KK..",
+    "board_legend": {
+      ".": "可移动空格",
+      "_": "棋盘轮廓外",
+      "red": ["A", "D", "G"],
+      "blue": ["B", "F", "J"],
+      "yellow": ["C", "I"],
+      "green": ["H"],
+      "purple": ["E", "K"]
+    },
+    "exits": [
+      {"edge": "W", "index": 1, "color": "red"},
+      {"edge": "S", "index": 5, "color": "blue"},
+      {"edge": "E", "index": 3, "color": "yellow"},
+      {"edge": "S", "index": 7, "color": "green"},
+      {"edge": "N", "index": 4, "color": "purple"}
+    ],
+    "color_count": 5,
+    "number_elements": [
+      {"type": "数字边栏", "value": 2, "position": "W2"},
+      {"type": "数字边栏", "value": 7, "position": "W5"},
+      {"type": "数字边栏", "value": 4, "position": "N2"},
+      {"type": "数字边栏", "value": 9, "position": "N6"},
+      {"type": "数字边栏", "value": 3, "position": "E2"},
+      {"type": "数字边栏", "value": 8, "position": "E5"},
+      {"type": "数字边栏", "value": 5, "position": "S1"},
+      {"type": "数字边栏", "value": 6, "position": "S3"},
+      {"type": "数字边栏", "value": 2, "position": "S6"},
+      {"type": "数字边栏", "value": 7, "position": "E6"}
+    ],
+    "mechanism": ["方向出口", "数字边栏"],
+    "target_coins": 1190,
+    "time_limit_sec": 120,
+    "expected_clear_time_s": 11,
+    "D_v2_target": 48.7,
+    "D_v2_calculated": 48.51,
+    "D_v2_error": 0.19,
+    "D_v2_components": {"E": 48.67, "G": 2.92, "P": 9.17, "C": 57.14, "N2": 97.70, "M": 16.67},
+    "design_note": "以十个分散数字边栏制造高信息量，但保留宽阔中央区让首关仍能快速清理。",
+    "layout_difference": "数字边栏按西二、北二、东三、南三的不均衡方式分布，中央采用三连条加双竖块，不复用竞品L11的数字位置与积木占位。"
+  },
+  {
+    "level_id": 102,
+    "benchmark_level": "L12",
+    "chapter_position": 2,
+    "difficulty_tag": "normal",
+    "board": "__AABB__\n_CC.DD._\nEE.F.GGH\nI..F.JJH\n_KK.LL._\n__M..N__",
+    "board_legend": {
+      ".": "可移动空格",
+      "_": "棋盘轮廓外",
+      "red": ["A", "F", "J", "M"],
+      "blue": ["B", "E", "H"],
+      "yellow": ["C", "G", "K"],
+      "green": ["D", "I", "L", "N"]
+    },
+    "exits": [
+      {"edge": "N", "index": 3, "color": "red"},
+      {"edge": "N", "index": 5, "color": "blue"},
+      {"edge": "W", "index": 3, "color": "yellow"},
+      {"edge": "E", "index": 4, "color": "green"}
+    ],
+    "color_count": 4,
+    "number_elements": [
+      {"type": "数字边栏", "value": 8, "position": "N4"},
+      {"type": "数字边栏", "value": 3, "position": "W3"},
+      {"type": "数字边栏", "value": 6, "position": "E3"},
+      {"type": "数字边栏", "value": 2, "position": "E5"},
+      {"type": "数字边栏", "value": 9, "position": "S3"},
+      {"type": "数字边栏", "value": 5, "position": "S5"},
+      {"type": "数字边栏", "value": 4, "position": "W4"}
+    ],
+    "mechanism": ["方向出口", "数字边栏", "阶梯形通道", "图案方块"],
+    "mechanism_config": {
+      "阶梯形通道": "上下各收窄两级，内部保持完全连通",
+      "图案方块": ["M", "N"]
+    },
+    "target_coins": 1210,
+    "time_limit_sec": 120,
+    "expected_clear_time_s": 45,
+    "D_v2_target": 48.3,
+    "D_v2_calculated": 47.94,
+    "D_v2_error": 0.36,
+    "D_v2_components": {"E": 74.98, "G": 3.22, "P": 37.50, "C": 42.86, "N2": 49.99, "M": 51.67},
+    "design_note": "七个数字条件配合双向收阶轮廓，让玩家判断哪些横块应先通过中央宽区。",
+    "layout_difference": "采用上下同时收阶和底部双图案块，七个数字为8/3/6/2/9/5/4，排列与竞品L12不同。"
+  },
+  {
+    "level_id": 103,
+    "benchmark_level": "L13",
+    "chapter_position": 3,
+    "difficulty_tag": "normal",
+    "board": "AA.BB___\nC..BB.D_\nCC.EE.DD\n.F.GG.HH\n_F.IIJ._\n__KK.J__",
+    "board_legend": {
+      ".": "可移动空格",
+      "_": "棋盘轮廓外",
+      "red": ["A", "F"],
+      "blue": ["B", "G"],
+      "yellow": ["C", "H"],
+      "green": ["D", "I"],
+      "purple": ["E", "J"],
+      "orange": ["K"]
+    },
+    "exits": [
+      {"edge": "W", "index": 3, "color": "red"},
+      {"edge": "N", "index": 4, "color": "blue"},
+      {"edge": "E", "index": 4, "color": "yellow"},
+      {"edge": "S", "index": 4, "color": "green"},
+      {"edge": "E", "index": 3, "color": "purple"},
+      {"edge": "S", "index": 3, "color": "orange"}
+    ],
+    "color_count": 6,
+    "number_elements": [
+      {"type": "侧边计数装置", "value": 2, "position": "W2"},
+      {"type": "侧边计数装置", "value": 8, "position": "W4"},
+      {"type": "侧边计数装置", "value": 5, "position": "N2"},
+      {"type": "侧边计数装置", "value": 3, "position": "N6"},
+      {"type": "侧边计数装置", "value": 9, "position": "E2"},
+      {"type": "侧边计数装置", "value": 4, "position": "E5"},
+      {"type": "侧边计数装置", "value": 7, "position": "S2"},
+      {"type": "侧边计数装置", "value": 6, "position": "S6"}
+    ],
+    "mechanism": ["方向出口", "侧边计数装置", "异形方块"],
+    "mechanism_config": {
+      "异形方块": ["B:2x2", "C:L形", "D:L形"]
+    },
+    "target_coins": 1230,
+    "time_limit_sec": 120,
+    "expected_clear_time_s": 47,
+    "D_v2_target": 56.5,
+    "D_v2_calculated": 56.83,
+    "D_v2_error": 0.33,
+    "D_v2_components": {"E": 75.82, "G": 3.53, "P": 39.17, "C": 71.43, "N2": 77.73, "M": 38.33},
+    "design_note": "六色、八计数与对角L形块共同抬高信息密度，但中央仍保留两条交换路线。",
+    "layout_difference": "原创偏心菱形棋盘让两个L形块处于相反对角，计数序列2/8/5/3/9/4/7/6与竞品L13不同。"
+  },
+  {
+    "level_id": 104,
+    "benchmark_level": "L14",
+    "chapter_position": 4,
+    "difficulty_tag": "hard",
+    "board": "AA.BB.CC\nD..BB.EE\nD.FFF.G.\nHH..I.GG\nJ.KKI...\nJ.LL.MM.",
+    "board_legend": {
+      ".": "可移动空格",
+      "_": "棋盘轮廓外",
+      "red": ["A", "D", "H", "L"],
+      "blue": ["B", "E", "I", "M"],
+      "yellow": ["C", "F", "J"],
+      "green": ["G", "K"]
+    },
+    "exits": [
+      {"edge": "W", "index": 1, "color": "red"},
+      {"edge": "N", "index": 5, "color": "blue"},
+      {"edge": "E", "index": 3, "color": "yellow"},
+      {"edge": "S", "index": 4, "color": "green"}
+    ],
+    "color_count": 4,
+    "number_elements": [
+      {"type": "数字方块", "value": 4, "block": "F"},
+      {"type": "数字方块", "value": 7, "block": "K"}
+    ],
+    "mechanism": ["方向出口", "数字方块", "异形方块", "图案方块"],
+    "mechanism_config": {
+      "异形方块": ["G:L形"],
+      "图案方块": ["K"]
+    },
+    "target_coins": 1250,
+    "time_limit_sec": 120,
+    "expected_clear_time_s": 47,
+    "D_v2_target": 33.1,
+    "D_v2_calculated": 32.74,
+    "D_v2_error": 0.36,
+    "D_v2_components": {"E": 75.82, "G": 3.84, "P": 39.17, "C": 42.86, "N2": 0.18, "M": 48.33, "mechanism_raw": 2.9},
+    "design_note": "Hard感来自L形块、图案块与长条之间的互锁，而不是堆叠数字数量。",
+    "layout_difference": "使用完整矩形场地、中心三连条和右侧L形块，数字仅为4与7，既不复用竞品L14布局也不复用其少量数字组合。"
+  },
+  {
+    "level_id": 105,
+    "benchmark_level": "L15",
+    "chapter_position": 5,
+    "difficulty_tag": "normal",
+    "board": "AA._BBCC\nD.._B.EE\nDFF_..G.\nH.._I.GG\nHJJ_KK..\nL.._MMNN",
+    "board_legend": {
+      ".": "可移动空格",
+      "_": "棋盘轮廓外或双面板间隔",
+      "red": ["A", "G", "L"],
+      "blue": ["B", "H", "M"],
+      "yellow": ["C", "D", "I"],
+      "green": ["E", "J", "N"],
+      "purple": ["F", "K"]
+    },
+    "exits": [
+      {"edge": "W", "index": 1, "color": "red"},
+      {"edge": "N", "index": 5, "color": "blue"},
+      {"edge": "E", "index": 1, "color": "yellow"},
+      {"edge": "S", "index": 2, "color": "green"},
+      {"edge": "E", "index": 5, "color": "purple"}
+    ],
+    "color_count": 5,
+    "number_elements": [
+      {"type": "数字边栏", "value": 8, "position": "W3"},
+      {"type": "数字边栏", "value": 3, "position": "N7"},
+      {"type": "数字边栏", "value": 6, "position": "E4"},
+      {"type": "数字边栏", "value": 5, "position": "S5"}
+    ],
+    "mechanism": ["方向出口", "数字边栏", "分离式双面板", "图案方块"],
+    "mechanism_config": {
+      "分离式双面板": {"separator_col": 4, "transfer": "仅通过对应颜色出口转移"},
+      "图案方块": ["F", "K"]
+    },
+    "target_coins": 1310,
+    "time_limit_sec": 120,
+    "expected_clear_time_s": 40,
+    "D_v2_target": 35.3,
+    "D_v2_calculated": 34.63,
+    "D_v2_error": 0.67,
+    "D_v2_components": {"E": 72.73, "G": 4.76, "P": 33.33, "C": 57.14, "N2": 2.28, "M": 53.33},
+    "design_note": "Hard关后用双面板降低局部拥挤度，但保留跨面板出口顺序判断。",
+    "layout_difference": "左右面板按3列与4列非等宽切分，数字序列8/3/6/5且图案块分置两侧，与竞品L15不同。"
+  }
+]

@@ -1,0 +1,105 @@
+{
+  "source": "F:\\ruanjian\\xwechat_files\\wxid_70xc4dsnvhlm21_58d6\\temp\\RWTemp\\2026-09\\8b70aa19612861d7a60de4d01ae0f0a4\\10fface5519a3c6eeca775d7b5b956d6.mp4",
+  "frame_count": 224,
+  "fps": 30.0,
+  "width": 592,
+  "height": 1280,
+  "duration_seconds": 7.467,
+  "frames": [
+    {
+      "index": 0,
+      "seconds": 1.05,
+      "file": "frame-000-0001.05s.jpg"
+    },
+    {
+      "index": 1,
+      "seconds": 1.083,
+      "file": "frame-001-0001.08s.jpg"
+    },
+    {
+      "index": 2,
+      "seconds": 1.117,
+      "file": "frame-002-0001.12s.jpg"
+    },
+    {
+      "index": 3,
+      "seconds": 1.15,
+      "file": "frame-003-0001.15s.jpg"
+    },
+    {
+      "index": 4,
+      "seconds": 1.183,
+      "file": "frame-004-0001.18s.jpg"
+    },
+    {
+      "index": 5,
+      "seconds": 1.217,
+      "file": "frame-005-0001.22s.jpg"
+    },
+    {
+      "index": 6,
+      "seconds": 1.25,
+      "file": "frame-006-0001.25s.jpg"
+    },
+    {
+      "index": 7,
+      "seconds": 1.283,
+      "file": "frame-007-0001.28s.jpg"
+    },
+    {
+      "index": 8,
+      "seconds": 1.317,
+      "file": "frame-008-0001.32s.jpg"
+    },
+    {
+      "index": 9,
+      "seconds": 1.35,
+      "file": "frame-009-0001.35s.jpg"
+    },
+    {
+      "index": 10,
+      "seconds": 1.383,
+      "file": "frame-010-0001.38s.jpg"
+    },
+    {
+      "index": 11,
+      "seconds": 1.417,
+      "file": "frame-011-0001.42s.jpg"
+    },
+    {
+      "index": 12,
+      "seconds": 1.45,
+      "file": "frame-012-0001.45s.jpg"
+    },
+    {
+      "index": 13,
+      "seconds": 1.483,
+      "file": "frame-013-0001.48s.jpg"
+    },
+    {
+      "index": 14,
+      "seconds": 1.517,
+      "file": "frame-014-0001.52s.jpg"
+    },
+    {
+      "index": 15,
+      "seconds": 1.55,
+      "file": "frame-015-0001.55s.jpg"
+    },
+    {
+      "index": 16,
+      "seconds": 1.583,
+      "file": "frame-016-0001.58s.jpg"
+    },
+    {
+      "index": 17,
+      "seconds": 1.617,
+      "file": "frame-017-0001.62s.jpg"
+    },
+    {
+      "index": 18,
+      "seconds": 1.65,
+      "file": "frame-018-0001.65s.jpg"
+    }
+  ]
+}

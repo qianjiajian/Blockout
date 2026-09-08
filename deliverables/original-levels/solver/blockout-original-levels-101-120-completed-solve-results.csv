@@ -1,0 +1,2 @@
+level_id,solvability,minimum_steps,estimated_clear_time_s,expected_clear_time_s,deviation_s,time_limit_sec,explored_states,reason
+"101","未判定","","","11","","120","10000","达到 10000 状态上限；当前最好状态已清除 8/11 块"

@@ -1,0 +1,257 @@
+{
+  "source": "Block Out! - Color Sort Puzzle",
+  "scope": {
+    "videos": [
+      {"file": "15583c7e290ee0622e16734e4e51767c.mp4", "levels": "1-10"},
+      {"file": "e5841e9d60c7908d21cffdbaf6e7feae.mp4", "levels": "21-30"}
+    ],
+    "level_count": 20
+  },
+  "score_model": {
+    "version": "blockout-d1-video-estimate",
+    "raw_formula": "100 * (0.35 * buffer_tightness + 0.20 * hidden_information + 0.20 * mechanism_diversity + 0.25 * exit_competition)",
+    "calibration": "round(13.161835 + 0.826935 * round(raw_score, 2), 2)",
+    "bands": {
+      "entry": "45.00-49.99",
+      "normal": "50.00-59.99",
+      "advanced": "60.00-69.99",
+      "hard": "70.00-79.99",
+      "extreme": "80.00-100.00"
+    },
+    "equivalent_mechanism_mapping": {
+      "numeric_edge_exit": "frozen-gate",
+      "numeric_ice_block": "frozen-block",
+      "irregular_board": "irregular-board",
+      "counted_purple_cover": "counter-cover"
+    }
+  },
+  "limitations": [
+    "Scores are structural estimates reconstructed from visible video frames, not LevelSpec-exact scores.",
+    "The counted purple cover is treated as a counter-cover equivalent because it counts down and then disappears or reveals lower content.",
+    "Unknown internal colors, exact cell coordinates, and hidden block geometry reduce confidence for some levels.",
+    "Displayed competitor difficulty labels, completion time, coins, and booster inventory are not blockout-d1 inputs."
+  ],
+  "levels": [
+    {
+      "level_id": 1,
+      "video": "15583c7e290ee0622e16734e4e51767c.mp4",
+      "video_range": "00:00-00:06",
+      "components": {"buffer_tightness": 0.4688, "hidden_information": 0, "mechanism_diversity": 0, "exit_competition": 0.3},
+      "raw_score": 23.91,
+      "difficulty_score": 32.93,
+      "difficulty_band": null,
+      "band_note": "below-entry/tutorial-range",
+      "estimate_range": [32, 34],
+      "visible_mechanisms": ["directional-exit"]
+    },
+    {
+      "level_id": 2,
+      "video": "15583c7e290ee0622e16734e4e51767c.mp4",
+      "video_range": "00:07-00:19",
+      "components": {"buffer_tightness": 0.8795, "hidden_information": 0, "mechanism_diversity": 0, "exit_competition": 0.5375},
+      "raw_score": 44.22,
+      "difficulty_score": 49.73,
+      "difficulty_band": "entry",
+      "estimate_range": [48, 51],
+      "visible_mechanisms": ["directional-exit", "irregular-block-shape"]
+    },
+    {
+      "level_id": 3,
+      "video": "15583c7e290ee0622e16734e4e51767c.mp4",
+      "video_range": "00:20-00:31",
+      "components": {"buffer_tightness": 1, "hidden_information": 0, "mechanism_diversity": 0, "exit_competition": 0.6111},
+      "raw_score": 50.28,
+      "difficulty_score": 54.74,
+      "difficulty_band": "normal",
+      "estimate_range": [53, 56],
+      "visible_mechanisms": ["directional-exit"]
+    },
+    {
+      "level_id": 4,
+      "video": "15583c7e290ee0622e16734e4e51767c.mp4",
+      "video_range": "00:32-00:47",
+      "components": {"buffer_tightness": 1, "hidden_information": 0, "mechanism_diversity": 0, "exit_competition": 0.6889},
+      "raw_score": 52.22,
+      "difficulty_score": 56.35,
+      "difficulty_band": "normal",
+      "estimate_range": [55, 58],
+      "visible_mechanisms": ["directional-exit"]
+    },
+    {
+      "level_id": 5,
+      "video": "15583c7e290ee0622e16734e4e51767c.mp4",
+      "video_range": "00:52-01:24",
+      "components": {"buffer_tightness": 1, "hidden_information": 0, "mechanism_diversity": 0, "exit_competition": 0.895},
+      "raw_score": 57.38,
+      "difficulty_score": 60.6,
+      "difficulty_band": "advanced",
+      "estimate_range": [59, 62],
+      "visible_mechanisms": ["directional-exit"]
+    },
+    {
+      "level_id": 6,
+      "video": "15583c7e290ee0622e16734e4e51767c.mp4",
+      "video_range": "01:31-02:04",
+      "components": {"buffer_tightness": 1, "hidden_information": 1, "mechanism_diversity": 0.1429, "exit_competition": 0.8667},
+      "raw_score": 79.52,
+      "difficulty_score": 78.92,
+      "difficulty_band": "hard",
+      "estimate_range": [77, 80],
+      "visible_mechanisms": ["directional-exit", "frozen-gate"]
+    },
+    {
+      "level_id": 7,
+      "video": "15583c7e290ee0622e16734e4e51767c.mp4",
+      "video_range": "02:11-02:46",
+      "components": {"buffer_tightness": 1, "hidden_information": 0.5833, "mechanism_diversity": 0.1429, "exit_competition": 0.8688},
+      "raw_score": 71.24,
+      "difficulty_score": 72.07,
+      "difficulty_band": "hard",
+      "estimate_range": [70, 74],
+      "visible_mechanisms": ["directional-exit", "frozen-gate"]
+    },
+    {
+      "level_id": 8,
+      "video": "15583c7e290ee0622e16734e4e51767c.mp4",
+      "video_range": "02:52-03:24",
+      "components": {"buffer_tightness": 1, "hidden_information": 1, "mechanism_diversity": 0.2857, "exit_competition": 0.792},
+      "raw_score": 80.51,
+      "difficulty_score": 79.74,
+      "difficulty_band": "hard",
+      "estimate_range": [78, 80],
+      "visible_mechanisms": ["directional-exit", "frozen-gate", "irregular-board"]
+    },
+    {
+      "level_id": 9,
+      "video": "15583c7e290ee0622e16734e4e51767c.mp4",
+      "video_range": "03:34-04:00",
+      "components": {"buffer_tightness": 1, "hidden_information": 0.8333, "mechanism_diversity": 0.2857, "exit_competition": 0.65},
+      "raw_score": 73.63,
+      "difficulty_score": 74.05,
+      "difficulty_band": "hard",
+      "estimate_range": [72, 76],
+      "visible_mechanisms": ["directional-exit", "frozen-gate", "irregular-board"]
+    },
+    {
+      "level_id": 10,
+      "video": "15583c7e290ee0622e16734e4e51767c.mp4",
+      "video_range": "04:14-04:49",
+      "components": {"buffer_tightness": 1, "hidden_information": 1, "mechanism_diversity": 0.2857, "exit_competition": 0.8286},
+      "raw_score": 81.43,
+      "difficulty_score": 80.5,
+      "difficulty_band": "extreme",
+      "estimate_range": [79, 83],
+      "visible_mechanisms": ["directional-exit", "frozen-gate", "frozen-block"]
+    },
+    {
+      "level_id": 21,
+      "video": "e5841e9d60c7908d21cffdbaf6e7feae.mp4",
+      "video_range": "00:07-01:07",
+      "components": {"buffer_tightness": 1, "hidden_information": 1, "mechanism_diversity": 0.5714, "exit_competition": 0.9},
+      "raw_score": 88.93,
+      "difficulty_score": 86.7,
+      "difficulty_band": "extreme",
+      "confidence": "medium",
+      "visible_mechanisms": ["directional-exit", "frozen-gate", "frozen-block", "layered-block", "counter-cover"]
+    },
+    {
+      "level_id": 22,
+      "video": "e5841e9d60c7908d21cffdbaf6e7feae.mp4",
+      "video_range": "01:15-01:51",
+      "components": {"buffer_tightness": 1, "hidden_information": 1, "mechanism_diversity": 0.4286, "exit_competition": 0.88},
+      "raw_score": 85.57,
+      "difficulty_score": 83.92,
+      "difficulty_band": "extreme",
+      "confidence": "medium",
+      "visible_mechanisms": ["directional-exit", "frozen-gate", "frozen-block", "counter-cover"]
+    },
+    {
+      "level_id": 23,
+      "video": "e5841e9d60c7908d21cffdbaf6e7feae.mp4",
+      "video_range": "01:57-02:47",
+      "components": {"buffer_tightness": 1, "hidden_information": 1, "mechanism_diversity": 0.4286, "exit_competition": 0.87},
+      "raw_score": 85.32,
+      "difficulty_score": 83.72,
+      "difficulty_band": "extreme",
+      "confidence": "medium",
+      "visible_mechanisms": ["directional-exit", "frozen-gate", "layered-block", "counter-cover"]
+    },
+    {
+      "level_id": 24,
+      "video": "e5841e9d60c7908d21cffdbaf6e7feae.mp4",
+      "video_range": "02:54-04:04",
+      "components": {"buffer_tightness": 0.95, "hidden_information": 1, "mechanism_diversity": 0.7143, "exit_competition": 0.88},
+      "raw_score": 89.54,
+      "difficulty_score": 87.21,
+      "difficulty_band": "extreme",
+      "confidence": "medium-low",
+      "visible_mechanisms": ["directional-exit", "frozen-gate", "frozen-block", "layered-block", "counter-cover", "irregular-board"]
+    },
+    {
+      "level_id": 25,
+      "video": "e5841e9d60c7908d21cffdbaf6e7feae.mp4",
+      "video_range": "04:16-04:57",
+      "components": {"buffer_tightness": 1, "hidden_information": 1, "mechanism_diversity": 0.4286, "exit_competition": 0.76},
+      "raw_score": 82.57,
+      "difficulty_score": 81.44,
+      "difficulty_band": "extreme",
+      "confidence": "medium",
+      "visible_mechanisms": ["directional-exit", "frozen-gate", "layered-block", "irregular-board"]
+    },
+    {
+      "level_id": 26,
+      "video": "e5841e9d60c7908d21cffdbaf6e7feae.mp4",
+      "video_range": "05:04-06:10",
+      "components": {"buffer_tightness": 0.97, "hidden_information": 1, "mechanism_diversity": 0.4286, "exit_competition": 0.77},
+      "raw_score": 81.77,
+      "difficulty_score": 80.78,
+      "difficulty_band": "extreme",
+      "confidence": "medium-low",
+      "visible_mechanisms": ["directional-exit", "frozen-gate", "counter-cover", "irregular-board"]
+    },
+    {
+      "level_id": 27,
+      "video": "e5841e9d60c7908d21cffdbaf6e7feae.mp4",
+      "video_range": "06:18-06:47",
+      "components": {"buffer_tightness": 0.86, "hidden_information": 1, "mechanism_diversity": 0.4286, "exit_competition": 0.84},
+      "raw_score": 79.67,
+      "difficulty_score": 79.04,
+      "difficulty_band": "hard",
+      "confidence": "medium-low",
+      "visible_mechanisms": ["directional-exit", "frozen-gate", "counter-cover", "irregular-board"]
+    },
+    {
+      "level_id": 28,
+      "video": "e5841e9d60c7908d21cffdbaf6e7feae.mp4",
+      "video_range": "06:53-07:45",
+      "components": {"buffer_tightness": 1, "hidden_information": 0.5, "mechanism_diversity": 0.2857, "exit_competition": 0.82},
+      "raw_score": 71.21,
+      "difficulty_score": 72.05,
+      "difficulty_band": "hard",
+      "confidence": "medium",
+      "visible_mechanisms": ["directional-exit", "frozen-gate", "counter-cover"]
+    },
+    {
+      "level_id": 29,
+      "video": "e5841e9d60c7908d21cffdbaf6e7feae.mp4",
+      "video_range": "07:51-08:55",
+      "components": {"buffer_tightness": 1, "hidden_information": 1, "mechanism_diversity": 0.4286, "exit_competition": 0.9},
+      "raw_score": 86.07,
+      "difficulty_score": 84.34,
+      "difficulty_band": "extreme",
+      "confidence": "medium-low",
+      "visible_mechanisms": ["directional-exit", "frozen-gate", "layered-block", "counter-cover"]
+    },
+    {
+      "level_id": 30,
+      "video": "e5841e9d60c7908d21cffdbaf6e7feae.mp4",
+      "video_range": "09:06-09:41",
+      "components": {"buffer_tightness": 1, "hidden_information": 0.875, "mechanism_diversity": 0.4286, "exit_competition": 0.78},
+      "raw_score": 80.57,
+      "difficulty_score": 79.79,
+      "difficulty_band": "hard",
+      "confidence": "medium-low",
+      "visible_mechanisms": ["directional-exit", "frozen-gate", "frozen-block", "irregular-board"]
+    }
+  ]
+}

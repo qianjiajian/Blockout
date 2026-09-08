@@ -1,0 +1,3948 @@
+[
+  {
+    "levelId": 35,
+    "name": "生成器初启",
+    "difficulty": "normal",
+    "parMoves": 11,
+    "dimensions": [
+      9,
+      10
+    ],
+    "opening": {
+      "active": 5,
+      "actionable": 5,
+      "directClearable": 0,
+      "forcedRepositions": 5,
+      "matchingEdgeStarts": 0,
+      "oneStepMovable": 4,
+      "contacts": 5,
+      "blockerRelations": [
+        [
+          "composition-35-1",
+          "yellow-open"
+        ],
+        [
+          "composition-35-3",
+          "yellow-open"
+        ],
+        [
+          "composition-35-2",
+          "green-open"
+        ],
+        [
+          "composition-35-1",
+          "composition-35-2"
+        ],
+        [
+          "composition-35-1",
+          "composition-35-3"
+        ]
+      ],
+      "distinctBlockedTargets": 4
+    },
+    "validation": {
+      "solved": true,
+      "drags": 11,
+      "repositionOverhead": 3,
+      "gridSteps": 65,
+      "turns": 11,
+      "exploredStates": 14,
+      "firstClearDrag": 2,
+      "openingRoute": [
+        {
+          "drag": 1,
+          "blockId": "composition-35-1",
+          "from": [
+            3,
+            6
+          ],
+          "to": [
+            4,
+            6
+          ],
+          "gridSteps": 1,
+          "exitSide": null
+        },
+        {
+          "drag": 2,
+          "blockId": "composition-35-2",
+          "from": [
+            1,
+            6
+          ],
+          "to": [
+            7,
+            7
+          ],
+          "gridSteps": 11,
+          "exitSide": "right"
+        },
+        {
+          "drag": 3,
+          "blockId": "green-open",
+          "from": [
+            2,
+            4
+          ],
+          "to": [
+            0,
+            6
+          ],
+          "gridSteps": 4,
+          "exitSide": "left"
+        },
+        {
+          "drag": 4,
+          "blockId": "blue-load",
+          "from": [
+            4,
+            0
+          ],
+          "to": [
+            3,
+            0
+          ],
+          "gridSteps": 1,
+          "exitSide": null
+        },
+        {
+          "drag": 5,
+          "blockId": "red-target",
+          "from": [
+            4,
+            2
+          ],
+          "to": [
+            4,
+            0
+          ],
+          "gridSteps": 4,
+          "exitSide": "top"
+        },
+        {
+          "drag": 6,
+          "blockId": "yellow-open",
+          "from": [
+            3,
+            4
+          ],
+          "to": [
+            3,
+            3
+          ],
+          "gridSteps": 1,
+          "exitSide": null
+        },
+        {
+          "drag": 7,
+          "blockId": "composition-35-3",
+          "from": [
+            5,
+            4
+          ],
+          "to": [
+            0,
+            6
+          ],
+          "gridSteps": 7,
+          "exitSide": "left"
+        },
+        {
+          "drag": 8,
+          "blockId": "yellow-open",
+          "from": [
+            3,
+            4
+          ],
+          "to": [
+            7,
+            6
+          ],
+          "gridSteps": 7,
+          "exitSide": "right"
+        }
+      ]
+    },
+    "blocks": [
+      {
+        "id": "yellow-open",
+        "x": 3,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "purple"
+      },
+      {
+        "id": "green-open",
+        "x": 2,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "red-target",
+        "x": 4,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "blue-load",
+        "x": 4,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "composition-35-1",
+        "x": 3,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "composition-35-2",
+        "x": 1,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "purple"
+      },
+      {
+        "id": "composition-35-3",
+        "x": 5,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "yellow"
+      }
+    ],
+    "gates": [
+      {
+        "id": "yellow-left",
+        "side": "right",
+        "offset": 6,
+        "size": 2,
+        "color": "purple"
+      },
+      {
+        "id": "green-right",
+        "side": "left",
+        "offset": 6,
+        "size": 2,
+        "color": "yellow"
+      },
+      {
+        "id": "red-top",
+        "side": "top",
+        "offset": 4,
+        "size": 2,
+        "color": "blue"
+      },
+      {
+        "id": "blue-bottom",
+        "side": "bottom",
+        "offset": 7,
+        "size": 2,
+        "color": "green",
+        "frozen": 3
+      }
+    ]
+  },
+  {
+    "levelId": 58,
+    "name": "三向换色",
+    "difficulty": "super",
+    "parMoves": 27,
+    "dimensions": [
+      10,
+      10
+    ],
+    "opening": {
+      "active": 11,
+      "actionable": 11,
+      "directClearable": 0,
+      "forcedRepositions": 11,
+      "matchingEdgeStarts": 0,
+      "oneStepMovable": 8,
+      "contacts": 15,
+      "blockerRelations": [],
+      "distinctBlockedTargets": 0
+    },
+    "validation": {
+      "solved": true,
+      "drags": 27,
+      "repositionOverhead": 11,
+      "gridSteps": 164,
+      "turns": 28,
+      "exploredStates": 1654,
+      "firstClearDrag": 4,
+      "openingRoute": [
+        {
+          "drag": 1,
+          "blockId": "composition-58-5",
+          "from": [
+            8,
+            6
+          ],
+          "to": [
+            8,
+            8
+          ],
+          "gridSteps": 2,
+          "exitSide": null
+        },
+        {
+          "drag": 2,
+          "blockId": "pink-open",
+          "from": [
+            8,
+            4
+          ],
+          "to": [
+            8,
+            6
+          ],
+          "gridSteps": 2,
+          "exitSide": null
+        },
+        {
+          "drag": 3,
+          "blockId": "composition-58-6",
+          "from": [
+            7,
+            3
+          ],
+          "to": [
+            8,
+            2
+          ],
+          "gridSteps": 2,
+          "exitSide": null
+        },
+        {
+          "drag": 4,
+          "blockId": "cyan-open",
+          "from": [
+            6,
+            4
+          ],
+          "to": [
+            9,
+            2
+          ],
+          "gridSteps": 5,
+          "exitSide": "right"
+        },
+        {
+          "drag": 5,
+          "blockId": "composition-58-6",
+          "from": [
+            7,
+            3
+          ],
+          "to": [
+            9,
+            1
+          ],
+          "gridSteps": 2,
+          "exitSide": null
+        },
+        {
+          "drag": 6,
+          "blockId": "composition-58-3",
+          "from": [
+            4,
+            5
+          ],
+          "to": [
+            8,
+            3
+          ],
+          "gridSteps": 6,
+          "exitSide": "right"
+        },
+        {
+          "drag": 7,
+          "blockId": "composition-58-1",
+          "from": [
+            5,
+            2
+          ],
+          "to": [
+            6,
+            3
+          ],
+          "gridSteps": 2,
+          "exitSide": null
+        },
+        {
+          "drag": 8,
+          "blockId": "composition-58-4",
+          "from": [
+            2,
+            4
+          ],
+          "to": [
+            3,
+            5
+          ],
+          "gridSteps": 2,
+          "exitSide": null
+        }
+      ]
+    },
+    "blocks": [
+      {
+        "id": "cyan-open",
+        "x": 6,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "green-open",
+        "x": 6,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "purple"
+      },
+      {
+        "id": "pink-open",
+        "x": 8,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "red-target",
+        "x": 7,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "blue-load",
+        "x": 4,
+        "y": 8,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "orange-target",
+        "x": 6,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "cyan"
+      },
+      {
+        "id": "yellow-load",
+        "x": 0,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "orange"
+      },
+      {
+        "id": "composition-58-1",
+        "x": 5,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "composition-58-2",
+        "x": 5,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ]
+        ],
+        "color": "cyan"
+      },
+      {
+        "id": "composition-58-3",
+        "x": 4,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "composition-58-4",
+        "x": 2,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "purple"
+      },
+      {
+        "id": "composition-58-5",
+        "x": 8,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "composition-58-6",
+        "x": 7,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "composition-58-7",
+        "x": 2,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "cyan"
+      }
+    ],
+    "gates": [
+      {
+        "id": "cyan-left",
+        "side": "right",
+        "offset": 2,
+        "size": 2,
+        "color": "blue"
+      },
+      {
+        "id": "green-right",
+        "side": "left",
+        "offset": 2,
+        "size": 2,
+        "color": "purple"
+      },
+      {
+        "id": "pink-bottom",
+        "side": "top",
+        "offset": 4,
+        "size": 2,
+        "color": "red"
+      },
+      {
+        "id": "red-top",
+        "side": "bottom",
+        "offset": 4,
+        "size": 2,
+        "color": "green"
+      },
+      {
+        "id": "blue-bottom",
+        "side": "top",
+        "offset": 8,
+        "size": 2,
+        "color": "yellow",
+        "frozen": 5
+      },
+      {
+        "id": "orange-right",
+        "side": "left",
+        "offset": 6,
+        "size": 2,
+        "color": "cyan"
+      },
+      {
+        "id": "yellow-bottom",
+        "side": "top",
+        "offset": 6,
+        "size": 2,
+        "color": "orange",
+        "frozen": 5
+      }
+    ]
+  },
+  {
+    "levelId": 60,
+    "name": "光谱核心",
+    "difficulty": "super",
+    "parMoves": 17,
+    "dimensions": [
+      12,
+      10
+    ],
+    "opening": {
+      "active": 11,
+      "actionable": 8,
+      "directClearable": 0,
+      "forcedRepositions": 8,
+      "matchingEdgeStarts": 0,
+      "oneStepMovable": 6,
+      "contacts": 11,
+      "blockerRelations": [
+        [
+          "yellow-load",
+          "orange-target"
+        ],
+        [
+          "green-load",
+          "pink-target"
+        ],
+        [
+          "green-load",
+          "composition-60-3"
+        ]
+      ],
+      "distinctBlockedTargets": 3
+    },
+    "validation": {
+      "solved": true,
+      "drags": 17,
+      "repositionOverhead": 3,
+      "gridSteps": 111,
+      "turns": 19,
+      "exploredStates": 37,
+      "firstClearDrag": 2,
+      "openingRoute": [
+        {
+          "drag": 1,
+          "blockId": "yellow-load",
+          "from": [
+            4,
+            0
+          ],
+          "to": [
+            5,
+            0
+          ],
+          "gridSteps": 1,
+          "exitSide": null
+        },
+        {
+          "drag": 2,
+          "blockId": "orange-target",
+          "from": [
+            4,
+            2
+          ],
+          "to": [
+            4,
+            0
+          ],
+          "gridSteps": 2,
+          "exitSide": "top"
+        },
+        {
+          "drag": 3,
+          "blockId": "green-load",
+          "from": [
+            8,
+            1
+          ],
+          "to": [
+            9,
+            1
+          ],
+          "gridSteps": 1,
+          "exitSide": null
+        },
+        {
+          "drag": 4,
+          "blockId": "composition-60-3",
+          "from": [
+            6,
+            1
+          ],
+          "to": [
+            8,
+            0
+          ],
+          "gridSteps": 3,
+          "exitSide": "top"
+        },
+        {
+          "drag": 5,
+          "blockId": "green-load",
+          "from": [
+            8,
+            1
+          ],
+          "to": [
+            10,
+            1
+          ],
+          "gridSteps": 1,
+          "exitSide": null
+        },
+        {
+          "drag": 6,
+          "blockId": "pink-target",
+          "from": [
+            8,
+            2
+          ],
+          "to": [
+            8,
+            0
+          ],
+          "gridSteps": 2,
+          "exitSide": "top"
+        },
+        {
+          "drag": 7,
+          "blockId": "yellow-load",
+          "from": [
+            4,
+            0
+          ],
+          "to": [
+            10,
+            6
+          ],
+          "gridSteps": 11,
+          "exitSide": "right"
+        },
+        {
+          "drag": 8,
+          "blockId": "orange-target",
+          "from": [
+            4,
+            2
+          ],
+          "to": [
+            11,
+            6
+          ],
+          "gridSteps": 13,
+          "exitSide": "right"
+        }
+      ]
+    },
+    "blocks": [
+      {
+        "id": "red-target",
+        "x": 0,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "blue-load",
+        "x": 0,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "orange-target",
+        "x": 4,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "pink"
+      },
+      {
+        "id": "yellow-load",
+        "x": 4,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "purple"
+      },
+      {
+        "id": "pink-target",
+        "x": 8,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "cyan"
+      },
+      {
+        "id": "green-load",
+        "x": 8,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "composition-60-1",
+        "x": 5,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "composition-60-2",
+        "x": 2,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "pink"
+      },
+      {
+        "id": "composition-60-3",
+        "x": 6,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "cyan"
+      },
+      {
+        "id": "composition-60-4",
+        "x": 6,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "composition-60-5",
+        "x": 7,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "pink"
+      }
+    ],
+    "gates": [
+      {
+        "id": "red-top",
+        "side": "top",
+        "offset": 0,
+        "size": 2,
+        "color": "blue"
+      },
+      {
+        "id": "orange-top",
+        "side": "top",
+        "offset": 4,
+        "size": 2,
+        "color": "pink"
+      },
+      {
+        "id": "pink-top",
+        "side": "top",
+        "offset": 8,
+        "size": 2,
+        "color": "cyan"
+      },
+      {
+        "id": "blue-bottom",
+        "side": "bottom",
+        "offset": 10,
+        "size": 2,
+        "color": "green",
+        "frozen": 3
+      },
+      {
+        "id": "yellow-right",
+        "side": "right",
+        "offset": 6,
+        "size": 2,
+        "color": "purple",
+        "frozen": 3
+      },
+      {
+        "id": "green-bottom",
+        "side": "bottom",
+        "offset": 2,
+        "size": 2,
+        "color": "yellow",
+        "frozen": 3
+      }
+    ]
+  },
+  {
+    "levelId": 70,
+    "name": "传送带初启",
+    "difficulty": "normal",
+    "parMoves": 10,
+    "dimensions": [
+      12,
+      10
+    ],
+    "opening": {
+      "active": 5,
+      "actionable": 2,
+      "directClearable": 0,
+      "forcedRepositions": 2,
+      "matchingEdgeStarts": 0,
+      "oneStepMovable": 2,
+      "contacts": 3,
+      "blockerRelations": [
+        [
+          "yellow-load",
+          "orange-target"
+        ],
+        [
+          "green-load",
+          "pink-target"
+        ]
+      ],
+      "distinctBlockedTargets": 2
+    },
+    "validation": {
+      "solved": true,
+      "drags": 10,
+      "repositionOverhead": 3,
+      "gridSteps": 56,
+      "turns": 9,
+      "exploredStates": 32,
+      "firstClearDrag": 2,
+      "openingRoute": [
+        {
+          "drag": 1,
+          "blockId": "yellow-load",
+          "from": [
+            0,
+            1
+          ],
+          "to": [
+            0,
+            2
+          ],
+          "gridSteps": 1,
+          "exitSide": null
+        },
+        {
+          "drag": 2,
+          "blockId": "orange-target",
+          "from": [
+            2,
+            2
+          ],
+          "to": [
+            0,
+            0
+          ],
+          "gridSteps": 4,
+          "exitSide": "left"
+        },
+        {
+          "drag": 3,
+          "blockId": "green-load",
+          "from": [
+            1,
+            6
+          ],
+          "to": [
+            3,
+            6
+          ],
+          "gridSteps": 2,
+          "exitSide": null
+        },
+        {
+          "drag": 4,
+          "blockId": "pink-target",
+          "from": [
+            2,
+            4
+          ],
+          "to": [
+            0,
+            6
+          ],
+          "gridSteps": 4,
+          "exitSide": "left"
+        },
+        {
+          "drag": 5,
+          "blockId": "blue-load",
+          "from": [
+            10,
+            1
+          ],
+          "to": [
+            9,
+            1
+          ],
+          "gridSteps": 1,
+          "exitSide": null
+        },
+        {
+          "drag": 6,
+          "blockId": "red-target",
+          "from": [
+            10,
+            2
+          ],
+          "to": [
+            11,
+            0
+          ],
+          "gridSteps": 2,
+          "exitSide": "top"
+        },
+        {
+          "drag": 7,
+          "blockId": "green-load",
+          "from": [
+            1,
+            6
+          ],
+          "to": [
+            6,
+            0
+          ],
+          "gridSteps": 9,
+          "exitSide": "top"
+        },
+        {
+          "drag": 8,
+          "blockId": "pink-target",
+          "from": [
+            2,
+            4
+          ],
+          "to": [
+            4,
+            8
+          ],
+          "gridSteps": 6,
+          "exitSide": "bottom"
+        }
+      ]
+    },
+    "blocks": [
+      {
+        "id": "red-target",
+        "x": 10,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "blue-load",
+        "x": 10,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "orange-target",
+        "x": 2,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "pink"
+      },
+      {
+        "id": "yellow-load",
+        "x": 0,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "purple"
+      },
+      {
+        "id": "pink-target",
+        "x": 2,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "cyan"
+      },
+      {
+        "id": "green-load",
+        "x": 1,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "yellow"
+      }
+    ],
+    "gates": [
+      {
+        "id": "red-top",
+        "side": "top",
+        "offset": 10,
+        "size": 2,
+        "color": "blue"
+      },
+      {
+        "id": "orange-left",
+        "side": "left",
+        "offset": 0,
+        "size": 2,
+        "color": "pink"
+      },
+      {
+        "id": "pink-left",
+        "side": "left",
+        "offset": 6,
+        "size": 2,
+        "color": "cyan"
+      },
+      {
+        "id": "blue-bottom",
+        "side": "bottom",
+        "offset": 4,
+        "size": 2,
+        "color": "green",
+        "frozen": 3
+      },
+      {
+        "id": "yellow-bottom",
+        "side": "bottom",
+        "offset": 8,
+        "size": 2,
+        "color": "purple",
+        "frozen": 3
+      },
+      {
+        "id": "green-top",
+        "side": "top",
+        "offset": 6,
+        "size": 2,
+        "color": "yellow",
+        "frozen": 3
+      }
+    ]
+  },
+  {
+    "levelId": 78,
+    "name": "双帘热浪",
+    "difficulty": "super",
+    "parMoves": 25,
+    "dimensions": [
+      10,
+      10
+    ],
+    "opening": {
+      "active": 12,
+      "actionable": 12,
+      "directClearable": 0,
+      "forcedRepositions": 12,
+      "matchingEdgeStarts": 0,
+      "oneStepMovable": 6,
+      "contacts": 20,
+      "blockerRelations": [
+        [
+          "green-open",
+          "composition-78-3"
+        ]
+      ],
+      "distinctBlockedTargets": 1
+    },
+    "validation": {
+      "solved": true,
+      "drags": 25,
+      "repositionOverhead": 6,
+      "gridSteps": 153,
+      "turns": 30,
+      "exploredStates": 204,
+      "firstClearDrag": 2,
+      "openingRoute": [
+        {
+          "drag": 1,
+          "blockId": "green-open",
+          "from": [
+            6,
+            2
+          ],
+          "to": [
+            8,
+            0
+          ],
+          "gridSteps": 4,
+          "exitSide": null
+        },
+        {
+          "drag": 2,
+          "blockId": "composition-78-3",
+          "from": [
+            6,
+            4
+          ],
+          "to": [
+            6,
+            0
+          ],
+          "gridSteps": 4,
+          "exitSide": "top"
+        },
+        {
+          "drag": 3,
+          "blockId": "composition-78-6",
+          "from": [
+            4,
+            7
+          ],
+          "to": [
+            4,
+            8
+          ],
+          "gridSteps": 1,
+          "exitSide": null
+        },
+        {
+          "drag": 4,
+          "blockId": "composition-78-5",
+          "from": [
+            5,
+            6
+          ],
+          "to": [
+            5,
+            7
+          ],
+          "gridSteps": 1,
+          "exitSide": null
+        },
+        {
+          "drag": 5,
+          "blockId": "cyan-open",
+          "from": [
+            4,
+            5
+          ],
+          "to": [
+            6,
+            0
+          ],
+          "gridSteps": 7,
+          "exitSide": "top"
+        },
+        {
+          "drag": 6,
+          "blockId": "composition-78-4",
+          "from": [
+            8,
+            4
+          ],
+          "to": [
+            6,
+            2
+          ],
+          "gridSteps": 4,
+          "exitSide": null
+        },
+        {
+          "drag": 7,
+          "blockId": "composition-78-5",
+          "from": [
+            5,
+            6
+          ],
+          "to": [
+            7,
+            4
+          ],
+          "gridSteps": 5,
+          "exitSide": "right"
+        },
+        {
+          "drag": 8,
+          "blockId": "pink-open",
+          "from": [
+            4,
+            3
+          ],
+          "to": [
+            9,
+            4
+          ],
+          "gridSteps": 8,
+          "exitSide": "right"
+        }
+      ]
+    },
+    "blocks": [
+      {
+        "id": "cyan-open",
+        "x": 4,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "green-open",
+        "x": 6,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "orange"
+      },
+      {
+        "id": "pink-open",
+        "x": 4,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "red-target",
+        "x": 8,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "blue-load",
+        "x": 0,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "purple"
+      },
+      {
+        "id": "orange-target",
+        "x": 2,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "yellow-load",
+        "x": 2,
+        "y": 8,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "pink"
+      },
+      {
+        "id": "composition-78-1",
+        "x": 8,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "composition-78-2",
+        "x": 5,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "composition-78-3",
+        "x": 6,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "composition-78-4",
+        "x": 8,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "orange"
+      },
+      {
+        "id": "composition-78-5",
+        "x": 5,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "composition-78-6",
+        "x": 4,
+        "y": 7,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "composition-78-7",
+        "x": 4,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "composition-78-8",
+        "x": 3,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "green"
+      }
+    ],
+    "gates": [
+      {
+        "id": "cyan-left",
+        "side": "top",
+        "offset": 6,
+        "size": 2,
+        "color": "green"
+      },
+      {
+        "id": "green-right",
+        "side": "bottom",
+        "offset": 6,
+        "size": 2,
+        "color": "orange"
+      },
+      {
+        "id": "pink-bottom",
+        "side": "right",
+        "offset": 4,
+        "size": 2,
+        "color": "blue"
+      },
+      {
+        "id": "red-top",
+        "side": "left",
+        "offset": 4,
+        "size": 2,
+        "color": "yellow"
+      },
+      {
+        "id": "blue-bottom",
+        "side": "right",
+        "offset": 0,
+        "size": 2,
+        "color": "purple",
+        "frozen": 5
+      },
+      {
+        "id": "orange-right",
+        "side": "bottom",
+        "offset": 2,
+        "size": 2,
+        "color": "red"
+      },
+      {
+        "id": "yellow-bottom",
+        "side": "right",
+        "offset": 2,
+        "size": 2,
+        "color": "pink",
+        "frozen": 5
+      }
+    ]
+  },
+  {
+    "levelId": 80,
+    "name": "熔芯中枢",
+    "difficulty": "super",
+    "parMoves": 25,
+    "dimensions": [
+      10,
+      12
+    ],
+    "opening": {
+      "active": 12,
+      "actionable": 9,
+      "directClearable": 0,
+      "forcedRepositions": 9,
+      "matchingEdgeStarts": 0,
+      "oneStepMovable": 7,
+      "contacts": 17,
+      "blockerRelations": [
+        [
+          "blue-load",
+          "red-target"
+        ]
+      ],
+      "distinctBlockedTargets": 1
+    },
+    "validation": {
+      "solved": true,
+      "drags": 25,
+      "repositionOverhead": 8,
+      "gridSteps": 185,
+      "turns": 33,
+      "exploredStates": 2397,
+      "firstClearDrag": 2,
+      "openingRoute": [
+        {
+          "drag": 1,
+          "blockId": "blue-load",
+          "from": [
+            8,
+            0
+          ],
+          "to": [
+            8,
+            2
+          ],
+          "gridSteps": 2,
+          "exitSide": null
+        },
+        {
+          "drag": 2,
+          "blockId": "red-target",
+          "from": [
+            6,
+            0
+          ],
+          "to": [
+            8,
+            0
+          ],
+          "gridSteps": 2,
+          "exitSide": "right"
+        },
+        {
+          "drag": 3,
+          "blockId": "orange-target",
+          "from": [
+            6,
+            4
+          ],
+          "to": [
+            1,
+            10
+          ],
+          "gridSteps": 11,
+          "exitSide": null
+        },
+        {
+          "drag": 4,
+          "blockId": "yellow-load",
+          "from": [
+            8,
+            4
+          ],
+          "to": [
+            4,
+            3
+          ],
+          "gridSteps": 5,
+          "exitSide": null
+        },
+        {
+          "drag": 5,
+          "blockId": "composition-80-6",
+          "from": [
+            5,
+            10
+          ],
+          "to": [
+            7,
+            5
+          ],
+          "gridSteps": 11,
+          "exitSide": "right"
+        },
+        {
+          "drag": 6,
+          "blockId": "yellow-load",
+          "from": [
+            8,
+            4
+          ],
+          "to": [
+            3,
+            3
+          ],
+          "gridSteps": 1,
+          "exitSide": null
+        },
+        {
+          "drag": 7,
+          "blockId": "orange-target",
+          "from": [
+            6,
+            4
+          ],
+          "to": [
+            8,
+            4
+          ],
+          "gridSteps": 13,
+          "exitSide": "right"
+        },
+        {
+          "drag": 8,
+          "blockId": "yellow-load",
+          "from": [
+            8,
+            4
+          ],
+          "to": [
+            4,
+            10
+          ],
+          "gridSteps": 8,
+          "exitSide": "bottom"
+        }
+      ]
+    },
+    "blocks": [
+      {
+        "id": "red-target",
+        "x": 6,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "blue-load",
+        "x": 8,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "orange-target",
+        "x": 6,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "pink"
+      },
+      {
+        "id": "yellow-load",
+        "x": 8,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "purple"
+      },
+      {
+        "id": "pink-target",
+        "x": 6,
+        "y": 8,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "cyan"
+      },
+      {
+        "id": "green-load",
+        "x": 8,
+        "y": 8,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "composition-80-1",
+        "x": 7,
+        "y": 7,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "cyan"
+      },
+      {
+        "id": "composition-80-2",
+        "x": 6,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "composition-80-3",
+        "x": 5,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "pink"
+      },
+      {
+        "id": "composition-80-4",
+        "x": 7,
+        "y": 9,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ]
+        ],
+        "color": "cyan"
+      },
+      {
+        "id": "composition-80-5",
+        "x": 7,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "composition-80-6",
+        "x": 5,
+        "y": 10,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "pink"
+      }
+    ],
+    "gates": [
+      {
+        "id": "red-right",
+        "side": "right",
+        "offset": 0,
+        "size": 2,
+        "color": "blue"
+      },
+      {
+        "id": "orange-right",
+        "side": "right",
+        "offset": 4,
+        "size": 2,
+        "color": "pink"
+      },
+      {
+        "id": "pink-right",
+        "side": "right",
+        "offset": 8,
+        "size": 2,
+        "color": "cyan"
+      },
+      {
+        "id": "blue-left",
+        "side": "left",
+        "offset": 10,
+        "size": 2,
+        "color": "green",
+        "frozen": 3
+      },
+      {
+        "id": "yellow-bottom",
+        "side": "bottom",
+        "offset": 4,
+        "size": 2,
+        "color": "purple",
+        "frozen": 3
+      },
+      {
+        "id": "green-left",
+        "side": "left",
+        "offset": 2,
+        "size": 2,
+        "color": "yellow",
+        "frozen": 3
+      }
+    ]
+  },
+  {
+    "levelId": 88,
+    "name": "双帘叠态",
+    "difficulty": "super",
+    "parMoves": 30,
+    "dimensions": [
+      11,
+      10
+    ],
+    "opening": {
+      "active": 12,
+      "actionable": 12,
+      "directClearable": 0,
+      "forcedRepositions": 12,
+      "matchingEdgeStarts": 0,
+      "oneStepMovable": 8,
+      "contacts": 18,
+      "blockerRelations": [],
+      "distinctBlockedTargets": 0
+    },
+    "validation": {
+      "solved": true,
+      "drags": 31,
+      "repositionOverhead": 11,
+      "gridSteps": 186,
+      "turns": 31,
+      "exploredStates": 3522,
+      "firstClearDrag": 6,
+      "openingRoute": [
+        {
+          "drag": 1,
+          "blockId": "composition-88-6",
+          "from": [
+            1,
+            6
+          ],
+          "to": [
+            0,
+            6
+          ],
+          "gridSteps": 1,
+          "exitSide": null
+        },
+        {
+          "drag": 2,
+          "blockId": "composition-88-5",
+          "from": [
+            3,
+            5
+          ],
+          "to": [
+            3,
+            4
+          ],
+          "gridSteps": 1,
+          "exitSide": null
+        },
+        {
+          "drag": 3,
+          "blockId": "composition-88-4",
+          "from": [
+            3,
+            7
+          ],
+          "to": [
+            2,
+            6
+          ],
+          "gridSteps": 2,
+          "exitSide": null
+        },
+        {
+          "drag": 4,
+          "blockId": "composition-88-7",
+          "from": [
+            3,
+            8
+          ],
+          "to": [
+            1,
+            8
+          ],
+          "gridSteps": 2,
+          "exitSide": null
+        },
+        {
+          "drag": 5,
+          "blockId": "green-open",
+          "from": [
+            6,
+            8
+          ],
+          "to": [
+            2,
+            7
+          ],
+          "gridSteps": 5,
+          "exitSide": null
+        },
+        {
+          "drag": 6,
+          "blockId": "pink-open",
+          "from": [
+            6,
+            6
+          ],
+          "to": [
+            4,
+            8
+          ],
+          "gridSteps": 4,
+          "exitSide": "bottom"
+        },
+        {
+          "drag": 7,
+          "blockId": "composition-88-8",
+          "from": [
+            8,
+            5
+          ],
+          "to": [
+            8,
+            4
+          ],
+          "gridSteps": 1,
+          "exitSide": null
+        },
+        {
+          "drag": 8,
+          "blockId": "composition-88-2",
+          "from": [
+            7,
+            6
+          ],
+          "to": [
+            8,
+            5
+          ],
+          "gridSteps": 2,
+          "exitSide": null
+        }
+      ]
+    },
+    "blocks": [
+      {
+        "id": "cyan-open",
+        "x": 8,
+        "y": 8,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "green-open",
+        "x": 6,
+        "y": 8,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "pink"
+      },
+      {
+        "id": "pink-open",
+        "x": 6,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "red-target",
+        "x": 6,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "purple"
+      },
+      {
+        "id": "blue-load",
+        "x": 4,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "orange"
+      },
+      {
+        "id": "orange-target",
+        "x": 2,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "yellow-load",
+        "x": 8,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "cyan"
+      },
+      {
+        "id": "composition-88-1",
+        "x": 5,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "purple"
+      },
+      {
+        "id": "composition-88-2",
+        "x": 7,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "composition-88-3",
+        "x": 6,
+        "y": 9,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "composition-88-4",
+        "x": 3,
+        "y": 7,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "pink"
+      },
+      {
+        "id": "composition-88-5",
+        "x": 3,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "composition-88-6",
+        "x": 1,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "purple"
+      },
+      {
+        "id": "composition-88-7",
+        "x": 3,
+        "y": 8,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "composition-88-8",
+        "x": 8,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "yellow"
+      }
+    ],
+    "gates": [
+      {
+        "id": "cyan-left",
+        "side": "left",
+        "offset": 6,
+        "size": 2,
+        "color": "yellow"
+      },
+      {
+        "id": "green-right",
+        "side": "right",
+        "offset": 6,
+        "size": 2,
+        "color": "pink"
+      },
+      {
+        "id": "pink-bottom",
+        "side": "bottom",
+        "offset": 4,
+        "size": 2,
+        "color": "green"
+      },
+      {
+        "id": "red-top",
+        "side": "top",
+        "offset": 4,
+        "size": 2,
+        "color": "purple"
+      },
+      {
+        "id": "blue-bottom",
+        "side": "bottom",
+        "offset": 0,
+        "size": 2,
+        "color": "orange",
+        "frozen": 5
+      },
+      {
+        "id": "orange-right",
+        "side": "right",
+        "offset": 2,
+        "size": 2,
+        "color": "blue"
+      },
+      {
+        "id": "yellow-bottom",
+        "side": "bottom",
+        "offset": 2,
+        "size": 2,
+        "color": "cyan",
+        "frozen": 5
+      }
+    ]
+  },
+  {
+    "levelId": 90,
+    "name": "量子核心",
+    "difficulty": "super",
+    "parMoves": 19,
+    "dimensions": [
+      12,
+      12
+    ],
+    "opening": {
+      "active": 12,
+      "actionable": 8,
+      "directClearable": 0,
+      "forcedRepositions": 8,
+      "matchingEdgeStarts": 0,
+      "oneStepMovable": 8,
+      "contacts": 15,
+      "blockerRelations": [
+        [
+          "blue-load",
+          "red-target"
+        ],
+        [
+          "yellow-load",
+          "orange-target"
+        ],
+        [
+          "composition-90-3",
+          "orange-target"
+        ],
+        [
+          "purple-load",
+          "cyan-target"
+        ],
+        [
+          "pink-target",
+          "composition-90-1"
+        ],
+        [
+          "green-load",
+          "composition-90-1"
+        ],
+        [
+          "purple-load",
+          "composition-90-2"
+        ]
+      ],
+      "distinctBlockedTargets": 5
+    },
+    "validation": {
+      "solved": true,
+      "drags": 19,
+      "repositionOverhead": 3,
+      "gridSteps": 101,
+      "turns": 10,
+      "exploredStates": 31,
+      "firstClearDrag": 2,
+      "openingRoute": [
+        {
+          "drag": 1,
+          "blockId": "green-load",
+          "from": [
+            6,
+            0
+          ],
+          "to": [
+            5,
+            0
+          ],
+          "gridSteps": 1,
+          "exitSide": null
+        },
+        {
+          "drag": 2,
+          "blockId": "composition-90-1",
+          "from": [
+            6,
+            2
+          ],
+          "to": [
+            6,
+            0
+          ],
+          "gridSteps": 2,
+          "exitSide": "top"
+        },
+        {
+          "drag": 3,
+          "blockId": "pink-target",
+          "from": [
+            7,
+            3
+          ],
+          "to": [
+            6,
+            0
+          ],
+          "gridSteps": 4,
+          "exitSide": "top"
+        },
+        {
+          "drag": 4,
+          "blockId": "blue-load",
+          "from": [
+            0,
+            1
+          ],
+          "to": [
+            0,
+            2
+          ],
+          "gridSteps": 1,
+          "exitSide": null
+        },
+        {
+          "drag": 5,
+          "blockId": "red-target",
+          "from": [
+            1,
+            2
+          ],
+          "to": [
+            0,
+            0
+          ],
+          "gridSteps": 3,
+          "exitSide": "top"
+        },
+        {
+          "drag": 6,
+          "blockId": "yellow-load",
+          "from": [
+            3,
+            1
+          ],
+          "to": [
+            2,
+            1
+          ],
+          "gridSteps": 1,
+          "exitSide": null
+        },
+        {
+          "drag": 7,
+          "blockId": "orange-target",
+          "from": [
+            3,
+            3
+          ],
+          "to": [
+            3,
+            0
+          ],
+          "gridSteps": 4,
+          "exitSide": "top"
+        },
+        {
+          "drag": 8,
+          "blockId": "blue-load",
+          "from": [
+            0,
+            1
+          ],
+          "to": [
+            0,
+            4
+          ],
+          "gridSteps": 2,
+          "exitSide": "left"
+        }
+      ]
+    },
+    "blocks": [
+      {
+        "id": "red-target",
+        "x": 1,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "blue-load",
+        "x": 0,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "orange-target",
+        "x": 3,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "pink"
+      },
+      {
+        "id": "yellow-load",
+        "x": 3,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "purple"
+      },
+      {
+        "id": "pink-target",
+        "x": 7,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "cyan"
+      },
+      {
+        "id": "green-load",
+        "x": 6,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "cyan-target",
+        "x": 9,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "purple-load",
+        "x": 9,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "orange"
+      },
+      {
+        "id": "composition-90-1",
+        "x": 6,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "cyan"
+      },
+      {
+        "id": "composition-90-2",
+        "x": 8,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "composition-90-3",
+        "x": 4,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "composition-90-4",
+        "x": 1,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "pink"
+      }
+    ],
+    "gates": [
+      {
+        "id": "red-top",
+        "side": "top",
+        "offset": 0,
+        "size": 2,
+        "color": "blue"
+      },
+      {
+        "id": "orange-top",
+        "side": "top",
+        "offset": 3,
+        "size": 2,
+        "color": "pink"
+      },
+      {
+        "id": "pink-top",
+        "side": "top",
+        "offset": 6,
+        "size": 2,
+        "color": "cyan"
+      },
+      {
+        "id": "cyan-top",
+        "side": "top",
+        "offset": 9,
+        "size": 2,
+        "color": "red"
+      },
+      {
+        "id": "blue-left",
+        "side": "left",
+        "offset": 4,
+        "size": 2,
+        "color": "green",
+        "frozen": 4
+      },
+      {
+        "id": "yellow-bottom",
+        "side": "bottom",
+        "offset": 3,
+        "size": 2,
+        "color": "purple",
+        "frozen": 4
+      },
+      {
+        "id": "green-bottom",
+        "side": "bottom",
+        "offset": 6,
+        "size": 2,
+        "color": "yellow",
+        "frozen": 4
+      },
+      {
+        "id": "purple-right",
+        "side": "right",
+        "offset": 4,
+        "size": 2,
+        "color": "orange",
+        "frozen": 4
+      }
+    ]
+  },
+  {
+    "levelId": 98,
+    "name": "全域封锁",
+    "difficulty": "super",
+    "parMoves": 41,
+    "dimensions": [
+      11,
+      10
+    ],
+    "opening": {
+      "active": 12,
+      "actionable": 12,
+      "directClearable": 0,
+      "forcedRepositions": 12,
+      "matchingEdgeStarts": 0,
+      "oneStepMovable": 7,
+      "contacts": 17,
+      "blockerRelations": [],
+      "distinctBlockedTargets": 0
+    },
+    "validation": {
+      "solved": true,
+      "drags": 42,
+      "repositionOverhead": 21,
+      "gridSteps": 234,
+      "turns": 47,
+      "exploredStates": 15515,
+      "firstClearDrag": 6,
+      "openingRoute": [
+        {
+          "drag": 1,
+          "blockId": "composition-98-6",
+          "from": [
+            1,
+            6
+          ],
+          "to": [
+            0,
+            7
+          ],
+          "gridSteps": 2,
+          "exitSide": null
+        },
+        {
+          "drag": 2,
+          "blockId": "composition-98-4",
+          "from": [
+            0,
+            5
+          ],
+          "to": [
+            0,
+            6
+          ],
+          "gridSteps": 1,
+          "exitSide": null
+        },
+        {
+          "drag": 3,
+          "blockId": "composition-98-1",
+          "from": [
+            1,
+            1
+          ],
+          "to": [
+            2,
+            0
+          ],
+          "gridSteps": 2,
+          "exitSide": null
+        },
+        {
+          "drag": 4,
+          "blockId": "composition-98-5",
+          "from": [
+            0,
+            1
+          ],
+          "to": [
+            1,
+            0
+          ],
+          "gridSteps": 2,
+          "exitSide": null
+        },
+        {
+          "drag": 5,
+          "blockId": "red-target",
+          "from": [
+            0,
+            3
+          ],
+          "to": [
+            0,
+            4
+          ],
+          "gridSteps": 1,
+          "exitSide": null
+        },
+        {
+          "drag": 6,
+          "blockId": "cyan-open",
+          "from": [
+            2,
+            2
+          ],
+          "to": [
+            0,
+            2
+          ],
+          "gridSteps": 2,
+          "exitSide": "left"
+        },
+        {
+          "drag": 7,
+          "blockId": "green-open",
+          "from": [
+            4,
+            3
+          ],
+          "to": [
+            5,
+            4
+          ],
+          "gridSteps": 1,
+          "exitSide": null
+        },
+        {
+          "drag": 8,
+          "blockId": "pink-open",
+          "from": [
+            2,
+            4
+          ],
+          "to": [
+            4,
+            3
+          ],
+          "gridSteps": 3,
+          "exitSide": null
+        }
+      ]
+    },
+    "blocks": [
+      {
+        "id": "cyan-open",
+        "x": 2,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "green-open",
+        "x": 4,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "pink"
+      },
+      {
+        "id": "pink-open",
+        "x": 2,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "red-target",
+        "x": 0,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "purple"
+      },
+      {
+        "id": "blue-load",
+        "x": 4,
+        "y": 8,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "orange"
+      },
+      {
+        "id": "orange-target",
+        "x": 2,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "yellow-load",
+        "x": 8,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "cyan"
+      },
+      {
+        "id": "composition-98-1",
+        "x": 1,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "purple"
+      },
+      {
+        "id": "composition-98-2",
+        "x": 3,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "composition-98-3",
+        "x": 5,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "composition-98-4",
+        "x": 0,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "pink"
+      },
+      {
+        "id": "composition-98-5",
+        "x": 0,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "composition-98-6",
+        "x": 1,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "purple"
+      },
+      {
+        "id": "composition-98-7",
+        "x": 8,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "composition-98-8",
+        "x": 4,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "yellow"
+      }
+    ],
+    "gates": [
+      {
+        "id": "cyan-left",
+        "side": "left",
+        "offset": 2,
+        "size": 2,
+        "color": "yellow"
+      },
+      {
+        "id": "green-right",
+        "side": "right",
+        "offset": 2,
+        "size": 2,
+        "color": "pink"
+      },
+      {
+        "id": "pink-bottom",
+        "side": "top",
+        "offset": 4,
+        "size": 2,
+        "color": "green"
+      },
+      {
+        "id": "red-top",
+        "side": "bottom",
+        "offset": 4,
+        "size": 2,
+        "color": "purple"
+      },
+      {
+        "id": "blue-bottom",
+        "side": "top",
+        "offset": 0,
+        "size": 2,
+        "color": "orange",
+        "frozen": 5
+      },
+      {
+        "id": "orange-right",
+        "side": "right",
+        "offset": 6,
+        "size": 2,
+        "color": "blue"
+      },
+      {
+        "id": "yellow-bottom",
+        "side": "top",
+        "offset": 2,
+        "size": 2,
+        "color": "cyan",
+        "frozen": 5
+      }
+    ]
+  }
+]

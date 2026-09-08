@@ -1,0 +1,381 @@
+{
+  "labelIds": [
+    14,
+    19,
+    24,
+    29,
+    39,
+    44,
+    49,
+    54,
+    59,
+    64,
+    69,
+    74,
+    79,
+    84,
+    94,
+    99
+  ],
+  "candidateCount": 11178,
+  "feasibleCount": 0,
+  "closestFeasible": [],
+  "bestMargins": [
+    {
+      "weights": {
+        "solve_time": 0.28,
+        "coins": 0.1,
+        "time_pressure": 0.02,
+        "colors": 0.05,
+        "number_elements": 0.35,
+        "mechanisms": 0.2
+      },
+      "labelMean": 71.4348,
+      "adjacentMean": 65.879096875,
+      "adjacentLift": 5.555703124999994,
+      "normalMean": 61.14752976190475,
+      "overallLift": 10.287270238095246,
+      "aboveChapterMedian": 12,
+      "distance": 0.23452078799117146
+    },
+    {
+      "weights": {
+        "solve_time": 0.28,
+        "coins": 0.1,
+        "time_pressure": 0.02,
+        "colors": 0.05,
+        "number_elements": 0.34,
+        "mechanisms": 0.21
+      },
+      "labelMean": 71.29878749999999,
+      "adjacentMean": 65.809296875,
+      "adjacentLift": 5.489490624999988,
+      "normalMean": 61.07864880952382,
+      "overallLift": 10.220138690476169,
+      "aboveChapterMedian": 12,
+      "distance": 0.2240535650240808
+    },
+    {
+      "weights": {
+        "solve_time": 0.27,
+        "coins": 0.1,
+        "time_pressure": 0.03,
+        "colors": 0.05,
+        "number_elements": 0.35,
+        "mechanisms": 0.2
+      },
+      "labelMean": 71.12573125,
+      "adjacentMean": 65.652746875,
+      "adjacentLift": 5.472984374999996,
+      "normalMean": 60.86563690476188,
+      "overallLift": 10.260094345238123,
+      "aboveChapterMedian": 12,
+      "distance": 0.2262741699796952
+    },
+    {
+      "weights": {
+        "solve_time": 0.28,
+        "coins": 0.1,
+        "time_pressure": 0.02,
+        "colors": 0.06,
+        "number_elements": 0.34,
+        "mechanisms": 0.2
+      },
+      "labelMean": 71.25472500000001,
+      "adjacentMean": 65.86635000000001,
+      "adjacentLift": 5.388374999999996,
+      "normalMean": 61.12960476190477,
+      "overallLift": 10.125120238095235,
+      "aboveChapterMedian": 12,
+      "distance": 0.2262741699796952
+    },
+    {
+      "weights": {
+        "solve_time": 0.28,
+        "coins": 0.1,
+        "time_pressure": 0.02,
+        "colors": 0.06,
+        "number_elements": 0.33,
+        "mechanisms": 0.21
+      },
+      "labelMean": 71.11871250000002,
+      "adjacentMean": 65.79655,
+      "adjacentLift": 5.322162500000019,
+      "normalMean": 61.0607238095238,
+      "overallLift": 10.057988690476215,
+      "aboveChapterMedian": 12,
+      "distance": 0.21587033144922904
+    },
+    {
+      "weights": {
+        "solve_time": 0.27,
+        "coins": 0.1,
+        "time_pressure": 0.03,
+        "colors": 0.06,
+        "number_elements": 0.34,
+        "mechanisms": 0.2
+      },
+      "labelMean": 70.94565625000001,
+      "adjacentMean": 65.64000000000001,
+      "adjacentLift": 5.305656249999998,
+      "normalMean": 60.84771190476191,
+      "overallLift": 10.097944345238105,
+      "aboveChapterMedian": 12,
+      "distance": 0.21771541057077243
+    },
+    {
+      "weights": {
+        "solve_time": 0.27,
+        "coins": 0.1,
+        "time_pressure": 0.03,
+        "colors": 0.06,
+        "number_elements": 0.33,
+        "mechanisms": 0.21
+      },
+      "labelMean": 70.80964375,
+      "adjacentMean": 65.5702,
+      "adjacentLift": 5.239443750000007,
+      "normalMean": 60.77883095238095,
+      "overallLift": 10.030812797619056,
+      "aboveChapterMedian": 12,
+      "distance": 0.20688160865577201
+    },
+    {
+      "weights": {
+        "solve_time": 0.26,
+        "coins": 0.1,
+        "time_pressure": 0.04,
+        "colors": 0.06,
+        "number_elements": 0.34,
+        "mechanisms": 0.2
+      },
+      "labelMean": 70.63658749999999,
+      "adjacentMean": 65.41365,
+      "adjacentLift": 5.222937499999986,
+      "normalMean": 60.56581904761906,
+      "overallLift": 10.070768452380932,
+      "aboveChapterMedian": 12,
+      "distance": 0.20976176963403032
+    },
+    {
+      "weights": {
+        "solve_time": 0.28,
+        "coins": 0.1,
+        "time_pressure": 0.02,
+        "colors": 0.07,
+        "number_elements": 0.33,
+        "mechanisms": 0.2
+      },
+      "labelMean": 71.07464999999999,
+      "adjacentMean": 65.853603125,
+      "adjacentLift": 5.221046874999985,
+      "normalMean": 61.11167976190477,
+      "overallLift": 9.962970238095224,
+      "aboveChapterMedian": 12,
+      "distance": 0.21863211109075448
+    },
+    {
+      "weights": {
+        "solve_time": 0.28,
+        "coins": 0.1,
+        "time_pressure": 0.02,
+        "colors": 0.07,
+        "number_elements": 0.32,
+        "mechanisms": 0.21
+      },
+      "labelMean": 70.9386375,
+      "adjacentMean": 65.783803125,
+      "adjacentLift": 5.154834374999993,
+      "normalMean": 61.04279880952382,
+      "overallLift": 9.895838690476175,
+      "aboveChapterMedian": 12,
+      "distance": 0.2083266665599966
+    },
+    {
+      "weights": {
+        "solve_time": 0.27,
+        "coins": 0.1,
+        "time_pressure": 0.03,
+        "colors": 0.07,
+        "number_elements": 0.33,
+        "mechanisms": 0.2
+      },
+      "labelMean": 70.76558125000003,
+      "adjacentMean": 65.627253125,
+      "adjacentLift": 5.1383281250000294,
+      "normalMean": 60.82978690476191,
+      "overallLift": 9.935794345238115,
+      "aboveChapterMedian": 12,
+      "distance": 0.20976176963403032
+    },
+    {
+      "weights": {
+        "solve_time": 0.28,
+        "coins": 0.1,
+        "time_pressure": 0.02,
+        "colors": 0.07,
+        "number_elements": 0.31,
+        "mechanisms": 0.22
+      },
+      "labelMean": 70.80262499999999,
+      "adjacentMean": 65.714003125,
+      "adjacentLift": 5.088621874999987,
+      "normalMean": 60.97391785714289,
+      "overallLift": 9.828707142857105,
+      "aboveChapterMedian": 12,
+      "distance": 0.19849433241279207
+    },
+    {
+      "weights": {
+        "solve_time": 0.27,
+        "coins": 0.1,
+        "time_pressure": 0.03,
+        "colors": 0.07,
+        "number_elements": 0.32,
+        "mechanisms": 0.21
+      },
+      "labelMean": 70.62956875,
+      "adjacentMean": 65.55745312499998,
+      "adjacentLift": 5.072115625000023,
+      "normalMean": 60.76090595238096,
+      "overallLift": 9.868662797619045,
+      "aboveChapterMedian": 12,
+      "distance": 0.198997487421324
+    },
+    {
+      "weights": {
+        "solve_time": 0.26,
+        "coins": 0.1,
+        "time_pressure": 0.04,
+        "colors": 0.07,
+        "number_elements": 0.33,
+        "mechanisms": 0.2
+      },
+      "labelMean": 70.4565125,
+      "adjacentMean": 65.40090312500001,
+      "adjacentLift": 5.055609374999989,
+      "normalMean": 60.54789404761906,
+      "overallLift": 9.908618452380942,
+      "aboveChapterMedian": 12,
+      "distance": 0.20149441679609884
+    },
+    {
+      "weights": {
+        "solve_time": 0.28,
+        "coins": 0.1,
+        "time_pressure": 0.02,
+        "colors": 0.08,
+        "number_elements": 0.32,
+        "mechanisms": 0.2
+      },
+      "labelMean": 70.89457499999999,
+      "adjacentMean": 65.84085625,
+      "adjacentLift": 5.053718749999987,
+      "normalMean": 61.09375476190475,
+      "overallLift": 9.800820238095241,
+      "aboveChapterMedian": 12,
+      "distance": 0.21166010488516723
+    },
+    {
+      "weights": {
+        "solve_time": 0.26,
+        "coins": 0.1,
+        "time_pressure": 0.04,
+        "colors": 0.07,
+        "number_elements": 0.32,
+        "mechanisms": 0.21
+      },
+      "labelMean": 70.3205,
+      "adjacentMean": 65.331103125,
+      "adjacentLift": 4.989396874999997,
+      "normalMean": 60.47901309523813,
+      "overallLift": 9.841486904761865,
+      "aboveChapterMedian": 12,
+      "distance": 0.19026297590440447
+    },
+    {
+      "weights": {
+        "solve_time": 0.28,
+        "coins": 0.1,
+        "time_pressure": 0.02,
+        "colors": 0.08,
+        "number_elements": 0.31,
+        "mechanisms": 0.21
+      },
+      "labelMean": 70.7585625,
+      "adjacentMean": 65.77105625,
+      "adjacentLift": 4.987506249999996,
+      "normalMean": 61.02487380952383,
+      "overallLift": 9.733688690476164,
+      "aboveChapterMedian": 12,
+      "distance": 0.20149441679609884
+    },
+    {
+      "weights": {
+        "solve_time": 0.25,
+        "coins": 0.1,
+        "time_pressure": 0.05,
+        "colors": 0.07,
+        "number_elements": 0.33,
+        "mechanisms": 0.2
+      },
+      "labelMean": 70.14744375,
+      "adjacentMean": 65.17455312500002,
+      "adjacentLift": 4.972890624999977,
+      "normalMean": 60.26600119047618,
+      "overallLift": 9.881442559523812,
+      "aboveChapterMedian": 12,
+      "distance": 0.19390719429665315
+    },
+    {
+      "weights": {
+        "solve_time": 0.27,
+        "coins": 0.1,
+        "time_pressure": 0.03,
+        "colors": 0.08,
+        "number_elements": 0.32,
+        "mechanisms": 0.2
+      },
+      "labelMean": 70.58550625000001,
+      "adjacentMean": 65.61450625,
+      "adjacentLift": 4.971000000000004,
+      "normalMean": 60.811861904761926,
+      "overallLift": 9.773644345238083,
+      "aboveChapterMedian": 12,
+      "distance": 0.2024845673131659
+    },
+    {
+      "weights": {
+        "solve_time": 0.28,
+        "coins": 0.1,
+        "time_pressure": 0.02,
+        "colors": 0.08,
+        "number_elements": 0.3,
+        "mechanisms": 0.22
+      },
+      "labelMean": 70.62255,
+      "adjacentMean": 65.70125625000001,
+      "adjacentLift": 4.92129374999999,
+      "normalMean": 60.95599285714285,
+      "overallLift": 9.666557142857151,
+      "aboveChapterMedian": 12,
+      "distance": 0.19183326093250877
+    }
+  ],
+  "v1Metrics": {
+    "weights": {
+      "solve_time": 0.3,
+      "coins": 0.1,
+      "time_pressure": 0.2,
+      "colors": 0.15,
+      "number_elements": 0.1,
+      "mechanisms": 0.15
+    },
+    "labelMean": 65.71525,
+    "adjacentMean": 67.19351562499999,
+    "adjacentLift": -1.4782656249999917,
+    "normalMean": 59.581994047619034,
+    "overallLift": 6.1332559523809635,
+    "aboveChapterMedian": 7
+  }
+}

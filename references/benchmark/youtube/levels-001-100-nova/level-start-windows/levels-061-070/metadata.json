@@ -1,0 +1,435 @@
+{
+  "sourceUrl": "https://www.youtube.com/watch?v=KDHW-MJHbVI",
+  "title": "Block Out! Levels 61-62-63-64-65-66-67-68-69-70 - YouTube",
+  "durationSeconds": 903.321,
+  "sourceWidth": 640,
+  "sourceHeight": 360,
+  "startSeconds": 0,
+  "endSeconds": 903.321,
+  "intervalSeconds": 1,
+  "requestedTimestamps": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    180,
+    181,
+    182,
+    183,
+    184,
+    185,
+    186,
+    270,
+    271,
+    272,
+    273,
+    274,
+    275,
+    276,
+    400,
+    401,
+    402,
+    403,
+    404,
+    405,
+    406,
+    460,
+    461,
+    462,
+    463,
+    464,
+    465,
+    466,
+    530,
+    531,
+    532,
+    533,
+    534,
+    535,
+    536,
+    600,
+    601,
+    602,
+    603,
+    604,
+    605,
+    606,
+    675,
+    676,
+    677,
+    678,
+    679,
+    680,
+    681,
+    845,
+    846,
+    847,
+    848,
+    849,
+    850,
+    851
+  ],
+  "frameCount": 70,
+  "frames": [
+    {
+      "index": 0,
+      "seconds": 0,
+      "file": "frame-0000-0000.00s.jpg"
+    },
+    {
+      "index": 1,
+      "seconds": 1,
+      "file": "frame-0001-0001.00s.jpg"
+    },
+    {
+      "index": 2,
+      "seconds": 2,
+      "file": "frame-0002-0002.00s.jpg"
+    },
+    {
+      "index": 3,
+      "seconds": 3,
+      "file": "frame-0003-0003.00s.jpg"
+    },
+    {
+      "index": 4,
+      "seconds": 4,
+      "file": "frame-0004-0004.00s.jpg"
+    },
+    {
+      "index": 5,
+      "seconds": 5,
+      "file": "frame-0005-0005.00s.jpg"
+    },
+    {
+      "index": 6,
+      "seconds": 6,
+      "file": "frame-0006-0006.00s.jpg"
+    },
+    {
+      "index": 7,
+      "seconds": 80,
+      "file": "frame-0007-0080.00s.jpg"
+    },
+    {
+      "index": 8,
+      "seconds": 81,
+      "file": "frame-0008-0081.00s.jpg"
+    },
+    {
+      "index": 9,
+      "seconds": 82,
+      "file": "frame-0009-0082.00s.jpg"
+    },
+    {
+      "index": 10,
+      "seconds": 83,
+      "file": "frame-0010-0083.00s.jpg"
+    },
+    {
+      "index": 11,
+      "seconds": 84,
+      "file": "frame-0011-0084.00s.jpg"
+    },
+    {
+      "index": 12,
+      "seconds": 85,
+      "file": "frame-0012-0085.00s.jpg"
+    },
+    {
+      "index": 13,
+      "seconds": 86,
+      "file": "frame-0013-0086.00s.jpg"
+    },
+    {
+      "index": 14,
+      "seconds": 180,
+      "file": "frame-0014-0180.00s.jpg"
+    },
+    {
+      "index": 15,
+      "seconds": 181,
+      "file": "frame-0015-0181.00s.jpg"
+    },
+    {
+      "index": 16,
+      "seconds": 182,
+      "file": "frame-0016-0182.00s.jpg"
+    },
+    {
+      "index": 17,
+      "seconds": 183,
+      "file": "frame-0017-0183.00s.jpg"
+    },
+    {
+      "index": 18,
+      "seconds": 184,
+      "file": "frame-0018-0184.00s.jpg"
+    },
+    {
+      "index": 19,
+      "seconds": 185,
+      "file": "frame-0019-0185.00s.jpg"
+    },
+    {
+      "index": 20,
+      "seconds": 186,
+      "file": "frame-0020-0186.00s.jpg"
+    },
+    {
+      "index": 21,
+      "seconds": 270,
+      "file": "frame-0021-0270.00s.jpg"
+    },
+    {
+      "index": 22,
+      "seconds": 271,
+      "file": "frame-0022-0271.00s.jpg"
+    },
+    {
+      "index": 23,
+      "seconds": 272,
+      "file": "frame-0023-0272.00s.jpg"
+    },
+    {
+      "index": 24,
+      "seconds": 273,
+      "file": "frame-0024-0273.00s.jpg"
+    },
+    {
+      "index": 25,
+      "seconds": 274,
+      "file": "frame-0025-0274.00s.jpg"
+    },
+    {
+      "index": 26,
+      "seconds": 275,
+      "file": "frame-0026-0275.00s.jpg"
+    },
+    {
+      "index": 27,
+      "seconds": 276,
+      "file": "frame-0027-0276.00s.jpg"
+    },
+    {
+      "index": 28,
+      "seconds": 400,
+      "file": "frame-0028-0400.00s.jpg"
+    },
+    {
+      "index": 29,
+      "seconds": 401,
+      "file": "frame-0029-0401.00s.jpg"
+    },
+    {
+      "index": 30,
+      "seconds": 402,
+      "file": "frame-0030-0402.00s.jpg"
+    },
+    {
+      "index": 31,
+      "seconds": 403,
+      "file": "frame-0031-0403.00s.jpg"
+    },
+    {
+      "index": 32,
+      "seconds": 404,
+      "file": "frame-0032-0404.00s.jpg"
+    },
+    {
+      "index": 33,
+      "seconds": 405,
+      "file": "frame-0033-0405.00s.jpg"
+    },
+    {
+      "index": 34,
+      "seconds": 406,
+      "file": "frame-0034-0406.00s.jpg"
+    },
+    {
+      "index": 35,
+      "seconds": 460,
+      "file": "frame-0035-0460.00s.jpg"
+    },
+    {
+      "index": 36,
+      "seconds": 461,
+      "file": "frame-0036-0461.00s.jpg"
+    },
+    {
+      "index": 37,
+      "seconds": 462,
+      "file": "frame-0037-0462.00s.jpg"
+    },
+    {
+      "index": 38,
+      "seconds": 463,
+      "file": "frame-0038-0463.00s.jpg"
+    },
+    {
+      "index": 39,
+      "seconds": 464,
+      "file": "frame-0039-0464.00s.jpg"
+    },
+    {
+      "index": 40,
+      "seconds": 465,
+      "file": "frame-0040-0465.00s.jpg"
+    },
+    {
+      "index": 41,
+      "seconds": 466,
+      "file": "frame-0041-0466.00s.jpg"
+    },
+    {
+      "index": 42,
+      "seconds": 530,
+      "file": "frame-0042-0530.00s.jpg"
+    },
+    {
+      "index": 43,
+      "seconds": 531,
+      "file": "frame-0043-0531.00s.jpg"
+    },
+    {
+      "index": 44,
+      "seconds": 532,
+      "file": "frame-0044-0532.00s.jpg"
+    },
+    {
+      "index": 45,
+      "seconds": 533,
+      "file": "frame-0045-0533.00s.jpg"
+    },
+    {
+      "index": 46,
+      "seconds": 534,
+      "file": "frame-0046-0534.00s.jpg"
+    },
+    {
+      "index": 47,
+      "seconds": 535,
+      "file": "frame-0047-0535.00s.jpg"
+    },
+    {
+      "index": 48,
+      "seconds": 536,
+      "file": "frame-0048-0536.00s.jpg"
+    },
+    {
+      "index": 49,
+      "seconds": 600,
+      "file": "frame-0049-0600.00s.jpg"
+    },
+    {
+      "index": 50,
+      "seconds": 601,
+      "file": "frame-0050-0601.00s.jpg"
+    },
+    {
+      "index": 51,
+      "seconds": 602,
+      "file": "frame-0051-0602.00s.jpg"
+    },
+    {
+      "index": 52,
+      "seconds": 603,
+      "file": "frame-0052-0603.00s.jpg"
+    },
+    {
+      "index": 53,
+      "seconds": 604,
+      "file": "frame-0053-0604.00s.jpg"
+    },
+    {
+      "index": 54,
+      "seconds": 605,
+      "file": "frame-0054-0605.00s.jpg"
+    },
+    {
+      "index": 55,
+      "seconds": 606,
+      "file": "frame-0055-0606.00s.jpg"
+    },
+    {
+      "index": 56,
+      "seconds": 675,
+      "file": "frame-0056-0675.00s.jpg"
+    },
+    {
+      "index": 57,
+      "seconds": 676,
+      "file": "frame-0057-0676.00s.jpg"
+    },
+    {
+      "index": 58,
+      "seconds": 677,
+      "file": "frame-0058-0677.00s.jpg"
+    },
+    {
+      "index": 59,
+      "seconds": 678,
+      "file": "frame-0059-0678.00s.jpg"
+    },
+    {
+      "index": 60,
+      "seconds": 679,
+      "file": "frame-0060-0679.00s.jpg"
+    },
+    {
+      "index": 61,
+      "seconds": 680,
+      "file": "frame-0061-0680.00s.jpg"
+    },
+    {
+      "index": 62,
+      "seconds": 681,
+      "file": "frame-0062-0681.00s.jpg"
+    },
+    {
+      "index": 63,
+      "seconds": 845,
+      "file": "frame-0063-0845.00s.jpg"
+    },
+    {
+      "index": 64,
+      "seconds": 846,
+      "file": "frame-0064-0846.00s.jpg"
+    },
+    {
+      "index": 65,
+      "seconds": 847,
+      "file": "frame-0065-0847.00s.jpg"
+    },
+    {
+      "index": 66,
+      "seconds": 848,
+      "file": "frame-0066-0848.00s.jpg"
+    },
+    {
+      "index": 67,
+      "seconds": 849,
+      "file": "frame-0067-0849.00s.jpg"
+    },
+    {
+      "index": 68,
+      "seconds": 850,
+      "file": "frame-0068-0850.00s.jpg"
+    },
+    {
+      "index": 69,
+      "seconds": 851,
+      "file": "frame-0069-0851.00s.jpg"
+    }
+  ]
+}

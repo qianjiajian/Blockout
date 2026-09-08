@@ -1,0 +1,908 @@
+{
+  "version": 2,
+  "status": "manual-visual-qa-passed",
+  "sourceIndex": "level-initial-frame-index.json",
+  "count": 100,
+  "levels": [
+    {
+      "level": 1,
+      "youtubeId": "LlOMtgdGOQA",
+      "seconds": 4,
+      "source": "level-start-windows/levels-001-010/frame-0004-0004.00s.jpg",
+      "output": "competitor-level-001.jpg",
+      "sourceSha256": "7e71069e62d0c01182cdd022e1ce2fa047a35034ff99c3e53bb689403a3057ed",
+      "review": "approved"
+    },
+    {
+      "level": 2,
+      "youtubeId": "LlOMtgdGOQA",
+      "seconds": 12,
+      "source": "level-start-windows/levels-001-010/frame-0009-0012.00s.jpg",
+      "output": "competitor-level-002.jpg",
+      "sourceSha256": "f916f93390d0fcf75e9db6680593e3b7d1f2a0e4db37cee9ceaa6be2313abaff",
+      "review": "approved"
+    },
+    {
+      "level": 3,
+      "youtubeId": "LlOMtgdGOQA",
+      "seconds": 27,
+      "source": "level-start-windows/levels-001-010/frame-0016-0027.00s.jpg",
+      "output": "competitor-level-003.jpg",
+      "sourceSha256": "c87e6dd4beffaf0e5cc2849bfb2b9a67bf0fc7410358a8b06d19c8ae4f02d781",
+      "review": "approved"
+    },
+    {
+      "level": 4,
+      "youtubeId": "LlOMtgdGOQA",
+      "seconds": 45,
+      "source": "level-start-windows/levels-001-010/frame-0026-0045.00s.jpg",
+      "output": "competitor-level-004.jpg",
+      "sourceSha256": "caf1204b3f0ea36f7c323bfca0983f99c976929b4334d0fc12e05eefc987fddd",
+      "review": "approved"
+    },
+    {
+      "level": 5,
+      "youtubeId": "LlOMtgdGOQA",
+      "seconds": 72,
+      "source": "level-start-windows/levels-001-010/frame-0030-0072.00s.jpg",
+      "output": "competitor-level-005.jpg",
+      "sourceSha256": "1325d06b121958ff417083d7b82797923342e334e17f50ee8cd4c2d473623f18",
+      "review": "approved"
+    },
+    {
+      "level": 6,
+      "youtubeId": "LlOMtgdGOQA",
+      "seconds": 122,
+      "source": "level-start-windows/levels-001-010/frame-0037-0122.00s.jpg",
+      "output": "competitor-level-006.jpg",
+      "sourceSha256": "6b4eae9f8d4998e1608b00f4bc90ffd14ff4a7a74fced26650cc4cb809a7e983",
+      "review": "approved"
+    },
+    {
+      "level": 7,
+      "youtubeId": "LlOMtgdGOQA",
+      "seconds": 163,
+      "source": "level-start-windows/levels-001-010/frame-0045-0163.00s.jpg",
+      "output": "competitor-level-007.jpg",
+      "sourceSha256": "eabac513103385795d415d3da02554154e30710bc528a69c0fd204fb40404f6e",
+      "review": "approved"
+    },
+    {
+      "level": 8,
+      "youtubeId": "LlOMtgdGOQA",
+      "seconds": 218,
+      "source": "level-start-windows/levels-001-010/frame-0052-0218.00s.jpg",
+      "output": "competitor-level-008.jpg",
+      "sourceSha256": "50e552786100dea9e2e1c5c9bb64cf8c9af82e6b45138f14b1f731210d028028",
+      "review": "approved"
+    },
+    {
+      "level": 9,
+      "youtubeId": "LlOMtgdGOQA",
+      "seconds": 259,
+      "source": "level-start-windows/levels-001-010/frame-0060-0259.00s.jpg",
+      "output": "competitor-level-009.jpg",
+      "sourceSha256": "8bf6ecaf941c195c86ec4ba43d5b7181d1ceb61bf0c276dffdac4d658f39bdae",
+      "review": "approved"
+    },
+    {
+      "level": 10,
+      "youtubeId": "LlOMtgdGOQA",
+      "seconds": 301,
+      "source": "level-start-windows/levels-001-010/frame-0064-0301.00s.jpg",
+      "output": "competitor-level-010.jpg",
+      "sourceSha256": "a5f6b56834549b91923c559ed7a59a66d35e051cb504c75513637613b73caee3",
+      "review": "approved"
+    },
+    {
+      "level": 11,
+      "youtubeId": "b5mFsyrvCws",
+      "seconds": 4,
+      "source": "level-start-windows/levels-011-020/frame-0004-0004.00s.jpg",
+      "output": "competitor-level-011.jpg",
+      "sourceSha256": "c6e13c3a3dabbdda9a076d294440e5af2bc743ad9fcd8b8688c915a8d2950d35",
+      "review": "approved"
+    },
+    {
+      "level": 12,
+      "youtubeId": "b5mFsyrvCws",
+      "seconds": 49,
+      "source": "level-start-windows/levels-011-020/frame-0011-0049.00s.jpg",
+      "output": "competitor-level-012.jpg",
+      "sourceSha256": "b81dd939324e1cbd95fddd8aa28085e814ba1827d90c498a714eeacd54be897c",
+      "review": "approved"
+    },
+    {
+      "level": 13,
+      "youtubeId": "b5mFsyrvCws",
+      "seconds": 96,
+      "source": "level-start-windows/levels-011-020/frame-0015-0096.00s.jpg",
+      "output": "competitor-level-013.jpg",
+      "sourceSha256": "2f7a4b8efbbf413a44184dc113f87344b0b233dbb5faf3dae45d1e830d4e4cf8",
+      "review": "approved"
+    },
+    {
+      "level": 14,
+      "youtubeId": "b5mFsyrvCws",
+      "seconds": 143,
+      "source": "level-start-windows/levels-011-020/frame-0024-0143.00s.jpg",
+      "output": "competitor-level-014.jpg",
+      "sourceSha256": "1663d03a096a3f4855a4a95c09db12472d63e50d2d940a34034362812bc9dca5",
+      "review": "approved"
+    },
+    {
+      "level": 15,
+      "youtubeId": "b5mFsyrvCws",
+      "seconds": 183,
+      "source": "level-start-windows/levels-011-020/frame-0031-0183.00s.jpg",
+      "output": "competitor-level-015.jpg",
+      "sourceSha256": "92c9246eb38167a6943aa8705e53dd19a1f1f7d069a6138b820b719567157d20",
+      "review": "approved"
+    },
+    {
+      "level": 16,
+      "youtubeId": "b5mFsyrvCws",
+      "seconds": 229,
+      "source": "level-start-windows/levels-011-020/frame-0039-0229.00s.jpg",
+      "output": "competitor-level-016.jpg",
+      "sourceSha256": "3d270e8fed8c41ee1d9d5b4f5736449d02d7f01de3e26517c539ad92162fd73d",
+      "review": "approved"
+    },
+    {
+      "level": 17,
+      "youtubeId": "b5mFsyrvCws",
+      "seconds": 274,
+      "source": "level-start-windows/levels-011-020/frame-0046-0274.00s.jpg",
+      "output": "competitor-level-017.jpg",
+      "sourceSha256": "798298b5e35b68a1b0f5de2adbb3b8fa9ddc16d69d7ccee640b273ca360bbdbc",
+      "review": "approved"
+    },
+    {
+      "level": 18,
+      "youtubeId": "b5mFsyrvCws",
+      "seconds": 351,
+      "source": "level-start-windows/levels-011-020/frame-0057-0351.00s.jpg",
+      "output": "competitor-level-018.jpg",
+      "sourceSha256": "d4ff47dda6b337da47930aff5d8ee0e8c2b3d090d4d45515eb66f729ea9a2c7b",
+      "review": "approved"
+    },
+    {
+      "level": 19,
+      "youtubeId": "b5mFsyrvCws",
+      "seconds": 379,
+      "source": "level-start-windows/levels-011-020/frame-0067-0379.00s.jpg",
+      "output": "competitor-level-019.jpg",
+      "sourceSha256": "7c3c8d8cc9bb0abbf1098d4a48ce2992b67a57b424d61deb1408ab04b4a95f2a",
+      "review": "approved"
+    },
+    {
+      "level": 20,
+      "youtubeId": "b5mFsyrvCws",
+      "seconds": 463,
+      "source": "repairs/level-020/frame-0003-0463.00s.jpg",
+      "output": "competitor-level-020.jpg",
+      "sourceSha256": "2c5297cbf8ac7441ec9ab099952e3a0c16d4b4ec4c4f8cf420e005cbf4bb74b2",
+      "review": "approved"
+    },
+    {
+      "level": 21,
+      "youtubeId": "MOpt7j6VyEI",
+      "seconds": 5,
+      "source": "level-start-windows/levels-021-030/frame-0005-0005.00s.jpg",
+      "output": "competitor-level-021.jpg",
+      "sourceSha256": "717fbb5aa9cdcae230b8e08f16500cb9b3c4a7e0acd4cb999a3ad18847b8669f",
+      "review": "approved"
+    },
+    {
+      "level": 22,
+      "youtubeId": "MOpt7j6VyEI",
+      "seconds": 71,
+      "source": "level-start-windows/levels-021-030/frame-0008-0071.00s.jpg",
+      "output": "competitor-level-022.jpg",
+      "sourceSha256": "e6fbe3ca23a6aa89ecbba7f4802030afd292f7e6a900e3e6a77acc00659777f4",
+      "review": "approved"
+    },
+    {
+      "level": 23,
+      "youtubeId": "MOpt7j6VyEI",
+      "seconds": 112,
+      "source": "level-start-windows/levels-021-030/frame-0016-0112.00s.jpg",
+      "output": "competitor-level-023.jpg",
+      "sourceSha256": "a0ac3e4da5d7fcc3a0c5e02910a61594ce8892b8eb1c50ae557883eb226c8f00",
+      "review": "approved"
+    },
+    {
+      "level": 24,
+      "youtubeId": "MOpt7j6VyEI",
+      "seconds": 181,
+      "source": "level-start-windows/levels-021-030/frame-0022-0181.00s.jpg",
+      "output": "competitor-level-024.jpg",
+      "sourceSha256": "009b5ecfb8a8fa36e076f756ab904db50701f03398186c6a0aba5628d56f349c",
+      "review": "approved"
+    },
+    {
+      "level": 25,
+      "youtubeId": "MOpt7j6VyEI",
+      "seconds": 256,
+      "source": "level-start-windows/levels-021-030/frame-0029-0256.00s.jpg",
+      "output": "competitor-level-025.jpg",
+      "sourceSha256": "602d7d3c0c8c483d1675abe6453b3bf1f6739aa389e095e6595165e45d21f1ac",
+      "review": "approved"
+    },
+    {
+      "level": 26,
+      "youtubeId": "MOpt7j6VyEI",
+      "seconds": 316,
+      "source": "level-start-windows/levels-021-030/frame-0036-0316.00s.jpg",
+      "output": "competitor-level-026.jpg",
+      "sourceSha256": "5b8e28bb6fee6011ba07a25af04bfde4e543c267eff119c99447c84273022e12",
+      "review": "approved"
+    },
+    {
+      "level": 27,
+      "youtubeId": "MOpt7j6VyEI",
+      "seconds": 392,
+      "source": "level-start-windows/levels-021-030/frame-0044-0392.00s.jpg",
+      "output": "competitor-level-027.jpg",
+      "sourceSha256": "890ccf39eff7e0a98bb2e672ffa0b65ddbdc3714fbb7a2d0ff785692dac31fbc",
+      "review": "approved"
+    },
+    {
+      "level": 28,
+      "youtubeId": "MOpt7j6VyEI",
+      "seconds": 432,
+      "source": "level-start-windows/levels-021-030/frame-0051-0432.00s.jpg",
+      "output": "competitor-level-028.jpg",
+      "sourceSha256": "f5b41b37586e48da1767b369484d2f5c46877052509a8512f81def253fea09c8",
+      "review": "approved"
+    },
+    {
+      "level": 29,
+      "youtubeId": "MOpt7j6VyEI",
+      "seconds": 486,
+      "source": "level-start-windows/levels-021-030/frame-0057-0486.00s.jpg",
+      "output": "competitor-level-029.jpg",
+      "sourceSha256": "9bd2977037eaf847a7b717fa09d6fa567d6df93aad56111d1112810b9463083d",
+      "review": "approved"
+    },
+    {
+      "level": 30,
+      "youtubeId": "MOpt7j6VyEI",
+      "seconds": 601,
+      "source": "level-start-windows/levels-021-030/frame-0064-0601.00s.jpg",
+      "output": "competitor-level-030.jpg",
+      "sourceSha256": "700ff14675c104bd857b1ab4b7237f902c5f587d73309c0e7d2b3579d98896b9",
+      "review": "approved"
+    },
+    {
+      "level": 31,
+      "youtubeId": "hthuKdxZ8-4",
+      "seconds": 5,
+      "source": "level-start-windows/levels-031-040/frame-0005-0005.00s.jpg",
+      "output": "competitor-level-031.jpg",
+      "sourceSha256": "e7fd72eb7c75d8a4102889d72f9bcd18e7a75c5910efe3296cb3a30220d64e5b",
+      "review": "approved"
+    },
+    {
+      "level": 32,
+      "youtubeId": "hthuKdxZ8-4",
+      "seconds": 65,
+      "source": "level-start-windows/levels-031-040/frame-0012-0065.00s.jpg",
+      "output": "competitor-level-032.jpg",
+      "sourceSha256": "bdee97d6ae1618e1e4ac1c94f34b0fca9565e437696bf7602932121658b0c68f",
+      "review": "approved"
+    },
+    {
+      "level": 33,
+      "youtubeId": "hthuKdxZ8-4",
+      "seconds": 109,
+      "source": "level-start-windows/levels-031-040/frame-0018-0109.00s.jpg",
+      "output": "competitor-level-033.jpg",
+      "sourceSha256": "3aa230a60867dbf15b9989a01d85e926d8f5dad9bbe411379fdc275c5c6d0954",
+      "review": "approved"
+    },
+    {
+      "level": 34,
+      "youtubeId": "hthuKdxZ8-4",
+      "seconds": 168,
+      "source": "level-start-windows/levels-031-040/frame-0024-0168.00s.jpg",
+      "output": "competitor-level-034.jpg",
+      "sourceSha256": "42aa97d550230765423dd11ac5522a7e2e9160ea5e332ba66652d85c25f39fbd",
+      "review": "approved"
+    },
+    {
+      "level": 35,
+      "youtubeId": "hthuKdxZ8-4",
+      "seconds": 269,
+      "source": "level-start-windows/levels-031-040/frame-0032-0269.00s.jpg",
+      "output": "competitor-level-035.jpg",
+      "sourceSha256": "8356907695272cdb3bfb0a17ded1588e90a4a2c0b6c41750379d0fa5a353f9bd",
+      "review": "approved"
+    },
+    {
+      "level": 36,
+      "youtubeId": "hthuKdxZ8-4",
+      "seconds": 301,
+      "source": "level-start-windows/levels-031-040/frame-0036-0301.00s.jpg",
+      "output": "competitor-level-036.jpg",
+      "sourceSha256": "572f50f5973ef799c2b27861ab35b0e8e7c7177cd682dab1fb292ad785bba3b3",
+      "review": "approved"
+    },
+    {
+      "level": 37,
+      "youtubeId": "hthuKdxZ8-4",
+      "seconds": 343,
+      "source": "level-start-windows/levels-031-040/frame-0045-0343.00s.jpg",
+      "output": "competitor-level-037.jpg",
+      "sourceSha256": "e3e67c20ab0bdee31d9ec42345bbd44edf6245f874d483c7284503f2f5acf6c6",
+      "review": "approved"
+    },
+    {
+      "level": 38,
+      "youtubeId": "hthuKdxZ8-4",
+      "seconds": 394,
+      "source": "level-start-windows/levels-031-040/frame-0053-0394.00s.jpg",
+      "output": "competitor-level-038.jpg",
+      "sourceSha256": "377efc125ea6b3aaa44202b7265e88871e63dbc8963c49eb591907daa45702eb",
+      "review": "approved"
+    },
+    {
+      "level": 39,
+      "youtubeId": "hthuKdxZ8-4",
+      "seconds": 455,
+      "source": "level-start-windows/levels-031-040/frame-0061-0455.00s.jpg",
+      "output": "competitor-level-039.jpg",
+      "sourceSha256": "8c3e95ce6d09f2d614c16b05a980edbbfe81ac2647389bd1f96e77910f9178b3",
+      "review": "approved"
+    },
+    {
+      "level": 40,
+      "youtubeId": "hthuKdxZ8-4",
+      "seconds": 548,
+      "source": "level-start-windows/levels-031-040/frame-0066-0548.00s.jpg",
+      "output": "competitor-level-040.jpg",
+      "sourceSha256": "5f2ce1d034be8d4cb1e41bc3669d7f2aab5ba92257b8ea7845c92cfc1207117e",
+      "review": "approved"
+    },
+    {
+      "level": 41,
+      "youtubeId": "ay2_zRTnAak",
+      "seconds": 5,
+      "source": "level-start-windows/levels-041-050/frame-0005-0005.00s.jpg",
+      "output": "competitor-level-041.jpg",
+      "sourceSha256": "7b7cd61f5c6012a3bf7c76bea291b5ac77ab558888112c083f42a8e53d7019b9",
+      "review": "approved"
+    },
+    {
+      "level": 42,
+      "youtubeId": "ay2_zRTnAak",
+      "seconds": 70,
+      "source": "level-start-windows/levels-041-050/frame-0012-0070.00s.jpg",
+      "output": "competitor-level-042.jpg",
+      "sourceSha256": "c125c5086eb696e0c4d349fa232fd72db60a16248349137204b25a1c6467fbb9",
+      "review": "approved"
+    },
+    {
+      "level": 43,
+      "youtubeId": "ay2_zRTnAak",
+      "seconds": 140,
+      "source": "level-start-windows/levels-041-050/frame-0019-0140.00s.jpg",
+      "output": "competitor-level-043.jpg",
+      "sourceSha256": "b81c8b3653a3aea94ae4f4f1575d078aaab3fea8e519d6bb1d00f4baa9ae5d8a",
+      "review": "approved"
+    },
+    {
+      "level": 44,
+      "youtubeId": "ay2_zRTnAak",
+      "seconds": 182,
+      "source": "level-start-windows/levels-041-050/frame-0023-0182.00s.jpg",
+      "output": "competitor-level-044.jpg",
+      "sourceSha256": "37088ac90acc222d531281e3d9428273ef29aac41ae5ba074b48609a61fc7d77",
+      "review": "approved"
+    },
+    {
+      "level": 45,
+      "youtubeId": "ay2_zRTnAak",
+      "seconds": 253,
+      "source": "level-start-windows/levels-041-050/frame-0031-0253.00s.jpg",
+      "output": "competitor-level-045.jpg",
+      "sourceSha256": "94a57b626bb6ee8812347d1550a5a4ee5a54b9314c6be4209ed6859152f7a6e9",
+      "review": "approved"
+    },
+    {
+      "level": 46,
+      "youtubeId": "ay2_zRTnAak",
+      "seconds": 302,
+      "source": "level-start-windows/levels-041-050/frame-0037-0302.00s.jpg",
+      "output": "competitor-level-046.jpg",
+      "sourceSha256": "9d2939adcccbd587667698a22391bd8f2605bbebb58ba9e473bf91772d3ba10c",
+      "review": "approved"
+    },
+    {
+      "level": 47,
+      "youtubeId": "ay2_zRTnAak",
+      "seconds": 359,
+      "source": "level-start-windows/levels-041-050/frame-0046-0359.00s.jpg",
+      "output": "competitor-level-047.jpg",
+      "sourceSha256": "de6219b3147331d833b8239d3db3525ba1cb4d2193c11367e04fa1f4e38bcd8c",
+      "review": "approved"
+    },
+    {
+      "level": 48,
+      "youtubeId": "ay2_zRTnAak",
+      "seconds": 440,
+      "source": "level-start-windows/levels-041-050/frame-0054-0440.00s.jpg",
+      "output": "competitor-level-048.jpg",
+      "sourceSha256": "b6faf970d3aa8f0f42e62113c71128a93528b9419496d1336bbee978bf4bf0b2",
+      "review": "approved"
+    },
+    {
+      "level": 49,
+      "youtubeId": "ay2_zRTnAak",
+      "seconds": 505,
+      "source": "level-start-windows/levels-041-050/frame-0061-0505.00s.jpg",
+      "output": "competitor-level-049.jpg",
+      "sourceSha256": "a7d2098c3fcae292c561e725b6d0229bddb8da1e54d48a193f8fa5578ce65dd5",
+      "review": "approved"
+    },
+    {
+      "level": 50,
+      "youtubeId": "ay2_zRTnAak",
+      "seconds": 601,
+      "source": "level-start-windows/levels-041-050/frame-0064-0601.00s.jpg",
+      "output": "competitor-level-050.jpg",
+      "sourceSha256": "da0073cb049e87bf58b511f4d0e6dc4ba488d3074ef9a72a3ded7fd447458f75",
+      "review": "approved"
+    },
+    {
+      "level": 51,
+      "youtubeId": "cNTbp1ZY_iA",
+      "seconds": 5,
+      "source": "level-start-windows/levels-051-060/frame-0005-0005.00s.jpg",
+      "output": "competitor-level-051.jpg",
+      "sourceSha256": "9d1f12982aec97fc044cd693df5e2e914fe1d33a28330065e91aa4a0e6c61e2f",
+      "review": "approved"
+    },
+    {
+      "level": 52,
+      "youtubeId": "cNTbp1ZY_iA",
+      "seconds": 42,
+      "source": "level-start-windows/levels-051-060/frame-0009-0042.00s.jpg",
+      "output": "competitor-level-052.jpg",
+      "sourceSha256": "64eacb2cb527e0ef98dc5c962d2b6f64e3279d9c93be49272a35d45c4cdf20dc",
+      "review": "approved"
+    },
+    {
+      "level": 53,
+      "youtubeId": "cNTbp1ZY_iA",
+      "seconds": 88,
+      "source": "level-start-windows/levels-051-060/frame-0017-0088.00s.jpg",
+      "output": "competitor-level-053.jpg",
+      "sourceSha256": "396ab7f9eca2ac6e10e36206b695cfee4ab7f44f8363c93a32cd8348aed3c3b8",
+      "review": "approved"
+    },
+    {
+      "level": 54,
+      "youtubeId": "cNTbp1ZY_iA",
+      "seconds": 143,
+      "source": "level-start-windows/levels-051-060/frame-0024-0143.00s.jpg",
+      "output": "competitor-level-054.jpg",
+      "sourceSha256": "3ee8945a30ca6f71aa1abd1090fd41a91d75307bd4ab91dc315a5e385db2dba4",
+      "review": "approved"
+    },
+    {
+      "level": 55,
+      "youtubeId": "cNTbp1ZY_iA",
+      "seconds": 264,
+      "source": "level-start-windows/levels-051-060/frame-0032-0264.00s.jpg",
+      "output": "competitor-level-055.jpg",
+      "sourceSha256": "d363beae19c059f8295636234e58f9ff3bfa683836735ba92bfe817203fd1ba0",
+      "review": "approved"
+    },
+    {
+      "level": 56,
+      "youtubeId": "cNTbp1ZY_iA",
+      "seconds": 327,
+      "source": "repairs/levels-056-060/frame-0001-0327.00s.jpg",
+      "output": "competitor-level-056.jpg",
+      "sourceSha256": "b910694251c39d8fb36554e123f3b5eab1425eef6ec6d6a7b9c6f18989728d46",
+      "review": "approved"
+    },
+    {
+      "level": 57,
+      "youtubeId": "cNTbp1ZY_iA",
+      "seconds": 379,
+      "source": "repairs/levels-056-060/frame-0010-0379.00s.jpg",
+      "output": "competitor-level-057.jpg",
+      "sourceSha256": "4e40e91de06d0bef9bbad63b6db397bf02b5619bbbe20de7d0987044137b6b94",
+      "review": "approved"
+    },
+    {
+      "level": 58,
+      "youtubeId": "cNTbp1ZY_iA",
+      "seconds": 445,
+      "source": "repairs/levels-056-060/frame-0018-0445.00s.jpg",
+      "output": "competitor-level-058.jpg",
+      "sourceSha256": "3bed02834511f95a1e5d945334bd8e911843dafcfcd9efae21046fdd09885324",
+      "review": "approved"
+    },
+    {
+      "level": 59,
+      "youtubeId": "cNTbp1ZY_iA",
+      "seconds": 520,
+      "source": "repairs/levels-056-060/frame-0025-0520.00s.jpg",
+      "output": "competitor-level-059.jpg",
+      "sourceSha256": "eefb0c1d390b2631db398e8c2917f34565ce407510528b64816408590deb2369",
+      "review": "approved"
+    },
+    {
+      "level": 60,
+      "youtubeId": "cNTbp1ZY_iA",
+      "seconds": 626,
+      "source": "repairs/levels-056-060/frame-0028-0626.00s.jpg",
+      "output": "competitor-level-060.jpg",
+      "sourceSha256": "d46cb5329e3cb20e2ccda2f10106bea7916c43514ff8cda9a7eb2d93cec6db23",
+      "review": "approved"
+    },
+    {
+      "level": 61,
+      "youtubeId": "KDHW-MJHbVI",
+      "seconds": 5,
+      "source": "level-start-windows/levels-061-070/frame-0005-0005.00s.jpg",
+      "output": "competitor-level-061.jpg",
+      "sourceSha256": "26c9231f61b1514efcd43ddb6ea1636b3050f934fb09bdad23caa2daaab1703c",
+      "review": "approved"
+    },
+    {
+      "level": 62,
+      "youtubeId": "KDHW-MJHbVI",
+      "seconds": 82,
+      "source": "level-start-windows/levels-061-070/frame-0009-0082.00s.jpg",
+      "output": "competitor-level-062.jpg",
+      "sourceSha256": "060c62670ab44292df648db4dbface8b0ad1db787d17a919ef67badf7eac191b",
+      "review": "approved"
+    },
+    {
+      "level": 63,
+      "youtubeId": "KDHW-MJHbVI",
+      "seconds": 185,
+      "source": "level-start-windows/levels-061-070/frame-0019-0185.00s.jpg",
+      "output": "competitor-level-063.jpg",
+      "sourceSha256": "7a63723fa27528494f8a5c8828953ef7befc6285e916c323fac0b87e73516813",
+      "review": "approved"
+    },
+    {
+      "level": 64,
+      "youtubeId": "KDHW-MJHbVI",
+      "seconds": 273,
+      "source": "level-start-windows/levels-061-070/frame-0024-0273.00s.jpg",
+      "output": "competitor-level-064.jpg",
+      "sourceSha256": "682101f1d44c821bf8e370b4fd4bfb2a65705789c2898a3aedb946c80cfb786c",
+      "review": "approved"
+    },
+    {
+      "level": 65,
+      "youtubeId": "KDHW-MJHbVI",
+      "seconds": 405,
+      "source": "level-start-windows/levels-061-070/frame-0033-0405.00s.jpg",
+      "output": "competitor-level-065.jpg",
+      "sourceSha256": "1d98aa7ab621f5c3161c209890cf43b493eed6f34a07e643ed5b7d0b5551f0da",
+      "review": "approved"
+    },
+    {
+      "level": 66,
+      "youtubeId": "KDHW-MJHbVI",
+      "seconds": 465,
+      "source": "level-start-windows/levels-061-070/frame-0040-0465.00s.jpg",
+      "output": "competitor-level-066.jpg",
+      "sourceSha256": "2ced5533550ac14461db26d98cbf0fd0da9ad9bfa7140b5026c252d0cc528b94",
+      "review": "approved"
+    },
+    {
+      "level": 67,
+      "youtubeId": "KDHW-MJHbVI",
+      "seconds": 533,
+      "source": "level-start-windows/levels-061-070/frame-0045-0533.00s.jpg",
+      "output": "competitor-level-067.jpg",
+      "sourceSha256": "7c9d3c8fb4ad0c1d10cb5a7855fd6948ee2b3e14aeaf4abba1b5f536b71c5313",
+      "review": "approved"
+    },
+    {
+      "level": 68,
+      "youtubeId": "KDHW-MJHbVI",
+      "seconds": 604,
+      "source": "level-start-windows/levels-061-070/frame-0053-0604.00s.jpg",
+      "output": "competitor-level-068.jpg",
+      "sourceSha256": "2bdcf2ed53284434454a291372c27de1b8cdba43e4eda436dadbf5dc25e3432a",
+      "review": "approved"
+    },
+    {
+      "level": 69,
+      "youtubeId": "KDHW-MJHbVI",
+      "seconds": 683,
+      "source": "repairs/level-069/frame-0002-0683.00s.jpg",
+      "output": "competitor-level-069.jpg",
+      "sourceSha256": "93359062a4f1ff07aaf6a6b31478cbfffa7cd5047139e63e6f4220f9a868b1e8",
+      "review": "approved"
+    },
+    {
+      "level": 70,
+      "youtubeId": "KDHW-MJHbVI",
+      "seconds": 847,
+      "source": "level-start-windows/levels-061-070/frame-0065-0847.00s.jpg",
+      "output": "competitor-level-070.jpg",
+      "sourceSha256": "5657a3ca01114f4f6f7450d6522ca8f1f1602c74dc8ed5f4be5a6dd4ec1f9b59",
+      "review": "approved"
+    },
+    {
+      "level": 71,
+      "youtubeId": "E0PQvJBPLHA",
+      "seconds": 5,
+      "source": "level-start-windows/levels-071-080/frame-0005-0005.00s.jpg",
+      "output": "competitor-level-071.jpg",
+      "sourceSha256": "be4a13f4538554e0d0670dfd89c36f262cf257713114c9e2b4995d251cbb2634",
+      "review": "approved"
+    },
+    {
+      "level": 72,
+      "youtubeId": "E0PQvJBPLHA",
+      "seconds": 89,
+      "source": "level-start-windows/levels-071-080/frame-0011-0089.00s.jpg",
+      "output": "competitor-level-072.jpg",
+      "sourceSha256": "d0b45ef1fadabd58e652df13f1fb5ad5b2fdf22fb68618e4a17ab55e2a26af7c",
+      "review": "approved"
+    },
+    {
+      "level": 73,
+      "youtubeId": "E0PQvJBPLHA",
+      "seconds": 189,
+      "source": "level-start-windows/levels-071-080/frame-0018-0189.00s.jpg",
+      "output": "competitor-level-073.jpg",
+      "sourceSha256": "4e8d7e1a5b399ca3846d4192151ad7e53a5ec54044d12c68c3f27f7a9edf6f6d",
+      "review": "approved"
+    },
+    {
+      "level": 74,
+      "youtubeId": "E0PQvJBPLHA",
+      "seconds": 265,
+      "source": "level-start-windows/levels-071-080/frame-0026-0265.00s.jpg",
+      "output": "competitor-level-074.jpg",
+      "sourceSha256": "7bda657bf02eb5c7495418f14c64e810a8d8d9e8dfc45551b1f9eb7396ce1167",
+      "review": "approved"
+    },
+    {
+      "level": 75,
+      "youtubeId": "E0PQvJBPLHA",
+      "seconds": 408,
+      "source": "level-start-windows/levels-071-080/frame-0031-0408.00s.jpg",
+      "output": "competitor-level-075.jpg",
+      "sourceSha256": "d88762814a29fbbbadeb800933b0a95eb0198d3942e844f88367d2c1cc6f93a7",
+      "review": "approved"
+    },
+    {
+      "level": 76,
+      "youtubeId": "E0PQvJBPLHA",
+      "seconds": 478,
+      "source": "level-start-windows/levels-071-080/frame-0038-0478.00s.jpg",
+      "output": "competitor-level-076.jpg",
+      "sourceSha256": "4ea2bfe6cad8e2ff106603d77107ade4f8cda294abeb2461806a42d6b4fb3dba",
+      "review": "approved"
+    },
+    {
+      "level": 77,
+      "youtubeId": "E0PQvJBPLHA",
+      "seconds": 545,
+      "source": "level-start-windows/levels-071-080/frame-0047-0545.00s.jpg",
+      "output": "competitor-level-077.jpg",
+      "sourceSha256": "4a9644b7d4f16a3f2757b4d3b2b55af7168f7a71d6c827cfcac6396bdf4e191c",
+      "review": "approved"
+    },
+    {
+      "level": 78,
+      "youtubeId": "E0PQvJBPLHA",
+      "seconds": 622,
+      "source": "level-start-windows/levels-071-080/frame-0051-0622.00s.jpg",
+      "output": "competitor-level-078.jpg",
+      "sourceSha256": "7b4f3c0297c35e2f394a2ea8ca3ecc37147c9dbb005f376d9b4321f4a9004a72",
+      "review": "approved"
+    },
+    {
+      "level": 79,
+      "youtubeId": "E0PQvJBPLHA",
+      "seconds": 704,
+      "source": "level-start-windows/levels-071-080/frame-0060-0704.00s.jpg",
+      "output": "competitor-level-079.jpg",
+      "sourceSha256": "3ffafaef40d8d80d1018dc4b49bc65df92c15fe1cd789bea17e1f8986153f2e1",
+      "review": "approved"
+    },
+    {
+      "level": 80,
+      "youtubeId": "E0PQvJBPLHA",
+      "seconds": 799,
+      "source": "level-start-windows/levels-071-080/frame-0067-0799.00s.jpg",
+      "output": "competitor-level-080.jpg",
+      "sourceSha256": "4322a0a8bffe55464ffadc820e8083b288e5a8e900f78df13a160eedeccb0812",
+      "review": "approved"
+    },
+    {
+      "level": 81,
+      "youtubeId": "z84HxyHQX-4",
+      "seconds": 5,
+      "source": "level-start-windows/levels-081-090/frame-0005-0005.00s.jpg",
+      "output": "competitor-level-081.jpg",
+      "sourceSha256": "e8240d0f162235d3e589cf616009dc856dff2ac501c9cfd60713185828dd6d7b",
+      "review": "approved"
+    },
+    {
+      "level": 82,
+      "youtubeId": "z84HxyHQX-4",
+      "seconds": 65,
+      "source": "level-start-windows/levels-081-090/frame-0012-0065.00s.jpg",
+      "output": "competitor-level-082.jpg",
+      "sourceSha256": "3ff81283c69aebf171601370412af58efdb18ada6b9f3b51c5b675f2b4043992",
+      "review": "approved"
+    },
+    {
+      "level": 83,
+      "youtubeId": "z84HxyHQX-4",
+      "seconds": 142,
+      "source": "level-start-windows/levels-081-090/frame-0016-0142.00s.jpg",
+      "output": "competitor-level-083.jpg",
+      "sourceSha256": "e9562e1f8d85c61e4cbadeff088b5113a636cd4de5b33d1cc4fc72282d485e18",
+      "review": "approved"
+    },
+    {
+      "level": 84,
+      "youtubeId": "z84HxyHQX-4",
+      "seconds": 228,
+      "source": "level-start-windows/levels-081-090/frame-0024-0228.00s.jpg",
+      "output": "competitor-level-084.jpg",
+      "sourceSha256": "c27f8afaec9e75d8b573c7ee2e7009ea7853ae00d4edfcfdc8ca287674ce946b",
+      "review": "approved"
+    },
+    {
+      "level": 85,
+      "youtubeId": "z84HxyHQX-4",
+      "seconds": 365,
+      "source": "level-start-windows/levels-081-090/frame-0033-0365.00s.jpg",
+      "output": "competitor-level-085.jpg",
+      "sourceSha256": "658ad954fd8f336054929ce6bdf8c654b76cbdc21e478339fbcd3b97eae812c1",
+      "review": "approved"
+    },
+    {
+      "level": 86,
+      "youtubeId": "z84HxyHQX-4",
+      "seconds": 440,
+      "source": "level-start-windows/levels-081-090/frame-0040-0440.00s.jpg",
+      "output": "competitor-level-086.jpg",
+      "sourceSha256": "83712b93d505cbbb42c90c70efc6d2eca1a2b52de0802a975da64b2c367cca0b",
+      "review": "approved"
+    },
+    {
+      "level": 87,
+      "youtubeId": "z84HxyHQX-4",
+      "seconds": 498,
+      "source": "level-start-windows/levels-081-090/frame-0045-0498.00s.jpg",
+      "output": "competitor-level-087.jpg",
+      "sourceSha256": "033516949fb0d029bc74b1eafdb244fb5599bca2d3e189e202f9416e6e2ddd31",
+      "review": "approved"
+    },
+    {
+      "level": 88,
+      "youtubeId": "z84HxyHQX-4",
+      "seconds": 591,
+      "source": "level-start-windows/levels-081-090/frame-0050-0591.00s.jpg",
+      "output": "competitor-level-088.jpg",
+      "sourceSha256": "d79cc41eefc5b8a21646761b450728ce7767e7fc99b73ec74436cc8001459ae5",
+      "review": "approved"
+    },
+    {
+      "level": 89,
+      "youtubeId": "z84HxyHQX-4",
+      "seconds": 726,
+      "source": "level-start-windows/levels-081-090/frame-0057-0726.00s.jpg",
+      "output": "competitor-level-089.jpg",
+      "sourceSha256": "94bcd987c727fb436f5ff9253b81d1921b9f727ddbadd26f5fdbe8ff132aa6e9",
+      "review": "approved"
+    },
+    {
+      "level": 90,
+      "youtubeId": "z84HxyHQX-4",
+      "seconds": 820,
+      "source": "level-start-windows/levels-081-090/frame-0068-0820.00s.jpg",
+      "output": "competitor-level-090.jpg",
+      "sourceSha256": "0835cf0c90b928e105eb6ec46b6991952082fd46c598014d7fa210ac7fd471db",
+      "review": "approved"
+    },
+    {
+      "level": 91,
+      "youtubeId": "rGzYQi1ljnM",
+      "seconds": 6,
+      "source": "level-start-windows/levels-091-100/frame-0001-0006.00s.jpg",
+      "output": "competitor-level-091.jpg",
+      "sourceSha256": "8a51c621bc11c25f28d19d8f780fbc915aa1c4988cea2bec44e765b3061bbef3",
+      "review": "approved"
+    },
+    {
+      "level": 92,
+      "youtubeId": "rGzYQi1ljnM",
+      "seconds": 102,
+      "source": "level-start-windows/levels-091-100/frame-0009-0102.00s.jpg",
+      "output": "competitor-level-092.jpg",
+      "sourceSha256": "48fd5ce98f80578005310da660a8679f98b8d93c40c77ca59d87b1d16e898e40",
+      "review": "approved"
+    },
+    {
+      "level": 93,
+      "youtubeId": "rGzYQi1ljnM",
+      "seconds": 208,
+      "source": "level-start-windows/levels-091-100/frame-0017-0208.00s.jpg",
+      "output": "competitor-level-093.jpg",
+      "sourceSha256": "3d1b0a7ad8ba6bc21b8e546d3e26aac8b560507edbcf359127012845d1e966a5",
+      "review": "approved"
+    },
+    {
+      "level": 94,
+      "youtubeId": "rGzYQi1ljnM",
+      "seconds": 273,
+      "source": "level-start-windows/levels-091-100/frame-0024-0273.00s.jpg",
+      "output": "competitor-level-094.jpg",
+      "sourceSha256": "107a98619b25a1e7c671b857b974c08845e9bf506aba4ec158b65692ac690bcc",
+      "review": "approved"
+    },
+    {
+      "level": 95,
+      "youtubeId": "rGzYQi1ljnM",
+      "seconds": 386,
+      "source": "level-start-windows/levels-091-100/frame-0029-0386.00s.jpg",
+      "output": "competitor-level-095.jpg",
+      "sourceSha256": "59286edd422bdaff69fdda0ec5831c0780529e9ef402c7e92078052f83840591",
+      "review": "approved"
+    },
+    {
+      "level": 96,
+      "youtubeId": "rGzYQi1ljnM",
+      "seconds": 452,
+      "source": "level-start-windows/levels-091-100/frame-0037-0452.00s.jpg",
+      "output": "competitor-level-096.jpg",
+      "sourceSha256": "5effc97f601906eb20da20eacb5be3c075d59e28fdf706aaf24a0c9b18e94d15",
+      "review": "approved"
+    },
+    {
+      "level": 97,
+      "youtubeId": "rGzYQi1ljnM",
+      "seconds": 601,
+      "source": "level-start-windows/levels-091-100/frame-0048-0601.00s.jpg",
+      "output": "competitor-level-097.jpg",
+      "sourceSha256": "ecd06658c2658ea99c422cfb3953f3f3b1aa396d9bdef35d8b4dbfc6788a65b1",
+      "review": "approved"
+    },
+    {
+      "level": 98,
+      "youtubeId": "rGzYQi1ljnM",
+      "seconds": 695,
+      "source": "level-start-windows/levels-091-100/frame-0054-0695.00s.jpg",
+      "output": "competitor-level-098.jpg",
+      "sourceSha256": "f2f3e9d0eb37da774c709bb2ad4446824c9eb3b0626a1452efec57f951df9e7b",
+      "review": "approved"
+    },
+    {
+      "level": 99,
+      "youtubeId": "rGzYQi1ljnM",
+      "seconds": 791,
+      "source": "level-start-windows/levels-091-100/frame-0057-0791.00s.jpg",
+      "output": "competitor-level-099.jpg",
+      "sourceSha256": "92e47747681da98cecb9c73fe097bc6b71476a6d8746a71edba652a966c89ea6",
+      "review": "approved"
+    },
+    {
+      "level": 100,
+      "youtubeId": "rGzYQi1ljnM",
+      "seconds": 924,
+      "source": "level-start-windows/levels-091-100/frame-0067-0924.00s.jpg",
+      "output": "competitor-level-100.jpg",
+      "sourceSha256": "dee7268abf3969a216bcc9408b4f22225ddb6d9bc46172da1403368745369d14",
+      "review": "approved"
+    }
+  ]
+}

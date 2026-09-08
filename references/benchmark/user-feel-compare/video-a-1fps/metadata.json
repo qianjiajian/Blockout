@@ -1,0 +1,65 @@
+{
+  "source": "F:\\ruanjian\\xwechat_files\\wxid_70xc4dsnvhlm21_58d6\\temp\\RWTemp\\2026-09\\8b70aa19612861d7a60de4d01ae0f0a4\\67b13dfab288fdccfa61d8a1e10a249f.mp4",
+  "frame_count": 314,
+  "fps": 29.62264150943396,
+  "width": 592,
+  "height": 1280,
+  "duration_seconds": 10.6,
+  "frames": [
+    {
+      "index": 0,
+      "seconds": 0.0,
+      "file": "frame-000-0000.00s.jpg"
+    },
+    {
+      "index": 1,
+      "seconds": 1.0,
+      "file": "frame-001-0001.00s.jpg"
+    },
+    {
+      "index": 2,
+      "seconds": 2.0,
+      "file": "frame-002-0002.00s.jpg"
+    },
+    {
+      "index": 3,
+      "seconds": 3.0,
+      "file": "frame-003-0003.00s.jpg"
+    },
+    {
+      "index": 4,
+      "seconds": 4.0,
+      "file": "frame-004-0004.00s.jpg"
+    },
+    {
+      "index": 5,
+      "seconds": 5.0,
+      "file": "frame-005-0005.00s.jpg"
+    },
+    {
+      "index": 6,
+      "seconds": 6.0,
+      "file": "frame-006-0006.00s.jpg"
+    },
+    {
+      "index": 7,
+      "seconds": 7.0,
+      "file": "frame-007-0007.00s.jpg"
+    },
+    {
+      "index": 8,
+      "seconds": 8.0,
+      "file": "frame-008-0008.00s.jpg"
+    },
+    {
+      "index": 9,
+      "seconds": 9.0,
+      "file": "frame-009-0009.00s.jpg"
+    },
+    {
+      "index": 10,
+      "seconds": 10.0,
+      "file": "frame-010-0010.00s.jpg"
+    }
+  ]
+}

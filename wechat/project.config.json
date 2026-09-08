@@ -1,0 +1,37 @@
+{
+  "description": "方块出逃 - 竖屏颜色滑块益智微信小游戏",
+  "compileType": "game",
+  "setting": {
+    "es6": true,
+    "minified": true,
+    "postcss": false,
+    "urlCheck": true,
+    "checkInvalidKey": true,
+    "compileWorklet": false,
+    "uglifyFileName": false,
+    "uploadWithSourceMap": false,
+    "enhance": false,
+    "packNpmManually": false,
+    "packNpmRelationList": [],
+    "minifyWXSS": true,
+    "minifyWXML": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": false,
+    "condition": false,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    }
+  },
+  "appid": "wx51654dfc10c64035",
+  "projectname": "color-escape",
+  "simulatorPluginLibVersion": {},
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "isGameTourist": false,
+  "editorSetting": {}
+}

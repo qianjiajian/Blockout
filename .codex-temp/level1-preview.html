@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>第一关试玩</title>
+    <style>
+      html,
+      body,
+      iframe {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        border: 0;
+        overflow: hidden;
+        background: #060629;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      localStorage.removeItem("color-escape-save-v1");
+      const preview = document.createElement("iframe");
+      preview.title = "第一关试玩";
+      preview.src = "/?level1-preview=1";
+      document.body.appendChild(preview);
+
+      preview.addEventListener("load", () => {
+        const openLevelOne = () => {
+          const game = preview.contentWindow?.__COLOR_ESCAPE__;
+          if (!game) {
+            window.setTimeout(openLevelOne, 50);
+            return;
+          }
+          game.loadLevel(1, true, false);
+        };
+        window.setTimeout(openLevelOne, 250);
+      });
+    </script>
+  </body>
+</html>

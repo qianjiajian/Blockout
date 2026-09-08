@@ -1,0 +1,63 @@
+{
+  "sourceUrl": "https://www.youtube.com/watch?v=KDHW-MJHbVI",
+  "title": "Block Out! Levels 61-62-63-64-65-66-67-68-69-70 - YouTube",
+  "durationSeconds": 903.321,
+  "sourceWidth": 640,
+  "sourceHeight": 360,
+  "startSeconds": 0,
+  "endSeconds": 903.321,
+  "intervalSeconds": 1,
+  "requestedTimestamps": [
+    681,
+    682,
+    683,
+    684,
+    685,
+    686,
+    687,
+    688
+  ],
+  "frameCount": 8,
+  "frames": [
+    {
+      "index": 0,
+      "seconds": 681,
+      "file": "frame-0000-0681.00s.jpg"
+    },
+    {
+      "index": 1,
+      "seconds": 682,
+      "file": "frame-0001-0682.00s.jpg"
+    },
+    {
+      "index": 2,
+      "seconds": 683,
+      "file": "frame-0002-0683.00s.jpg"
+    },
+    {
+      "index": 3,
+      "seconds": 684,
+      "file": "frame-0003-0684.00s.jpg"
+    },
+    {
+      "index": 4,
+      "seconds": 685,
+      "file": "frame-0004-0685.00s.jpg"
+    },
+    {
+      "index": 5,
+      "seconds": 686,
+      "file": "frame-0005-0686.00s.jpg"
+    },
+    {
+      "index": 6,
+      "seconds": 687,
+      "file": "frame-0006-0687.00s.jpg"
+    },
+    {
+      "index": 7,
+      "seconds": 688,
+      "file": "frame-0007-0688.00s.jpg"
+    }
+  ]
+}

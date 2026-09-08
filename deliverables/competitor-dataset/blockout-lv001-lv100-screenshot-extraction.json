@@ -1,0 +1,1902 @@
+[
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 1",
+    "board": {
+      "rows": 5,
+      "cols": 5
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 3,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 2",
+    "board": {
+      "rows": 6,
+      "cols": 5
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 3",
+    "board": {
+      "rows": 6,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 4",
+    "board": {
+      "rows": 6,
+      "cols": 5
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 8,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 5",
+    "board": {
+      "rows": 6,
+      "cols": 4
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 3,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 6",
+    "board": {
+      "rows": 5,
+      "cols": 5
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 4,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 7",
+    "board": {
+      "rows": 8,
+      "cols": 5
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 3,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 8",
+    "board": {
+      "rows": 8,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 4,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 9",
+    "board": {
+      "rows": 8,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 10",
+    "board": {
+      "rows": 9,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 4,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 11",
+    "board": {
+      "rows": 7,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 12",
+    "board": {
+      "rows": 9,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 4,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 13",
+    "board": {
+      "rows": 9,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 6,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 14",
+    "board": {
+      "rows": 7,
+      "cols": 5
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 4,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 15",
+    "board": {
+      "rows": 8,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 16",
+    "board": {
+      "rows": 7,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 17",
+    "board": {
+      "rows": 8,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 6,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 18",
+    "board": {
+      "rows": 7,
+      "cols": 5
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 19",
+    "board": {
+      "rows": 9,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 7,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 20",
+    "board": {
+      "rows": 8,
+      "cols": 5
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 21",
+    "board": {
+      "rows": 9,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 22",
+    "board": {
+      "rows": 10,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 3,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 23",
+    "board": {
+      "rows": 8,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 24",
+    "board": {
+      "rows": 10,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 3,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 25",
+    "board": {
+      "rows": 9,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 7,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 26",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 27",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 2,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 28",
+    "board": {
+      "rows": 10,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 29",
+    "board": {
+      "rows": 10,
+      "cols": 7
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 3,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 30",
+    "board": {
+      "rows": 9,
+      "cols": 8
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 3,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 31",
+    "board": {
+      "rows": 8,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 32",
+    "board": {
+      "rows": 9,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 4,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 33",
+    "board": {
+      "rows": 10,
+      "cols": 8
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 6,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 34",
+    "board": {
+      "rows": 10,
+      "cols": 7
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 3,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 35",
+    "board": {
+      "rows": 8,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 1,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 36",
+    "board": {
+      "rows": 9,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 4,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 37",
+    "board": {
+      "rows": 10,
+      "cols": 8
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 6,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 38",
+    "board": {
+      "rows": 9,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 4,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 39",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 40",
+    "board": {
+      "rows": 7,
+      "cols": 7
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 41",
+    "board": {
+      "rows": 10,
+      "cols": 7
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 2,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 42",
+    "board": {
+      "rows": 9,
+      "cols": 5
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 4,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 43",
+    "board": {
+      "rows": 10,
+      "cols": 7
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 4,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 44",
+    "board": {
+      "rows": 11,
+      "cols": 7
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 4,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 45",
+    "board": {
+      "rows": 9,
+      "cols": 5
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 6,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 46",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 6,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 47",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 6,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 48",
+    "board": {
+      "rows": 10,
+      "cols": 7
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 4,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 49",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 4,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 50",
+    "board": {
+      "rows": 9,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 51",
+    "board": {
+      "rows": 7,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 6,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 52",
+    "board": {
+      "rows": 7,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 6,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 53",
+    "board": {
+      "rows": 7,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 7,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 54",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 6,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 55",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 6,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 56",
+    "board": {
+      "rows": 10,
+      "cols": 8
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 7,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 57",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 4,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 58",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 7,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 59",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 7,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 60",
+    "board": {
+      "rows": 7,
+      "cols": 5
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 4,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 61",
+    "board": {
+      "rows": 11,
+      "cols": 7
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 6,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 62",
+    "board": {
+      "rows": 10,
+      "cols": 7
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 7,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 63",
+    "board": {
+      "rows": 8,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 8,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 64",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 65",
+    "board": {
+      "rows": 8,
+      "cols": 8
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 7,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 66",
+    "board": {
+      "rows": 10,
+      "cols": 8
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 6,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 67",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 6,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 68",
+    "board": {
+      "rows": 9,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 69",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 70",
+    "board": {
+      "rows": 6,
+      "cols": 5
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 1,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 71",
+    "board": {
+      "rows": 9,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 72",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 8,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 73",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 6,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 74",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 6,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 75",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 6,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 76",
+    "board": {
+      "rows": 8,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 4,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 77",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 6,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 78",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 7,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 79",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 6,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 80",
+    "board": {
+      "rows": 7,
+      "cols": 5
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 4,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 81",
+    "board": {
+      "rows": 9,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 4,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 82",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 8,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 83",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 84",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 85",
+    "board": {
+      "rows": 9,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 6,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 86",
+    "board": {
+      "rows": 9,
+      "cols": 5
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 6,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 87",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 6,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 88",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 6,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 89",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 7,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 90",
+    "board": {
+      "rows": 11,
+      "cols": 7
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 2,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 91",
+    "board": {
+      "rows": 10,
+      "cols": 7
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 92",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 93",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 3,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 94",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 95",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 96",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 8,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 97",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 5,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 98",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 7,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 99",
+    "board": {
+      "rows": "unclear",
+      "cols": "unclear"
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 7,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  },
+  {
+    "source": "Block Out! - Color Sort Puzzle",
+    "level_id": "Level 100",
+    "board": {
+      "rows": 8,
+      "cols": 6
+    },
+    "goals": null,
+    "max_moves": null,
+    "obstacles": null,
+    "blockers": null,
+    "specials": null,
+    "color_count": 3,
+    "blocked_cells_ratio": null,
+    "player_stats": {
+      "first_pass_rate": null,
+      "avg_attempts": null
+    }
+  }
+]

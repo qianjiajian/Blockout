@@ -1,0 +1,250 @@
+{
+  "scope": "Block Out original Lv1-Lv10 difficulty uplift pilot",
+  "calibration": "blockout-d1-baseline-2026-09-05 (fixed)",
+  "solver_note": "Drag counts are executable validation-route counts, not optimality proofs.",
+  "summary": {
+    "calibrated_mean": {
+      "before": 44.22,
+      "after": 57.88,
+      "delta": 13.65
+    },
+    "raw_mean": {
+      "before": 37.56,
+      "after": 54.07,
+      "delta": 16.51
+    },
+    "validation_route_drags": {
+      "before": 123,
+      "after": 145,
+      "delta": 22,
+      "delta_percent": 17.89
+    },
+    "reposition_overhead": {
+      "before": 46,
+      "after": 49,
+      "delta": 3
+    }
+  },
+  "per_level": [
+    {
+      "level_id": 1,
+      "name": "新手教程",
+      "before": {
+        "level": 1,
+        "calibrated": 23.63,
+        "raw": 12.66,
+        "drags": 2,
+        "repositions": 0
+      },
+      "after": {
+        "level": 1,
+        "name": "新手教程",
+        "calibrated": 23.63,
+        "raw": 12.66,
+        "drags": 2,
+        "repositions": 0,
+        "blocks": 2
+      },
+      "calibrated_delta": 0,
+      "drag_delta": 0
+    },
+    {
+      "level_id": 2,
+      "name": "转角校准",
+      "before": {
+        "level": 2,
+        "calibrated": 48.22,
+        "raw": 42.4,
+        "drags": 12,
+        "repositions": 6
+      },
+      "after": {
+        "level": 2,
+        "name": "转角校准",
+        "calibrated": 48.22,
+        "raw": 42.4,
+        "drags": 12,
+        "repositions": 6,
+        "blocks": 6
+      },
+      "calibrated_delta": 0,
+      "drag_delta": 0
+    },
+    {
+      "level_id": 3,
+      "name": "四色罗盘",
+      "before": {
+        "level": 3,
+        "calibrated": 46.3,
+        "raw": 40.07,
+        "drags": 13,
+        "repositions": 8
+      },
+      "after": {
+        "level": 3,
+        "name": "四色罗盘",
+        "calibrated": 46.3,
+        "raw": 40.07,
+        "drags": 13,
+        "repositions": 8,
+        "blocks": 5
+      },
+      "calibrated_delta": 0,
+      "drag_delta": 0
+    },
+    {
+      "level_id": 4,
+      "name": "双向分流",
+      "before": {
+        "level": 4,
+        "calibrated": 46.21,
+        "raw": 39.96,
+        "drags": 11,
+        "repositions": 3
+      },
+      "after": {
+        "level": 4,
+        "name": "双向分流",
+        "calibrated": 46.21,
+        "raw": 39.96,
+        "drags": 11,
+        "repositions": 3,
+        "blocks": 8
+      },
+      "calibrated_delta": 0,
+      "drag_delta": 0
+    },
+    {
+      "level_id": 5,
+      "name": "轻装复盘",
+      "before": {
+        "level": 5,
+        "calibrated": 45.35,
+        "raw": 38.92,
+        "drags": 11,
+        "repositions": 1
+      },
+      "after": {
+        "level": 5,
+        "name": "轻装复盘",
+        "calibrated": 45.35,
+        "raw": 38.92,
+        "drags": 11,
+        "repositions": 1,
+        "blocks": 10
+      },
+      "calibrated_delta": 0,
+      "drag_delta": 0
+    },
+    {
+      "level_id": 6,
+      "name": "冰块初试",
+      "before": {
+        "level": 6,
+        "calibrated": 46.38,
+        "raw": 40.17,
+        "drags": 11,
+        "repositions": 3
+      },
+      "after": {
+        "level": 6,
+        "name": "冰块初试",
+        "calibrated": 70.18,
+        "raw": 68.95,
+        "drags": 12,
+        "repositions": 3,
+        "blocks": 8
+      },
+      "calibrated_delta": 23.8,
+      "drag_delta": 1
+    },
+    {
+      "level_id": 7,
+      "name": "冰门换轨",
+      "before": {
+        "level": 7,
+        "calibrated": 47.44,
+        "raw": 41.45,
+        "drags": 12,
+        "repositions": 3
+      },
+      "after": {
+        "level": 7,
+        "name": "冰门换轨",
+        "calibrated": 72.1,
+        "raw": 71.27,
+        "drags": 15,
+        "repositions": 3,
+        "blocks": 9
+      },
+      "calibrated_delta": 24.66,
+      "drag_delta": 3
+    },
+    {
+      "level_id": 8,
+      "name": "外壳侧泊",
+      "before": {
+        "level": 8,
+        "calibrated": 45.77,
+        "raw": 39.43,
+        "drags": 22,
+        "repositions": 11
+      },
+      "after": {
+        "level": 8,
+        "name": "外壳侧泊",
+        "calibrated": 74.18,
+        "raw": 73.79,
+        "drags": 26,
+        "repositions": 10,
+        "blocks": 12
+      },
+      "calibrated_delta": 28.41,
+      "drag_delta": 4
+    },
+    {
+      "level_id": 9,
+      "name": "双线预判",
+      "before": {
+        "level": 9,
+        "calibrated": 47.4,
+        "raw": 41.4,
+        "drags": 15,
+        "repositions": 4
+      },
+      "after": {
+        "level": 9,
+        "name": "双线预判",
+        "calibrated": 75.52,
+        "raw": 75.41,
+        "drags": 24,
+        "repositions": 7,
+        "blocks": 12
+      },
+      "calibrated_delta": 28.12,
+      "drag_delta": 9
+    },
+    {
+      "level_id": 10,
+      "name": "冰块初醒",
+      "before": {
+        "level": 10,
+        "calibrated": 45.55,
+        "raw": 39.17,
+        "drags": 14,
+        "repositions": 7
+      },
+      "after": {
+        "level": 10,
+        "name": "冰块初醒",
+        "calibrated": 77.08,
+        "raw": 77.29,
+        "drags": 19,
+        "repositions": 8,
+        "blocks": 8
+      },
+      "calibrated_delta": 31.53,
+      "drag_delta": 5
+    }
+  ]
+}

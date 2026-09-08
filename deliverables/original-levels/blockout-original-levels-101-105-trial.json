@@ -1,0 +1,213 @@
+[
+  {
+    "level_id": 101,
+    "chapter_position": 1,
+    "board": "AA..B.CC\n.D..B...\n.D.EEE.F\nGG....HF\n..II..H.\nJ...KK..",
+    "board_legend": {
+      ".": "可移动空格",
+      "_": "棋盘轮廓外",
+      "red": ["A", "D", "G"],
+      "blue": ["B", "F", "J"],
+      "yellow": ["C", "E", "I"],
+      "green": ["H", "K"]
+    },
+    "exits": [
+      {"edge": "W", "index": 1, "color": "red"},
+      {"edge": "N", "index": 5, "color": "blue"},
+      {"edge": "E", "index": 3, "color": "yellow"},
+      {"edge": "S", "index": 7, "color": "green"}
+    ],
+    "color_count": 4,
+    "number_elements": [
+      {"type": "数字边栏", "value": 3, "position": "W2"},
+      {"type": "数字边栏", "value": 4, "position": "N4"},
+      {"type": "数字边栏", "value": 5, "position": "E4"},
+      {"type": "数字边栏", "value": 3, "position": "S2"},
+      {"type": "数字边栏", "value": 6, "position": "S6"}
+    ],
+    "mechanism": ["方向出口", "中部通道", "数字边栏"],
+    "mechanism_config": {
+      "中部通道": ["r3c4", "r4c4"]
+    },
+    "target_coins": 1200,
+    "time_limit_sec": 150,
+    "expected_clear_time_s": 50,
+    "D_v2_target": 32,
+    "D_v2_calculated": 31.39,
+    "D_v2_components": {"E": 77.00, "G": 3.07, "P": 33.33, "C": 42.86, "N2": 7.57, "M": 33.33},
+    "design_note": "用宽中央缓冲区教授先腾挪长条、再处理竖向堵点的基础顺序。",
+    "layout_difference": "采用左上双格、中央三连条与右侧双竖块的非对称错位关系，出口组合和占位签名均不同于竞品100关截图。"
+  },
+  {
+    "level_id": 102,
+    "chapter_position": 2,
+    "board": "__AABB__\n_CC.DD._\nEE.F.GGH\nI..F.JJH\n_KK.LL._\n__M..N__",
+    "board_legend": {
+      ".": "可移动空格",
+      "_": "棋盘轮廓外",
+      "red": ["A", "F", "J", "M"],
+      "blue": ["B", "E", "H"],
+      "yellow": ["C", "G", "K"],
+      "green": ["D", "I", "L", "N"]
+    },
+    "exits": [
+      {"edge": "N", "index": 3, "color": "red"},
+      {"edge": "N", "index": 5, "color": "blue"},
+      {"edge": "W", "index": 3, "color": "yellow"},
+      {"edge": "E", "index": 4, "color": "green"}
+    ],
+    "color_count": 4,
+    "number_elements": [
+      {"type": "数字边栏", "value": 4, "position": "N4"},
+      {"type": "数字边栏", "value": 5, "position": "W3"},
+      {"type": "数字边栏", "value": 3, "position": "E3"},
+      {"type": "数字边栏", "value": 6, "position": "E5"},
+      {"type": "数字边栏", "value": 4, "position": "S3"},
+      {"type": "数字边栏", "value": 7, "position": "S6"}
+    ],
+    "mechanism": ["方向出口", "阶梯形通道", "数字边栏"],
+    "mechanism_config": {
+      "阶梯形通道": "上下各收窄两级，内部无封死格"
+    },
+    "target_coins": 1350,
+    "time_limit_sec": 145,
+    "expected_clear_time_s": 55,
+    "D_v2_target": 38,
+    "D_v2_calculated": 37.91,
+    "D_v2_components": {"E": 78.84, "G": 5.37, "P": 37.93, "C": 42.86, "N2": 22.26, "M": 38.33},
+    "design_note": "利用逐级收窄的外轮廓，让玩家提前规划长块通过中央宽位的次序。",
+    "layout_difference": "原创棋盘采用上下双向收阶、中央双竖轴结构，不复用竞品任一关的矩形、单侧阶梯或分面板轮廓。"
+  },
+  {
+    "level_id": 103,
+    "chapter_position": 3,
+    "board": "AA.BB___\nC..BB.D_\nCC.EE.DD\n.F.GG.HH\n_F.IIJ._\n__KK.J__",
+    "board_legend": {
+      ".": "可移动空格",
+      "_": "棋盘轮廓外",
+      "red": ["A", "F", "K"],
+      "blue": ["B", "G"],
+      "yellow": ["C", "H"],
+      "green": ["D", "I"],
+      "purple": ["E", "J"]
+    },
+    "exits": [
+      {"edge": "W", "index": 3, "color": "red"},
+      {"edge": "N", "index": 4, "color": "blue"},
+      {"edge": "E", "index": 4, "color": "yellow"},
+      {"edge": "S", "index": 4, "color": "green"},
+      {"edge": "E", "index": 3, "color": "purple"}
+    ],
+    "color_count": 5,
+    "number_elements": [
+      {"type": "数字边栏", "value": 4, "position": "W2"},
+      {"type": "数字边栏", "value": 6, "position": "N3"},
+      {"type": "数字边栏", "value": 5, "position": "N6"},
+      {"type": "数字边栏", "value": 3, "position": "E2"},
+      {"type": "数字边栏", "value": 7, "position": "E5"},
+      {"type": "数字边栏", "value": 5, "position": "S5"}
+    ],
+    "mechanism": ["方向出口", "数字边栏", "异形方块", "中部缺口通道"],
+    "mechanism_config": {
+      "异形方块": ["B:2x2", "C:L形", "D:L形"],
+      "中部缺口通道": "左右错位开口，中段保持连通"
+    },
+    "target_coins": 1500,
+    "time_limit_sec": 140,
+    "expected_clear_time_s": 60,
+    "D_v2_target": 43,
+    "D_v2_calculated": 43.13,
+    "D_v2_components": {"E": 80.51, "G": 7.68, "P": 42.86, "C": 57.14, "N2": 22.26, "M": 51.67},
+    "design_note": "第一次把五色与L形块组合，要求玩家把宽块和拐角块分开排队。",
+    "layout_difference": "采用上宽下窄的偏心菱形轮廓，并让两个L形块分居对角，区别于竞品截图中的同侧聚集布局。"
+  },
+  {
+    "level_id": 104,
+    "chapter_position": 4,
+    "board": "AABBCCDD\nEE.F.GGH\n__I.JJ__\n__I.K.__\nLL.MK.NN\nOOPPQQRR",
+    "board_legend": {
+      ".": "可移动空格",
+      "_": "棋盘轮廓外",
+      "red": ["A", "F", "I", "N", "Q"],
+      "blue": ["B", "G", "J", "O"],
+      "yellow": ["C", "H", "K", "P"],
+      "green": ["D", "L", "R"],
+      "purple": ["E", "M"]
+    },
+    "exits": [
+      {"edge": "N", "index": 1, "color": "red"},
+      {"edge": "E", "index": 2, "color": "blue"},
+      {"edge": "W", "index": 5, "color": "yellow"},
+      {"edge": "S", "index": 7, "color": "green"},
+      {"edge": "N", "index": 5, "color": "purple"}
+    ],
+    "color_count": 5,
+    "number_elements": [
+      {"type": "数字方块", "value": 3, "block": "F"},
+      {"type": "数字方块", "value": 2, "block": "H"},
+      {"type": "数字方块", "value": 5, "block": "I"},
+      {"type": "数字方块", "value": 5, "block": "K"},
+      {"type": "数字方块", "value": 4, "block": "M"},
+      {"type": "数字方块", "value": 7, "block": "O"},
+      {"type": "数字方块", "value": 6, "block": "R"}
+    ],
+    "mechanism": ["方向出口", "数字方块", "异形方块", "图案方块", "中部狭窄通道"],
+    "mechanism_config": {
+      "异形方块": ["I:纵向双格", "K:L形"],
+      "图案方块": ["C"],
+      "中部狭窄通道": ["r3c3-r3c6", "r4c3-r4c6"]
+    },
+    "target_coins": 1700,
+    "time_limit_sec": 130,
+    "expected_clear_time_s": 65,
+    "D_v2_target": 57,
+    "D_v2_calculated": 56.56,
+    "D_v2_components": {"E": 82.05, "G": 10.75, "P": 50.00, "C": 57.14, "N2": 49.99, "M": 70.00},
+    "design_note": "Hard节点用上下仓室、双格窄腰、异形块和图案块共同制造通行竞争。",
+    "layout_difference": "原创轮廓为上下满宽仓室夹双层窄腰，并在两侧配置异形块，没有沿用竞品标签关的单层瓶颈。"
+  },
+  {
+    "level_id": 105,
+    "chapter_position": 5,
+    "board": "___AA.BB\n__CC.DDE\n_FF.GG.E\nHH.I.JJK\nL.MM.NNK\nO.PP.QQR",
+    "board_legend": {
+      ".": "可移动空格",
+      "_": "棋盘轮廓外",
+      "red": ["A", "F", "K", "P"],
+      "blue": ["B", "G", "L", "Q"],
+      "yellow": ["C", "H", "M", "R"],
+      "green": ["D", "I", "N"],
+      "purple": ["E", "J", "O"]
+    },
+    "exits": [
+      {"edge": "N", "index": 4, "color": "red"},
+      {"edge": "E", "index": 2, "color": "blue"},
+      {"edge": "W", "index": 4, "color": "yellow"},
+      {"edge": "S", "index": 6, "color": "green"},
+      {"edge": "E", "index": 5, "color": "purple"}
+    ],
+    "color_count": 5,
+    "number_elements": [
+      {"type": "数字方块", "value": 4, "block": "A"},
+      {"type": "数字方块", "value": 3, "block": "C"},
+      {"type": "数字方块", "value": 5, "block": "G"},
+      {"type": "数字方块", "value": 6, "block": "J"},
+      {"type": "数字方块", "value": 7, "block": "N"},
+      {"type": "侧边计数装置", "value": 2, "position": "W3"},
+      {"type": "侧边计数装置", "value": 4, "position": "E5"}
+    ],
+    "mechanism": ["方向出口", "数字方块", "图案方块", "阶梯形通道", "侧边计数装置"],
+    "mechanism_config": {
+      "图案方块": ["I"],
+      "阶梯形通道": "左上三级收阶，向下逐行展开"
+    },
+    "target_coins": 1850,
+    "time_limit_sec": 125,
+    "expected_clear_time_s": 70,
+    "D_v2_target": 60,
+    "D_v2_calculated": 59.43,
+    "D_v2_components": {"E": 83.48, "G": 13.05, "P": 56.00, "C": 57.14, "N2": 49.99, "M": 78.33},
+    "design_note": "Hard后的承接关继续升压，通过单侧阶梯和图案块考察空间预留。",
+    "layout_difference": "棋盘从左上角连续三级扩张，数字块沿斜线分散，区别于竞品常见的水平分层或左右镜像布局。"
+  }
+]

@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "status": "manual-candidate-selection-pending-overview-qa",
+  "purpose": "One earliest unobstructed full-board frame per numbered level from the June 2026 Nova walkthrough set.",
+  "sourceIndex": "https://novaspuzzleden.com/games/Block-Out-Updated0626",
+  "notes": [
+    "The frame is evidence for board geometry, blocks, exits and visible mechanisms; YouTube chrome and black side bars are cropped during export.",
+    "A frame is rejected when it shows a home screen, completion card, feature-introduction modal, loading state, ad overlay, or a board after the first visible move.",
+    "The older VU9mQ_gleN8 level 1-20 set is retained separately because its layouts differ from this updated walkthrough set."
+  ],
+  "segments": [
+    {
+      "levels": "001-010",
+      "youtubeId": "LlOMtgdGOQA",
+      "frameDirectory": "level-start-windows/levels-001-010",
+      "selectedSeconds": [4, 12, 27, 45, 72, 122, 163, 218, 259, 301]
+    },
+    {
+      "levels": "011-020",
+      "youtubeId": "b5mFsyrvCws",
+      "frameDirectory": "level-start-windows/levels-011-020",
+      "selectedSeconds": [4, 49, 96, 143, 183, 229, 274, 351, 379, 463],
+      "directoryOverrides": {
+        "20": "repairs/level-020"
+      }
+    },
+    {
+      "levels": "021-030",
+      "youtubeId": "MOpt7j6VyEI",
+      "frameDirectory": "level-start-windows/levels-021-030",
+      "selectedSeconds": [5, 71, 112, 181, 256, 316, 392, 432, 486, 601]
+    },
+    {
+      "levels": "031-040",
+      "youtubeId": "hthuKdxZ8-4",
+      "frameDirectory": "level-start-windows/levels-031-040",
+      "selectedSeconds": [5, 65, 109, 168, 269, 301, 343, 394, 455, 548]
+    },
+    {
+      "levels": "041-050",
+      "youtubeId": "ay2_zRTnAak",
+      "frameDirectory": "level-start-windows/levels-041-050",
+      "selectedSeconds": [5, 70, 140, 182, 253, 302, 359, 440, 505, 601]
+    },
+    {
+      "levels": "051-060",
+      "youtubeId": "cNTbp1ZY_iA",
+      "frameDirectory": "level-start-windows/levels-051-060",
+      "selectedSeconds": [5, 42, 88, 143, 264, 327, 379, 445, 520, 626],
+      "directoryOverrides": {
+        "56": "repairs/levels-056-060",
+        "57": "repairs/levels-056-060",
+        "58": "repairs/levels-056-060",
+        "59": "repairs/levels-056-060",
+        "60": "repairs/levels-056-060"
+      }
+    },
+    {
+      "levels": "061-070",
+      "youtubeId": "KDHW-MJHbVI",
+      "frameDirectory": "level-start-windows/levels-061-070",
+      "selectedSeconds": [5, 82, 185, 273, 405, 465, 533, 604, 683, 847],
+      "directoryOverrides": {
+        "69": "repairs/level-069"
+      }
+    },
+    {
+      "levels": "071-080",
+      "youtubeId": "E0PQvJBPLHA",
+      "frameDirectory": "level-start-windows/levels-071-080",
+      "selectedSeconds": [5, 89, 189, 265, 408, 478, 545, 622, 704, 799]
+    },
+    {
+      "levels": "081-090",
+      "youtubeId": "z84HxyHQX-4",
+      "frameDirectory": "level-start-windows/levels-081-090",
+      "selectedSeconds": [5, 65, 142, 228, 365, 440, 498, 591, 726, 820]
+    },
+    {
+      "levels": "091-100",
+      "youtubeId": "rGzYQi1ljnM",
+      "frameDirectory": "level-start-windows/levels-091-100",
+      "selectedSeconds": [6, 102, 208, 273, 386, 452, 601, 695, 791, 924]
+    }
+  ]
+}

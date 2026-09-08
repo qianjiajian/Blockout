@@ -1,0 +1,12 @@
+{
+  "levelCount": 100,
+  "uniqueCanonicalLayouts": 100,
+  "duplicateLayoutGroups": [],
+  "duplicateNameGroups": [],
+  "passed": true,
+  "policy": {
+    "canonicalization": "ignores ids, names and colors; compares rotations and reflections",
+    "required": "100 unique layouts and 100 unique names",
+    "competitor_boundary": "competitor screenshots inform curve and mechanic cadence only; no competitor coordinates are imported into LevelSpec"
+  }
+}
