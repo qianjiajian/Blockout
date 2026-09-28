@@ -245,7 +245,12 @@ export class ProceduralSoundscape {
       this.stopMusic();
       return;
     }
-    if (previousTrack && nextTrack && previousTrack !== nextTrack) this.stopMusicSource();
+    if (this.musicPaused) return;
+    if (previousTrack && nextTrack && previousTrack !== nextTrack) {
+      this.stopMusicSource();
+      this.musicPosition = 0;
+      this.musicPositionStartedAt = undefined;
+    }
     if (changed || this.musicTimer === undefined) this.startMusic();
   }
 
@@ -349,7 +354,7 @@ export class ProceduralSoundscape {
 
   private startMusic(): void {
     this.stopMusic();
-    if (!this.enabled || this.scene === "silent" || this.suspended) return;
+    if (!this.enabled || this.scene === "silent" || this.suspended || this.musicPaused) return;
     const track = musicTrackForScene(this.scene, this.selectedMusicTrack);
     if (!track) return;
     this.musicPositionStartedAt = this.context.currentTime;

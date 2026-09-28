@@ -1,6 +1,6 @@
 import { LEVELS, getLevel } from "../core/levels";
 import { MUSIC_CATALOG, isMusicTrack, musicCatalogEntry } from "../audio/musicCatalog";
-import type { MusicTrackId } from "../audio/musicCatalog";
+import type { MusicCatalogEntry, MusicTrackId } from "../audio/musicCatalog";
 import { PuzzleModel } from "../core/PuzzleModel";
 import { drawContinuousGateStrip } from "./continuousGateStrip";
 import { JourneyDeferredArt } from "./JourneyDeferredArt";
@@ -438,20 +438,18 @@ type MusicLibraryArt = {
   [Key in Exclude<keyof MusicLibraryArtUrls, "albums">]: HTMLImageElement;
 } & { albums: readonly HTMLImageElement[] };
 
-// The supplied reference plate is 941×1672. Preserve its aspect ratio when it
-// is placed on the 720×1584 home artboard; stretching it was the source of the
-// previous size and alignment drift.
+// The supplied reference plate is 941×1672. The game home artboard is
+// 720×1584, so use the same explicit x/y mapping as the reference preview
+// rather than letting each control acquire a separate ad-hoc scale.
 const MUSIC_PREVIEW_SIZE = { width: 941, height: 1672 } as const;
-const MUSIC_PREVIEW_SCALE = Math.max(
-  HOME_ARTBOARD.width / MUSIC_PREVIEW_SIZE.width,
-  HOME_ARTBOARD.height / MUSIC_PREVIEW_SIZE.height,
-);
-const MUSIC_PREVIEW_OFFSET_X = (HOME_ARTBOARD.width - MUSIC_PREVIEW_SIZE.width * MUSIC_PREVIEW_SCALE) / 2;
+const MUSIC_PREVIEW_SCALE_X = HOME_ARTBOARD.width / MUSIC_PREVIEW_SIZE.width;
+const MUSIC_PREVIEW_SCALE_Y = HOME_ARTBOARD.height / MUSIC_PREVIEW_SIZE.height;
+const MUSIC_PREVIEW_OFFSET_X = 0;
 const musicPreviewRect = (rect: { x: number; y: number; width: number; height: number }) => ({
-  x: MUSIC_PREVIEW_OFFSET_X + rect.x * MUSIC_PREVIEW_SCALE,
-  y: rect.y * MUSIC_PREVIEW_SCALE,
-  width: rect.width * MUSIC_PREVIEW_SCALE,
-  height: rect.height * MUSIC_PREVIEW_SCALE,
+  x: MUSIC_PREVIEW_OFFSET_X + rect.x * MUSIC_PREVIEW_SCALE_X,
+  y: rect.y * MUSIC_PREVIEW_SCALE_Y,
+  width: rect.width * MUSIC_PREVIEW_SCALE_X,
+  height: rect.height * MUSIC_PREVIEW_SCALE_Y,
 });
 
 interface CompletionMetrics {
@@ -1764,25 +1762,29 @@ export class ColorEscapeGame {
     this.musicLibraryArtLoading = true;
     const token = ++this.musicLibraryArtRequestToken;
     const paths = GAME_ART.ui.musicLibrary;
-    const orderedPaths = [paths.preview, paths.panel, paths.header, paths.close, paths.play, paths.previous, paths.next, paths.volume, paths.entry, ...paths.albums] as const;
-    return this.loadImages(orderedPaths).then((images) => {
+    // The full reference plate already contains the exact panel, controls and
+    // cards. Load that single plate for the first screen; the split PNGs stay
+    // available as replaceable authoring resources without adding a dozen
+    // simultaneous decoded textures to the first library frame.
+    return this.host.createImage(paths.preview).then((preview) => {
       if (token !== this.musicLibraryArtRequestToken) {
-        images.forEach((image) => this.host.releaseImage?.(image));
+        this.host.releaseImage?.(preview);
         return false;
       }
       this.musicLibraryArt = {
-        preview: images[0],
-        panel: images[1],
-        header: images[2],
-        close: images[3],
-        play: images[4],
-        previous: images[5],
-        next: images[6],
-        volume: images[7],
-        entry: this.musicEntryArt ?? images[8],
-        albums: images.slice(9),
+        preview,
+        panel: preview,
+        header: preview,
+        close: preview,
+        play: preview,
+        previous: preview,
+        next: preview,
+        volume: preview,
+        entry: this.musicEntryArt ?? preview,
+        albums: [preview],
       };
       this.musicLibraryArtError = undefined;
+      this.artLoadedImageCount += 1;
       return true;
     }).catch((error: unknown) => {
       this.musicLibraryArtError = error instanceof Error ? error.message : String(error);
@@ -8378,6 +8380,8 @@ export class ColorEscapeGame {
     }
     if (this.screen === "musicLibrary") {
       const playRect = homeArtRect(musicPreviewRect({ x: 548, y: 515, width: 125, height: 125 }));
+      const previousRect = homeArtRect(musicPreviewRect({ x: 420, y: 515, width: 125, height: 125 }));
+      const nextRect = homeArtRect(musicPreviewRect({ x: 690, y: 515, width: 125, height: 125 }));
       const progressRect = homeArtRect(musicPreviewRect({ x: 430, y: 420, width: 450, height: 70 }));
       if (this.interactionHit(point, playRect)) {
         const transport = this.host.musicTransport();
@@ -8385,6 +8389,14 @@ export class ColorEscapeGame {
         this.playSound("button");
         this.dirty = true;
         this.scheduleFrame();
+        return;
+      }
+      if (this.interactionHit(point, previousRect)) {
+        this.stepMusicTrack(-1);
+        return;
+      }
+      if (this.interactionHit(point, nextRect)) {
+        this.stepMusicTrack(1);
         return;
       }
       if (this.interactionHit(point, progressRect)) {
@@ -13540,19 +13552,27 @@ export class ColorEscapeGame {
   private musicLibraryRowRect(index: number): Rect {
     return homeArtRect(musicPreviewRect({
       x: 52,
-      y: 690 + index * 186 - this.musicLibraryScrollOffset / MUSIC_PREVIEW_SCALE,
+      y: 690 + index * 186 - this.musicLibraryScrollOffset / MUSIC_PREVIEW_SCALE_Y,
       width: 836,
       height: 178,
     }));
   }
 
+  private musicLibraryUnlockLevel(entry: MusicCatalogEntry, index: number): number {
+    // The first four library cards follow the supplied reference contract.
+    // Audio scene defaults remain catalog-driven; only the player-facing
+    // library gates use these illustrated milestone labels.
+    return [1, 15, 30, 45][index] ?? entry.unlockLevel;
+  }
+
   private musicLibraryMaxScrollOffset(): number {
-    return Math.max(0, (MUSIC_CATALOG.length - 4) * 186 * MUSIC_PREVIEW_SCALE);
+    return Math.max(0, (MUSIC_CATALOG.length - 4) * 186 * MUSIC_PREVIEW_SCALE_Y);
   }
 
   private selectMusicTrack(track: MusicTrackId): void {
     const entry = musicCatalogEntry(track);
-    if (this.save.highestLevel < entry.unlockLevel) {
+    const entryIndex = MUSIC_CATALOG.findIndex((candidate) => candidate.id === track);
+    if (this.save.highestLevel < this.musicLibraryUnlockLevel(entry, entryIndex)) {
       this.playSound("blocked");
       return;
     }
@@ -13572,6 +13592,19 @@ export class ColorEscapeGame {
     this.playSound("button");
     this.dirty = true;
     this.scheduleFrame();
+  }
+
+  private stepMusicTrack(direction: -1 | 1): void {
+    const current = this.save.selectedMusicTrack ?? "menu";
+    const currentIndex = Math.max(0, MUSIC_CATALOG.findIndex((entry) => entry.id === current));
+    for (let offset = 1; offset <= MUSIC_CATALOG.length; offset += 1) {
+      const index = (currentIndex + direction * offset + MUSIC_CATALOG.length) % MUSIC_CATALOG.length;
+      const entry = MUSIC_CATALOG[index];
+      if (this.save.highestLevel < this.musicLibraryUnlockLevel(entry, index)) continue;
+      this.selectMusicTrack(entry.id);
+      return;
+    }
+    this.playSound("blocked");
   }
 
   private drawMusicLibrary(): void {
@@ -13603,14 +13636,13 @@ export class ColorEscapeGame {
       if (art.preview) {
         ctx.drawImage(
           art.preview,
-          MUSIC_PREVIEW_OFFSET_X,
           0,
-          MUSIC_PREVIEW_SIZE.width * MUSIC_PREVIEW_SCALE,
-          MUSIC_PREVIEW_SIZE.height * MUSIC_PREVIEW_SCALE,
+          0,
+          HOME_ARTBOARD.width,
+          HOME_ARTBOARD.height,
         );
         ctx.save();
-        ctx.translate(MUSIC_PREVIEW_OFFSET_X, 0);
-        ctx.scale(MUSIC_PREVIEW_SCALE, MUSIC_PREVIEW_SCALE);
+        ctx.scale(MUSIC_PREVIEW_SCALE_X, MUSIC_PREVIEW_SCALE_Y);
         const selectedTrack = this.save.selectedMusicTrack ?? "menu";
         const selectedEntry = musicCatalogEntry(selectedTrack);
         const playback = this.host.musicTransport();
@@ -13653,16 +13685,22 @@ export class ColorEscapeGame {
         // Status buttons are dynamic, while the card fills and the supplied
         // lock/equalizer artwork remain untouched from the reference image.
         MUSIC_CATALOG.slice(0, 4).forEach((entry, index) => {
-          const unlocked = this.save.highestLevel >= entry.unlockLevel;
+          const unlockLevel = this.musicLibraryUnlockLevel(entry, index);
+          const unlocked = this.save.highestLevel >= unlockLevel;
           const selected = selectedTrack === entry.id;
-          const row = { x: 52, y: 690 + index * 186 - this.musicLibraryScrollOffset / MUSIC_PREVIEW_SCALE, width: 836, height: 178 };
+          // At the reference state (level 1, menu track selected) the plate
+          // already contains the exact supplied status buttons. Do not paint
+          // a second approximation over them; only redraw when live state
+          // differs from that reference state.
+          if (unlocked === (index === 0) && selected === (index === 0)) return;
+          const row = { x: 52, y: 690 + index * 186 - this.musicLibraryScrollOffset / MUSIC_PREVIEW_SCALE_Y, width: 836, height: 178 };
           const button = { x: 610, y: row.y + 61, width: 170, height: 70 };
           ctx.fillStyle = unlocked ? (selected ? "#25bb5b" : "#6b5ad4") : "#9698bd";
           ctx.beginPath();
           traceRoundedRect(ctx, button.x, button.y, button.width, button.height, 18);
           ctx.fill();
           this.label(
-            unlocked ? (selected ? "已解锁" : "选择") : `第${entry.unlockLevel}关解锁`,
+            unlocked ? (selected ? "已解锁" : "选择") : `第${unlockLevel}关解锁`,
             button.x + button.width / 2,
             button.y + 39,
             23,

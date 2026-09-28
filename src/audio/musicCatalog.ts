@@ -25,7 +25,7 @@ export interface MusicCatalogEntry {
 
 export const MUSIC_CATALOG: readonly MusicCatalogEntry[] = Object.freeze([
   {
-    id: "menu", title: "欢乐嘉年华", artist: "Alex-Productions", unlockLevel: 1, scene: "menu",
+    id: "menu", title: "沙漠晨曦", artist: "关卡音乐", unlockLevel: 1, scene: "menu",
     assetPath: "assets/audio/happy-carnival.mp3", wechatPath: "menu-music/happy-carnival.mp3", wechatSubpackage: "menu-music",
     loopStartSeconds: 0, loopEndSeconds: 7_112_551 / 48_000, rights: "PROJECT_AUDIO",
   },

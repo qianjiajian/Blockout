@@ -7278,6 +7278,149 @@
         1,
         1
       ]
+    },
+    {
+      "key": "ui.musicPlayer.preview",
+      "source": "ui/music-player-v1/preview-mockup.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/preview-mockup.png",
+      "width": 941,
+      "height": 1672,
+      "alpha": false,
+      "grid": [1, 1],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-preview"
+    },
+    {
+      "key": "ui.musicPlayer.panel",
+      "source": "ui/music-player-v1/music-panel-frame.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/music-panel-frame.png",
+      "width": 1024,
+      "height": 1536,
+      "alpha": true,
+      "grid": [1, 1],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-panel"
+    },
+    {
+      "key": "ui.musicPlayer.header",
+      "source": "ui/music-player-v1/music-header-banner.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/music-header-banner.png",
+      "width": 2172,
+      "height": 724,
+      "alpha": true,
+      "grid": [1, 1],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-header"
+    },
+    {
+      "key": "ui.musicPlayer.close",
+      "source": "ui/music-player-v1/music-close-button.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/music-close-button.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "grid": [1, 1],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-close"
+    },
+    {
+      "key": "ui.musicPlayer.play",
+      "source": "ui/music-player-v1/music-play-button.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/music-play-button.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "grid": [1, 1],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-play"
+    },
+    {
+      "key": "ui.musicPlayer.previous",
+      "source": "ui/music-player-v1/music-prev-button.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/music-prev-button.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "grid": [1, 1],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-previous"
+    },
+    {
+      "key": "ui.musicPlayer.next",
+      "source": "ui/music-player-v1/music-skip-button.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/music-skip-button.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "grid": [1, 1],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-next"
+    },
+    {
+      "key": "ui.musicPlayer.volume",
+      "source": "ui/music-player-v1/music-volume-icon.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/music-volume-icon.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "grid": [1, 1],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-volume"
+    },
+    {
+      "key": "ui.musicPlayer.entry",
+      "source": "ui/music-player-v1/music-entry-icon.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/music-entry-icon.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "grid": [1, 1],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-entry"
+    },
+    {
+      "key": "ui.musicPlayer.albumDesert",
+      "source": "ui/music-player-v1/album-desert-dawn.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/album-desert-dawn.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": false,
+      "grid": [1, 1],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-albumDesert"
+    },
+    {
+      "key": "ui.musicPlayer.albumLighthouse",
+      "source": "ui/music-player-v1/album-lighthouse-bay.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/album-lighthouse-bay.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": false,
+      "grid": [1, 1],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-albumLighthouse"
+    },
+    {
+      "key": "ui.musicPlayer.albumStarry",
+      "source": "ui/music-player-v1/album-starry-journey.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/album-starry-journey.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": false,
+      "grid": [1, 1],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-albumStarry"
+    },
+    {
+      "key": "ui.musicPlayer.albumForest",
+      "source": "ui/music-player-v1/album-forest-stream.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/album-forest-stream.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": false,
+      "grid": [1, 1],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-albumForest"
     }
   ]
 }
