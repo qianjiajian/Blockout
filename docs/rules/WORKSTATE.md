@@ -10,8 +10,8 @@
 - 音乐播放器美术统一取自`design-assets/music-player-v1/`，并已镜像到`public/assets/art/ui/music-player-v1/`：主页入口、面板、标题、关闭/播放/上一首/下一首/音量控件和4张专辑图均由拆分PNG加载，播放器界面只保留布局、文字、解锁状态和交互逻辑。入口图标与播放器面板按需加载，不阻塞首屏；网页包可直接显示全部资源。
 - 微信构建会移除`assets/art/ui/music-player-v1/`（约16.3 MB），避免超过现有20 MB主包余量；因此微信端在尚未配置独立资源分包/CDN前会走已有兜底显示/播放策略。`node scripts/build-wechat.mjs`退出0，`dist-wechat`约19.23 MB且该目录不存在播放器大图资源。
 - 根据参考图复核后，播放器首屏改为大卡片布局：播放器主卡、专辑封面和列表行均按拆分资源组合，列表使用约126逻辑像素行高/145逻辑像素间距，首屏裁剪展示4行并保留其余曲目切换轨道。修复了列表背景重复填充覆盖前序文字导致的空白行问题，并在资源未完成时只显示加载态。
-- 2026-09-28参考图复核继续：播放器改为使用`preview-mockup.png`统一底板，按941×1672参考坐标映射到720×1584首页画布，避免独立绘制面板/按钮造成的尺寸漂移；实时曲名、进度条和时间覆盖在底板对应区域，参考态的标题、黑胶、关闭/上一首/播放/下一首/音量、四张歌曲卡和背景装饰保留原图资源。播放器进度由`GameHost.musicTransport()`提供，支持暂停/继续和进度条点击定位，播放中页面持续刷新；暂停状态不会被每帧`syncMusic`重新启动。`preview-mockup.png`已同步到`public/assets/art/ui/music-player-v1/`供网页使用，微信构建仍按包体策略移除整目录。
-- 参考图回归证据：`playtest-results/music-reference-final.png`为清空临时选曲状态后的首屏，`music-progress-a.png`与`music-progress-b.png`间隔2.2秒像素差为764（进度实时变化），暂停后`music-paused-a.png`与`music-paused-b.png`间隔1秒差为0；网页构建、20项音频测试、art:verify和TypeScript均通过。
+- 2026-09-28参考图复核继续：播放器已移除运行时整图`preview-mockup.png`，改为面板、标题横幅、关闭/上一首/播放/下一首/音量控件和4张专辑图的拆分PNG组合。各素材按自身宽高比绘制，黑胶唱片、实时文字、进度条、时间和解锁卡片由代码叠加；播放器进度由`GameHost.musicTransport()`提供，支持暂停/继续和进度条点击定位，播放中页面持续刷新；暂停状态不会被每帧`syncMusic`重新启动。设计用预览图仅留在`design-assets/`，不进入运行时资源清单。
+- 拆分资源回归证据：`playtest-results/music-split-final.png`为内部浏览器首屏，确认没有整图底板和非等比拉伸；网页构建、20项音频测试、art:verify和TypeScript均通过。
 
 ## 微信包重新打包（2026-09-28，活动v1.114.0，已完成）
 

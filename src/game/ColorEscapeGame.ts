@@ -452,7 +452,7 @@ const MUSIC_LAYOUT = {
   play: { x: 414, y: 480, size: 84 },
   next: { x: 514, y: 492, size: 58 },
   volume: { x: 602, y: 498, size: 52 },
-  rows: { x: 48, y: 646, width: 624, height: 132, pitch: 144, viewportHeight: 664 },
+  rows: { x: 48, y: 646, width: 624, height: 122, pitch: 132, viewportHeight: 528 },
 } as const;
 
 const musicArtRect = (rect: { x: number; y: number; width: number; height: number }) => rect;
@@ -1795,7 +1795,6 @@ export class ColorEscapeGame {
         albums: images.slice(8),
       };
       this.musicLibraryArtError = undefined;
-      this.artLoadedImageCount += images.length;
       return true;
     }).catch((error: unknown) => {
       this.musicLibraryArtError = error instanceof Error ? error.message : String(error);
