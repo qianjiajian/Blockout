@@ -1,0 +1,2 @@
+import {build} from 'esbuild';
+export async function loadIsolatedApi(){const b=await build({stdin:{resolveDir:process.cwd(),contents:"export {PuzzleModel,validateLevel} from './src/core/PuzzleModel.ts';export {replayRevisedRoute,searchRevisedLevel} from './src/core/revisedLevelSearch.ts';export {matchFormalBlockShape} from './src/game/formalBlockShapes.ts';"},bundle:true,write:false,platform:'node',format:'esm',logLevel:'silent'});return import('data:text/javascript;base64,'+Buffer.from(b.outputFiles[0].text).toString('base64'));}

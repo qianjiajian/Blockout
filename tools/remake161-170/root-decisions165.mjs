@@ -1,0 +1,11 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';import {ROOT,writeNew,digest,ruleGate} from './common.mjs';import {loadApi,replay} from './replay.mjs';
+ruleGate();const {api}=await loadApi(),file=ROOT+'/author164-167/checked165-1790517242794.json',d=JSON.parse(fs.readFileSync(file)),l=d.level,cases=[];
+for(let i=0;i<d.drags.length&&cases.length<3;i++){const a=d.drags[i];if(a.exitSide||!a.path.length||!d.drags[i+1])continue;const before=i?replay(l,d.drags.slice(0,i),api).final:new api.PuzzleModel(l).snapshot(),b=before.blocks.find(b=>b.id===a.blockId);if(b.shape.length<2)continue;const p=a.path.at(-1);
+ for(const [dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){const wrong={...a,path:[...a.path,[p[0]+dx,p[1]+dy]]};try{replay(l,[...d.drags.slice(0,i),wrong],api,{requirePointerCompatible:true});}catch{continue;}let blocked=false;try{replay(l,[...d.drags.slice(0,i),wrong,d.drags[i+1]],api,{requirePointerCompatible:true});}catch{blocked=true;}if(!blocked)continue;const recovery={blockId:b.id,path:[p]},full=[...d.drags.slice(0,i),wrong,recovery,...d.drags.slice(i+1)];try{replay(l,full,api,{complete:true,requirePointerCompatible:true});}catch{continue;}cases.push({atDrag:i+1,blockId:b.id,area:b.shape.length,wrong,blockedNext:d.drags[i+1],recovery,fullRecoveredRoute:full,completeRecovery:true});break;}
+}
+assert(cases.length>=2);
+const keyCases=[];for(const key of l.blocks.filter(b=>b.keyId)){const m=new api.PuzzleModel(l);m.startCountdown();delete m.getBlock(key.id).keyId;let blocked;
+ for(const [i,a]of d.drags.entries()){m.beginAction();let ok=true;for(const p of a.path)if(!m.moveBlockStep(a.blockId,...p)){ok=false;break;}if(ok&&a.exitSide)ok=m.tryExit(a.blockId,a.exitSide).ok;if(!ok){blocked={atDrag:i+1,blockId:a.blockId,lockedBy:m.getBlock(a.blockId)?.lockedBy};break;}assert(m.commitAction());}
+ assert(blocked);assert.equal(blocked.lockedBy,key.keyId);keyCases.push({removedOnlyKeyEmission:key.id,keyGroup:key.keyId,blocked,scope:'Counterfactual model only; full formal route and level unchanged.'});
+}
+const out=ROOT+'/root-decisions165-'+Date.now()+'.json';writeNew(out,{passed:true,file,levelSha256:digest(l),cases,keyCases,globalDeadlockClaim:false});console.log(JSON.stringify({out,cases:cases.length,keyCases:keyCases.length}));

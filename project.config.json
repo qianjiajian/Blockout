@@ -23,6 +23,7 @@
     "condition": false
   },
   "compileType": "game",
+  "libVersion": "3.17.2",
   "simulatorPluginLibVersion": {},
   "packOptions": {
     "ignore": [],

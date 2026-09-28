@@ -135,49 +135,54 @@ const loadFixture = async (page) => {
     const state = window.__COLOR_ESCAPE__?.getDebugState();
     return state?.screen === "playing" && state?.puzzle?.levelId === id;
   }, levelId);
-  await page.evaluate(({ movingId, collisionId }) => {
+  await page.evaluate(async ({ movingId, collisionId, fixtureLevelId }) => {
     const game = window.__COLOR_ESCAPE__;
     if (!game?.model) throw new Error("Drag-continuity E2E: game model is missing");
 
-    // Keep this input-runtime regression independent from authored campaign
-    // counters. The real Lv5 board supplies the playable geometry, while the
-    // two unfrozen, differently colored blocks recreate the collision corner
-    // that this suite exercises.
-    game.model.blocks = [
-      {
-        id: movingId,
-        x: 4,
-        y: 5,
-        shape: [[0, 0], [0, 1]],
-        color: "blue",
-        layers: ["blue"],
-        frozen: 0,
-      },
-      {
-        id: collisionId,
-        x: 3,
-        y: 4,
-        shape: [[0, 0], [0, 1], [0, 2]],
-        color: "green",
-        layers: ["green"],
-        frozen: 0,
-      },
-    ];
-    game.model.history = [];
-    game.model.pendingHistory = undefined;
-    game.model.pendingActionMutated = false;
+    // Own the complete collision world instead of borrowing an authored mask.
+    // Frozen campaign Lv5 is now 5x6, so its former lower rows no longer make
+    // (4,6) a legal origin for this vertical two-cell movement fixture.
+    const { PuzzleModel } = await import("/src/core/PuzzleModel.ts");
+    game.model = new PuzzleModel({
+      id: fixtureLevelId,
+      name: "Drag continuity fixture",
+      difficulty: "normal",
+      timeSeconds: 120,
+      reward: 0,
+      parMoves: 1,
+      width: 7,
+      height: 8,
+      gates: [],
+      blocks: [
+        {
+          id: movingId,
+          x: 4,
+          y: 5,
+          shape: [[0, 0], [0, 1]],
+          color: "blue",
+        },
+        {
+          id: collisionId,
+          x: 3,
+          y: 4,
+          shape: [[0, 0], [0, 1], [0, 2]],
+          color: "green",
+        },
+      ],
+    });
     game.selectedId = undefined;
     game.activePointer = undefined;
     game.dragVisual = undefined;
     game.blockerFocusBlockId = undefined;
     game.blockerFocusTime = 0;
     game.dirty = true;
-  }, { movingId: blockId, collisionId: blockerId });
+  }, { movingId: blockId, collisionId: blockerId, fixtureLevelId: levelId });
   await page.waitForTimeout(80);
   const state = await debug(page);
   const block = blockFrom(state);
   const blocker = state.puzzle.blocks.find((candidate) => candidate.id === blockerId);
-  assert(state.level.name === "轻装复盘", `Drag-continuity E2E: Lv5 name drifted to ${state.level.name}`);
+  assert(state.level.id === levelId,
+    `Drag-continuity E2E: fixture opened Lv${state.level.id} instead of Lv${levelId}`);
   assert(block && block.x === fixtureX && block.y === 5 && block.frozen === 0,
     `Drag-continuity E2E: ${blockId} fixture moved ${JSON.stringify(block)}`);
   assert(JSON.stringify(block.shape) === JSON.stringify([[0, 0], [0, 1]]),
@@ -213,8 +218,8 @@ const assertBlocked = (state, expectedY, expectedMoves) => {
   `Drag-continuity E2E: collision left an invalid floating pose ${JSON.stringify(state.dragMotion)}`);
   assert(state.selectionFeedback?.mode === "blocked",
     `Drag-continuity E2E: collision lacked blocked feedback ${JSON.stringify(state.selectionFeedback)}`);
-  assert(state.blockerFocus?.blockId === blockerId,
-    `Drag-continuity E2E: collision did not identify ${blockerId} ${JSON.stringify(state.blockerFocus)}`);
+  assert(!state.blockerFocus,
+    `Drag-continuity E2E: collision selected or framed ${blockerId} ${JSON.stringify(state.blockerFocus)}`);
   assert(state.puzzle.moves === expectedMoves,
     `Drag-continuity E2E: collision counted a move (${state.puzzle.moves} !== ${expectedMoves})`);
 };

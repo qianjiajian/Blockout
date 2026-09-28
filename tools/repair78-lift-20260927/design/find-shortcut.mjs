@@ -1,0 +1,13 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {build} from 'esbuild';
+import {digest} from '../../revised-preview-validation-v160.mjs';
+import {verifyRulesLock} from '../../verify-rules-lock.mjs';
+import {searchSpatial} from './spatial-search.mjs';
+const source=process.argv[2],root='deliverables/repair78-lift-20260927/design';assert(source);const lock=verifyRulesLock();assert(lock.ok);assert.equal(lock.activeVersion,'1.104.0');
+const candidate=JSON.parse(fs.readFileSync(source));
+const built=await build({stdin:{resolveDir:process.cwd(),contents:"export {PuzzleModel,validateLevel} from './src/core/PuzzleModel.ts';export {resolveMatchingGatePortal,exitFrontierFacesBoundary} from './src/core/blockExitFrontier.ts';export {replayRevisedRoute} from './src/core/revisedLevelSearch.ts';"},bundle:true,write:false,platform:'node',format:'esm',metafile:true,logLevel:'silent'});
+const api=await import('data:text/javascript;base64,'+Buffer.from(built.outputFiles[0].text).toString('base64'));
+const options={floor:16,maxStates:1000000,maxMilliseconds:30000,maxTransitions:15000000,prove:true,normalize:true},search=searchSpatial(candidate.level,api,options),replay=search.drags?api.replayRevisedRoute(candidate.level,search.drags):undefined;
+const bindings=Object.fromEntries([...Object.keys(built.metafile.inputs).filter(p=>fs.existsSync(p)),source,'tools/repair78-lift-20260927/design/spatial-search.mjs','tools/repair78-lift-20260927/design/find-shortcut.mjs'].map(p=>[p,digest(fs.readFileSync(p))]));
+const output=`${root}/shortcut-${candidate.index}-${Date.now()}.json`;fs.writeFileSync(output,JSON.stringify({createdAt:new Date().toISOString(),ruleVersion:lock.activeVersion,source:{file:source,sha256:bindings[source]},levelSha256:candidate.levelSha256,options,search,replay,bindings,lowerBoundCertified:false},null,2)+'\n',{flag:'wx'});console.log(JSON.stringify({output,status:search.status,cost:search.cost,termination:search.termination,states:search.discoveredStates,ms:search.elapsedMilliseconds,drags:search.drags?.length,replay:replay?{...replay,finalStateKey:undefined}:undefined}));

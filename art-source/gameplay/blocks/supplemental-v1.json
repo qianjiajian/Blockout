@@ -1,0 +1,249 @@
+{
+  "schemaVersion": 1,
+  "importedAt": "2026-09-24",
+  "sourceDirectory": "C:/Users/Administrator/Desktop/block out/方块补充1/方块补充1",
+  "transform": "copy",
+  "description": "User-supplied native upright 2x3, 3x2 and 3x3 block artwork; source/runtime preserve original bytes. No level or gameplay changes.",
+  "assets": [
+    {
+      "color": "red",
+      "shapeId": 13,
+      "originalFile": "红2X3.png",
+      "source": "gameplay/blocks/formal-v1/red-rectangle-2x3.png",
+      "width": 192,
+      "height": 296,
+      "bytes": 32308,
+      "sha256": "f4f8c14d7caea1f1a86053e5fb60359973e424dc96c3f01dbc15cb90bf5f378e"
+    },
+    {
+      "color": "red",
+      "shapeId": 21,
+      "originalFile": "红3X2.png",
+      "source": "gameplay/blocks/formal-v1/red-rectangle-3x2.png",
+      "width": 285,
+      "height": 201,
+      "bytes": 26669,
+      "sha256": "964af56e6cd842bc7bca12c50b0fb5ec69f4b7490d4276e286e7f65bccf1a298"
+    },
+    {
+      "color": "red",
+      "shapeId": 14,
+      "originalFile": "红3X3.png",
+      "source": "gameplay/blocks/formal-v1/red-square-3x3.png",
+      "width": 286,
+      "height": 296,
+      "bytes": 38278,
+      "sha256": "7951bc02dad2fc1f5ae0a43741223a98df68b4331840f6bbd306d6d630a2d651"
+    },
+    {
+      "color": "blue",
+      "shapeId": 13,
+      "originalFile": "蓝2X3.png",
+      "source": "gameplay/blocks/formal-v1/blue-rectangle-2x3.png",
+      "width": 192,
+      "height": 296,
+      "bytes": 37110,
+      "sha256": "dfadad891f02bc0bb31bdd3debf5e925f409651c8854b834335f6cf4cfaab7ce"
+    },
+    {
+      "color": "blue",
+      "shapeId": 21,
+      "originalFile": "蓝3X2.png",
+      "source": "gameplay/blocks/formal-v1/blue-rectangle-3x2.png",
+      "width": 285,
+      "height": 201,
+      "bytes": 35043,
+      "sha256": "e8e8a8c3ab05197c0167cb70929732e848e9bdc561fd6bf13b8cc96590db1d6e"
+    },
+    {
+      "color": "blue",
+      "shapeId": 14,
+      "originalFile": "蓝3X3.png",
+      "source": "gameplay/blocks/formal-v1/blue-square-3x3.png",
+      "width": 286,
+      "height": 296,
+      "bytes": 53931,
+      "sha256": "efd2d071ab288dce59d6057ceafc83dd2010bccda33968f168efe6b76961c467"
+    },
+    {
+      "color": "green",
+      "shapeId": 13,
+      "originalFile": "绿2X3.png",
+      "source": "gameplay/blocks/formal-v1/green-rectangle-2x3.png",
+      "width": 192,
+      "height": 296,
+      "bytes": 32062,
+      "sha256": "953a7d627d1e4dbc0cad08a7ddf9ae991fb6bff325926469013547207fd2728d"
+    },
+    {
+      "color": "green",
+      "shapeId": 21,
+      "originalFile": "绿3X2.png",
+      "source": "gameplay/blocks/formal-v1/green-rectangle-3x2.png",
+      "width": 285,
+      "height": 201,
+      "bytes": 30834,
+      "sha256": "cda5774d6d13d1e33f270ef1c26a293ebd13bd3e455b30546c869a7d0b9a45d3"
+    },
+    {
+      "color": "green",
+      "shapeId": 14,
+      "originalFile": "绿3X3.png",
+      "source": "gameplay/blocks/formal-v1/green-square-3x3.png",
+      "width": 286,
+      "height": 296,
+      "bytes": 38031,
+      "sha256": "af8990b4a3c4d008c13baefa74ec25e61967ce03b22fcb77e2b2162faf1b42cb"
+    },
+    {
+      "color": "yellow",
+      "shapeId": 13,
+      "originalFile": "黄2X3.png",
+      "source": "gameplay/blocks/formal-v1/yellow-rectangle-2x3.png",
+      "width": 192,
+      "height": 296,
+      "bytes": 31083,
+      "sha256": "9971b3306bb72640e285452019e5b7bdbb0434b88525c6da2d3efe2a480a3c89"
+    },
+    {
+      "color": "yellow",
+      "shapeId": 21,
+      "originalFile": "黄3X2.png",
+      "source": "gameplay/blocks/formal-v1/yellow-rectangle-3x2.png",
+      "width": 285,
+      "height": 201,
+      "bytes": 31735,
+      "sha256": "f6e37cb5717acff23bb657814486b10b7ce97447ff5da8fb6fd00a9018a9c9b7"
+    },
+    {
+      "color": "yellow",
+      "shapeId": 14,
+      "originalFile": "黄3X3.png",
+      "source": "gameplay/blocks/formal-v1/yellow-square-3x3.png",
+      "width": 286,
+      "height": 296,
+      "bytes": 72062,
+      "sha256": "a07cfd0a714291daa3fdb6f2601203fbeaf2df2ae4377d2f56979e7953451d0d"
+    },
+    {
+      "color": "purple",
+      "shapeId": 13,
+      "originalFile": "紫2X3.png",
+      "source": "gameplay/blocks/formal-v1/purple-rectangle-2x3.png",
+      "width": 192,
+      "height": 296,
+      "bytes": 32411,
+      "sha256": "ebdd66b4d8b60f3d769070d78cd21a040357893b4c38d1350d50ea1e87342dac"
+    },
+    {
+      "color": "purple",
+      "shapeId": 21,
+      "originalFile": "紫3X2.png",
+      "source": "gameplay/blocks/formal-v1/purple-rectangle-3x2.png",
+      "width": 285,
+      "height": 201,
+      "bytes": 26557,
+      "sha256": "540837b668ceedd3b8a5f5e7bc8b2393c0924e08c1a556a0cb11f852c07bed46"
+    },
+    {
+      "color": "purple",
+      "shapeId": 14,
+      "originalFile": "紫3X3.png",
+      "source": "gameplay/blocks/formal-v1/purple-square-3x3.png",
+      "width": 286,
+      "height": 296,
+      "bytes": 36431,
+      "sha256": "62bd86d54956cce648edf76cf7778c2cdb5b866c9545a0535d92b29bf5464a7e"
+    },
+    {
+      "color": "orange",
+      "shapeId": 13,
+      "originalFile": "橙2X3.png",
+      "source": "gameplay/blocks/formal-v1/orange-rectangle-2x3.png",
+      "width": 192,
+      "height": 296,
+      "bytes": 33935,
+      "sha256": "c40b280289b272bb9a2bca7dd19a3dbd3e2dc926596382ce9c71f0ad91e3f462"
+    },
+    {
+      "color": "orange",
+      "shapeId": 21,
+      "originalFile": "橙3X2.png",
+      "source": "gameplay/blocks/formal-v1/orange-rectangle-3x2.png",
+      "width": 285,
+      "height": 201,
+      "bytes": 27898,
+      "sha256": "36ee48f60ccad6870a5748b3054de539db4dc7982f7020d00f4a29f42b8851e5"
+    },
+    {
+      "color": "orange",
+      "shapeId": 14,
+      "originalFile": "橙3X3.png",
+      "source": "gameplay/blocks/formal-v1/orange-square-3x3.png",
+      "width": 286,
+      "height": 296,
+      "bytes": 38929,
+      "sha256": "9560e9ef505bf17f4a12f8c06d6f9464313d4f52ec764efb0ac0872748211ec9"
+    },
+    {
+      "color": "pink",
+      "shapeId": 13,
+      "originalFile": "粉2X3.png",
+      "source": "gameplay/blocks/formal-v1/pink-rectangle-2x3.png",
+      "width": 192,
+      "height": 296,
+      "bytes": 33086,
+      "sha256": "d0d933f079de7d71e0efb46d311aef14a003271294651cef8237709fb98c007c"
+    },
+    {
+      "color": "pink",
+      "shapeId": 21,
+      "originalFile": "粉3X2.png",
+      "source": "gameplay/blocks/formal-v1/pink-rectangle-3x2.png",
+      "width": 285,
+      "height": 201,
+      "bytes": 28549,
+      "sha256": "b21e44a796847e8206b1d771ea236e914af21b1007b4487d530986a4a475e155"
+    },
+    {
+      "color": "pink",
+      "shapeId": 14,
+      "originalFile": "粉3X3.png",
+      "source": "gameplay/blocks/formal-v1/pink-square-3x3.png",
+      "width": 286,
+      "height": 296,
+      "bytes": 36826,
+      "sha256": "12c93784bf7f8ea49b6ddf5efbce3e0962776649db1e1f50cc389cc49d54d9dd"
+    },
+    {
+      "color": "cyan",
+      "shapeId": 13,
+      "originalFile": "浅蓝2X3.png",
+      "source": "gameplay/blocks/formal-v1/cyan-rectangle-2x3.png",
+      "width": 192,
+      "height": 296,
+      "bytes": 37908,
+      "sha256": "e5d0d3b49bccae03e97de9b35d6d85a6fff5a7896733ff28d489f26ac784451f"
+    },
+    {
+      "color": "cyan",
+      "shapeId": 21,
+      "originalFile": "浅蓝3X2.png",
+      "source": "gameplay/blocks/formal-v1/cyan-rectangle-3x2.png",
+      "width": 285,
+      "height": 201,
+      "bytes": 29900,
+      "sha256": "68ecdc26adbbea92c50a4777d31817509facbd84b9f7afca2f9c6787c7182565"
+    },
+    {
+      "color": "cyan",
+      "shapeId": 14,
+      "originalFile": "浅蓝3X3.png",
+      "source": "gameplay/blocks/formal-v1/cyan-square-3x3.png",
+      "width": 286,
+      "height": 296,
+      "bytes": 42732,
+      "sha256": "ed57c33116712fdd2fe0c955558038429e24804068e445d3fe39aa674f4da631"
+    }
+  ]
+}

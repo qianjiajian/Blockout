@@ -1,0 +1,13 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {build} from 'esbuild';
+import {ROOT,digest,writeNew,ruleGate} from './common.mjs';
+ruleGate();const candidate=process.argv[2],floor=Number(process.argv[3]),d=JSON.parse(fs.readFileSync(candidate));
+assert(!d.level.flipDoors?.length);
+const projected=structuredClone(d.level);projected.mechanismRules='revised-2026-09-23-v1.4';
+const bundle=await build({stdin:{resolveDir:process.cwd(),contents:"export {checkRevisedRepositionFloor} from './src/core/revisedRepositionFloor.ts';"},bundle:true,write:false,platform:'node',format:'esm',logLevel:'silent'});
+const {checkRevisedRepositionFloor}=await import('data:text/javascript;base64,'+Buffer.from(bundle.outputFiles[0].text).toString('base64'));
+const budget={floor,maxStates:18000,maxDragStates:500000,maxTransitions:2000000,maxMilliseconds:10000};
+const result=checkRevisedRepositionFloor(projected,budget),out=ROOT+'/model-floor'+d.level.id+'-'+Date.now()+'.json';
+writeNew(out,{candidate,levelSha256:digest(d.level),projectionSha256:digest(projected),projection:'Only profile1.5→1.4 for a flip-free level; all geometry, colors, keys, locks, ice, inventory and other data unchanged. Authoritative PuzzleModel gesture graph, no greedy clearing or identity quotient. Timed input validation remains separate.',budget,result,tool:'src/core/revisedRepositionFloor.ts',toolSha256:digest(fs.readFileSync('src/core/revisedRepositionFloor.ts')),formalAdopted:false});
+console.log(JSON.stringify({out,status:result.status,states:result.discoveredStates,termination:result.termination}));

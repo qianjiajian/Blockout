@@ -2,6 +2,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { resolve } from "node:path";
 import { chromium } from "playwright";
+import { CHAPTER_FOUR_PROOF_ROUTES } from "./chapter-four-proof-routes.mjs";
 
 const output = fileURLToPath(new URL("../playtest-results/", import.meta.url));
 const shot = (name) => resolve(output, name);
@@ -45,7 +46,7 @@ await page.waitForFunction(
 const requestedLevel = Number(process.env.PLAYTEST_LEVEL_ID);
 const requestedFrom = Number(process.env.PLAYTEST_LEVEL_FROM);
 const requestedTo = Number(process.env.PLAYTEST_LEVEL_TO);
-const campaign = await page.evaluate(async ({ onlyLevel, fromLevel, toLevel }) => {
+const campaign = await page.evaluate(async ({ onlyLevel, fromLevel, toLevel, certifiedRoutes }) => {
   const [{ LEVELS }, { solveLevelForValidation }] = await Promise.all([
     import("/src/core/levels.ts"),
     import("/src/core/levelSolver.ts"),
@@ -54,6 +55,7 @@ const campaign = await page.evaluate(async ({ onlyLevel, fromLevel, toLevel }) =
     onlyLevel ? level.id === onlyLevel : level.id >= fromLevel && level.id <= toLevel
   )).map((level) => {
     const hasWallClockElevator = (level.elevators?.length ?? 0) > 0;
+    const certifiedRoute = certifiedRoutes[String(level.id)];
     return {
       levelId: level.id,
       name: level.name,
@@ -61,13 +63,24 @@ const campaign = await page.evaluate(async ({ onlyLevel, fromLevel, toLevel }) =
       parMoves: level.parMoves,
       clearLoad: level.blocks.reduce((sum, block) => sum + (block.layers?.length ?? 1), 0),
       hasWallClockElevator,
-      solution: hasWallClockElevator ? undefined : solveLevelForValidation(level),
+      solution: hasWallClockElevator
+        ? undefined
+        : certifiedRoute
+          ? {
+              solved: true,
+              drags: certifiedRoute,
+              minimumDrags: certifiedRoute.length,
+              exploredStates: 0,
+              termination: "permanent_chapter_four_certificate",
+            }
+          : solveLevelForValidation(level),
     };
   });
 }, {
   onlyLevel: Number.isInteger(requestedLevel) && requestedLevel >= 1 ? requestedLevel : 0,
   fromLevel: Number.isInteger(requestedFrom) && requestedFrom >= 1 ? requestedFrom : 1,
   toLevel: Number.isInteger(requestedTo) && requestedTo <= 100 ? requestedTo : 100,
+  certifiedRoutes: CHAPTER_FOUR_PROOF_ROUTES,
 });
 
 const isFullCampaign = (!Number.isInteger(requestedLevel) || requestedLevel < 1)
@@ -104,6 +117,17 @@ const logicalPoint = (board, blockX, blockY, anchorX, anchorY) => ({
   x: board.innerX + (blockX + anchorX + 0.5) * board.cell,
   y: board.innerY + (blockY + anchorY + 0.5) * board.cell,
 });
+
+// A certified route may encode an exit as an empty path when the block already
+// occupies its matching edge cell. Press the cell furthest inside the board so
+// the real pointer does not land under the rim/gate artwork; handleDown then
+// resolves the already-aligned exit through the normal gameplay path.
+const emptyExitAnchor = (shape, side) => shape.reduce((best, cell) => {
+  if (side === "top") return cell[1] > best[1] ? cell : best;
+  if (side === "bottom") return cell[1] < best[1] ? cell : best;
+  if (side === "left") return cell[0] > best[0] ? cell : best;
+  return cell[0] < best[0] ? cell : best;
+}, shape[0]);
 
 const isBlockActive = (block, snapshot) => {
   if (block.frozen > 0) return false;
@@ -248,7 +272,16 @@ const waitForPlannedState = async (signature) => {
   return false;
 };
 
-const performDrag = async (drag, { allowReplan = false, expectedStart, expectedSignature } = {}) => {
+const performDrag = async (drag, {
+  allowReplan = false,
+  expectedStart,
+  expectedSignature,
+  routeIndex,
+} = {}) => {
+  // Shutter batches can become logically active before their reveal pulse has
+  // finished painting. A human cannot press an unseen just-released piece in
+  // that same frame, so give empty-path edge exits one short perception beat.
+  if (drag.exitSide && drag.path.length === 0) await page.waitForTimeout(250);
   const state = await waitForInput();
   if (expectedSignature && puzzleSignature(state.puzzle) !== expectedSignature) {
     if (allowReplan) return false;
@@ -262,9 +295,16 @@ const performDrag = async (drag, { allowReplan = false, expectedStart, expectedS
     throw new Error(`Full-season E2E: ${drag.blockId} moved before the drag began`);
   }
 
-  const [anchorX, anchorY] = beforeBlock.shape[0];
+  const [anchorX, anchorY] = drag.exitSide && drag.path.length === 0
+    ? emptyExitAnchor(beforeBlock.shape, drag.exitSide)
+    : beforeBlock.shape[0];
   const elevatorAtPress = elevatorSignature(state.puzzle);
   const start = logicalPoint(state.board, beforeBlock.x, beforeBlock.y, anchorX, anchorY);
+  const coveringTargets = Object.entries(state.interactionTargets?.targets ?? {})
+    .filter(([, target]) => target?.hit
+      && start.x >= target.hit.x && start.x <= target.hit.x + target.hit.width
+      && start.y >= target.hit.y && start.y <= target.hit.y + target.hit.height)
+    .map(([key]) => key);
   await page.mouse.move(start.x, start.y);
   await page.mouse.down();
   for (const [x, y] of drag.path) {
@@ -294,7 +334,7 @@ const performDrag = async (drag, { allowReplan = false, expectedStart, expectedS
       pointerGestures += 1;
       const afterRelease = await debug();
       if (allowReplan && elevatorSignature(afterRelease.puzzle) !== elevatorAtPress) return false;
-      throw new Error(`Full-season E2E: ${drag.blockId} did not resolve while the pointer was still held at ${drag.exitSide}; drag=${JSON.stringify(drag)}; before=${JSON.stringify(beforeBlock)}; after=${JSON.stringify(alignedBlock)}; gates=${JSON.stringify(aligned.puzzle.gates)}; selected=${aligned.selectedId}; pointer=${aligned.activePointer}`);
+      throw new Error(`Full-season E2E: ${drag.blockId} did not resolve while the pointer was still held at ${drag.exitSide}; routeIndex=${routeIndex ?? "unknown"}; drag=${JSON.stringify(drag)}; before=${JSON.stringify(beforeBlock)}; after=${JSON.stringify(alignedBlock)}; start=${JSON.stringify(start)}; screen=${aligned.screen}; coveringTargets=${JSON.stringify(coveringTargets)}; boosterTarget=${aligned.boosterTarget}; buttonPress=${JSON.stringify(aligned.buttonPress)}; selectionAssist=${JSON.stringify(aligned.selectionAssist)}; board=${JSON.stringify(aligned.board)}; viewport=${JSON.stringify(aligned.viewportTransform)}; blocks=${JSON.stringify(aligned.puzzle.blocks.map(({ id, x, y, frozen, shutterId }) => ({ id, x, y, frozen, shutterId })))}; shutters=${JSON.stringify(aligned.puzzle.shutters)}; gates=${JSON.stringify(aligned.puzzle.gates)}; selected=${aligned.selectedId}; pointer=${aligned.activePointer}`);
     }
   }
   await page.mouse.up();
@@ -380,7 +420,9 @@ for (const authored of campaign) {
       if (attempt === 199) throw new Error(`Full-season E2E: dynamic re-plan limit reached on level ${authored.levelId}`);
     }
   } else {
-    for (const drag of authored.solution.drags) await performDrag(drag);
+    for (const [routeIndex, drag] of authored.solution.drags.entries()) {
+      await performDrag(drag, { routeIndex });
+    }
   }
 
   const completed = await debug();

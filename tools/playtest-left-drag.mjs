@@ -15,7 +15,33 @@ page.on("console", (message) => { if (message.type() === "error") errors.push(me
 page.on("pageerror", (error) => errors.push(error.message));
 
 await page.goto(playtestUrl, { waitUntil: "networkidle" });
-await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(63, true));
+const fixture = await page.evaluate(async () => {
+  const [{ LEVELS }, { PuzzleModel }] = await Promise.all([
+    import("/src/core/levels.ts"),
+    import("/src/core/PuzzleModel.ts"),
+  ]);
+  for (const level of LEVELS) {
+    for (const authored of level.blocks) {
+      const model = new PuzzleModel(level);
+      let block = model.getBlock(authored.id);
+      if (!block || !model.isBlockActive(block) || block.frozen > 0
+        || model.possibleExitSides(block).length > 0) continue;
+      const startX = block.x;
+      const startY = block.y;
+      let leftCells = 0;
+      while (model.moveBlockStep(block.id, startX - leftCells - 1, startY)) {
+        leftCells += 1;
+        block = model.getBlock(block.id);
+        if (!block || model.possibleExitSides(block).length > 0) break;
+      }
+      if (block && leftCells >= 4 && model.possibleExitSides(block).length === 0) {
+        return { levelId: level.id, blockId: block.id, startX, startY, leftCells };
+      }
+    }
+  }
+  throw new Error("Left-drag E2E: campaign has no four-cell reversible left lane");
+});
+await page.evaluate((levelId) => window.__COLOR_ESCAPE__.loadLevel(levelId, true), fixture.levelId);
 await page.waitForTimeout(120);
 
 const debug = () => page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
@@ -29,16 +55,16 @@ const screenPoint = (state, x, y) => {
 };
 
 let state = await debug();
-const blockId = "composition-63-5";
-const generator = state.puzzle.shutters.find((shutter) => shutter.id === "shutter-a");
+const { blockId } = fixture;
 const opening = state.puzzle.blocks.find((block) => block.id === blockId);
-if (!opening || opening.x !== 5 || opening.y !== 6) throw new Error("Left-drag E2E: level 63 lower-lane block moved");
-if (!generator || generator.x !== 0 || generator.y !== 2 || generator.width !== 4 || generator.height !== 4) {
-  throw new Error("Left-drag E2E: visible generator and logical footprint diverged");
+if (!opening || opening.x !== fixture.startX || opening.y !== fixture.startY) {
+  throw new Error(`Left-drag E2E: Lv${fixture.levelId} reversible-lane block moved`);
 }
+const [anchorX, anchorY] = opening.shape[0];
+const endX = fixture.startX - fixture.leftCells;
 
-const start = screenPoint(state, 5, 6);
-const finish = screenPoint(state, 0, 6);
+const start = screenPoint(state, fixture.startX + anchorX, fixture.startY + anchorY);
+const finish = screenPoint(state, endX + anchorX, fixture.startY + anchorY);
 await page.mouse.move(start.x, start.y);
 await page.mouse.down();
 for (let sample = 1; sample <= 32; sample += 1) {
@@ -46,23 +72,23 @@ for (let sample = 1; sample <= 32; sample += 1) {
 }
 state = await debug();
 const held = state.puzzle.blocks.find((block) => block.id === blockId);
-if (!held || held.x !== 0 || held.y !== 6 || state.dragMotion?.blockId !== blockId) {
-  throw new Error("Left-drag E2E: the recorded level 63 gesture did not cross five cells left");
+if (!held || held.x !== endX || held.y !== fixture.startY || state.dragMotion?.blockId !== blockId) {
+  throw new Error(`Left-drag E2E: Lv${fixture.levelId} gesture did not cross ${fixture.leftCells} cells left`);
 }
-if (Math.abs(state.dragMotion.visualX) > 0.03 || state.selectionFeedback?.mode === "blocked") {
-  throw new Error("Left-drag E2E: the open upper lane still produced collision feedback");
+if (Math.abs(state.dragMotion.visualX - endX) > 0.03 || state.selectionFeedback?.mode === "blocked") {
+  throw new Error("Left-drag E2E: the open lane produced collision feedback");
 }
-await page.screenshot({ path: shot("round55-level63-left-drag-held.png") });
+await page.screenshot({ path: shot(`round55-level${fixture.levelId}-left-drag-held.png`) });
 await page.mouse.up();
 await page.waitForTimeout(140);
 state = await debug();
 const committed = state.puzzle.blocks.find((block) => block.id === blockId);
-if (!committed || committed.x !== 0 || committed.y !== 6 || state.puzzle.moves !== 1 || state.dragMotion) {
+if (!committed || committed.x !== endX || committed.y !== fixture.startY || state.puzzle.moves !== 1 || state.dragMotion) {
   throw new Error("Left-drag E2E: leftward release did not commit and settle exactly once");
 }
 
-const reverseStart = screenPoint(state, 0, 6);
-const reverseFinish = screenPoint(state, 5, 6);
+const reverseStart = screenPoint(state, endX + anchorX, fixture.startY + anchorY);
+const reverseFinish = screenPoint(state, fixture.startX + anchorX, fixture.startY + anchorY);
 await page.mouse.move(reverseStart.x, reverseStart.y);
 await page.mouse.down();
 await page.mouse.move(reverseFinish.x, reverseFinish.y, { steps: 24 });
@@ -70,19 +96,18 @@ await page.mouse.up();
 await page.waitForTimeout(140);
 state = await debug();
 const restored = state.puzzle.blocks.find((block) => block.id === blockId);
-if (!restored || restored.x !== 5 || restored.y !== 6 || state.puzzle.moves !== 2) {
+if (!restored || restored.x !== fixture.startX || restored.y !== fixture.startY || state.puzzle.moves !== 2) {
   throw new Error("Left-drag E2E: reverse drag did not restore the opening pose");
 }
 
-await writeFile(shot("round55-level63-left-drag-report.json"), `${JSON.stringify({
-  levelId: 63,
+await writeFile(shot(`round55-level${fixture.levelId}-left-drag-report.json`), `${JSON.stringify({
+  levelId: fixture.levelId,
   blockId,
-  leftCellsCrossed: 5,
+  leftCellsCrossed: fixture.leftCells,
   committedMoves: state.puzzle.moves,
-  generator: { x: generator.x, y: generator.y, width: generator.width, height: generator.height },
   browserErrors: errors,
 }, null, 2)}\n`, "utf8");
 
 await browser.close();
 if (errors.length) throw new Error(`Left-drag browser errors:\n${errors.join("\n")}`);
-console.log("Level 63 left drag passed: the lower-lane block crosses five cells and reverses cleanly.");
+console.log(`Level ${fixture.levelId} left drag passed: the block crosses ${fixture.leftCells} cells and reverses cleanly.`);

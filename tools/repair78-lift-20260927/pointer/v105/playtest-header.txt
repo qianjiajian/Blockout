@@ -1,0 +1,36 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import ts from 'typescript';
+import {build} from 'esbuild';
+import {chromium} from 'playwright';
+import {createServer} from 'vite';
+import {verifyRulesLock} from '../../../verify-rules-lock.mjs';
+import {digest} from '../../../revised-preview-validation-v160.mjs';
+import {observe as observeFormalModelTiming,replayTiming as replayObservedModelTiming} from '../../../campaign-v145/lv141-150/observed-timing-flips.mjs';
+import {IDS,clean,omitTarget,validateRepair,replaySpatial,inspectReveal,spatialRevealProof} from './verification.mjs';
+const OUTPUT='deliverables/repair78-lift-20260927/pointer/v105';
+const [beforeFile,expectedBeforeSha,routeFile,expectedRouteSha,ruleVersion,ruleSha,caseName]=process.argv.slice(2);
+assert(process.argv.length===9&&beforeFile&&routeFile&&/^1\.[0-9]+\.0$/.test(ruleVersion??'')&&[expectedBeforeSha,ruleSha,expectedRouteSha].every(s=>/^[a-f0-9]{64}$/.test(s??'')),'Usage: playtest.mjs BEFORE SHA ROUTE SHA RULE_VERSION RULE_SHA CASE(normal|late-no-external)');
+assert(['normal','late-no-external'].includes(caseName));
+const ruleFile='docs/rules/mechanism-rules-v'+ruleVersion+'.md',lock=verifyRulesLock();assert(lock.ok,lock.errors.join('\n'));assert.equal(lock.activeVersion,ruleVersion);assert.equal(digest(fs.readFileSync(ruleFile)),ruleSha);
+assert.equal(digest(fs.readFileSync(beforeFile)),expectedBeforeSha);assert.equal(digest(fs.readFileSync(routeFile)),expectedRouteSha);
+const before=JSON.parse(fs.readFileSync(beforeFile)),route=JSON.parse(fs.readFileSync(routeFile));
+const viewport={width:Number(process.env.REMAKE_VIEWPORT_WIDTH??496),height:Number(process.env.REMAKE_VIEWPORT_HEIGHT??1078)};assert([[320,568],[496,1078]].some(([w,h])=>viewport.width===w&&viewport.height===h));
+const bindings={};
+function bind(file){const absolute=path.resolve(file),p=path.relative(process.cwd(),absolute).replaceAll('\\','/');assert(!p.startsWith('../')&&!path.isAbsolute(p));if(Object.hasOwn(bindings,p))return;const bytes=fs.readFileSync(p);bindings[p]=digest(bytes);if(/\.[cm]?[jt]s$/.test(p)){const source=ts.createSourceFile(p,bytes.toString('utf8'),ts.ScriptTarget.Latest,true);for(const node of source.statements){if(!ts.isImportDeclaration(node)&&!ts.isExportDeclaration(node))continue;const s=node.moduleSpecifier;if(s&&ts.isStringLiteral(s)&&/^\..*\.[cm]?[jt]s$/.test(s.text))bind(path.resolve(path.dirname(absolute),s.text));}}}
+const tree=dir=>{for(const e of fs.readdirSync(dir,{withFileTypes:true})){const p=path.join(dir,e.name);if(e.isDirectory())tree(p);else bind(p);}};
+tree('src');tree('public/assets/art');for(const p of[beforeFile,routeFile,ruleFile,'docs/rules/manifest.json','tools/repair78-lift-20260927/pointer/v105/browser.mjs','tools/repair78-lift-20260927/pointer/v105/index.html','tools/repair78-lift-20260927/pointer/v105/playtest.mjs','tools/repair78-lift-20260927/pointer/v105/prepare.mjs','tools/repair78-lift-20260927/pointer/v105/playtest-header.txt','tools/repair78-lift-20260927/pointer/v105/verification.mjs'])bind(p);
+for(const[p,h]of Object.entries(before.bindings)){if(p!=='src/core/levels.ts')assert.equal(digest(fs.readFileSync(p)),h,'Only the approved final LEVELS wiring may change: '+p);bind(p);}
+const newSourceFiles=Object.keys(bindings).filter(p=>p.startsWith('src/')&&!Object.hasOwn(before.bindings,p));assert.deepEqual(newSourceFiles,['src/core/level78LateLiftRepair.ts'],'Only the approved Level 78 repair module may be added');
+const sourceBindings={};
+for(const[p,h]of Object.entries(route.evidenceBindings??{})){assert.equal(digest(fs.readFileSync(p)),h);sourceBindings[p]=h;bind(p);}
+const evidence=route.sourceEvidence;assert(evidence&&evidence.file&&evidence.sha256,'Current route requires an immutable source');assert.equal(digest(fs.readFileSync(evidence.file)),evidence.sha256);sourceBindings[evidence.file]=evidence.sha256;bind(evidence.file);
+const sourceDoc=JSON.parse(fs.readFileSync(evidence.file)),source=sourceDoc.rows?.find(r=>r.id===78)??sourceDoc;
+assert.equal(source.id??source.levelId,78);const routeField=evidence.routeField??'drags';assert(['drags','lateDrags'].includes(routeField));assert.deepEqual(source[routeField],route.drags);assert(source.level||source.levelSha256,'Route source must bind current gameplay');if(source.level)assert.deepEqual(source.level,route.level);if(source.levelSha256)assert.equal(source.levelSha256,digest(route.level));
+const compiled=await build({stdin:{resolveDir:process.cwd(),contents:"export {LEVELS} from './src/core/levels.ts';export {PuzzleModel} from './src/core/PuzzleModel.ts';export {replayRevisedRoute} from './src/core/revisedLevelSearch.ts';export {levelStarTargets,evaluateLevelStars} from './src/core/levelStarConditions.ts';"},bundle:true,write:false,platform:'node',format:'esm',logLevel:'silent'});
+const api=await import('data:text/javascript;base64,'+Buffer.from(compiled.outputFiles[0].text).toString('base64')),levels=clean(api.LEVELS),validation=validateRepair(before,route,levels,api);
+const candidates=IDS.map(id=>{const level=levels[id-1],stars=api.levelStarTargets(level),replay=replaySpatial(level,route.drags,api);assert(replay.valid&&replay.complete,JSON.stringify({id,replay}));assert.equal(replay.effectiveDrags,route.drags.length);const prefixStates=route.drags.map((_,i)=>{const r=replaySpatial(level,route.drags.slice(0,i+1),api);assert(r.valid,r.error);return JSON.parse(r.finalStateKey);});const revealProof=spatialRevealProof(level,route.drags,api);if(caseName==='normal')assert(route.drags.length<=stars.moveTarget,'Normal route must reach current three-star drag target');else assert.deepEqual(revealProof.remainingExternalIds,[],'All opening blocks must already be cleared at the first reveal event');return{...route,level,oldStars:stars,stars,prefixStates,revealProof};});
+const output=path.resolve(OUTPUT,`pointer-${caseName}-${Date.now()}-${viewport.width}x${viewport.height}-${process.pid}`);fs.mkdirSync(output,{recursive:true});
+const report={status:'running',ruleVersion:lock.activeVersion,taskRuleVersion:'1.104.0',scope:'Lv78 hidden-lift repair final LEVELS route verification',caseName,requestedIds:IDS,viewport,beforeFile,beforeSha256:expectedBeforeSha,routeFile,routeSha256:expectedRouteSha,ruleFile,ruleSha256:ruleSha,bindings,sourceBindings,validation,rows:[],errors:[],formalDataValidated:true,other199Preserved:true,scoringPreserved:true,naturalClock:true,clockFrozen:false,playerSaveTouched:false,lowerBoundsRecomputed:false,mechanismRecertificationClaimed:false,humanBlindTested:false,releaseApproved:false};
+if(process.env.REPAIR78_PREFLIGHT_ONLY==='1'){report.status='PREFLIGHT_PASS';report.pointerValidated=false;report.naturalClockValidated=false;report.preflightRows=candidates.map(({id,drags,stars,level})=>({id,drags:drags.length,stars,levelSha256:digest(level),routeSha256:digest(drags)}));fs.writeFileSync(path.join(output,'preflight.json'),JSON.stringify(report,null,2));console.log(JSON.stringify({output,status:report.status,rows:report.preflightRows}));process.exit(0);}

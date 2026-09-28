@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import { resolve } from "node:path";
 import { chromium } from "playwright";
 
-const output = fileURLToPath(new URL("../playtest-results/", import.meta.url));
+const output = fileURLToPath(new URL(`../playtest-results/boosters-time-freeze-${new Date().toISOString().replaceAll(":", "-")}/`, import.meta.url));
 const shot = (name) => resolve(output, name);
 const playtestUrl = process.env.PLAYTEST_URL ?? "http://127.0.0.1:5173/";
 await mkdir(output, { recursive: true });
@@ -47,17 +47,17 @@ await page.waitForTimeout(120);
 // Time is immediate, visible, costs no puzzle move, and undo refunds it atomically.
 await page.mouse.click(132, 990);
 let state = await debug();
-if (state.economy.boosters.time !== 2 || state.puzzle.remainingSeconds !== 210 || state.puzzle.moves !== 0) {
+if (state.economy.boosters.time !== 2 || state.puzzle.remainingSeconds !== 180 || state.puzzle.timeFreezeSeconds <= 9 || state.puzzle.timeFreezeSeconds > 10 || state.puzzle.moves !== 0) {
   throw new Error("Booster E2E: time booster settlement is incorrect");
 }
-if (state.boosterFeedback?.text !== "+30 秒") throw new Error("Booster E2E: time feedback missing");
+if (state.boosterFeedback?.text !== "时间冻结10秒") throw new Error("Booster E2E: time feedback missing");
 await page.screenshot({ path: shot("round18-booster-time.png") });
 await page.mouse.click(54, 140);
 state = await debug();
-if (state.economy.boosters.time !== 3 || state.puzzle.remainingSeconds !== 180 || state.puzzle.moves !== 0) {
+if (state.economy.boosters.time !== 3 || state.puzzle.remainingSeconds !== 180 || state.puzzle.timeFreezeSeconds !== 0 || state.puzzle.moves !== 0) {
   throw new Error("Booster E2E: time undo did not refund effect and inventory");
 }
-if (state.boosterFeedback?.text !== "已返还加时") throw new Error("Booster E2E: time refund feedback missing");
+if (state.boosterFeedback?.text !== "已返还冻结") throw new Error("Booster E2E: time refund feedback missing");
 
 // An irrelevant pulse must not consume inventory or create undo history.
 await page.mouse.click(364, 990);
@@ -83,14 +83,18 @@ await page.mouse.click(54, 140);
 
 // A frozen target is rejected with a reason, keeps targeting active, and costs nothing.
 await page.evaluate((levelId) => window.__COLOR_ESCAPE__.loadLevel(levelId, true), fixtures.frozenBlock.levelId);
-await page.waitForTimeout(80);
+await page.waitForFunction(() => {
+  const g = window.__COLOR_ESCAPE__, d = g.getDebugState();
+  return !g.revisedArtLoading && d.art.formalGameplay.requestedBlockSignature == null
+    && d.art.formalGameplay.missingWholeBlockIds.length === 0;
+});
 await page.mouse.click(248, 990);
 state = await debug();
 const frozenPoint = blockPoint(state, fixtures.frozenBlock.blockId);
 await page.mouse.click(frozenPoint.x, frozenPoint.y);
 state = await debug();
 if (state.boosterTarget !== "rocket" || state.economy.boosters.rocket !== 3 || state.boosterFeedback?.text !== "方块仍冰封") {
-  throw new Error("Booster E2E: frozen rocket target handling is incorrect");
+  throw new Error(`Booster E2E: frozen rocket target handling is incorrect (${JSON.stringify({ screen: state.screen, target: state.boosterTarget, stock: state.economy.boosters.rocket, feedback: state.boosterFeedback, block: state.puzzle.blocks.find(b => b.id === fixtures.frozenBlock.blockId) })})`);
 }
 await page.screenshot({ path: shot("round18-booster-frozen-target.png") });
 
@@ -99,16 +103,18 @@ await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(1, true));
 await page.waitForTimeout(80);
 await page.mouse.click(248, 990);
 state = await debug();
-const redPoint = blockPoint(state, "red-a");
-await page.mouse.click(redPoint.x, redPoint.y);
+const rocketTargetId = state.puzzle.blocks.find((block) => (block.frozen ?? 0) === 0)?.id;
+if (!rocketTargetId) throw new Error("Booster E2E: current Lv1 has no legal rocket target");
+const rocketPoint = blockPoint(state, rocketTargetId);
+await page.mouse.click(rocketPoint.x, rocketPoint.y);
 state = await debug();
-if (state.economy.boosters.rocket !== 2 || state.puzzle.blocks.some((block) => block.id === "red-a") || state.puzzle.moves !== 0) {
+if (state.economy.boosters.rocket !== 2 || state.puzzle.blocks.some((block) => block.id === rocketTargetId) || state.puzzle.moves !== 0) {
   throw new Error("Booster E2E: rocket success settlement is incorrect");
 }
 await page.screenshot({ path: shot("round18-booster-rocket-fired.png") });
 await page.mouse.click(54, 140);
 state = await debug();
-if (state.economy.boosters.rocket !== 3 || !state.puzzle.blocks.some((block) => block.id === "red-a") || state.puzzle.moves !== 0) {
+if (state.economy.boosters.rocket !== 3 || !state.puzzle.blocks.some((block) => block.id === rocketTargetId) || state.puzzle.moves !== 0) {
   throw new Error("Booster E2E: rocket undo did not refund effect and inventory");
 }
 if (state.particles !== 0 || state.exitGhosts !== 0 || state.boosterFeedback?.text !== "已返还火箭") {
@@ -135,8 +141,7 @@ if (JSON.stringify(state.puzzle.gates.map((gate) => gate.frozen)) !== JSON.strin
 
 await page.close();
 
-// Reaching the authored +120-second ceiling must reject another real Pointer
-// use atomically: no paid stock, timer value, or undo history may change.
+// An active freeze rejects repeated real Pointer uses atomically.
 const timeCapContext = await browser.newContext({ viewport: { width: 496, height: 1078 } });
 const timeCapPage = await timeCapContext.newPage();
 timeCapPage.on("console", (message) => { if (message.type() === "error") errors.push(`[time-cap] ${message.text()}`); });
@@ -162,11 +167,12 @@ for (let use = 0; use < 4; use += 1) {
   await timeCapPage.waitForTimeout(20);
 }
 let timeCapState = await timeCapPage.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
-const maximumTime = timeCapState.level.timeSeconds + 120;
+const maximumTime = timeCapState.level.timeSeconds;
 if (timeCapState.puzzle.remainingSeconds !== maximumTime
-  || timeCapState.economy.boosters.time !== 5
-  || timeCapState.undoActions.length !== 4) {
-  throw new Error(`Booster E2E: four time uses did not reach the cap atomically (${JSON.stringify({
+  || timeCapState.puzzle.timeFreezeSeconds <= 8
+  || timeCapState.economy.boosters.time !== 8
+  || timeCapState.undoActions.length !== 1) {
+  throw new Error(`Booster E2E: repeated active freeze uses were not rejected atomically (${JSON.stringify({
     remainingSeconds: timeCapState.puzzle.remainingSeconds,
     maximumTime,
     stock: timeCapState.economy.boosters.time,
@@ -182,8 +188,8 @@ timeCapState = await timeCapPage.evaluate(() => window.__COLOR_ESCAPE__.getDebug
 if (timeCapState.puzzle.remainingSeconds !== maximumTime
   || timeCapState.economy.boosters.time !== stockAtCap
   || timeCapState.undoActions.length !== undoActionsAtCap
-  || timeCapState.boosterFeedback?.text !== "时间已满") {
-  throw new Error(`Booster E2E: a time use above the cap was not rejected atomically (${JSON.stringify({
+  || timeCapState.boosterFeedback?.text !== "冻结中") {
+  throw new Error(`Booster E2E: an active freeze use was not rejected atomically (${JSON.stringify({
     remainingSeconds: timeCapState.puzzle.remainingSeconds,
     maximumTime,
     stock: timeCapState.economy.boosters.time,
@@ -193,7 +199,7 @@ if (timeCapState.puzzle.remainingSeconds !== maximumTime
     feedback: timeCapState.boosterFeedback?.text,
   })})`);
 }
-await timeCapPage.screenshot({ path: shot("round110-booster-time-cap-rejected.png") });
+await timeCapPage.screenshot({ path: shot("booster-active-freeze-rejected.png") });
 await timeCapContext.close();
 
 // The persistent rocket target prompt must remain legible at the minimum viewport.
@@ -219,4 +225,4 @@ await small.close();
 
 await browser.close();
 if (errors.length) throw new Error(`Booster browser errors:\n${errors.join("\n")}`);
-console.log("Booster prompts, time-cap rejection, invalid-use protection, move neutrality, atomic undo refunds, and 320x568 passed.");
+console.log(`Booster prompts, active-freeze rejection, invalid-use protection, move neutrality, atomic undo refunds, and 320x568 passed. ${output}`);

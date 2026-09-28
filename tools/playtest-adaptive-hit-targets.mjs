@@ -119,26 +119,27 @@ if (state.screen !== "home") throw new Error("Adaptive-target E2E: expanded back
 await clickCenter("navigation.1", 280);
 state = await debug();
 if (state.screen !== "leaderboard") throw new Error("Adaptive-target E2E: leaderboard did not open");
-actions.push(await clickExpandedEdge("leaderboardEfficiency", "top"));
-state = await debug();
-if (state.leaderboard.mode !== "efficiency") throw new Error("Adaptive-target E2E: expanded leaderboard mode edge missed");
-actions.push(await clickExpandedEdge("leaderboardNext", "top"));
-state = await debug();
-if (state.leaderboard.page !== 1 || state.leaderboard.firstRank !== 6) {
-  throw new Error("Adaptive-target E2E: expanded leaderboard next edge missed");
+if (state.leaderboard.mode !== "world" || state.leaderboard.source !== "placeholder-v1"
+  || state.leaderboard.totalEntries !== 99 || state.leaderboard.totalPlayers !== 100
+  || state.leaderboard.player?.rank !== 66 || state.leaderboard.player?.isPlayer !== true
+  || state.leaderboard.entries.some((entry) => entry.isPlayer || !Number.isInteger(entry.totalStars))) {
+  throw new Error(`Adaptive-target E2E: default World placeholder contract drifted (${JSON.stringify(state.leaderboard)})`);
 }
-actions.push(await clickExpandedEdge("leaderboardPrev", "top"));
+actions.push(await clickExpandedEdge("leaderboardWeekly", "top"));
 state = await debug();
-if (state.leaderboard.page !== 0 || state.leaderboard.firstRank !== 1) {
-  throw new Error("Adaptive-target E2E: expanded leaderboard previous edge missed");
-}
+if (state.leaderboard.mode !== "weekly") throw new Error("Adaptive-target E2E: expanded Weekly tab edge missed");
+actions.push(await clickExpandedEdge("leaderboardCountry", "top"));
+state = await debug();
+if (state.leaderboard.mode !== "country") throw new Error("Adaptive-target E2E: expanded Country tab edge missed");
 
 await clickCenter("navigation.3", 280);
 state = await debug();
-if (state.screen !== "levels" || state.levelPage !== 5) throw new Error("Adaptive-target E2E: journey did not open at the current chapter");
-actions.push(await clickExpandedEdge("journeyPrev", "top"));
+if (state.screen !== "levels" || JSON.stringify(state.journey.displayedLevels) !== JSON.stringify([60, 50])) {
+  throw new Error("Adaptive-target E2E: Journey did not expose its current continuous-map reward window");
+}
+await clickCenter("journeyNode.0");
 state = await debug();
-if (state.levelPage !== 4) throw new Error("Adaptive-target E2E: expanded journey previous edge missed");
+if (state.screen !== "levels" || state.level.id !== 58) throw new Error("Adaptive-target E2E: locked Journey card changed the selected level");
 
 await clickCenter("navigation.2", 280);
 await clickCenter("homePlay", 120);
@@ -167,6 +168,162 @@ if (state.screen !== "playing" || state.puzzle.moves !== 0 || state.puzzle.start
 }
 await page.screenshot({ path: resolve(output, "02-restarted-320x568.png") });
 
+// A notched phone supplies a non-zero safeTop. The formal gameplay HUD already
+// contains its authored top clearance, so undo/pause visuals and hits must stay
+// on the same fixed artboard coordinates. Regressions used to move only the hit
+// rectangles down by safeTop, leaving an invisible tappable area below each icon.
+const safePage = await browser.newPage({
+  viewport: { width: 390, height: 844 },
+  deviceScaleFactor: 3,
+  isMobile: true,
+  hasTouch: true,
+});
+safePage.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
+safePage.on("pageerror", (error) => errors.push(error.message));
+await safePage.addInitScript((initialSave) => {
+  localStorage.setItem("color-escape-save-v1", JSON.stringify(initialSave));
+}, save);
+const safeUrl = new URL(playtestUrl);
+safeUrl.searchParams.set("safeTop", "47");
+safeUrl.searchParams.set("safeBottom", "34");
+await safePage.goto(safeUrl.href, { waitUntil: "networkidle" });
+await safePage.waitForFunction(() => window.__COLOR_ESCAPE__?.getDebugState().art.ready);
+await safePage.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(2, true));
+await safePage.waitForTimeout(120);
+
+const safeDebug = () => safePage.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
+const safeCanvas = await safePage.locator("canvas").boundingBox();
+if (!safeCanvas) throw new Error("Adaptive-target E2E: safe-area canvas bounds unavailable");
+let safeState = await safeDebug();
+const gameplayArtScale = 496 / 720;
+const gameplayArtOffsetY = (1078 - 1584 * gameplayArtScale) / 2;
+const gameplayRect = ({ x, y, width, height }) => ({
+  x: x * gameplayArtScale,
+  y: gameplayArtOffsetY + y * gameplayArtScale,
+  width: width * gameplayArtScale,
+  height: height * gameplayArtScale,
+});
+const expectedHudVisuals = {
+  undo: gameplayRect({ x: 61, y: 153, width: 88, height: 88 }),
+  pause: gameplayRect({ x: 582, y: 153, width: 88, height: 88 }),
+};
+const safeToPage = ({ x, y }) => ({
+  x: safeCanvas.x + safeState.viewportTransform.offsetX + x * safeState.viewportTransform.scale,
+  y: safeCanvas.y + safeState.viewportTransform.offsetY + y * safeState.viewportTransform.scale,
+});
+const rectCenter = (rect) => ({ x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 });
+const safeCenters = {};
+for (const [name, expectedVisual] of Object.entries(expectedHudVisuals)) {
+  const entry = safeState.interactionTargets.targets[name];
+  if (!entry) throw new Error(`Adaptive-target E2E: missing safe-area ${name} target`);
+  const expectedCenter = rectCenter(expectedVisual);
+  const visualCenter = rectCenter(entry.visual);
+  const hitCenter = rectCenter(entry.hit);
+  if (Math.hypot(visualCenter.x - expectedCenter.x, visualCenter.y - expectedCenter.y) > 0.001
+    || Math.hypot(hitCenter.x - expectedCenter.x, hitCenter.y - expectedCenter.y) > 0.001) {
+    throw new Error(`Adaptive-target E2E: ${name} image and hit center diverged under safeTop (${JSON.stringify({
+      expectedVisual,
+      visual: entry.visual,
+      hit: entry.hit,
+    })})`);
+  }
+  safeCenters[name] = safeToPage(expectedCenter);
+}
+
+await safePage.touchscreen.tap(safeCenters.pause.x, safeCenters.pause.y);
+await safePage.waitForTimeout(80);
+safeState = await safeDebug();
+if (safeState.screen !== "paused") {
+  throw new Error("Adaptive-target E2E: visible pause image center missed under safeTop");
+}
+
+await safePage.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(2, true));
+await safePage.waitForTimeout(80);
+const formerSafeTopShiftCss = 54 * safeState.viewportTransform.scale;
+await safePage.touchscreen.tap(safeCenters.pause.x, safeCenters.pause.y + formerSafeTopShiftCss);
+await safePage.waitForTimeout(80);
+safeState = await safeDebug();
+if (safeState.screen !== "playing") {
+  throw new Error("Adaptive-target E2E: former pause ghost target below the image is still active");
+}
+
+await safePage.touchscreen.tap(safeCenters.undo.x, safeCenters.undo.y);
+await safePage.waitForTimeout(80);
+safeState = await safeDebug();
+if (safeState.hudFeedback?.text !== "暂无可撤销操作") {
+  throw new Error("Adaptive-target E2E: visible undo image center missed under safeTop");
+}
+
+await safePage.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(2, true));
+await safePage.waitForTimeout(80);
+await safePage.touchscreen.tap(safeCenters.undo.x, safeCenters.undo.y + formerSafeTopShiftCss);
+await safePage.waitForTimeout(80);
+safeState = await safeDebug();
+if (safeState.hudFeedback) {
+  throw new Error("Adaptive-target E2E: former undo ghost target below the image is still active");
+}
+await safePage.screenshot({ path: resolve(output, "03-safearea-hud-hit-alignment-390x844.png") });
+
+// The formal border's outer-corner bitmap is 59px tall on the authored 95px
+// grid. Use that real visual extent instead of BoardLayout's legacy 18px
+// convenience padding, which is too small to detect board/booster overlap.
+const formalBoardOutsetCells = 69 / 95;
+const minimumBoardBoosterGapLogical = 14;
+const gameplayBoosterTargets = ["booster.time", "booster.rocket", "booster.pulse"];
+const safeAreaGameplayLevels = [];
+const boardBoosterViolations = [];
+for (let levelId = 1; levelId <= 100; levelId += 1) {
+  await safePage.evaluate((id) => window.__COLOR_ESCAPE__.loadLevel(id, true), levelId);
+  if (levelId === 10) {
+    await safePage.waitForFunction((id) => {
+      const current = window.__COLOR_ESCAPE__?.getDebugState();
+      return current?.screen === "playing"
+        && current.level.id === id
+        && !current.art.formalGameplay.requestedBlockSignature;
+    }, levelId, { timeout: 8_000 });
+    await safePage.waitForTimeout(120);
+  }
+  const levelState = await safeDebug();
+  const boardVisualBottom = levelState.board.innerY
+    + levelState.board.innerHeight
+    + levelState.board.cell * formalBoardOutsetCells;
+  const boosters = gameplayBoosterTargets.map((name) => {
+    const entry = levelState.interactionTargets.targets[name];
+    if (!entry) {
+      return { name, missing: true, visualGapLogical: Number.NEGATIVE_INFINITY, hitGapLogical: Number.NEGATIVE_INFINITY };
+    }
+    return {
+      name,
+      visualTop: entry.visual.y,
+      hitTop: entry.hit.y,
+      visualGapLogical: entry.visual.y - boardVisualBottom,
+      hitGapLogical: entry.hit.y - boardVisualBottom,
+    };
+  });
+  const row = {
+    levelId,
+    board: {
+      width: levelState.level.width,
+      height: levelState.level.height,
+      cell: levelState.board.cell,
+      visualBottom: boardVisualBottom,
+    },
+    boosters,
+    minimumVisualGapLogical: Math.min(...boosters.map(({ visualGapLogical }) => visualGapLogical)),
+    minimumHitGapLogical: Math.min(...boosters.map(({ hitGapLogical }) => hitGapLogical)),
+  };
+  safeAreaGameplayLevels.push(row);
+  const failed = boosters.filter(({ visualGapLogical, hitGapLogical }) => (
+    visualGapLogical < minimumBoardBoosterGapLogical - 0.001
+    || hitGapLogical < minimumBoardBoosterGapLogical - 0.001
+  ));
+  if (failed.length) boardBoosterViolations.push({ levelId, boardVisualBottom, boosters: failed });
+  if (levelId === 10) {
+    await safePage.screenshot({ path: resolve(output, "04-level-010-board-booster-gap-safearea-390x844.png") });
+  }
+}
+await safePage.close();
+
 const minimumWidth = Math.min(...auditEntries.map(([, entry]) => entry.cssWidth));
 const minimumHeight = Math.min(...auditEntries.map(([, entry]) => entry.cssHeight));
 const report = {
@@ -178,10 +335,34 @@ const report = {
   minimumMeasuredCssHeight: minimumHeight,
   adjacentOverlapArea: 0,
   expandedEdgeActions: actions,
+  safeAreaHudAlignment: {
+    viewport: { width: 390, height: 844, deviceScaleFactor: 3 },
+    safeTopCss: 47,
+    formerGhostShiftCss: formerSafeTopShiftCss,
+    visibleCenters: safeCenters,
+    imageCentersActivate: true,
+    formerGhostTargetsInactive: true,
+  },
+  safeAreaGameplaySeparation: {
+    viewport: { width: 390, height: 844, deviceScaleFactor: 3 },
+    safeTopCss: 47,
+    safeBottomCss: 34,
+    formalBoardOutsetCells,
+    minimumRequiredGapLogical: minimumBoardBoosterGapLogical,
+    levelsAudited: safeAreaGameplayLevels.length,
+    minimumVisualGapLogical: Math.min(...safeAreaGameplayLevels.map(({ minimumVisualGapLogical }) => minimumVisualGapLogical)),
+    minimumHitGapLogical: Math.min(...safeAreaGameplayLevels.map(({ minimumHitGapLogical }) => minimumHitGapLogical)),
+    level10: safeAreaGameplayLevels.find(({ levelId }) => levelId === 10),
+    violations: boardBoosterViolations,
+    levels: safeAreaGameplayLevels,
+  },
   browserErrors: errors,
 };
 await writeFile(resolve(output, "adaptive-hit-target-report.json"), `${JSON.stringify(report, null, 2)}\n`, "utf8");
 
 await browser.close();
 if (errors.length) throw new Error(`Adaptive-target browser errors:\n${errors.join("\n")}`);
-console.log(`Adaptive hit targets passed: ${auditEntries.length} controls, ${minimumWidth.toFixed(1)}x${minimumHeight.toFixed(1)} CSS px minimum, ${actions.length} expanded-edge actions.`);
+if (boardBoosterViolations.length) {
+  throw new Error(`Adaptive-target E2E: ${boardBoosterViolations.length}/100 levels violate the ${minimumBoardBoosterGapLogical} logical board/booster gap (${JSON.stringify(boardBoosterViolations.slice(0, 12))})`);
+}
+console.log(`Adaptive hit targets passed: ${auditEntries.length} controls, ${minimumWidth.toFixed(1)}x${minimumHeight.toFixed(1)} CSS px minimum, ${actions.length} expanded-edge actions, safe-area HUD centers aligned, and 100/100 board/booster gaps passed.`);

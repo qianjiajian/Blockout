@@ -5,16 +5,21 @@ import { fileURLToPath } from "node:url";
 import ts from "typescript";
 import { createServer } from "vite";
 import {
-  LEVEL_FREEZE_AUTHORED_SOURCES,
-  LEVEL_FREEZE_DIFFICULTY_RULE_SOURCES,
+  levelFreezeAuthoredSources,
+  levelFreezeDifficultyRuleSources,
 } from "./level-freeze-spec.mjs";
+import {
+  assertPositiveLevelCount,
+  levelCountForCapture,
+} from "./level-freeze-count.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const baselinePath = resolve(root, "tools", "level-freeze-baseline.json");
 const archiveDirectory = resolve(root, "playtest-results", "level-freeze-baselines");
 const args = process.argv.slice(2);
+const dryRun = args.includes("--dry-run");
 
-if (!args.includes("--confirm")) {
+if (!dryRun && !args.includes("--confirm")) {
   throw new Error("Refusing to replace the level freeze baseline without --confirm");
 }
 
@@ -45,9 +50,10 @@ const hashFiles = async (paths) => Object.fromEntries(await Promise.all(
 ));
 
 const current = JSON.parse(await readFile(baselinePath, "utf8"));
-if (current.schemaVersion !== 2 || current.levelCount !== 100) {
+if (current.schemaVersion !== 2) {
   throw new Error("Unsupported level freeze baseline schema");
 }
+assertPositiveLevelCount(current.levelCount, "current baseline level count");
 
 const archiveBaseline = async (snapshot) => {
   const archiveName = `${snapshot.baseline}.json`;
@@ -124,25 +130,28 @@ const vite = await createServer({
 
 try {
   const { LEVELS } = await vite.ssrLoadModule("/src/core/levels.ts");
-  const expectedIds = Array.from({ length: current.levelCount }, (_, index) => index + 1);
-  if (!Array.isArray(LEVELS) || JSON.stringify(LEVELS.map((level) => level.id)) !== JSON.stringify(expectedIds)) {
-    throw new Error(`Baseline capture requires exactly ${current.levelCount} sequential campaign levels`);
-  }
+  const levelCount = levelCountForCapture(LEVELS, current.levelCount);
+  const authoredSources = levelFreezeAuthoredSources(levelCount);
+  const difficultyRuleSources = levelFreezeDifficultyRuleSources(levelCount);
 
   const next = {
     ...current,
     baseline: label,
+    levelCount,
     campaignSha256: hashValue(LEVELS),
     levelSha256: Object.fromEntries(LEVELS.map((level) => [String(level.id), hashValue(level)])),
-    sourceSha256: await hashFiles(LEVEL_FREEZE_AUTHORED_SOURCES),
-    difficultyRuleSourceSha256: await hashFiles(LEVEL_FREEZE_DIFFICULTY_RULE_SOURCES),
+    sourceSha256: await hashFiles(authoredSources),
+    difficultyRuleSourceSha256: await hashFiles(difficultyRuleSources),
     difficultyIntegrationAst: { ...integration, sha256: integrationSha256 },
   };
-  await archiveBaseline(current);
-  const archivePath = await archiveBaseline(next);
-  await writeFile(baselinePath, `${JSON.stringify(next, null, 2)}\n`, "utf8");
+  let archivePath = "not written (--dry-run)";
+  if (!dryRun) {
+    await archiveBaseline(current);
+    archivePath = await archiveBaseline(next);
+    await writeFile(baselinePath, `${JSON.stringify(next, null, 2)}\n`, "utf8");
+  }
   console.log(
-    `Captured ${label}: ${LEVELS.length}/100 levels, semantic SHA-256 ${next.campaignSha256}, `
+    `${dryRun ? "Dry-run validated" : "Captured"} ${label}: ${LEVELS.length}/${levelCount} levels, semantic SHA-256 ${next.campaignSha256}, `
     + `${Object.keys(next.sourceSha256).length} authored sources, `
     + `${Object.keys(next.difficultyRuleSourceSha256).length} difficulty-rule sources; `
     + `immutable archive ${archivePath}.`,

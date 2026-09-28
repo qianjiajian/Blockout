@@ -1,0 +1,30 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';
+import {digest} from './revised-preview-validation-v160.mjs';
+const origin='.codex-temp/remaining98-v111/next-source-batch/source-review-98.json',originHash='c6f1f39e2d606563c7eae6f1aee25fa63b38c151027128dfd27c8c0e932abae3';
+const shapes={SINGLE:[[0,0]],H2:[[0,0],[1,0]],V2:[[0,0],[0,1]],V3:[[0,0],[0,1],[0,2]],SQ2:[[0,0],[1,0],[0,1],[1,1]],L3:[[0,0],[0,1],[1,1]],T4:[[1,0],[0,1],[1,1],[2,1]],CROSS5:[[1,0],[0,1],[1,1],[2,1],[1,2]]};
+const source=[['open1','V2','orange',['orange','yellow']],['open2','L3','blue'],['open3','V2','purple'],['open4','SQ2','cyan',['cyan','green']],['open5','V3','green',null,8],['open6','H2','yellow'],['open7','SINGLE','red'],['open8','L3','red'],['open9','SINGLE','green',['green','yellow']],['open10','V2','orange'],['open11','V3','purple'],['open12','H2','orange',['orange','purple'],7],['open13','L3','blue',null,7],['open14','CROSS5','red',null,10],['cover9-1','V2','purple'],['cover9-2','L3','blue'],['cover9-3','L3','yellow'],['cover9-4','T4','red'],['cover14-1','L3','green'],['cover14-2','L3','purple']];
+// Root independently inspected726/760/762/763/768/791/793/795/800/805:
+// the ice7 H2 really reveals an orange→purple shell; cover14 contains two L3.
+export function verifySource98(data){
+ const l=data.level,r=JSON.parse(fs.readFileSync(data.sourceReview));assert.equal(l.id,98);assert.equal(digest(fs.readFileSync(data.sourceReview)),data.sourceReviewSha256);assert.equal(r.origin,origin);assert.equal(r.originSha256,originHash);assert.equal(digest(fs.readFileSync(origin)),originHash);
+ const raw=JSON.parse(fs.readFileSync(origin)),sources={[origin]:originHash,[data.sourceReview]:data.sourceReviewSha256};assert.deepEqual(r.sourceFacts,raw.sourceFacts);assert.deepEqual(r.sourceNormalizedFacts,raw.sourceNormalizedFacts);
+ for(const[p,h]of Object.entries(raw.bindings)){assert.equal(digest(fs.readFileSync(p)),h);sources[p]=h;}
+ assert.equal(l.blocks.length,30);assert.equal(r.mapping.length,20);assert.equal(new Set(r.mapping.map(m=>m.sourceId)).size,20);assert.equal(new Set(r.mapping.map(m=>m.candidateId)).size,20);
+ for(const[id,kind,color,layers,frozen]of source){const m=r.mapping.find(m=>m.sourceId===id),b=l.blocks.find(b=>b.id===m?.candidateId);assert(m&&b);assert.equal(m.kind,kind);assert.equal(m.color,color);assert.deepEqual(m.layers,layers??undefined);assert.equal(m.frozen,frozen);assert.deepEqual(m.shape,shapes[kind]);assert.deepEqual(b.shape,shapes[kind]);assert.equal(b.color,color);assert.deepEqual(b.layers,layers??undefined);assert.equal(b.frozen,frozen);const shutter=id.startsWith('cover9')?'r147-98-s9':id.startsWith('cover14')?'r147-98-s14':undefined;assert.equal(b.shutterId,shutter);assert.equal(m.shutterId,shutter??null);assert(Object.keys(b).every(k=>['id','color','shape','x','y','layers','frozen','shutterId'].includes(k)));}
+ const mapped=new Set(r.mapping.map(m=>m.candidateId)),fill=l.blocks.filter(b=>!mapped.has(b.id));assert.equal(fill.length,10);assert.deepEqual(fill,r.ordinaryFills);assert.equal(fill.reduce((n,b)=>n+b.shape.length,0),32);
+ assert.deepEqual([undefined,'r147-98-s9','r147-98-s14'].map(id=>{const bs=fill.filter(b=>b.shutterId===id);return[bs.length,bs.reduce((n,b)=>n+b.shape.length,0)];}),[[5,26],[3,4],[2,2]]);
+ for(const b of fill){assert(Object.keys(b).every(k=>['id','color','shape','x','y','shutterId'].includes(k)));const xs=b.shape.map(p=>p[0]),ys=b.shape.map(p=>p[1]);assert.equal(b.shape.length,(Math.max(...xs)-Math.min(...xs)+1)*(Math.max(...ys)-Math.min(...ys)+1),'Only rectangular ordinary fill');}
+ assert.equal(l.blocks.reduce((n,b)=>n+b.shape.length,0),86);assert.deepEqual(l.shutters.map(s=>[s.id,s.count,s.width*s.height,s.skin]),[['r147-98-s9',9,16,undefined],['r147-98-s14',14,8,undefined]]);
+ assert.equal(l.gates.length,7);assert.deepEqual(l.gates.map(g=>g.color).sort(),['red','blue','green','yellow','orange','cyan','purple'].sort());for(const g of l.gates)assert(Object.keys(g).every(k=>['id','color','side','offset','size','portals'].includes(k)));
+ for(const k of ['generators','flipDoors','coloredGrids','elevators','conveyors'])assert(!l[k]?.length);
+ return{sources,sourceBodies:20,sourceArea:54,candidateBodies:30,candidateArea:86,ordinaryAddedArea:32,ordinaryAddedBodies:10,sourceShells:4,sourceIce:[7,7,8,10],sourceHiddenBodies:[4,2],candidateHiddenBodies:[7,4],irregularRatio:'9/30',exactSourceCopy:false};
+}
+const act=(m,d)=>{m.beginAction();for(const p of d.path)assert(m.moveBlockStep(d.blockId,...p));if(d.exitSide)assert(m.tryExit(d.blockId,d.exitSide).ok);assert(m.commitAction());};
+export function verifyMechanisms98(data,api){
+ const {level,drags}=data,m=new api.PuzzleModel(level);m.startCountdown();const peels=[],reveals=[],thaws=[];
+ for(const[i,d]of drags.entries()){const before=m.snapshot(),b=before.blocks.find(b=>b.id===d.blockId);act(m,d);const after=m.snapshot(),kept=after.blocks.find(b=>b.id===d.blockId);if(after.cleared>before.cleared&&kept){assert.equal(b.layers.length,2);assert.deepEqual(kept.layers,b.layers.slice(1));assert.equal(after.cleared,before.cleared+1);peels.push({step:i+1,blockId:b.id,from:b.layers[0],to:kept.layers[0],clearEvent:after.cleared});}
+  for(const z of after.blocks){const spec=level.blocks.find(b=>b.id===z.id);if(spec.frozen){assert.equal(z.frozen,Math.max(0,spec.frozen-after.cleared));if(before.blocks.find(b=>b.id===z.id).frozen>0&&!z.frozen)thaws.push({id:z.id,clearEvent:after.cleared});}}
+  for(const s of after.shutters)if(s.revealed&&!before.shutters.find(z=>z.id===s.id).revealed){const original=level.shutters.find(z=>z.id===s.id);assert.equal(after.cleared,original.count);reveals.push({id:s.id,step:i+1,clearEvent:after.cleared});}}
+ assert.equal(peels.length,4);assert.equal(new Set(peels.map(p=>p.blockId)).size,4);assert.equal(thaws.length,4);assert.deepEqual(thaws.map(t=>t.clearEvent).sort((a,b)=>a-b),[7,7,8,10]);assert.deepEqual(reveals.map(r=>r.clearEvent),[9,14]);assert.equal(m.snapshot().cleared,34);assert(m.snapshot().complete);
+ return{peels,reveals,thaws,allInventoryCompleted:true,globalMechanismOrderClaimed:false};
+}

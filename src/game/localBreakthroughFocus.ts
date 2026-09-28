@@ -1,5 +1,7 @@
 import type { PuzzleModel } from "../core/PuzzleModel";
-import type { BlockState, Point, PuzzleSnapshot, Side } from "../core/types";
+import { type BlockState, type Point, type PuzzleSnapshot, type Side } from "../core/types";
+import { usesRevisedMechanisms } from "../core/mechanismRules";
+import { isMechanismBlockVisible, isMechanismRegionBlocking } from "./revisedMechanismPresentation";
 
 const DIRECTIONS: readonly Point[] = [[1, 0], [0, 1], [-1, 0], [0, -1]];
 const SIDES: readonly Side[] = ["top", "right", "bottom", "left"];
@@ -28,8 +30,7 @@ export interface LocalBreakthroughAction {
 
 const blockActive = (snapshot: PuzzleSnapshot, block: BlockState): boolean => {
   if (block.frozen > 0) return false;
-  if (!block.shutterId) return true;
-  return (snapshot.shutters.find((shutter) => shutter.id === block.shutterId)?.count ?? 0) <= 0;
+  return isMechanismBlockVisible(snapshot, block);
 };
 
 const cellsAt = (block: BlockState, x = block.x, y = block.y): Point[] => (
@@ -46,14 +47,11 @@ const placementSets = (
   const occupied = new Set<string>();
   for (const other of snapshot.blocks) {
     if (other.id === movingId || other.id === ignoredOccupantId) continue;
-    const hidden = other.shutterId
-      ? snapshot.shutters.some((shutter) => shutter.id === other.shutterId && shutter.count > 0)
-      : false;
-    if (hidden) continue;
+    if (!isMechanismBlockVisible(snapshot, other)) continue;
     for (const [x, y] of cellsAt(other)) occupied.add(pointKey(x, y));
   }
   for (const shutter of snapshot.shutters) {
-    if (shutter.count <= 0) continue;
+    if (!isMechanismRegionBlocking(snapshot, shutter)) continue;
     for (let y = shutter.y; y < shutter.y + shutter.height; y += 1) {
       for (let x = shutter.x; x < shutter.x + shutter.width; x += 1) occupied.add(pointKey(x, y));
     }
@@ -189,6 +187,10 @@ const findLocalBreakthrough = (
   maximumSetupSteps = 4,
 ): (LocalBreakthroughFocus & { path?: Point[] }) | undefined => {
   const snapshot = model.snapshot();
+  // This legacy heuristic freezes space while probing routes. Revised moves
+  // can reveal lifts or dispatch cargo mid-gesture; do not advertise an
+  // unverified hint until the authoritative revised planner is integrated.
+  if (usesRevisedMechanisms(snapshot)) return undefined;
   const direct = shortestDirectClear(snapshot);
   if (direct) {
     return {

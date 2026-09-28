@@ -1,0 +1,18 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {verifyRulesLock} from '../verify-rules-lock.mjs';
+import {digest} from '../revised-preview-validation-v160.mjs';
+import {loadApi} from '../remake182-185-20260927/replay.mjs';
+const ROOT='deliverables/star-targets182-185-20260928';
+const files={before:ROOT+'/before.json',applied:ROOT+'/applied.json',rootInput:ROOT+'/root-input-review-1790525597658.json',dataReview:ROOT+'/review/data-review-1790525403455.json',pointerReview:ROOT+'/review/pointer-review-1790525571817.json',testReview:ROOT+'/test-review/review.json'};
+const d=Object.fromEntries(Object.entries(files).map(([k,p])=>[k,JSON.parse(fs.readFileSync(p))]));
+assert.equal(d.applied.status,'PASS');assert.equal(d.rootInput.status,'PASS_182_FORMAL_185_CANDIDATE_SCORE_INPUTS');assert.equal(d.dataReview.status,'PASS_SCORE_DATA_SCOPE_AND_ROUTES');assert.equal(d.pointerReview.status,'PASS_182_FORMAL_185_CANDIDATE_SCORE_DUALSCREEN');assert.equal(d.testReview.status,'PASS');assert.equal(d.testReview.typecheckExitCode,0);assert.equal(d.testReview.tests.failed,0);assert.equal(d.testReview.tests.passed,11);
+for(const[p,h]of Object.entries(d.before.oldEvidence))assert.equal(digest(fs.readFileSync(p)),h);
+for(const[p,h]of Object.entries(d.pointerReview.bindings))assert.equal(digest(fs.readFileSync(p)),h,'Latest independent Pointer source binding '+p);
+const {api}=await loadApi(),p182=JSON.parse(fs.readFileSync(ROOT+'/packets/level182.json')),p185=JSON.parse(fs.readFileSync(ROOT+'/packets/level185.json'));
+assert.deepEqual(JSON.parse(JSON.stringify(api.LEVELS[181])),p182.level);assert.deepEqual(JSON.parse(JSON.stringify(api.LEVELS[184])),d.before.levels[184].level);
+assert.deepEqual(p185.sourceAdaptation.sourcePhase.sourceInitialOpen,{orange:null,blue:null,purple:null});assert(p185.sourcePhaseApprovalPending);
+const lock=verifyRulesLock();assert(lock.ok,lock.errors.join('\n'));assert(lock.verified.some(v=>v.version==='1.111.0'));
+const bindingPaths=[...Object.values(files),'tests/remake182185.test.ts','tests/starTargets182185.test.ts','src/core/remake181to190.ts','docs/rules/mechanism-rules-v1.111.0.md','tools/star-targets182-185-20260928/root.mjs','tools/star-targets182-185-20260928/finish.mjs','tools/star-targets182-185-20260928/seal.mjs',ROOT+'/packets/level182.json',ROOT+'/packets/level185.json'];
+const result={createdAt:new Date().toISOString(),status:'SCORING_COMPLETE_182_FORMAL_185_CANDIDATE',taskRuleVersion:'1.111.0',activeRuleVersion:lock.activeVersion,rulesLock:{passed:true,versions:lock.verified.length},rows:[{id:182,scope:'formal',moveTarget:48,timeTargetSeconds:97,timeLimitSeconds:135},{id:185,scope:'candidate',moveTarget:50,timeTargetSeconds:93,timeLimitSeconds:130}],dualScreenThreeStars:true,rootInput:files.rootInput,independentDataReview:files.dataReview,independentPointerReview:files.pointerReview,testReview:files.testReview,testsPassed:11,typecheckPassed:true,oldEvidenceUnchanged:true,formal185Unchanged:true,sourceInitialPhaseAcceptancePending:true,remainingGenerationTask:'185橙蓝冰14翻门初始关闭仍待用户明确接受，之后正式接入并重验最终对象；本次评分调整不提供该许可。',playerSaveTouched:false,humanBlindTested:false,published:false,bindings:Object.fromEntries(bindingPaths.map(p=>[p,digest(fs.readFileSync(p))]))};
+fs.writeFileSync(ROOT+'/complete.json',JSON.stringify(result,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify({status:result.status,tests:11,typecheck:true,ruleVersion:lock.activeVersion}));

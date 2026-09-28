@@ -1,0 +1,17 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {digest} from '../../revised-preview-validation-v160.mjs';
+const dir='deliverables/remake31-200-v145-20260924/batches/lv051-060/agent51-54';
+let source=fs.readFileSync('tools/campaign-v145/lv051-060/author51-54-v146.mjs','utf8');
+source=source.replace("import {auditOpeningCoverage} from '../../revised-opening-coverage.mjs';\nimport {auditHiddenCoverage} from '../../revised-hidden-coverage.mjs';\nimport {auditGateSpanLimits} from '../../revised-gate-span-limits.mjs';\nimport {auditGeneratorQueueColors} from '../../revised-generator-queue-colors.mjs';", "import {auditSpatial} from '../../remake91to100-v146.mjs';");
+const begin=source.indexOf('function auditSpatial(level,api){');
+const end=source.indexOf('\nfor(const k of Object.keys(SHAPES))',begin);
+assert(begin>0&&end>begin);source=source.slice(0,begin)+source.slice(end+1);
+source=source.replace("options.sort((a,b)=>process.env.NARROW?a.size-b.size:b.size-a.size);const p=options[Math.floor(rng.rand()*Math.min(options.length,process.env.NARROW?2:4))]", "options.sort((a,b)=>b.size-a.size);const p=options[Math.floor(rng.rand()*Math.min(options.length,4))]");
+const a=JSON.parse(fs.readFileSync(dir+'/candidate51-1790248325953.json'));
+const b=JSON.parse(fs.readFileSync(dir+'/candidate53-1790248323901.json'));
+assert.equal(digest(source),a.freshVerification.authorSha256);
+assert.equal(digest(source),b.freshVerification.authorSha256);
+const out=dir+'/author51-53-enrichment-1790248323.mjs';
+if(fs.existsSync(out))assert.equal(fs.readFileSync(out,'utf8'),source);else fs.writeFileSync(out,source,{flag:'wx'});
+console.log(JSON.stringify({out,sha256:digest(source),matchesBothRecordedCandidateHashes:true,originalExecutionPath:'tools/campaign-v145/lv051-060/author51-54-v146.mjs'}));

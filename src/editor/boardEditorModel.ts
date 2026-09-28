@@ -1,6 +1,10 @@
 import { validateLevel } from "../core/PuzzleModel";
+import { boardCellsSeparatedBySeam, boardRailIsSeam } from "../core/boardSeams";
 import { enclosedBoardVoids } from "../core/boardTopology";
-import type { BlockColor, LevelSpec, Point, Side } from "../core/types";
+import { gatePortals, portalMouthCells } from "../core/gatePortals";
+import type { BlockColor, GateSpec, LevelSpec, Point, Side } from "../core/types";
+
+const BOARD_SEAM_TAG = "棋盘接缝";
 
 export interface CellConstraint {
   blocked: boolean;
@@ -64,17 +68,33 @@ export const buildCellConstraints = (level: LevelSpec): Map<string, CellConstrai
     cell.blocked = true;
     cell.tags.push("固定障碍");
   }
+  const addExitConstraints = (gate: GateSpec, label: string): void => {
+    for (const portal of gatePortals(level, gate)) {
+      for (const [x, y] of portalMouthCells(portal)) {
+        const cell = constraintAt(constraints, x, y);
+        cell.required = true;
+        cell.tags.push(`${gate.color} ${label}`);
+        cell.gateSides.push(portal.side);
+        cell.colors.push(gate.color);
+      }
+    }
+  };
   for (const gate of level.gates) {
-    for (let offset = gate.offset; offset < gate.offset + gate.size; offset += 1) {
-      const [x, y]: Point = gate.side === "top" ? [offset, 0]
-        : gate.side === "bottom" ? [offset, level.height - 1]
-          : gate.side === "left" ? [0, offset]
-            : [level.width - 1, offset];
-      const cell = constraintAt(constraints, x, y);
-      cell.required = true;
-      cell.tags.push(`${gate.color} 出口`);
-      cell.gateSides.push(gate.side);
-      cell.colors.push(gate.color);
+    addExitConstraints(gate, "出口");
+  }
+  for (const door of level.flipDoors ?? []) {
+    addExitConstraints(door, "翻转门");
+  }
+  const boundarySides: readonly Side[] = ["top", "right", "bottom", "left"];
+  for (let y = 0; y < level.height; y += 1) {
+    for (let x = 0; x < level.width; x += 1) {
+      for (const side of boundarySides) {
+        if (!boardRailIsSeam(level, [x, y], side)) continue;
+        const cell = constraintAt(constraints, x, y);
+        cell.required = true;
+        if (!cell.tags.includes(BOARD_SEAM_TAG)) cell.tags.push(BOARD_SEAM_TAG);
+        if (!cell.gateSides.includes(side)) cell.gateSides.push(side);
+      }
     }
   }
   for (const block of level.blocks) {
@@ -97,7 +117,7 @@ export const buildCellConstraints = (level: LevelSpec): Map<string, CellConstrai
   return constraints;
 };
 
-const connectedComponents = (active: Set<string>, width: number, height: number): string[][] => {
+const connectedComponents = (active: Set<string>, level: LevelSpec): string[][] => {
   const remaining = new Set(active);
   const components: string[][] = [];
   const directions: Point[] = [[1, 0], [-1, 0], [0, 1], [0, -1]];
@@ -114,7 +134,8 @@ const connectedComponents = (active: Set<string>, width: number, height: number)
         const nx = x + dx;
         const ny = y + dy;
         const neighbor = cellKey(nx, ny);
-        if (nx < 0 || ny < 0 || nx >= width || ny >= height || !remaining.has(neighbor)) continue;
+        if (nx < 0 || ny < 0 || nx >= level.width || ny >= level.height || !remaining.has(neighbor)) continue;
+        if (boardCellsSeparatedBySeam(level, [x, y], [nx, ny])) continue;
         remaining.delete(neighbor);
         queue.push(neighbor);
       }
@@ -142,9 +163,11 @@ export const analyzeBoardShape = (level: LevelSpec, rows: readonly string[]): Bo
   }
   if (!active.size) errors.push("棋盘不能完全为空");
 
-  const components = connectedComponents(active, level.width, level.height);
-  const required = new Set([...constraints].filter(([, value]) => value.required).map(([key]) => key));
-  const emptyComponents = components.filter((component) => !component.some((key) => required.has(key)));
+  const components = connectedComponents(active, level);
+  const meaningfulRequired = new Set([...constraints]
+    .filter(([, value]) => value.required && value.tags.some((tag) => tag !== BOARD_SEAM_TAG))
+    .map(([key]) => key));
+  const emptyComponents = components.filter((component) => !component.some((key) => meaningfulRequired.has(key)));
   if (emptyComponents.length) warnings.push(`有 ${emptyComponents.length} 个分区没有方块、出口或卷帘，可能是无意义孤岛`);
   const oneCellComponents = components.filter((component) => component.length === 1).length;
   if (oneCellComponents) warnings.push(`有 ${oneCellComponents} 个单格孤岛，触控和视觉都容易误解`);
@@ -154,7 +177,8 @@ export const analyzeBoardShape = (level: LevelSpec, rows: readonly string[]): Bo
   for (const cell of active) {
     const [x, y] = cell.split(",").map(Number);
     for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as Point[]) {
-      if (!active.has(cellKey(x + dx, y + dy))) perimeter += 1;
+      const neighbor: Point = [x + dx, y + dy];
+      if (!active.has(cellKey(...neighbor)) || boardCellsSeparatedBySeam(level, [x, y], neighbor)) perimeter += 1;
     }
   }
   const area = level.width * level.height;

@@ -1,0 +1,16 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {checkSymmetryFloor} from '../remake21to30-symmetry-floor-v139.mjs';
+import {loadPreviewCore,digest} from '../revised-preview-validation-v160.mjs';
+import {verifyRulesLock} from '../verify-rules-lock.mjs';
+const file=process.argv[2];assert(file);
+const lock=verifyRulesLock();assert(lock.ok&&lock.activeVersion==='1.85.0');
+const candidate=JSON.parse(fs.readFileSync(file));
+const bindings=Object.fromEntries([file,'tools/lv17-remake-20260927/root-floor.mjs','tools/remake21to30-symmetry-floor-v139.mjs','tools/remake21to30-mask-floor.mjs','docs/rules/manifest.json','docs/rules/mechanism-rules-v1.85.0.md'].map(p=>[p,digest(fs.readFileSync(p))]));
+const {api}=await loadPreviewCore();
+const replay=api.replayRevisedRoute(candidate.level,candidate.drags);assert(replay.valid&&replay.complete&&replay.clearEvents===31);
+const proof=checkSymmetryFloor(candidate.level,{floor:11,maxStates:1000000,maxMilliseconds:45000});
+const drift=Object.entries(bindings).filter(([p,h])=>digest(fs.readFileSync(p))!==h);assert.equal(drift.length,0);
+const status=proof.thresholdProven?'PASS':'UNVERIFIED';
+const report={status,ruleVersion:lock.activeVersion,candidate:file,levelSha256:digest(candidate.level),routeSha256:digest(candidate.drags),proof,replay,bindings,drift,scope:'Fresh difficulty lower bound and model witness only; source/qualification/pointer evidence required separately'};
+const out=`deliverables/lv17-remake-20260927/root-floor-${Date.now()}.json`;fs.writeFileSync(out,JSON.stringify(report,null,2),{flag:'wx'});console.log(JSON.stringify({out,status,proof,replay}));

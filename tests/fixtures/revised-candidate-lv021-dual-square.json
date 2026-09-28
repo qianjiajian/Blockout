@@ -1,0 +1,682 @@
+{
+  "schemaVersion": 1,
+  "ruleVersion": "1.2.1",
+  "levelId": 21,
+  "seed": "lv021-dual-sq3-cyclic-parking-v1",
+  "level": {
+    "id": 21,
+    "name": "Lv21 original parking-lock research",
+    "width": 6,
+    "height": 9,
+    "difficulty": "normal",
+    "mechanismRules": "revised-2026-09-21-v1.2",
+    "timeSeconds": 300,
+    "reward": 0,
+    "playable": [
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        4,
+        1
+      ],
+      [
+        5,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        5,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        0,
+        6
+      ],
+      [
+        1,
+        6
+      ],
+      [
+        2,
+        6
+      ],
+      [
+        3,
+        6
+      ],
+      [
+        4,
+        6
+      ],
+      [
+        5,
+        6
+      ],
+      [
+        0,
+        7
+      ],
+      [
+        1,
+        7
+      ],
+      [
+        2,
+        7
+      ],
+      [
+        3,
+        7
+      ],
+      [
+        4,
+        7
+      ],
+      [
+        5,
+        7
+      ],
+      [
+        0,
+        8
+      ],
+      [
+        1,
+        8
+      ],
+      [
+        2,
+        8
+      ],
+      [
+        3,
+        8
+      ],
+      [
+        4,
+        8
+      ],
+      [
+        5,
+        8
+      ]
+    ],
+    "blocks": [
+      {
+        "id": "red-pivot",
+        "x": 3,
+        "y": 6,
+        "color": "red",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            2
+          ]
+        ]
+      },
+      {
+        "id": "blue-starter",
+        "x": 0,
+        "y": 3,
+        "color": "blue",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            2
+          ]
+        ]
+      },
+      {
+        "id": "c10-ice",
+        "x": 0,
+        "y": 1,
+        "color": "green",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "frozen": 6,
+        "shutterId": "c10"
+      },
+      {
+        "id": "c10-shell-a",
+        "x": 2,
+        "y": 1,
+        "color": "yellow",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "layers": [
+          "yellow",
+          "green"
+        ],
+        "shutterId": "c10"
+      },
+      {
+        "id": "c10-shell-b",
+        "x": 0,
+        "y": 2,
+        "color": "green",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "layers": [
+          "green",
+          "purple"
+        ],
+        "shutterId": "c10"
+      },
+      {
+        "id": "c10-plain",
+        "x": 1,
+        "y": 2,
+        "color": "purple",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "shutterId": "c10"
+      },
+      {
+        "id": "c17-ice-shell",
+        "x": 3,
+        "y": 1,
+        "color": "purple",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "frozen": 2,
+        "layers": [
+          "purple",
+          "green"
+        ],
+        "shutterId": "c17"
+      },
+      {
+        "id": "c17-shell",
+        "x": 5,
+        "y": 1,
+        "color": "yellow",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "layers": [
+          "yellow",
+          "purple"
+        ],
+        "shutterId": "c17"
+      },
+      {
+        "id": "c17-plain-a",
+        "x": 3,
+        "y": 2,
+        "color": "green",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "shutterId": "c17"
+      },
+      {
+        "id": "c17-plain-b",
+        "x": 4,
+        "y": 2,
+        "color": "yellow",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "shutterId": "c17"
+      },
+      {
+        "id": "c19-plain-a",
+        "x": 2,
+        "y": 0,
+        "color": "green",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "shutterId": "c19"
+      },
+      {
+        "id": "c19-plain-b",
+        "x": 3,
+        "y": 0,
+        "color": "yellow",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "shutterId": "c19"
+      },
+      {
+        "id": "s-0-6",
+        "x": 0,
+        "y": 6,
+        "color": "green",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "id": "s-1-6",
+        "x": 1,
+        "y": 6,
+        "color": "yellow",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "id": "s-0-7",
+        "x": 0,
+        "y": 7,
+        "color": "yellow",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "id": "s-1-7",
+        "x": 1,
+        "y": 7,
+        "color": "green",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "id": "s-0-8",
+        "x": 0,
+        "y": 8,
+        "color": "green",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "id": "s-1-8",
+        "x": 1,
+        "y": 8,
+        "color": "yellow",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "id": "s-4-3",
+        "x": 4,
+        "y": 3,
+        "color": "yellow",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "id": "s-5-3",
+        "x": 5,
+        "y": 3,
+        "color": "green",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "id": "s-4-4",
+        "x": 4,
+        "y": 4,
+        "color": "green",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "id": "s-5-4",
+        "x": 5,
+        "y": 4,
+        "color": "yellow",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "id": "s-4-5",
+        "x": 4,
+        "y": 5,
+        "color": "yellow",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "id": "s-5-5",
+        "x": 5,
+        "y": 5,
+        "color": "green",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ]
+      }
+    ],
+    "gates": [
+      {
+        "id": "red",
+        "side": "left",
+        "offset": 6,
+        "size": 3,
+        "color": "red"
+      },
+      {
+        "id": "blue",
+        "side": "right",
+        "offset": 3,
+        "size": 3,
+        "color": "blue"
+      },
+      {
+        "id": "green",
+        "side": "right",
+        "offset": 7,
+        "size": 1,
+        "color": "green",
+        "frozen": 2
+      },
+      {
+        "id": "yellow",
+        "side": "left",
+        "offset": 3,
+        "size": 2,
+        "color": "yellow",
+        "frozen": 6
+      },
+      {
+        "id": "purple",
+        "side": "top",
+        "offset": 1,
+        "size": 4,
+        "color": "purple",
+        "frozen": 13
+      }
+    ],
+    "shutters": [
+      {
+        "id": "c10",
+        "x": 0,
+        "y": 1,
+        "width": 3,
+        "height": 2,
+        "count": 10
+      },
+      {
+        "id": "c17",
+        "x": 3,
+        "y": 1,
+        "width": 3,
+        "height": 2,
+        "count": 17
+      },
+      {
+        "id": "c19",
+        "x": 2,
+        "y": 0,
+        "width": 2,
+        "height": 1,
+        "count": 19
+      }
+    ]
+  }
+}

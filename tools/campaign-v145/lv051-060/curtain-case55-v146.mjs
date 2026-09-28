@@ -1,0 +1,15 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {loadApi}from '../../remake21to30-v120.mjs';
+import {digest}from '../../revised-preview-validation-v160.mjs';
+import {verifyLocalMechanismChoices}from '../../remake21to30-v139.mjs';
+const root='deliverables/remake31-200-v145-20260924/batches/lv051-060/agent55-57';
+const sourceFile=`${root}/candidate55-1790250647651.json`,data=JSON.parse(fs.readFileSync(sourceFile));
+const {api}=await loadApi();
+const prefix=[...data.drags.slice(0,18),{blockId:'s55-y3',path:[[0,4],[0,3]]},{blockId:'s55-c2',path:[[1,5],[0,5],[0,4]]}];
+const before=api.replayRevisedRoute(data.level,prefix);assert(before.valid&&before.clearEvents===7);
+const choice={curtainId:'s55-cover',originalCount:8,relaxedCount:7,beforeDrag:prefix.length+1,prefix,cleared:7,formalRemaining:1,blockedAction:{blockId:'s55-p3',path:[[0,5]]},interpretation:'主路线18拖后，合法将黄色H2停至0,3、cyanH3停至0,4，给帘上方留下三格。相同空间和库存，仅将帘8改7，则隐藏紫H3能上移0,5；原帘尚余1，动作真实拒绝。此为局部机关约束证据，不是全局最优顺序或难度证明。'};
+const checks=verifyLocalMechanismChoices({...data,curtainLocalChoices:[choice]},api);assert.equal(checks.length,1);
+const file=`${root}/curtain-supplement55-${Date.now()}.json`;
+fs.writeFileSync(file,JSON.stringify({ruleVersion:'1.47.0',sourceFile,sourceFileSha256:digest(fs.readFileSync(sourceFile)),levelSha256:digest(data.level),routeSha256:digest(data.drags),curtainLocalChoices:[choice],checks,constructionTool:{file:process.argv[1],sha256:digest(fs.readFileSync(process.argv[1]))}},null,2)+'\n',{flag:'wx'});
+console.log(JSON.stringify({file,checks}));

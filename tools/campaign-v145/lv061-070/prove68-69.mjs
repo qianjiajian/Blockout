@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+import {loadApi} from '../../native-block-repair-v143.mjs';
+import {checkLiftFloor,qualifyLift} from './lift-floor.mjs';
+import {searchCanonical} from './canonical-search68-69.mjs';
+import {checkCanonicalLiftFloor} from './canonical-lift-floor.mjs';
+import {proveOpeningFloor} from './opening-projection.mjs';
+const path=process.argv[2],data=JSON.parse(fs.readFileSync(path)),{api}=await loadApi();
+const floor=Number(process.env.FLOOR??16),options={floor,maxStates:Number(process.env.STATES??500000),maxMilliseconds:Number(process.env.MS??45000)};
+let result;if(process.env.CANON)result=checkCanonicalLiftFloor(data.level,api,options);else result=process.env.PROJECTION?proveOpeningFloor(data.level,api,options):checkLiftFloor(data.level,api,options);
+const file=path.replace('.json',`.floor${floor}-${process.env.CANON?'canonical':process.env.PROJECTION?'opening':'full'}-${Date.now()}.json`);
+fs.writeFileSync(file,JSON.stringify(result,null,2));console.log(JSON.stringify({file,result}));

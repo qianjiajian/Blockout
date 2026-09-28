@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {verifyRulesLock} from '../../../verify-rules-lock.mjs';
+import {digest} from '../../../revised-preview-validation-v160.mjs';
+import {searchSpatial,loadSpatialApi} from '../../../../deliverables/remake101-110-v146-20260924/pipeline/spatial-star-domain.mjs';
+import {save} from './author.mjs';
+const lock=verifyRulesLock();assert(lock.ok,lock.errors.join('\n'));
+const input=process.argv[2],candidate=JSON.parse(fs.readFileSync(input,'utf8')),api=await loadSpatialApi();
+const proof=searchSpatial(candidate.level,api,{prove:true,floor:16,maxStates:2000000,maxMilliseconds:60000,maxTransitions:20000000,normalize:true,symmetry:true});
+console.log(JSON.stringify({file:save('fresh-proof123',{ruleVersion:lock.activeVersion,input,inputSha256:digest(fs.readFileSync(input)),levelSha256:digest(candidate.level),routeSha256:digest(candidate.drags),proof}),proof}));

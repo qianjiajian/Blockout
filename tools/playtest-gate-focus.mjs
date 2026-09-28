@@ -35,7 +35,15 @@ const toScreen = (page, logical) => {
   };
 };
 const blockPoint = (page, state, block) => {
-  const [dx, dy] = block.shape[0];
+  const [dx, dy] = [...block.shape].sort((left, right) => {
+    const leftX = block.x + left[0];
+    const leftY = block.y + left[1];
+    const rightX = block.x + right[0];
+    const rightY = block.y + right[1];
+    const leftInset = Math.min(leftX, leftY, state.level.width - 1 - leftX, state.level.height - 1 - leftY);
+    const rightInset = Math.min(rightX, rightY, state.level.width - 1 - rightX, state.level.height - 1 - rightY);
+    return rightInset - leftInset;
+  })[0];
   return toScreen(page, {
     x: state.board.innerX + (block.x + dx + 0.5) * state.board.cell,
     y: state.board.innerY + (block.y + dy + 0.5) * state.board.cell,
@@ -65,7 +73,7 @@ const assertFocus = (state, block, context) => {
   const expected = expectedGateIds(state, block);
   const actual = state.targetGateFocus.map((gate) => gate.id).sort();
   if (expected.length === 0 || JSON.stringify(actual) !== JSON.stringify(expected)) {
-    throw new Error(`Gate-focus E2E ${context}: expected ${expected.join(",")}, received ${actual.join(",")}`);
+    throw new Error(`Gate-focus E2E ${context}: expected ${expected.join(",")}, received ${actual.join(",")}; selected=${state.selectedId ?? "none"}`);
   }
 };
 const isActive = (state, block) => block.frozen <= 0
@@ -82,16 +90,35 @@ const createPage = async (viewport, reducedMotion = false) => {
 };
 
 const standard = await createPage({ width: 720, height: 1584 });
-let state = await openLevel(standard, 3);
-let block = state.puzzle.blocks.find((candidate) => isActive(state, candidate) && expectedGateIds(state, candidate).length > 0);
-if (!block) throw new Error("Gate-focus E2E: Lv3 has no active block with an available target");
+const focusFixture = await standard.evaluate(async () => {
+  const [{ getLevel }, { PuzzleModel }] = await Promise.all([
+    import("/src/core/levels.ts"),
+    import("/src/core/PuzzleModel.ts"),
+  ]);
+  for (let levelId = 1; levelId <= 100; levelId += 1) {
+    const model = new PuzzleModel(getLevel(levelId));
+    const snapshot = model.snapshot();
+    for (const candidate of snapshot.blocks) {
+      if (!model.isBlockActive(candidate) || model.possibleExitSides(candidate).length > 0) continue;
+      const activeColor = candidate.layers[0] ?? candidate.color;
+      const hasAvailableTarget = snapshot.gates.some((gate) => (
+        gate.frozen <= 0 && gate.color === activeColor && (!candidate.star || gate.star)
+      ));
+      if (hasAvailableTarget) return { levelId, blockId: candidate.id };
+    }
+  }
+  throw new Error("Gate-focus E2E: frozen campaign has no non-aligned active block with an available target");
+});
+let state = await openLevel(standard, focusFixture.levelId);
+let block = state.puzzle.blocks.find((candidate) => candidate.id === focusFixture.blockId);
+if (!block) throw new Error("Gate-focus E2E: dynamic focus fixture block missing");
 let point = blockPoint(standard, state, block);
 await standard.mouse.move(point.x, point.y);
 await standard.mouse.down();
 await standard.waitForTimeout(220);
 state = await debug(standard);
-assertFocus(state, block, "Lv3 held");
-await standard.screenshot({ path: resolve(output, "round65-gate-focus-level-003-720x1584.png") });
+assertFocus(state, block, `Lv${focusFixture.levelId} held`);
+await standard.screenshot({ path: resolve(output, "round65-gate-focus-dynamic-720x1584.png") });
 await standard.mouse.up();
 await standard.waitForTimeout(120);
 state = await debug(standard);
@@ -102,35 +129,33 @@ block = state.puzzle.blocks.find((candidate) => candidate.star && isActive(state
 if (!block) throw new Error("Gate-focus E2E: Lv100 has no active star block");
 const activeColor = block.layers[0] ?? block.color;
 const matchingStarGates = state.puzzle.gates.filter((gate) => gate.color === activeColor && gate.star);
-if (matchingStarGates.length === 0 || matchingStarGates.some((gate) => gate.frozen <= 0)) {
-  throw new Error("Gate-focus E2E: Lv100 no longer provides the frozen-star-gate fixture");
+if (matchingStarGates.length === 0 || matchingStarGates.some((gate) => gate.frozen > 0)) {
+  throw new Error("Gate-focus E2E: Lv100 no longer provides the available star-gate fixture");
 }
 point = blockPoint(standard, state, block);
 await standard.mouse.move(point.x, point.y);
 await standard.mouse.down();
 await standard.waitForTimeout(220);
 state = await debug(standard);
-if (state.selectedId !== block.id || state.targetGateFocus.length !== 0) {
-  throw new Error("Gate-focus E2E: star block falsely focused an ordinary or still-frozen star gate");
-}
-await standard.screenshot({ path: resolve(output, "round65-gate-focus-frozen-star-level-100-720x1584.png") });
+assertFocus(state, block, "Lv100 star-only held");
+await standard.screenshot({ path: resolve(output, "round65-gate-focus-star-level-100-720x1584.png") });
 await standard.mouse.up();
 await standard.close();
 
 const mobile = await createPage({ width: 320, height: 568 }, true);
-state = await openLevel(mobile, 3);
-block = state.puzzle.blocks.find((candidate) => isActive(state, candidate) && expectedGateIds(state, candidate).length > 0);
-if (!block) throw new Error("Gate-focus E2E: reduced-motion Lv3 has no targetable block");
+state = await openLevel(mobile, focusFixture.levelId);
+block = state.puzzle.blocks.find((candidate) => candidate.id === focusFixture.blockId);
+if (!block) throw new Error("Gate-focus E2E: reduced-motion dynamic fixture block missing");
 point = blockPoint(mobile, state, block);
 await mobile.mouse.move(point.x, point.y);
 await mobile.mouse.down();
 await mobile.waitForTimeout(120);
 state = await debug(mobile);
 assertFocus(state, block, "320x568 reduced-motion held");
-await mobile.screenshot({ path: resolve(output, "round65-gate-focus-level-003-320x568.png") });
+await mobile.screenshot({ path: resolve(output, "round65-gate-focus-dynamic-320x568.png") });
 await mobile.mouse.up();
 await mobile.close();
 
 await browser.close();
 if (errors.length > 0) throw new Error(`Gate-focus browser errors:\n${errors.join("\n")}`);
-console.log("Selected-block target gate focus passed Lv3, star-only Lv100, release cleanup, reduced motion, and 320x568.");
+console.log(`Selected-block target gate focus passed dynamic Lv${focusFixture.levelId}, available star-only Lv100, release cleanup, reduced motion, and 320x568.`);

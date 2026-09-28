@@ -1,0 +1,22 @@
+import fs from 'node:fs';
+import {loadModelApi} from '../../../remake131to140-model-api.mjs';
+import {checkQueueStationaryObligations} from './stationary-queue-obligations.mjs';
+Error.stackTraceLimit=0;
+const dir='deliverables/remake131-140-v146-20260924',base=JSON.parse(fs.readFileSync(dir+'/agent136-138/twin-precise139-1790483203136.json')),hidden=JSON.parse(fs.readFileSync(dir+'/agent131-134/hidden-12plus16-139-1790483933996.json')),l=structuredClone(base.level),qids=new Set(l.generators[0].queueBlockIds),queue=l.blocks.filter(b=>qids.has(b.id)),S=[[0,0]],H2=[[0,0],[1,0]],H3=[[0,0],[1,0],[2,0]],L3=[[0,0],[0,1],[1,1]],SQ3=Array.from({length:9},(_,i)=>[i%3,Math.floor(i/3)]),opening=[];
+const put=(id,x,y,shape,color='blue',extra={})=>opening.push({id,x,y,shape,color,...extra});
+put('n139-opening-0',6,8,SQ3,'purple',{movementAxis:'horizontal'});
+put('n139-opening-1',0,9,L3);put('n139-opening-2',3,9,L3);
+put('n139-opening-3',0,0,H2,'purple');put('n139-opening-4',6,0,H3,'purple');
+for(let i=0;i<4;i++)put('n139-opening-'+(5+i),6,1+2*i,H3);
+for(let i=0;i<7;i++)put('n139-opening-'+(9+i),0,1+i,H2);
+for(let i=0;i<3;i++)put('a139-wide-middle-'+i,6,2+2*i,H3,'purple');
+for(const [i,x,y,shape]of [[0,0,8,H2],[1,3,8,H2],[2,1,11,H2],[3,4,11,H2],[4,6,12,H3]])put('a139-wide-bottom-'+i,x,y,shape,'purple');
+l.shutters=hidden.shutters;l.generators[0].side='top';l.generators[0].offset=7;l.generators[0].spawn=[7,0];
+queue.forEach((b,i)=>{b.x=7;b.y=0;b.shape=i?L3:H2;b.color=['purple','blue','cyan','green'][i];delete b.layers;});
+const change=(color,side,offset)=>Object.assign(l.gates.find(g=>g.color===color),{side,offset,size:3});change('purple','right',8);change('red','bottom',0);change('orange','left',8);
+const cells=b=>b.shape.map(([x,y])=>[x+b.x,y+b.y]),occupied=new Set(opening.flatMap(cells).map(p=>p.join(',')));if(occupied.size!==opening.reduce((n,b)=>n+b.shape.length,0))throw Error('overlap');
+for(const [x,y]of l.playable)if(!occupied.has(x+','+y)&&!l.shutters.some(s=>x>=s.x&&x<s.x+s.width&&y>=s.y&&y<s.y+s.height))put('a139-wide-fill-'+opening.length,x,y,S);
+const assigned=opening.filter(b=>b.color==='purple'),adj=(a,b)=>cells(a).some(([x,y])=>cells(b).some(([u,v])=>Math.abs(x-u)+Math.abs(y-v)===1));
+for(const b of opening.filter(b=>b.color!=='purple')){b.color=['blue','orange','cyan','red','yellow','green','pink'].find(c=>!assigned.some(a=>a.color===c&&adj(a,b)));assigned.push(b);}
+l.blocks=[...opening,...hidden.blocks,...queue];const api=await loadModelApi();api.validateLevel(l);const proof=checkQueueStationaryObligations(l,api,{floor:11});
+const file=dir+'/root-native/draft-wide139-'+Date.now()+'.json';fs.writeFileSync(file,JSON.stringify({level:l,proof,status:'DRAFT_NO_COMPLETE_ROUTE_NO_SOURCE_REFRESH',formalAdopted:false,sourceCandidate:dir+'/agent136-138/twin-precise139-1790483203136.json',targetId:'n139-opening-4',sourceReviewNeedsRefresh:true},null,2)+'\n',{flag:'wx'});console.log(JSON.stringify({file,bodies:l.blocks.length,openingPurple:opening.filter(b=>b.color==='purple').length,L:proof.provedObligations,status:proof.status}));

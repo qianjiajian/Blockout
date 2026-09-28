@@ -11,44 +11,6 @@ await mkdir(output, { recursive: true });
 const browser = await chromium.launch({ headless: true });
 const errors = [];
 
-// A document can be hidden before the game is constructed (for example when a
-// background tab restores on browser launch). It must not arm a rollover timer
-// until the first real foreground transition.
-const hiddenContext = await browser.newContext({ viewport: { width: 496, height: 1078 } });
-await hiddenContext.addInitScript(() => {
-  let hidden = true;
-  Object.defineProperty(document, "hidden", { configurable: true, get: () => hidden });
-  Object.defineProperty(document, "visibilityState", {
-    configurable: true,
-    get: () => hidden ? "hidden" : "visible",
-  });
-  Object.defineProperty(globalThis, "__lifecycleInitialVisibility", {
-    configurable: true,
-    value: {
-      show() {
-        hidden = false;
-        document.dispatchEvent(new Event("visibilitychange"));
-      },
-    },
-  });
-});
-const hiddenPage = await hiddenContext.newPage();
-hiddenPage.on("console", (message) => { if (message.type() === "error") errors.push(`[hidden-start] ${message.text()}`); });
-hiddenPage.on("pageerror", (error) => errors.push(`[hidden-start] ${error.message}`));
-await hiddenPage.goto(playtestUrl, { waitUntil: "networkidle" });
-await hiddenPage.waitForFunction(() => window.__COLOR_ESCAPE__?.getDebugState != null);
-let hiddenStartState = await hiddenPage.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
-if (hiddenStartState.daily.rolloverWatchScheduled !== false) {
-  throw new Error("Lifecycle E2E: hidden initial load armed the daily rollover watch");
-}
-await hiddenPage.evaluate(() => globalThis.__lifecycleInitialVisibility.show());
-await hiddenPage.waitForFunction(() => window.__COLOR_ESCAPE__.getDebugState().daily.rolloverWatchScheduled === true);
-hiddenStartState = await hiddenPage.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
-if (hiddenStartState.daily.rolloverWatchScheduled !== true) {
-  throw new Error("Lifecycle E2E: first foreground transition did not arm the daily rollover watch");
-}
-await hiddenContext.close();
-
 const page = await browser.newPage({ viewport: { width: 496, height: 1078 } });
 page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
 page.on("pageerror", (error) => errors.push(error.message));
@@ -66,13 +28,21 @@ await page.evaluate(() => localStorage.setItem("color-escape-save-v1", JSON.stri
   bestStars: {},
   bestMoves: {},
   rewardedLevels: [],
-  dailyStreak: 0,
-  lastDailyCompletedDay: "",
 })));
 await page.reload({ waitUntil: "networkidle" });
 await page.waitForTimeout(400);
 
 const debug = () => page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
+const clickInteractionTarget = async (name) => {
+  const state = await debug();
+  const hit = state.interactionTargets?.targets?.[name]?.hit;
+  const canvas = await page.locator("canvas").boundingBox();
+  if (!hit || !canvas) throw new Error(`Lifecycle E2E: missing ${name} target or canvas bounds`);
+  await page.mouse.click(
+    canvas.x + state.viewportTransform.offsetX + (hit.x + hit.width / 2) * state.viewportTransform.scale,
+    canvas.y + state.viewportTransform.offsetY + (hit.y + hit.height / 2) * state.viewportTransform.scale,
+  );
+};
 const point = (board, x, y) => ({ x: board.innerX + (x + 0.5) * board.cell, y: board.innerY + (y + 0.5) * board.cell });
 const dispatchPointer = (type, pointerId, position, buttons = 0) => page.evaluate(({ type, pointerId, position, buttons }) => {
   const canvas = document.querySelector("canvas");
@@ -216,20 +186,18 @@ await page.waitForTimeout(30);
 state = await debug();
 const hiddenBlock = state.puzzle.blocks.find((block) => block.id === openingDrag.blockId);
 if (state.screen !== "paused" || !hiddenBlock || hiddenBlock.x !== openingOrigin.x || hiddenBlock.y !== openingOrigin.y
-  || state.puzzle.moves !== 0 || state.selectedId || state.activePointer != null
-  || state.daily.rolloverWatchScheduled !== false) {
+  || state.puzzle.moves !== 0 || state.selectedId || state.activePointer != null) {
   throw new Error("Lifecycle E2E: hiding during drag did not roll back and pause safely");
 }
 await page.screenshot({ path: shot("round12-hide-during-drag-paused.png") });
 
 await setVisibility(false);
-await page.mouse.click(248, 755);
+await clickInteractionTarget("pauseResume");
 await page.waitForTimeout(30);
 state = await debug();
 if (state.screen !== "playing"
   || state.puzzle.blocks.find((block) => block.id === openingDrag.blockId)?.x !== openingOrigin.x
-  || state.puzzle.blocks.find((block) => block.id === openingDrag.blockId)?.y !== openingOrigin.y
-  || state.daily.rolloverWatchScheduled !== true) {
+  || state.puzzle.blocks.find((block) => block.id === openingDrag.blockId)?.y !== openingOrigin.y) {
   throw new Error("Lifecycle E2E: resume did not preserve the rolled-back board");
 }
 
@@ -253,4 +221,4 @@ await page.screenshot({ path: shot("round12-resume-undo-clean.png") });
 await page.close();
 await browser.close();
 if (errors.length) throw new Error(`Browser errors:\n${errors.join("\n")}`);
-console.log("Hidden initial load, Pointer cancel rollback, multi-touch ownership, hide/resume, and clean undo history passed.");
+console.log("Pointer cancel rollback, multi-touch ownership, hide/resume, and clean undo history passed.");

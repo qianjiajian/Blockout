@@ -1,7 +1,27 @@
 node_modules/
 .tools/
+.codex-temp/
+outputs/
+artifacts/
 dist/
 dist-wechat/
+*.build-manifest.json
 playtest-results/
 tools/board-editor-backups/
 *.log
+
+# Local scratch files and machine-specific tooling
+.tmp-*
+.codex-temp-*
+.vite-*.log
+NUL
+%SystemDrive%/
+tmpbfs.exe
+eng.traineddata
+art-source.7z
+({id*
+--output*
+
+# Large generated experiment archives and candidate dumps
+deliverables/*/
+deliverables/*.zip

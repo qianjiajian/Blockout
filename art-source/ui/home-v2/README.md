@@ -1,6 +1,6 @@
 # 主界面 V2 资源映射（720×1584）
 
-本目录保存已接入主界面的可替换源素材；运行时同名文件位于 `public/assets/art/ui/home-v2/`。替换同名文件即可保持代码映射不变，随后运行 `pnpm art:optimize`、`pnpm art:verify` 和 `pnpm build:wechat`。
+本目录保存上一版主界面的回退源素材，当前不进入运行目录。正式首页位于 `art-source/ui/home-v3/`；不能通过只替换本目录文件改变当前游戏。
 
 | 文件 | 主界面位置 |
 |---|---|
@@ -14,4 +14,4 @@
 | `navigation-bar.png` / `navigation-selected.png` | 底部导航底板与主页选中态 |
 | `navigation-levels.png` / `navigation-home.png` / `navigation-achievements.png` | 底部三个导航图标 |
 
-`reference-layout.png` 是项目方提供的720×1584排版示意，仅用于视觉比对，不进入运行包。首页背景源稿位于 `art-source/backgrounds/home-lab-v2.png`，运行时由资源工具生成同尺寸高质量 JPEG，以控制微信主包体积。
+`reference-layout.png` 是上一版 720×1584 排版示意，仅用于历史比对，不进入运行包。若明确恢复 Home V2，必须同步恢复清单、运行路径和布局代码，再运行完整美术及微信构建验证。

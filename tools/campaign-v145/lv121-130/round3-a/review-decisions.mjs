@@ -1,0 +1,21 @@
+import assert from 'node:assert/strict';
+import {digest} from '../../../revised-preview-validation-v160.mjs';
+import {compileLevel,stateFromSnapshot,forEachGesture} from '../../../remake21to30-mask-floor.mjs';
+import {observeMechanismProcess} from '../../../review-remake111to120-decisions-v147.mjs';
+import {read,save,apiLoad,projection,replayBomb} from './author.mjs';
+const api=await apiLoad();
+for(const file of process.argv.slice(2)){
+ const d=read(file),l=d.level,p=projection(l),c=compileLevel(p),cases=[],model=new api.PuzzleModel(l),repositionRows=[];model.startCountdown();
+ for(let i=0;i<d.drags.length;i++){
+  const before=model.snapshot(),correct=d.drags[i],body=before.blocks.find(b=>b.id===correct.blockId);
+  if(!correct.exitSide)repositionRows.push({step:i+1,blockId:body.id,shape:body.shape,area:body.shape.length,from:[body.x,body.y],to:correct.path.at(-1),currentColor:body.layers[0]});
+  if(cases.length<2){const prefix=d.drags.slice(0,i),s=stateFromSnapshot(c,before),choices=[];forEachGesture(c,s,(j,v,cost,get)=>{if(cost===1&&c.blocks[j].shape.length>1)choices.push(get());});
+   for(const wrong of choices){const b=before.blocks.find(b=>b.id===wrong.blockId);const recovery={blockId:b.id,path:[...[...wrong.path].slice(0,-1).reverse(),[b.x,b.y]]};const wp=api.replayRevisedRoute(p,[...prefix,wrong]);if(!wp.valid)continue;const blocked=api.replayRevisedRoute(p,[...prefix,wrong,correct]);if(blocked.valid)continue;const restored=api.replayRevisedRoute(p,[...prefix,wrong,recovery]),original=api.replayRevisedRoute(p,prefix);if(!restored.valid||restored.finalStateKey!==original.finalStateKey)continue;const full=[...prefix,wrong,recovery,...d.drags.slice(i)],timed=replayBomb(l,full,api,true);if(!timed.valid||!timed.complete)continue;cases.push({atStep:i+1,beforeDrag:i+1,blockId:b.id,area:b.shape.length,legalWrongParking:wrong,blockedNextAction:correct,blockedReason:blocked.error,recoveryDrag:recovery,restoresExactSpatialState:true,fullRecoveredRoute:full,recoveredTimedModel:timed,provesGlobalDeadEnd:false,provesOptimalPenalty:false});break;}
+  }
+  model.beginAction();for(const q of correct.path)assert(model.moveBlockStep(correct.blockId,...q));if(correct.exitSide)assert(model.tryExit(correct.blockId,correct.exitSide).ok);assert(model.commitAction());
+ }
+ assert(model.snapshot().complete);assert(cases.length,'At least one real multi-cell recoverable obstruction');
+ const process=observeMechanismProcess(l,d.drags,{...api,replayRevisedRoute:(level,route)=>replayBomb(level,route,api,false)});
+ const report={levelId:l.id,candidateFile:file,levelSha256:digest(l),routeSha256:digest(d.drags),deadlineFreeSpatialProjectionSha256:digest(p),cases,repositionRows,multiCellRepositions:repositionRows.filter(r=>r.area>1).length,singleCellRepositions:repositionRows.filter(r=>r.area===1).length,mechanismProcess:process,forcedConstraints:l.gates.filter(g=>g.frozen).map(g=>({gateId:g.id,color:g.color,requiredClearEvents:g.frozen,meaning:'No matching body or shell can use this exit before this many clearing/peeling events; observed unlock step is in mechanismProcess.'})),mechanismDecisionReview:l.id===121?'The first24-second bomb is cleared while building7 events for blue access. Clearing15 events reveals the real cover and activates the second bomb; the hidden orange shell must be peeled to disarm it before the35-second active deadline. Purple21 and green26 gates keep the two inner green bodies as late inventory. Six of eight witnessed reposition decisions move multi-cell bodies.':'The60-second bomb is cleared early. Ice5 and ice7 prevent moving two substantial blockers until clears thaw them. The3 shell peels leave blue inner bodies whose gate is locked until18 clears; orange14 and red12 exits order the intervening inventory. The witnessed route has three multi-cell and four singleton parkings; the explicit multi-cell obstruction cases establish local spatial choices, and the independentL5 proof supplies necessity, without claiming every singleton move is a large-block decision.',humanBlindTested:false,globalOrderBeyondMechanismThresholdsProven:false,formalPointerValidated:false};
+ console.log(JSON.stringify({file:save(`decisions${l.id}`,report),cases:cases.length,multi:report.multiCellRepositions,single:report.singleCellRepositions}));
+}

@@ -1,0 +1,15 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const source='tools/campaign-v145/lv131-140/root-native/native-axis-pruned.cs';
+let s=fs.readFileSync(source,'utf8');
+const sub=(a,b)=>{assert(s.includes(a),a);s=s.replace(a,b);};
+sub('public int[][] groups,states;','public int[][] groups,states;public int[][][] types;');
+sub('readonly Dictionary<World,int> indices=new Dictionary<World,int>();','readonly Dictionary<string,int> indices=new Dictionary<string,int>();');
+sub(' World Key(World s){foreach(int[] g in input.groups){for(int j=0;j<g.Length;j++)sortValues[j]=s.Get(g[j]);Array.Sort(sortValues,0,g.Length);for(int j=0;j<g.Length;j++)s=s.Set(g[j],sortValues[j]);}return s;}',` string Key(World s){int clear=Clears(s),count=0;int[] tokens=new int[n];for(int i=0;i<n;i++){int v=s.Get(i);if(v==255)continue;Body b=bodies[i];int phase=(clear>=b.reveal?2:0)+(clear>=b.reveal+b.ice?1:0);tokens[count++]=input.types[i][v>>7][phase]*128+(v&127);}Array.Sort(tokens,0,count);char[] chars=new char[1+count*2];chars[0]=(char)clear;for(int j=0;j<count;j++){chars[1+j*2]=(char)(tokens[j]>>16);chars[2+j*2]=(char)(tokens[j]&65535);}return new string(chars);}`);
+sub('World normalized=Key(Normalize(s));if(collect!=null){collect.Add(edge+":"+normalized.Text(n));return;}','World normalized=Normalize(s);string signature=Key(normalized);if(collect!=null){collect.Add(edge+":"+Convert.ToBase64String(System.Text.Encoding.Unicode.GetBytes(signature)));return;}');
+sub('indices.TryGetValue(normalized,out i)','indices.TryGetValue(signature,out i)');
+sub('indices.Add(normalized,i)','indices.Add(signature,i)');
+sub('canonical=Key(Normalize(s)).Text(n)','canonical=Convert.ToBase64String(System.Text.Encoding.Unicode.GetBytes(Key(Normalize(s))))');
+sub('World first=Key(Normalize(initial));indices.Add(first,0);','World first=Normalize(initial);indices.Add(Key(first),0);');
+sub('native-mask64-axis-countdown-optional-exit-identity-quotient-v172','native-mask64-countdown-optional-exit-remaining-phase-bisimulation-v173');
+fs.writeFileSync('tools/campaign-v145/lv141-150/round2-b/native-phase.cs',s);

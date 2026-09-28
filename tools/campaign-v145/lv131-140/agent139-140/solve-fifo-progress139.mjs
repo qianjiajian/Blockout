@@ -1,0 +1,37 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {loadApi} from '../../../native-block-repair-v143.mjs';
+import {verifyRulesLock} from '../../../verify-rules-lock.mjs';
+import {checkQueueStationaryObligations} from '../root-native/stationary-queue-obligations.mjs';
+import {searchNativeOpeningWitness} from './native-progress-witness139.mjs';
+import {loadSpatialApi,searchSpatial} from './witness-domain.mjs';
+import {measureRoute} from '../../../remake21to30-quality.mjs';
+import {auditOpeningCoverage} from '../../../revised-opening-coverage.mjs';
+import {auditHiddenCoverage} from '../../../revised-hidden-coverage.mjs';
+import {auditGateSpanLimits} from '../../../revised-gate-span-limits.mjs';
+import {auditGeneratorQueueColors} from '../../../revised-generator-queue-colors.mjs';
+import {createSourceReview139} from './source-review-current139.mjs';
+import {repairOrdinaryFifoPrefix} from './repair-ordinary-fifo-prefix139.mjs';
+Error.stackTraceLimit=0;
+const root='deliverables/remake131-140-v146-20260924/agent139-140',source=process.argv[2];
+const d=JSON.parse(fs.readFileSync(source)),level=d.level,{api}=await loadApi(),spatial=await loadSpatialApi();
+assert(verifyRulesLock().ok);
+const targetId=d.targetId??d.openingFacts?.targetId??'n139-opening-3';
+const proof=checkQueueStationaryObligations(level,api,{floor:11});assert(proof.thresholdProven);
+const queueIds=new Set(level.generators.flatMap(g=>g.queueBlockIds));
+const onboard=level.blocks.filter(b=>!queueIds.has(b.id));
+const adjacent=(a,b)=>a.shutterId===b.shutterId&&a.shape.some(([x,y])=>b.shape.some(([u,v])=>Math.abs(a.x+x-b.x-u)+Math.abs(a.y+y-b.y-v)===1));
+const checks={opening:auditOpeningCoverage(new api.PuzzleModel(level).snapshot()),hidden:auditHiddenCoverage(level),art:api.auditCandidateBlockArt(level),gates:auditGateSpanLimits(level),
+ gateColors:{passed:level.gates.every(g=>level.blocks.some(b=>(b.layers??[b.color]).includes(g.color)))},queue:auditGeneratorQueueColors(level),
+ adjacency:{passed:!onboard.some((a,i)=>onboard.some((b,j)=>i!==j&&a.color===b.color&&adjacent(a,b)))}};
+assert(Object.values(checks).every(c=>c.passed));
+const sourceReview=createSourceReview139(level,api);
+const prefix=searchNativeOpeningWitness(level,api,{targetId,goalClears:proof.contract.targetIds.length,floor:16,maxMilliseconds:Number(process.env.OPENING_MS??20000),maxStates:Number(process.env.OPENING_STATES??1000000),weight:1000});
+const repaired=repairOrdinaryFifoPrefix(level,prefix.drags,api);
+console.log(JSON.stringify({stage:'prefix',status:prefix.status,clears:prefix.maxClearsSeen,cost:prefix.cost,h:prefix.h,actual:prefix.actualPrefixValid,term:prefix.termination,repaired:repaired.selected.completeProjected,inserted:repaired.selected.inserted}));
+const search=prefix.status==='relaxed-prefix-witness'&&repaired.selected.completeProjected?searchSpatial(level,spatial,{floor:16,maxMilliseconds:8000,maxStates:150000,initialDrags:repaired.selected.drags,diagnosticTrace:true}):null;
+const replay=search?.status==='witness'?api.replayRevisedRoute(level,search.drags):null;
+const measurement=replay?.complete?measureRoute(level,search.drags,api):null;
+const file=root+'/fifo-progress-solve139-'+Date.now()+'.json';
+fs.writeFileSync(file,JSON.stringify({level,targetId,checks,proof,prefix,repaired,search,drags:search?.drags??[],replay,measurement,sourceReview,sourceCandidate:source,formalAdopted:false},null,2)+'\n',{flag:'wx'});
+console.log(JSON.stringify({file,L:proof.provedObligations,prefix:prefix.status,clears:prefix.maxClearsSeen,cost:prefix.cost,repaired:repaired.selected.completeProjected,inserted:repaired.selected.inserted,search:search?.status,U:replay?.nonClearingDrags,measurement}));

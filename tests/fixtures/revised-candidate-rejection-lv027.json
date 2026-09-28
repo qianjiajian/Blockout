@@ -1,0 +1,503 @@
+{
+  "schemaVersion": 1,
+  "ruleVersion": "1.2.1",
+  "levelId": 27,
+  "seed": "lv027-spatial-pipeline-pilot-20260921-01",
+  "level": {
+    "id": 27,
+    "name": "Lv27 isolated spatial pipeline pilot",
+    "difficulty": "normal",
+    "mechanismRules": "revised-2026-09-21-v1.2",
+    "width": 6,
+    "height": 9,
+    "timeSeconds": 180,
+    "reward": 0,
+    "playable": [
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        4,
+        1
+      ],
+      [
+        5,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        5,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        0,
+        6
+      ],
+      [
+        1,
+        6
+      ],
+      [
+        2,
+        6
+      ],
+      [
+        3,
+        6
+      ],
+      [
+        4,
+        6
+      ],
+      [
+        5,
+        6
+      ],
+      [
+        0,
+        7
+      ],
+      [
+        1,
+        7
+      ],
+      [
+        2,
+        7
+      ],
+      [
+        3,
+        7
+      ],
+      [
+        4,
+        7
+      ],
+      [
+        5,
+        7
+      ],
+      [
+        0,
+        8
+      ],
+      [
+        1,
+        8
+      ],
+      [
+        2,
+        8
+      ],
+      [
+        3,
+        8
+      ],
+      [
+        4,
+        8
+      ],
+      [
+        5,
+        8
+      ]
+    ],
+    "gates": [
+      {
+        "id": "red",
+        "side": "left",
+        "offset": 6,
+        "size": 3,
+        "color": "red"
+      },
+      {
+        "id": "blue",
+        "side": "right",
+        "offset": 6,
+        "size": 3,
+        "color": "blue"
+      },
+      {
+        "id": "green",
+        "side": "top",
+        "offset": 1,
+        "size": 1,
+        "color": "green",
+        "frozen": 10
+      },
+      {
+        "id": "yellow",
+        "side": "top",
+        "offset": 2,
+        "size": 1,
+        "color": "yellow",
+        "frozen": 13
+      },
+      {
+        "id": "purple",
+        "side": "top",
+        "offset": 3,
+        "size": 1,
+        "color": "purple",
+        "frozen": 13
+      }
+    ],
+    "shutters": [
+      {
+        "id": "cover-9",
+        "x": 1,
+        "y": 1,
+        "width": 3,
+        "height": 3,
+        "count": 9
+      }
+    ],
+    "blocks": [
+      {
+        "id": "opening-0",
+        "x": 1,
+        "y": 6,
+        "color": "red",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "id": "opening-1",
+        "x": 2,
+        "y": 6,
+        "color": "blue",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "id": "opening-2",
+        "x": 3,
+        "y": 6,
+        "color": "red",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "id": "opening-3",
+        "x": 1,
+        "y": 7,
+        "color": "blue",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "id": "opening-4",
+        "x": 2,
+        "y": 7,
+        "color": "red",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "id": "opening-5",
+        "x": 3,
+        "y": 7,
+        "color": "blue",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "id": "opening-6",
+        "x": 1,
+        "y": 8,
+        "color": "red",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "id": "opening-7",
+        "x": 2,
+        "y": 8,
+        "color": "blue",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "id": "opening-8",
+        "x": 3,
+        "y": 8,
+        "color": "red",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "id": "hidden-0",
+        "x": 1,
+        "y": 1,
+        "color": "red",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "shutterId": "cover-9"
+      },
+      {
+        "id": "hidden-1",
+        "x": 2,
+        "y": 1,
+        "color": "blue",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "shutterId": "cover-9"
+      },
+      {
+        "id": "hidden-2",
+        "x": 3,
+        "y": 1,
+        "color": "red",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "shutterId": "cover-9"
+      },
+      {
+        "id": "hidden-3",
+        "x": 1,
+        "y": 2,
+        "color": "blue",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "shutterId": "cover-9"
+      },
+      {
+        "id": "hidden-4",
+        "x": 2,
+        "y": 2,
+        "color": "green",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "shutterId": "cover-9"
+      },
+      {
+        "id": "hidden-5",
+        "x": 3,
+        "y": 2,
+        "color": "green",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "shutterId": "cover-9"
+      },
+      {
+        "id": "hidden-6",
+        "x": 1,
+        "y": 3,
+        "color": "yellow",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "shutterId": "cover-9"
+      },
+      {
+        "id": "hidden-7",
+        "x": 2,
+        "y": 3,
+        "color": "yellow",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "shutterId": "cover-9"
+      },
+      {
+        "id": "hidden-8",
+        "x": 3,
+        "y": 3,
+        "color": "purple",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "shutterId": "cover-9"
+      }
+    ]
+  }
+}

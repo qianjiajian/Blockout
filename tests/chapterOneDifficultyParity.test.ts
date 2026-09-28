@@ -1,90 +1,52 @@
 import { describe, expect, it } from "vitest";
-import { scoreBlockOutLevel } from "../src/core/blockOutDifficulty";
-import { CHAPTER_ONE_DIFFICULTY_RAMP_TARGETS } from "../src/core/campaignDifficultyOverrides";
-import { solveLevelForValidation, solveLevelOptimally } from "../src/core/levelSolver";
+import { calibratedBlockOutDifficulty, scoreBlockOutLevel } from "../src/core/blockOutDifficulty";
 import { LEVELS } from "../src/core/levels";
 
-const CALIBRATION = { slope: 0.826935, intercept: 13.161835 } as const;
-const calibratedScore = (raw: number): number => CALIBRATION.intercept + CALIBRATION.slope * raw;
+const EXPECTED = [
+  { id: 1, score: 30.87, parMoves: 3, routeOverhead: 0, certifiedFloor: null },
+  { id: 2, score: 54.74, parMoves: 10, routeOverhead: 1, certifiedFloor: 2 },
+  { id: 3, score: 48.7, parMoves: 9, routeOverhead: 1, certifiedFloor: 1 },
+  { id: 4, score: 56.34, parMoves: 33, routeOverhead: 15, certifiedFloor: 5 },
+  { id: 5, score: 60.61, parMoves: 29, routeOverhead: 9, certifiedFloor: 5 },
+  { id: 6, score: 62.28, parMoves: 27, routeOverhead: 6, certifiedFloor: 5 },
+  { id: 7, score: 60.07, parMoves: 28, routeOverhead: 12, certifiedFloor: 6 },
+  { id: 8, score: 62.17, parMoves: 56, routeOverhead: 31, certifiedFloor: 7 },
+  { id: 9, score: 57.91, parMoves: 20, routeOverhead: 10, certifiedFloor: 8 },
+  { id: 10, score: 60.7, parMoves: 52, routeOverhead: 27, certifiedFloor: 10 },
+] as const;
 
-describe("chapter-one tutorial and Lv3 difficulty parity", () => {
-  it("makes Lv1 the requested two-color, two-exit tutorial", () => {
+describe("chapter-one competitor-composition difficulty", () => {
+  it("keeps Lv1 as a three-color onboarding level", () => {
     const tutorial = LEVELS[0];
-    const optimal = solveLevelOptimally(tutorial);
-    const score = calibratedScore(scoreBlockOutLevel(tutorial).score);
-    expect(tutorial).toMatchObject({ id: 1, name: "新手教程", width: 5, height: 5, parMoves: 2 });
+    expect(tutorial).toMatchObject({ id: 1, name: "新手教程", width: 5, height: 5, parMoves: 3 });
     expect(tutorial.playable).toHaveLength(25);
-    expect(tutorial.blocked ?? []).toEqual([]);
-    expect(tutorial.blocks).toHaveLength(2);
-    expect(new Set(tutorial.blocks.map((block) => block.color)).size).toBe(2);
-    expect(tutorial.gates).toHaveLength(2);
-    expect(new Set(tutorial.gates.map((gate) => gate.color)).size).toBe(2);
-    expect(tutorial.gates).toMatchObject([
-      { id: "red-top", side: "top", offset: 0, size: 3, color: "blue" },
-      { id: "blue-bottom", side: "bottom", offset: 2, size: 3, color: "green" },
-    ]);
-    expect(tutorial.blocks).toMatchObject([
-      { id: "red-a", x: 0, y: 3, shape: [[0, 0], [1, 0], [0, 1], [1, 1]], color: "blue" },
-      { id: "blue-a", x: 3, y: 0, shape: [[0, 0], [1, 0], [0, 1], [1, 1]], color: "green" },
-    ]);
-    expect(tutorial.onboardingHint).toEqual({ blockId: "red-a", path: [[0, 2], [0, 1], [0, 0]] });
+    expect(tutorial.blocks).toHaveLength(3);
+    expect(tutorial.gates).toHaveLength(3);
+    expect(new Set(tutorial.blocks.map((block) => block.color)).size).toBe(3);
+    expect(tutorial.onboardingHint).toEqual({ blockId: "cc-001-b1-01", path: [] });
     expect(tutorial.shutters).toBeUndefined();
     expect(tutorial.blocks.every((block) => !block.layers && !block.frozen)).toBe(true);
     expect(tutorial.gates.every((gate) => !gate.frozen)).toBe(true);
-    expect(score).toBeCloseTo(23.63, 2);
-    expect(optimal).toMatchObject({ solved: true, minimumDrags: 2, clearLoad: 2, repositionOverhead: 0, gridSteps: 6, turns: 0 });
   });
 
-  it("keeps Lv2–5 inside the Lv3 score and optimal-drag bands", () => {
-    const chapter = LEVELS.slice(1, 5);
-    const results = chapter.map((level) => ({
-      id: level.id,
-      score: calibratedScore(scoreBlockOutLevel(level).score),
-      optimal: solveLevelOptimally(level),
-    }));
-
-    for (const result of results) {
-      expect(result.score, `Lv${result.id} calibrated score`).toBeGreaterThanOrEqual(45);
-      expect(result.score, `Lv${result.id} calibrated score`).toBeLessThanOrEqual(48.3);
-      expect(result.optimal.solved, `Lv${result.id} optimal proof`).toBe(true);
-      expect(result.optimal.minimumDrags, `Lv${result.id} optimal drags`).toBeGreaterThanOrEqual(11);
-      expect(result.optimal.minimumDrags, `Lv${result.id} optimal drags`).toBeLessThanOrEqual(13);
+  it("locks current D1 values, accepted par routes, and certified setup floors for Lv1–10", () => {
+    for (const expected of EXPECTED) {
+      const level = LEVELS[expected.id - 1];
+      const score = calibratedBlockOutDifficulty(scoreBlockOutLevel(level).score);
+      const clearLoad = level.blocks.reduce((sum, block) => sum + (block.layers?.length ?? 1), 0);
+      expect(score, `Lv${level.id} calibrated score`).toBe(expected.score);
+      expect(level.parMoves, `Lv${level.id} accepted route par`).toBe(expected.parMoves);
+      expect(level.parMoves! - clearLoad, `Lv${level.id} accepted route overhead`).toBe(expected.routeOverhead);
+      expect(level.designTargets?.minimumRepositionOverhead, `Lv${level.id} certified floor target`).toBe(expected.certifiedFloor);
     }
-
-    const mean = results.reduce((sum, result) => sum + result.score, 0) / results.length;
-    expect(mean).toBeGreaterThanOrEqual(45);
-    expect(mean).toBeLessThanOrEqual(48.3);
-    expect(results.find((result) => result.id === 3)).toMatchObject({ id: 3, optimal: { solved: true, minimumDrags: 12 } });
   });
 
-  it("uses the approved monotonic hard ramp for Lv6–10", () => {
-    const expectedScores = [70.18, 72.1, 74.18, 75.52, 77.08];
-    const expectedDrags = [12, 15, 26, 24, 19];
-    const results = LEVELS.slice(5, 10).map((level) => ({
-      id: level.id,
-      score: calibratedScore(scoreBlockOutLevel(level).score),
-      validation: solveLevelForValidation(level, 500_000),
-    }));
-
-    results.forEach((result, index) => {
-      const target = CHAPTER_ONE_DIFFICULTY_RAMP_TARGETS[result.id as keyof typeof CHAPTER_ONE_DIFFICULTY_RAMP_TARGETS];
-      expect(result.score, `Lv${result.id} calibrated score`).toBeCloseTo(expectedScores[index], 2);
-      expect(result.score, `Lv${result.id} target floor`).toBeGreaterThanOrEqual(target);
-      expect(result.score, `Lv${result.id} target tolerance`).toBeLessThan(target + 0.25);
-      expect(result.validation, `Lv${result.id} validation proof`).toMatchObject({
-        solved: true,
-        minimumDrags: expectedDrags[index],
-      });
-      if (index > 0) expect(result.score).toBeGreaterThan(results[index - 1].score);
-    });
-  }, 60_000);
-
-  it("keeps Lv1–5 at tutorial pacing and applies hard pacing to Lv6–10", () => {
-    for (const level of LEVELS.slice(0, 5)) {
+  it("keeps Lv1–3 at introductory pacing and Lv4–10 at hard pacing", () => {
+    for (const level of LEVELS.slice(0, 3)) {
       expect(level.difficulty, `Lv${level.id} difficulty tag`).toBe("normal");
       expect(level.timeSeconds, `Lv${level.id} timer`).toBe(180);
     }
-    for (const level of LEVELS.slice(5, 10)) {
+    for (const level of LEVELS.slice(3, 10)) {
       expect(level.difficulty, `Lv${level.id} difficulty tag`).toBe("hard");
       expect(level.timeSeconds, `Lv${level.id} timer`).toBe(150);
     }

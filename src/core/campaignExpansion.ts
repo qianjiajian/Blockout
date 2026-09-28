@@ -1,10 +1,18 @@
-import { COLORS, MAX_BLOCK_LAYERS, type BlockColor, type LevelSpec, type Point, type Side } from "./types";
+import { COLORS, MAX_BLOCK_LAYERS, type BlockColor, type GatePortalSpec, type GateSpec, type LevelSpec, type Point, type Side } from "./types";
 import { boardParForLevel, boardShapeForLevel } from "./boardShapes";
 import { fillEnclosedBoardVoids } from "./boardTopology";
 import { applyCompetitiveComposition } from "./campaignComposition";
 import { applyStrategyLayoutOverride } from "./campaignStrategyLayouts";
 import { applyDifficultyBandOverride } from "./campaignDifficultyOverrides";
 import { assertFrozenBlockShapes, normalizeFrozenBlockShapes } from "./blockShape";
+import { gateCoversExitFrontier } from "./blockExitFrontier";
+import {
+  gatePortalMouthCells,
+  mirrorGatePortalHorizontally,
+  mirrorGatePortalVertically,
+  portalTangentOffset,
+  rotateGatePortalClockwise,
+} from "./gatePortals";
 
 type TransformKind = "identity" | "mirror-x" | "mirror-y" | "rotate-180" | "rotate-90" | "rotate-270" | "transpose";
 
@@ -21,7 +29,7 @@ interface ExpansionRecipe {
 
 const CHAPTER_NAMES = [
   ["新手教程", "转角校准", "四色罗盘", "双向分流", "轻装复盘", "冰块初试", "冰门换轨", "外壳侧泊", "双线预判", "冰块初醒"],
-  ["冻域排序", "窄道融霜", "四门冰链", "暖舱缓冲", "外壳初见", "双色接力", "冰层换向", "棱镜岔路", "换色预判", "换色考核"],
+  ["冻域排序", "窄道融霜", "四门冰链", "暖舱缓冲", "外壳回顾", "双色接力", "冰层换向", "棱镜岔路", "换色预判", "换色考核"],
   ["外壳复习", "壳后接力", "双门调度", "隐藏航道", "中段整备", "多向穿梭", "冰路并行", "双区分流", "深舱迷阵", "联合考核"],
   ["外环试航", "交错航线", "狭道换向", "冰门突围", "生成器初启", "补给接力", "棱镜接力", "高压舱室", "环线封锁", "航道核心"],
   ["冻域初巡", "融冰岔路", "霜门序列", "寒潮高墙", "暖舱整备", "双冰接力", "冻层折返", "冰层夹击", "极寒回路", "升降台初见"],
@@ -70,6 +78,7 @@ const OPENING_WAVES: LevelSpec["difficulty"][][] = [
 ];
 
 const TIME_BY_DIFFICULTY: Record<LevelSpec["difficulty"], number> = {
+  easy: 180,
   normal: 180,
   hard: 150,
   super: 120,
@@ -191,14 +200,7 @@ const placementFitsGate = (
   y: number,
 ): boolean => {
   const cells = block.shape.map(([dx, dy]) => [x + dx, y + dy] as const);
-  const minX = Math.min(...cells.map(([cellX]) => cellX));
-  const maxX = Math.max(...cells.map(([cellX]) => cellX));
-  const minY = Math.min(...cells.map(([, cellY]) => cellY));
-  const maxY = Math.max(...cells.map(([, cellY]) => cellY));
-  if (gate.side === "top") return minY === 0 && minX >= gate.offset && maxX < gate.offset + gate.size;
-  if (gate.side === "bottom") return maxY === level.height - 1 && minX >= gate.offset && maxX < gate.offset + gate.size;
-  if (gate.side === "left") return minX === 0 && minY >= gate.offset && maxY < gate.offset + gate.size;
-  return maxX === level.width - 1 && minY >= gate.offset && maxY < gate.offset + gate.size;
+  return gateCoversExitFrontier(level, cells, gate);
 };
 
 const reachableGateColorsForBlock = (level: LevelSpec, block: LevelSpec["blocks"][number]): BlockColor[] => {
@@ -228,14 +230,25 @@ const reachableGateColorsForBlock = (level: LevelSpec, block: LevelSpec["blocks"
 const clearLoad = (level: LevelSpec): number => level.blocks
   .reduce((sum, block) => sum + (block.layers?.length ?? 1), 0);
 
-const applyProgressiveClearLoad = (input: LevelSpec): LevelSpec => {
-  if (input.id < 21) return input;
+const progressiveClearLoadTarget = (input: LevelSpec): number | undefined => {
+  if (input.id < 21) return undefined;
   const chapter = Math.floor((input.id - 1) / 10);
   const currentLoad = clearLoad(input);
   let targetLoad = CHAPTER_CLEAR_LOAD_FLOORS[chapter] + (input.difficulty === "super" ? 1 : 0);
   if (input.id % 10 === 5) targetLoad -= 1;
   if (LOW_PRESSURE_MECHANIC_INTROS.has(input.id)) targetLoad = Math.min(targetLoad, currentLoad + 1);
   if (input.id === 100) targetLoad = 13;
+  return targetLoad;
+};
+
+const applyProgressiveClearLoad = (
+  input: LevelSpec,
+  requestedTargetLoad = progressiveClearLoadTarget(input),
+  adjustPar = true,
+): LevelSpec => {
+  if (requestedTargetLoad === undefined) return input;
+  const currentLoad = clearLoad(input);
+  const targetLoad = requestedTargetLoad;
   if (currentLoad >= targetLoad) return input;
 
   const level: LevelSpec = {
@@ -264,7 +277,7 @@ const applyProgressiveClearLoad = (input: LevelSpec): LevelSpec => {
     }
     cursor += 1;
   }
-  if (addedLayers > 0) level.parMoves = (level.parMoves ?? currentLoad) + addedLayers;
+  if (adjustPar && addedLayers > 0) level.parMoves = (level.parMoves ?? currentLoad) + addedLayers;
   return level;
 };
 
@@ -500,12 +513,22 @@ const applyDocumentProgression = (input: LevelSpec): LevelSpec => {
     level.shutters = level.shutters.map((shutter) => ({ ...shutter, skin: "generator" }));
   }
 
-  level = applyProgressiveClearLoad(level);
+  const progressiveTargetLoad = progressiveClearLoadTarget(level);
+  level = applyProgressiveClearLoad(level, progressiveTargetLoad);
+  const progressiveLoadDeficit = progressiveTargetLoad === undefined
+    ? 0
+    : Math.max(0, progressiveTargetLoad - clearLoad(level));
   level = surfaceCounterCargo(level);
   level = exposeSecondOpeningRoute(level);
   level = scrambleMatchingGateStarts(level);
   level = applyAuthoredBottleneckPositions(level);
   level = applyCompetitiveComposition(level);
+  // Some source boards do not have enough separate pieces to carry their
+  // authored clear-load target under the one-extra-shell rule. Once ordinary
+  // composition cargo exists, distribute only that unresolved load across it.
+  if (progressiveLoadDeficit > 0) {
+    level = applyProgressiveClearLoad(level, clearLoad(level) + progressiveLoadDeficit, false);
+  }
   level = applyGeneratorFootprintOverrides(level);
 
   // The first-session hand must follow the current authored puzzle rather than
@@ -675,6 +698,61 @@ const transformSide = (side: Side, transform: TransformKind): Side => {
   return maps[transform][side];
 };
 
+/**
+ * Keep authored local portals attached to their real exposed rails whenever a
+ * reusable campaign layout is transformed.  Legacy gates intentionally stay
+ * legacy: their derived outer portal still follows the old side/offset path.
+ */
+const transformPortal = (
+  portal: GatePortalSpec,
+  width: number,
+  height: number,
+  transform: TransformKind,
+): GatePortalSpec => {
+  if (transform === "identity") return { ...portal, origin: [...portal.origin] as Point };
+  if (transform === "mirror-x") return mirrorGatePortalHorizontally(portal, width);
+  if (transform === "mirror-y") return mirrorGatePortalVertically(portal, height);
+  if (transform === "rotate-180") {
+    return mirrorGatePortalHorizontally(mirrorGatePortalVertically(portal, height), width);
+  }
+  if (transform === "rotate-90") return rotateGatePortalClockwise(portal, height);
+  if (transform === "rotate-270") {
+    return rotateGatePortalClockwise(
+      rotateGatePortalClockwise(rotateGatePortalClockwise(portal, height), width),
+      height,
+    );
+  }
+  // Transpose is a clockwise quarter turn followed by a horizontal mirror on
+  // the rotated board: (x, y) -> (y, x).
+  return mirrorGatePortalHorizontally(rotateGatePortalClockwise(portal, height), height);
+};
+
+const transformGateGeometry = <T extends GateSpec>(
+  gate: T,
+  width: number,
+  height: number,
+  transform: TransformKind,
+): T => {
+  if (!gate.portals?.length) {
+    const side = transformSide(gate.side, transform);
+    const cells = gatePortalMouthCells({ width, height }, gate)
+      .map(([x, y]) => transformPoint(x, y, width, height, transform));
+    const offset = side === "top" || side === "bottom"
+      ? Math.min(...cells.map(([x]) => x))
+      : Math.min(...cells.map(([, y]) => y));
+    return { ...gate, side, offset };
+  }
+  const portals = gate.portals.map((portal) => transformPortal(portal, width, height, transform));
+  const first = portals[0]!;
+  return {
+    ...gate,
+    side: first.side,
+    offset: portalTangentOffset(first),
+    size: first.size,
+    portals,
+  };
+};
+
 const rotateColor = (color: BlockColor, shift: number): BlockColor => {
   const index = COLORS.indexOf(color);
   return COLORS[(index + shift) % COLORS.length];
@@ -698,22 +776,12 @@ const transformPlacement = (
   };
 };
 
-const gateCells = (level: Pick<LevelSpec, "width" | "height">, gate: LevelSpec["gates"][number]): Point[] => {
-  const cells: Point[] = [];
-  for (let index = gate.offset; index < gate.offset + gate.size; index += 1) {
-    if (gate.side === "top") cells.push([index, 0]);
-    else if (gate.side === "bottom") cells.push([index, level.height - 1]);
-    else if (gate.side === "left") cells.push([0, index]);
-    else cells.push([level.width - 1, index]);
-  }
-  return cells;
-};
-
 const campaignPlayable = (
   levelId: number,
   width: number,
   height: number,
   gates: LevelSpec["gates"],
+  flipDoors: NonNullable<LevelSpec["flipDoors"]>,
   blocks: LevelSpec["blocks"],
   shutters: NonNullable<LevelSpec["shutters"]>,
 ): Point[] => {
@@ -727,8 +795,8 @@ const campaignPlayable = (
   // preserve the authored necks and chambers instead of filling an entire row
   // or column for every gate.
   for (const block of blocks) for (const [dx, dy] of block.shape) add(block.x + dx, block.y + dy);
-  for (const gate of gates) {
-    for (const [x, y] of gateCells({ width, height }, gate)) add(x, y);
+  for (const gate of [...gates, ...flipDoors]) {
+    for (const [x, y] of gatePortalMouthCells({ width, height }, gate)) add(x, y);
   }
   for (const shutter of shutters) {
     for (let y = shutter.y; y < shutter.y + shutter.height; y += 1) {
@@ -749,14 +817,14 @@ export const transformLevel = (source: LevelSpec, recipe: ExpansionRecipe): Leve
   const [transformedWidth, transformedHeight] = transformedDimensions(source.width, source.height, recipe.transform);
   const width = transformedWidth + (SIGNATURE_PAD_LEVELS.has(recipe.id) ? 1 : 0);
   const height = transformedHeight + (SIGNATURE_TALL_LEVELS.has(recipe.id) ? 1 : 0);
-  const gates = source.gates.map((gate) => {
-    const side = transformSide(gate.side, recipe.transform);
-    const cells = gateCells(source, gate).map(([x, y]) => transformPoint(x, y, source.width, source.height, recipe.transform));
-    const offset = side === "top" || side === "bottom"
-      ? Math.min(...cells.map(([x]) => x))
-      : Math.min(...cells.map(([, y]) => y));
-    return { ...gate, side, offset, color: rotateColor(gate.color, recipe.colorShift) };
-  });
+  const gates = source.gates.map((gate) => ({
+    ...transformGateGeometry(gate, source.width, source.height, recipe.transform),
+    color: rotateColor(gate.color, recipe.colorShift),
+  }));
+  const flipDoors = source.flipDoors?.map((door) => ({
+    ...transformGateGeometry(door, source.width, source.height, recipe.transform),
+    color: rotateColor(door.color, recipe.colorShift),
+  }));
   const transformedBlocks = source.blocks.map((block) => {
     const placement = transformPlacement(block.x, block.y, block.shape, source.width, source.height, recipe.transform);
     return {
@@ -791,17 +859,26 @@ export const transformLevel = (source: LevelSpec, recipe: ExpansionRecipe): Leve
     parMoves: authoredPar,
     width,
     height,
-    playable: campaignPlayable(recipe.id, width, height, gates, blocks, shutters ?? []),
+    playable: campaignPlayable(recipe.id, width, height, gates, flipDoors ?? [], blocks, shutters ?? []),
     // Static interior wall cells conflict with the tray language: every cell
     // inside the visible board must accept movement. Difficulty comes from the
     // outer silhouette, blocks, exits, and temporary mechanic layers instead.
     blocked: [],
     gates,
+    flipDoors,
     blocks,
     shutters,
     featureIntro: undefined,
   });
   const difficultyAdjusted = applyDifficultyBandOverride(authored);
+  const invalidLayers = difficultyAdjusted.blocks.find((block) => (
+    block.layers !== undefined && (block.layers.length < 1 || block.layers.length > MAX_BLOCK_LAYERS)
+  ));
+  if (invalidLayers) {
+    throw new Error(
+      `Lv${recipe.id} block ${invalidLayers.id} must have 1-${MAX_BLOCK_LAYERS} clear stages (at most one extra shell)`,
+    );
+  }
   const frozenShapeAdjusted = normalizeFrozenBlockShapes(difficultyAdjusted);
   assertFrozenBlockShapes(frozenShapeAdjusted);
   const difficulty = LEVEL_DIFFICULTY_OVERRIDES[recipe.id] ?? frozenShapeAdjusted.difficulty;

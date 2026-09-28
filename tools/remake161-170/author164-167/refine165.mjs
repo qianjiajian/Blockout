@@ -1,0 +1,11 @@
+import fs from'node:fs';import{api,OUT,audit,project,searchSpatial,save,digest,rng,recolor,rect,tile,shapes}from'./common.mjs';import{prefixFloor}from'./floor-countdown.mjs';import{shortenRoute}from'./shorten-route-keys.mjs';
+const original=JSON.parse(fs.readFileSync(OUT+'/candidate165-1790516441180.json')),R=rng(Number(process.env.SEED??165600)),rows=[];
+for(let attempt=0;attempt<Number(process.env.ATTEMPTS??100);attempt++){
+const l=structuredClone(original.level),seed=R.state(),opening=l.blocks.filter(b=>!b.shutterId);if(attempt>=8){let[a,b]=R.shuffle(opening);[a.color,b.color]=[b.color,a.color];}l.gates.find(g=>g.color==='green').offset=attempt%8;R.random();
+let auditCheck,proof,search,replay,error,drags;try{auditCheck=audit(l);proof=prefixFloor(l,{goalClears:5,floor:16,maxMilliseconds:500,maxStates:100000});if(proof.thresholdProven&&proof.maxClearsSeen>=3){
+const middle=l.blocks.filter(b=>b.shutterId==='r103-165-c5');for(const b of middle)if(!b.lockedBy)b.color=R.random()<.5?'red':'green';recolor(middle,['red','green','blue'],{seed:R.state(),filter:(b,c)=>b.lockedBy?c==='blue':c==='red'||c==='green'});auditCheck=audit(l);search=searchSpatial(project(l),api,{floor:24,maxMilliseconds:1500,maxStates:25000,maxTransitions:200000,orderSeed:attempt,diagnosticTrace:true});if(search.status==='witness'){drags=shortenRoute(l,search.drags,api).drags;replay=api.replayRevisedRoute(l,drags);}}
+}catch(e){error=e.message;}
+const row={attempt,seed,sha:digest(l),prefix:proof?.status,minimum:proof?.relaxedNonClearingDrags,proofMaxClear:proof?.maxClearsSeen,status:search?.status,U:replay?.nonClearingDrags,clears:search?.maxClearsSeen,error};rows.push(row);console.log(JSON.stringify(row));
+if(search||replay?.complete){row.file=save('refined165',{level:l,activeRuleVersion:'1.103.0',iteration:{attempt,seed},from:'candidate165-1790516441180.json',audit:auditCheck,proof,search,replay,drags:drags??[],sourceAdaptation:'Same21body inventory/keys/locks/gates7 and geometry, opening color swap and green gate position; middle free colors adapted red/green, locked colors blue. Formal adoption false.',formalAdopted:false});console.log(row.file);if(proof?.thresholdProven&&replay?.complete&&replay.nonClearingDrags<=20)break;}
+}
+console.log(save('refine165-attempts',rows));

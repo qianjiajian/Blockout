@@ -1,0 +1,29 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {loadApi,geometry} from '../native-block-repair-v143.mjs';
+import {digest} from '../revised-preview-validation-v160.mjs';
+import {verifyRulesLock} from '../verify-rules-lock.mjs';
+import {auditOpeningCoverage} from '../revised-opening-coverage.mjs';
+import {auditHiddenCoverage} from '../revised-hidden-coverage.mjs';
+import {auditGateSpanLimits} from '../revised-gate-span-limits.mjs';
+import {auditGeneratorQueueColors} from '../revised-generator-queue-colors.mjs';
+export {digest,geometry};
+export const ROOT='deliverables/remake151-160-20260927';
+export const baseline=JSON.parse(fs.readFileSync(ROOT+'/baseline.json'));
+export const api=(await loadApi()).api;
+export const shapes=Object.fromEntries(api.FORMAL_BLOCK_SHAPES.map(s=>[s.shapeId,s.cells]));
+export const ruleGate=()=>{const l=verifyRulesLock();assert(l.ok,l.errors.join('\n'));assert(l.verified.some(e=>e.version==='1.102.0'&&e.sha256==='81b380285e7aeae3261c1d0689d65cd3587437e591f97ae6af378b56f79f2d0e'));return l;};
+export const save=(name,data)=>{const p=ROOT+'/'+name+'-'+Date.now()+'-'+process.pid+'.json';fs.mkdirSync(p.slice(0,p.lastIndexOf('/')),{recursive:true});fs.writeFileSync(p,JSON.stringify(data,null,2)+'\n',{flag:'wx'});return p;};
+export const adjacent=(a,b)=>a.shape.some(([dx,dy])=>b.shape.some(([sx,sy])=>Math.abs(a.x+dx-b.x-sx)+Math.abs(a.y+dy-b.y-sy)===1));
+export function auditHiddenV15(level){assert.equal(level.mechanismRules,'revised-2026-09-27-v1.5');return {...auditHiddenCoverage({...level,mechanismRules:'revised-2026-09-23-v1.4'}),actualProfile:level.mechanismRules,staticGeometryProfile:'revised-2026-09-23-v1.4',qualification:'v1.5 only changes flip eligibility; hidden geometry and revised lift grouping unchanged; original candidate not mutated'};}
+export function audit(level){
+ ruleGate();const base=baseline.levels[level.id-1];assert(level.id>=151&&level.id<=160);api.validateLevel(level);assert.equal(level.mechanismRules,'revised-2026-09-27-v1.5');assert.deepEqual(geometry(level),base.geometry);assert.deepEqual(api.levelStarTargets(level),base.starTargets);
+ for(const k of ['id','name','timeSeconds','reward','parMoves'])assert.deepEqual(level[k],base.level[k]);
+ const active=new api.PuzzleModel(level),snap=active.snapshot(),opening=snap.blocks.filter(b=>!b.shutterId||snap.shutters.find(s=>s.id===b.shutterId)?.revealed);
+ const result={opening:auditOpeningCoverage(active.snapshot()),hidden:auditHiddenV15(level),spans:auditGateSpanLimits(level),art:api.auditCandidateBlockArt(level),queue:auditGeneratorQueueColors(level),native:{passed:level.blocks.every(b=>api.matchFormalBlockShape(b.shape,'native-only')?.quarterTurns===0)},axes:{passed:level.blocks.every(b=>!b.movementAxis||b.shape.length===(1+Math.max(...b.shape.map(p=>p[0])))*(1+Math.max(...b.shape.map(p=>p[1]))))},adjacency:{passed:!opening.some((a,i)=>opening.slice(i+1).some(b=>a.color===b.color&&adjacent(a,b)))}};
+ result.usedGateColors={passed:[...level.gates,...level.flipDoors??[]].every(g=>level.blocks.some(b=>(b.layers??[b.color]).includes(g.color)))};
+ return {passed:Object.values(result).every(r=>r.passed),...result};
+}
+export function rng(seed){let state=seed;const random=()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state/4294967296;};return{random,shuffle:a=>a.map(x=>({x,k:random()})).sort((a,b)=>a.k-b.k).map(x=>x.x),state:()=>state};}
+export function tile(specs,cells,{seed=1,maxNodes=30000,pins={}}={}){const R=rng(seed),legal=new Set(cells.map(p=>p.join(','))),occ=new Set(),placed=[],used=new Set();let nodes=0;assert.equal(specs.reduce((n,b)=>n+b.shape.length,0),cells.length);function put(i,x,y){used.add(i);placed.push({...specs[i],x,y});for(const[dx,dy]of specs[i].shape)occ.add([x+dx,y+dy].join(','));}function take(i){const b=placed.pop();used.delete(i);for(const[dx,dy]of b.shape)occ.delete([b.x+dx,b.y+dy].join(','));}const fits=(i,x,y)=>specs[i].shape.every(([dx,dy])=>legal.has([x+dx,y+dy].join(','))&&!occ.has([x+dx,y+dy].join(',')));for(const[id,[x,y]]of Object.entries(pins)){const i=specs.findIndex(b=>b.id===id);assert(i>=0&&fits(i,x,y));put(i,x,y);}function go(){if(++nodes>maxNodes)return false;if(used.size===specs.length)return true;const p=cells.find(p=>!occ.has(p.join(',')));if(!p)return false;const seen=new Set();for(const i of R.shuffle(specs.map((_,i)=>i).filter(i=>!used.has(i))).sort((a,b)=>specs[b].shape.length-specs[a].shape.length)){const sig=JSON.stringify(specs[i].shape);if(seen.has(sig))continue;seen.add(sig);for(const[dx,dy]of specs[i].shape){const x=p[0]-dx,y=p[1]-dy;if(!fits(i,x,y))continue;put(i,x,y);if(go())return true;take(i);if(nodes>maxNodes)return false;}}return false;}return go()?placed:null;}
+export function recolor(blocks,palette,{seed=1,pins={},filter=()=>true}={}){const R=rng(seed),set=new Set();for(const[id,col]of Object.entries(pins)){const i=blocks.findIndex(b=>b.id===id);if(i<0)return false;blocks[i].color=col;if(blocks[i].layers){if(blocks[i].layers[1]===col)return false;blocks[i].layers[0]=col;}set.add(i);}const adj=blocks.map(a=>blocks.map((b,j)=>b!==a&&adjacent(a,b)?j:-1).filter(j=>j>=0));let nodes=0;const go=()=>{if(++nodes>10000)return false;if(set.size===blocks.length)return true;const i=R.shuffle(blocks.map((_,i)=>i).filter(i=>!set.has(i))).sort((a,b)=>adj[b].filter(j=>set.has(j)).length-adj[a].filter(j=>set.has(j)).length)[0],b=blocks[i];for(const color of R.shuffle(palette)){if(!filter(b,color)||b.layers?.[1]===color||adj[i].some(j=>set.has(j)&&blocks[j].color===color))continue;const test={...b,color,...(b.layers?{layers:[color,b.layers[1]]}:{})};if(!api.auditCandidateBlockArt({blocks:[test]}).passed)continue;b.color=color;if(b.layers)b.layers[0]=color;set.add(i);if(go())return true;set.delete(i);}return false;};return go();}

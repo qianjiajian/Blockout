@@ -1,0 +1,22 @@
+import fs from 'node:fs';
+import {loadApi} from '../../native-block-repair-v143.mjs';
+import {digest} from '../../revised-preview-validation-v160.mjs';
+import {stateOf} from './lift-floor.mjs';
+import {compile,each,clearCount} from '../../../deliverables/remake31-200-v145-20260924/batches/lv061-070/author65-67/lift-search.mjs';
+const data=JSON.parse(fs.readFileSync('deliverables/remake31-200-v145-20260924/batches/lv061-070/author68-69/future69-stage-1790254635518.json')),{api}=await loadApi();Object.assign(data.level.gates.find(g=>g.color==='yellow'),{side:'right',offset:0,size:3});const c=compile(data.level),drags=data.drags.slice(0,14),initial=api.replayRevisedRoute(data.level,drags);if(!initial.valid)throw Error('prefix');let state=stateOf(c,JSON.parse(initial.finalStateKey));
+console.log({clears:clearCount(c,state),cost:initial.nonClearingDrags});
+function move(id,x,y){const blockId=`v147-69-${id}`,i=c.blocks.findIndex(b=>b.id===blockId);let chosen;each(c,state,(s,cost,get)=>{const drag=get();if(drag.blockId!==blockId)return;if(x===undefined?cost===0:cost===1&&(s[i]&127)===y*c.W+x){chosen={state:s,drag};return false;}});if(!chosen)throw Error(`No transition ${id} ${x},${y} at clears ${clearCount(c,state)}`);state=chosen.state;drags.push(chosen.drag);console.log({id,x,y,clears:clearCount(c,state)});}
+move('cover9-2',0,7);
+move('opening-1',5,6);
+move('cover6-1',0,4);
+move('cover9-2');
+move('cover11-4');
+move('cover11-3');
+move('cover6-4',2,5);
+move('cover9-1');
+move('opening-8');
+move('cover6-2');
+move('cover6-2');
+move('cover9-3');
+move('opening-1');
+const replay=api.replayRevisedRoute(data.level,drags);if(!replay.valid)throw Error(replay.error);const file=`deliverables/remake31-200-v145-20260924/batches/lv061-070/author68-69/manual69-stage-${Date.now()}.json`;fs.writeFileSync(file,JSON.stringify({...data,drags,cost:replay.nonClearingDrags,goal:JSON.parse(replay.finalStateKey).cleared,replay,levelSha256:digest(data.level)},null,2));console.log({file,cost:replay.nonClearingDrags,clears:JSON.parse(replay.finalStateKey).cleared});

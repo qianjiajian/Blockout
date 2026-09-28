@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {digest,save,OUT,ruleGate} from './common.mjs';
+ruleGate();
+const files={reviewed:OUT+'/reviewed171-1790527713145.json',decisions:OUT+'/decisions171-1790527958139.json',independent:'deliverables/remake171-180-20260927/author175-177/assist171/candidate-review-1790527959325.json',domain:'deliverables/remake171-180-20260927/author175-177/assist171/domain-review-1790527767882.json'};
+const a=JSON.parse(fs.readFileSync(files.reviewed)),b=JSON.parse(fs.readFileSync(files.decisions)),c=JSON.parse(fs.readFileSync(files.independent));
+assert.equal(b.levelSha256,digest(a.level));assert.equal(b.routeSha256,digest(a.drags));assert.equal(c.levelSha256,b.levelSha256);assert.equal(c.routeSha256,b.routeSha256);
+const mapping=c.source.sourceMapping,all=[...mapping.opening,...mapping.hidden];
+assert.equal(all.length,21);assert.equal(new Set(all.map(x=>x.source.id)).size,21);assert.equal(new Set(all.map(x=>x.candidate.id)).size,21);
+assert(all.every(x=>a.level.blocks.some(y=>digest(y)===digest(x.candidate))));
+assert.equal(mapping.hidden.filter(x=>x.changedColor).length,1);assert.equal(mapping.opening.filter(x=>x.changedColor).length,4);
+console.log(save('handoff171',{status:'AUTHOR_COMPLETE_READY_FOR_PARENT_FORMAL_ADOPTION',files:Object.fromEntries(Object.entries(files).map(([k,path])=>[k,{path,sha256:digest(fs.readFileSync(path))}])),levelSha256:b.levelSha256,routeSha256:b.routeSha256,lower:11,upper:14,totalDrags:35,sourceMapping:mapping,sourceMappingNote:'This final explicit design bijection supersedes the array-index correspondence in reviewed171 sourceMapping. The old array indices were author IDs, not source physical identities. Candidate level and route are unchanged; old reports remain immutable. This mapping keeps eight opening colors and eight hidden colors, with only four duplicate opening colors becoming purple and one hidden green becoming orange.',sourceCurtainMapping:c.source.curtainMapping,wordingCorrection:b.correction,candidatePointerReportedByParent:{small:'pointer-1790527720558-320x568-62200',large:'pointer-1790527720560-496x1078-24064',status:'PASS as reported by parent; final production evidence remains parent responsibility'},formalAdopted:false,blindTested:false,unresolvedSourceFields:[]}));

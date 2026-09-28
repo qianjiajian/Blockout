@@ -1,0 +1,17 @@
+import {api,spatial,PROFILE,auditSpatial,digest,ruleGate,replay,pack,SHAPES,seededRng,rect,compile,search,OUT,save,base,noTime,colour} from './common.mjs';
+ruleGate();const rng=seededRng(Number(process.env.SEED??106173)),budget=Number(process.env.BUDGET??60000),start=Date.now(),log=[],fails={};let attempts=0,valid=0;
+function make(){const l=base(173);l.shutters=[{id:'a106-173-cover18',x:0,y:5,width:8,height:3,count:18}];
+ const cols=rng.shuffle(['purple','blue','yellow','cyan','blue','purple','yellow','red']);
+ const op=[[0,8,'RECT6'],[6,8,'RECT6'],[2,8,'RECT6'],[4,8,'L3'],[5,8,'SINGLE'],[4,10,'H2'],[1,11,'H3'],[4,11,'H3']].map(([x,y,kind],i)=>({id:i,x,y,color:cols[i],shape:kind==='RECT6'?rect(2,3):SHAPES[kind][0]}));
+ op.push(...[[1,0,'red','H3'],[4,0,'yellow','H3'],[4,1,'blue','SQ2'],[6,1,'red','SQ2'],[4,3,'red','SQ2'],[6,3,'green','SQ2']].map(([x,y,color,kind],i)=>({id:8+i,x,y,color,shape:SHAPES[kind][0]})));
+ op.push(...Array.from({length:16},(_,i)=>({id:14+i,color:(i%4+Math.floor(i/4))%2?'green':'pink',shape:[[0,0]],x:i%4,y:1+Math.floor(i/4)})));
+ // Body identity, star/ice/bomb properties remain attached through regeneration.
+ const hs=[['green','H3'],['yellow','H3'],['purple','H3'],['blue','SQ2'],['cyan','H2'],['purple','SINGLE'],['yellow','H2'],['green','L3'],['red','L3']].map(([color,kind],i)=>({kind,color,id:'a106-173-hidden'+i,shutterId:l.shutters[0].id,...(i===3?{timedBombSeconds:50}:{})}));
+ const hp=pack(hs,rect(8,3).map(([x,y])=>[x,y+5]),rng,1500,true);if(!hp){fails.hidden=(fails.hidden??0)+1;return;}
+ l.blocks=[...op.map(({kind,id,...b})=>({...b,id:'a106-173-open'+id})),...hp.map(({kind,id,...b})=>({...b,id:'a106-173-hidden'+id}))];
+ // Source green15 and duplicate blue18 ports removed solely for unique colors;
+ // retain green4, blue18, pink ordinary, red15, yellow18, cyan22, purple22.
+ const gs=[['pink',0],['green',4],['red',15],['yellow',18],['blue',18],['cyan',22],['purple',22]],ports=[['left',1,3],['left',4,3],['top',1,3],['top',4,3],['left',8,3],['right',8,3],['bottom',2,3]];
+ const pairs=rng.shuffle(gs.slice(2));pairs.unshift(gs[0],gs[1]);l.gates=ports.map(([side,offset,size],i)=>({id:'a106-173-g'+i,color:pairs[i][0],side,offset,size,...(pairs[i][1]?{frozen:pairs[i][1]}:{})}));return l;}
+while(Date.now()-start<budget){attempts++;const level=make();if(!level)continue;let c;try{auditSpatial(level,api);c=compile(noTime(level),spatial);}catch(e){fails[e.message]=(fails[e.message]??0)+1;continue;}valid++;const w=search(c,{maxMilliseconds:800,maxStates:30000,floor:11,weight:1000});log.push({attempts,levelSha256:digest(level),status:w.status,U:w.cost,maxClears:w.maxClears});if(w.status!=='witness')continue;let r;try{r=replay(level,w.drags,api,{complete:true,timed:true,requirePointerCompatible:true});}catch(e){log.at(-1).replay=e.message;continue;}if(r.nonClearingDrags<5)continue;const p=search(c,{maxMilliseconds:6000,maxStates:200000,floor:5,prove:true});const file=save((p.thresholdProven?'candidate':'unverified')+'173',{ruleVersion:'1.106.0',level,levelSha256:digest(level),drags:w.drags,replay:r,proof:p,search:w,audit:auditSpatial(level,api),projection:'Only bomb countdown omitted for spatial lower-bound relaxation; all bodies and countdown18 preserved. No flip doors. Full witness retains bomb50.',formalAdopted:false,pointerValidated:false});console.log(JSON.stringify({file,L:p.status,U:r.nonClearingDrags}));if(p.thresholdProven)break;}
+console.log(JSON.stringify({attempts,valid,fails,log:save('attempts173',{budget,attempts,valid,fails,log})}));

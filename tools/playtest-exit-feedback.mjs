@@ -80,14 +80,18 @@ const feedbackFixtures = await page.evaluate(async () => {
         if (!gate) return "no-gate";
         if (gate.color !== color) return "wrong-color";
         if ((gate.frozen ?? 0) > 0) return "frozen-gate";
-        return undefined;
+        return "ok";
       };
+      const sides = ["top", "right", "bottom", "left"];
+      // A held drag auto-exits immediately on a compatible open gate. Such a
+      // square cannot be used as a transit node for an intentional failure.
+      if (sides.some((side) => statusAt(side, block.x, block.y) === "ok")) continue;
       const start = key(block.x, block.y);
       const queue = [[block.x, block.y]];
       const parent = new Map([[start, undefined]]);
       for (let cursor = 0; cursor < queue.length; cursor += 1) {
         const [x, y] = queue[cursor];
-        for (const side of ["top", "right", "bottom", "left"]) {
+        for (const side of sides) {
           const status = statusAt(side, x, y);
           if (!status || !wanted.has(status) || fixtures[status]) continue;
           const path = [];
@@ -102,7 +106,8 @@ const feedbackFixtures = await page.evaluate(async () => {
         }
         for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
           const nextX = x + dx; const nextY = y + dy; const next = key(nextX, nextY);
-          if (parent.has(next) || !canPlace(nextX, nextY)) continue;
+          if (parent.has(next) || !canPlace(nextX, nextY)
+            || sides.some((side) => statusAt(side, nextX, nextY) === "ok")) continue;
           parent.set(next, key(x, y));
           queue.push([nextX, nextY]);
         }

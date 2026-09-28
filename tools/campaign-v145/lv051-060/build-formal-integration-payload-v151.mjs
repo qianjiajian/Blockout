@@ -1,0 +1,13 @@
+import fs from 'node:fs';
+import {digest} from '../../revised-preview-validation-v160.mjs';
+import {verifyRulesLock} from '../../verify-rules-lock.mjs';
+const root='deliverables/remake31-200-v145-20260924/batches/lv051-060';
+const lock=verifyRulesLock();if(!lock.ok||lock.activeVersion!=='1.51.0')throw new Error('v1.51 lock required');
+const summaryFile=`${root}/summary.json`,readyFile=`${root}/ready-candidates.json`,summary=JSON.parse(fs.readFileSync(summaryFile)),ready=JSON.parse(fs.readFileSync(readyFile));
+if(summary.ruleVersion!==lock.activeVersion||ready.ruleVersion!==lock.activeVersion)throw new Error('summary/ready rule drift');
+const ids=summary.formalEligible??[];
+const records=ids.map(id=>{const row=summary.rows.find(r=>r.id===id);return{id,status:row.status,candidate:row.candidate,candidateSha256:row.candidateSha256,levelSha256:row.levelSha256,routeSha256:row.routeSha256,L:row.L??null,U:row.U,totalDrags:row.totalDrags,source:row.source,static:row.static,native:row.native,route:row.route,floor:row.floor,decisions:row.decisions,pointer:row.pointer,pointerReport:row.pointerReport??null,popupReport:row.popupReport??null,userException:row.userException??null,rangeException:row.rangeException??null,formalAdopted:false};});
+const pending=summary.rows.filter(r=>!ids.includes(r.id)).map(r=>({id:r.id,status:r.status,L:r.L??null,U:r.U??null,latestProof:r.latestProof??null,missing:r.missing}));
+const outFile=`${root}/formal-integration-payload-v151.json`;
+const out={schemaVersion:1,ruleVersion:lock.activeVersion,createdAt:new Date().toISOString(),scope:[51,60],candidateRecords:records,pendingRecords:pending,sourceSummary:{file:summaryFile,sha256:digest(fs.readFileSync(summaryFile))},readyIndex:{file:readyFile,sha256:digest(fs.readFileSync(readyFile))},production:{formalAdopted:false,productionLevelWrite:false,finalProductionPointerValidated:false,published:false,requiredNextStep:'Revalidate the selected records against production LEVELS before writing.'},limits:['Level58 is eligible only under the recorded user exception and has no lower-bound certificate.','Levels52,54,59 remain UNKNOWN and are excluded.','This payload is task-local integration input; it does not modify production LEVELS.']};
+fs.writeFileSync(outFile,JSON.stringify(out,null,2)+'\n');console.log(JSON.stringify({file:outFile,ruleVersion:out.ruleVersion,candidateIds:ids,pendingIds:pending.map(r=>r.id)}));

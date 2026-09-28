@@ -1,6 +1,60 @@
-import type { GameHost, PointerHandlers, PointerSample, SoundKind, StorageReadResult, Viewport } from "./Host";
+import { ProceduralSoundscape, RECORDED_MUSIC_LOOP_DURATIONS } from "../audio/ProceduralSoundscape";
+import type { MusicTrack } from "../audio/ProceduralSoundscape";
+import { MUSIC_CATALOG, musicTrackForScene } from "../audio/musicCatalog";
+import type { GameHost, MusicScene, MusicTransport, PointerHandlers, PointerSample, SoundKind, StorageReadResult, Viewport } from "./Host";
+import { filteredRawLocales } from "./preferredLocales";
+import { readWechatWindowInfo } from "./wechatRuntime";
 
 declare const wx: any;
+
+// A cold device has to download the roughly 3-4 MiB art subpackages before an
+// image can be created from them. Five seconds was short enough to reject a
+// healthy mobile download and leave startup on the retry screen. Keep the
+// network/package budget separate from the local image decode budget.
+const WECHAT_SUBPACKAGE_TIMEOUT_MS = 60_000;
+const WECHAT_IMAGE_TIMEOUT_MS = 15_000;
+
+const wechatAssetErrorDetail = (error: unknown): string => {
+  if (error == null) return "";
+  if (typeof error === "object") {
+    const details: string[] = [];
+    for (const key of ["errMsg", "message", "code", "errCode"]) {
+      try {
+        const value = (error as Record<string, unknown>)[key];
+        if (typeof value === "string" || typeof value === "number") details.push(`${key}=${value}`);
+      } catch { /* native error properties may be inaccessible */ }
+    }
+    if (details.length) return details.join("; ");
+    try {
+      const serialized = JSON.stringify(error);
+      if (serialized && serialized !== "{}") return serialized;
+    } catch { /* native events can contain circular references */ }
+  }
+  return String(error);
+};
+
+const reportWechatAssetFailure = (src: string, mappedSource: string, error: unknown): void => {
+  try {
+    console.error("[wechat-assets]", { src, mappedSource, error: wechatAssetErrorDetail(error) });
+  } catch { /* diagnostic output must not prevent a failed request settling */ }
+};
+
+const detachWechatImageHandlers = (image: HTMLImageElement): void => {
+  try { image.onload = null; } catch { /* best-effort native handler cleanup */ }
+  try { image.onerror = null; } catch { /* clean the other handler independently */ }
+};
+type AssetSubpackage = "meta-ui" | "gameplay-art" | "journey-themes" | "collection-art" | "audio" | "menu-music";
+type MusicAssetSubpackage = Extract<AssetSubpackage, "audio" | "menu-music">;
+const WECHAT_MUSIC_ASSETS: Partial<Record<MusicTrack, { path: string; subpackage: MusicAssetSubpackage }>> = Object.fromEntries(
+  MUSIC_CATALOG.filter((entry) => entry.wechatPath && entry.wechatSubpackage)
+    .map((entry) => [entry.id, { path: entry.wechatPath!, subpackage: entry.wechatSubpackage! }]),
+) as Partial<Record<MusicTrack, { path: string; subpackage: MusicAssetSubpackage }>>;
+const RECORDED_SOUND_KINDS = [
+  "blocked", "exit", "ice", "thaw", "win", "button", "putdown", "fail",
+  "reward", "booster", "unlock",
+  "time", "rocket", "pulse", "mechanic", "shell", "shutter",
+] as const satisfies readonly SoundKind[];
+
 
 interface WechatTouchLike {
   identifier?: unknown;
@@ -86,10 +140,18 @@ export class WechatHost implements GameHost {
   readonly context: CanvasRenderingContext2D;
   private system: any;
   private audio?: any;
+  private soundscape?: ProceduralSoundscape;
+  private musicScene: MusicScene = "menu";
+  private musicEnabled = false;
+  private selectedMusicTrack?: MusicTrack;
+  private retainedMusicTrack: MusicTrack = "menu";
+  private readonly musicAssetLoads: Partial<Record<MusicTrack, Promise<void>>> = {};
+  private effectsAssetLoading?: Promise<void>;
   private touchRouter?: WechatTouchRouter;
+  private assetSubpackages: Partial<Record<AssetSubpackage, Promise<void>>> = {};
 
   constructor() {
-    this.system = wx.getSystemInfoSync();
+    this.system = readWechatWindowInfo(wx);
     this.canvas = wx.createCanvas() as HTMLCanvasElement;
     const pixelRatio = Math.min(this.system.pixelRatio || 1, 2);
     this.canvas.width = Math.round(this.system.screenWidth * pixelRatio);
@@ -109,6 +171,16 @@ export class WechatHost implements GameHost {
     };
   }
 
+  preferredLocales(): readonly string[] {
+    try {
+      if (typeof wx.getAppBaseInfo === "function") {
+        const preferred = filteredRawLocales([wx.getAppBaseInfo()?.language]);
+        if (preferred.length > 0) return preferred;
+      }
+    } catch { /* older or restricted clients fall back to cached system info */ }
+    return filteredRawLocales([this.system?.language]);
+  }
+
   onPointer(handlers: PointerHandlers): void {
     const router = new WechatTouchRouter(handlers);
     this.touchRouter = router;
@@ -120,16 +192,21 @@ export class WechatHost implements GameHost {
 
   onHide(callback: () => void): void {
     wx.onHide(() => {
-      try { void this.audio?.suspend?.(); } catch { /* optional */ }
+      this.soundscape?.suspend();
       this.touchRouter?.reset();
       callback();
     });
   }
-  onShow(callback: () => void): void { wx.onShow(callback); }
+  onShow(callback: () => void): void {
+    wx.onShow(() => {
+      this.soundscape?.resume();
+      callback();
+    });
+  }
   isVisible(): boolean { return true; }
   onResize(callback: () => void): void {
     wx.onWindowResize?.(() => {
-      this.system = wx.getSystemInfoSync();
+      this.system = readWechatWindowInfo(wx);
       const pixelRatio = Math.min(this.system.pixelRatio || 1, 2);
       this.canvas.width = Math.round(this.system.screenWidth * pixelRatio);
       this.canvas.height = Math.round(this.system.screenHeight * pixelRatio);
@@ -143,13 +220,138 @@ export class WechatHost implements GameHost {
   scheduleTimeout(callback: () => void, delayMs: number): number { return setTimeout(callback, delayMs); }
   cancelTimeout(handle: number): void { clearTimeout(handle); }
 
-  createImage(src: string): Promise<HTMLImageElement> {
+  private loadAssetSubpackage(name: AssetSubpackage): Promise<void> {
+    if (typeof wx.loadSubpackage !== "function") {
+      return Promise.reject(new Error(`WeChat base library is too old for the ${name} subpackage; please upgrade WeChat`));
+    }
+    if (!this.assetSubpackages[name]) {
+      const timeoutMs = WECHAT_SUBPACKAGE_TIMEOUT_MS;
+      const pending = new Promise<void>((resolve, reject) => {
+        let settled = false;
+        const finish = (callback: () => void) => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timeout);
+          callback();
+        };
+        const timeout = setTimeout(() => finish(() => reject(new Error(
+          `Timed out loading ${name} subpackage after ${timeoutMs}ms`,
+        ))), timeoutMs);
+        try {
+          wx.loadSubpackage({
+            name,
+            success: () => finish(resolve),
+            fail: (error: unknown) => finish(() => reject(new Error(`Could not load ${name} subpackage: ${wechatAssetErrorDetail(error)}`))),
+          });
+        } catch (error) {
+          finish(() => reject(new Error(`Could not start ${name} subpackage load: ${wechatAssetErrorDetail(error)}`)));
+        }
+      });
+      const guarded = pending.catch((error: unknown) => {
+        if (this.assetSubpackages[name] === guarded) delete this.assetSubpackages[name];
+        throw error;
+      });
+      this.assetSubpackages[name] = guarded;
+    }
+    return this.assetSubpackages[name]!;
+  }
+
+  private prepareImageSource(src: string): Promise<string> {
+    const routes = [
+      {
+        prefix: "assets/art/ui/formal-pages/journey/home-",
+        packageName: "journey-themes" as const,
+        outputRoot: "journey-themes/home-",
+      },
+      {
+        prefix: "assets/art/ui/formal-pages/journey/episode-",
+        packageName: "journey-themes" as const,
+        outputRoot: "journey-themes/episode-",
+      },
+      {
+        prefix: "assets/art/ui/formal-pages/collection-card-atlases-v1/",
+        packageName: "collection-art" as const,
+        outputRoot: "collection-art/atlases/",
+      },
+      {
+        prefix: "assets/art/ui/formal-pages/",
+        packageName: "meta-ui" as const,
+        outputRoot: "meta-ui/formal-pages/",
+      },
+      {
+        prefix: "assets/art/gameplay/blocks/formal-v1/",
+        packageName: "gameplay-art" as const,
+        outputRoot: "gameplay-art/formal-v1/",
+      },
+      {
+        prefix: "assets/art/fx/",
+        packageName: "gameplay-art" as const,
+        outputRoot: "gameplay-art/fx/",
+      },
+      {
+        prefix: "assets/art/gameplay/mechanics/revised-reference-v1/",
+        packageName: "gameplay-art" as const,
+        outputRoot: "gameplay-art/revised-mechanisms/",
+      },
+      {
+        prefix: "assets/art/gameplay/mechanics/shutter-nine-slice-v1/",
+        packageName: "gameplay-art" as const,
+        outputRoot: "gameplay-art/shutter-nine-slice/",
+      },
+    ];
+    const route = routes.find((candidate) => src.startsWith(candidate.prefix));
+    if (!route) return Promise.resolve(src);
+    const mappedSource = `${route.outputRoot}${src.slice(route.prefix.length)}`;
+    return this.loadAssetSubpackage(route.packageName)
+      .then(() => mappedSource)
+      .catch((error: unknown) => {
+        reportWechatAssetFailure(src, mappedSource, error);
+        throw error;
+      });
+  }
+
+  async createImage(src: string): Promise<HTMLImageElement> {
+    const preparedSource = await this.prepareImageSource(src);
     return new Promise((resolve, reject) => {
-      const image = ((this.canvas as any).createImage?.() ?? wx.createImage()) as HTMLImageElement;
-      image.onload = () => resolve(image);
-      image.onerror = () => reject(new Error(`Could not load image: ${src}`));
-      image.src = src;
+      let image: HTMLImageElement | undefined;
+      let settled = false;
+      let timeout: ReturnType<typeof setTimeout> | undefined;
+      const finish = (error?: Error) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timeout);
+        if (image) {
+          if (error) this.releaseImage(image);
+          else detachWechatImageHandlers(image);
+        }
+        if (error) {
+          reportWechatAssetFailure(src, preparedSource, error);
+          reject(error);
+        } else {
+          resolve(image!);
+        }
+      };
+      const fail = (error: unknown) => {
+        const detail = wechatAssetErrorDetail(error);
+        finish(new Error(`Could not load image: ${preparedSource}${detail ? `; ${detail}` : ""}`));
+      };
+      try {
+        image = ((this.canvas as any).createImage?.() ?? wx.createImage()) as HTMLImageElement;
+        timeout = setTimeout(() => finish(new Error(
+          `Timed out loading image after ${WECHAT_IMAGE_TIMEOUT_MS}ms: ${preparedSource}`,
+        )), WECHAT_IMAGE_TIMEOUT_MS);
+        image.onload = () => finish();
+        image.onerror = (error) => fail(error);
+        image.src = preparedSource;
+      } catch (error) {
+        fail(error);
+      }
     });
+  }
+
+  releaseImage(image: HTMLImageElement): void {
+    detachWechatImageHandlers(image);
+    try { image.src = ""; } catch { /* best-effort decoded-image release */ }
   }
 
   storageRead<T>(key: string): StorageReadResult<T> {
@@ -177,27 +379,115 @@ export class WechatHost implements GameHost {
     }
   }
 
+  music(scene: MusicScene, enabled: boolean, selectedTrack?: MusicTrack): void {
+    const changed = scene !== this.musicScene || enabled !== this.musicEnabled || selectedTrack !== this.selectedMusicTrack;
+    this.musicScene = scene;
+    this.musicEnabled = enabled;
+    this.selectedMusicTrack = selectedTrack;
+    const track = musicTrackForScene(scene, selectedTrack);
+    if (track && track !== this.retainedMusicTrack) {
+      const releasedTrack = this.retainedMusicTrack;
+      this.retainedMusicTrack = track;
+      this.soundscape?.releaseMusicBuffer(releasedTrack);
+      delete this.musicAssetLoads[releasedTrack];
+    }
+    if (changed && enabled) {
+      if (track) this.beginMusicAssetLoad(track);
+    }
+    this.soundscape?.setMusic(scene, enabled, selectedTrack);
+  }
+
+  musicTransport(): MusicTransport { return this.soundscape?.musicTransport() ?? { positionSeconds: 0, durationSeconds: 0, playing: false }; }
+  setMusicPaused(paused: boolean): void { this.soundscape?.setMusicPaused(paused); }
+  seekMusic(positionSeconds: number): void { this.soundscape?.seekMusic(positionSeconds); }
+
+  private decodeAudioAsset(path: string): Promise<AudioBuffer> {
+    return new Promise((resolve, reject) => {
+      const fileSystem = wx.getFileSystemManager?.();
+      if (!fileSystem || typeof this.audio?.decodeAudioData !== "function") {
+        reject(new Error("Recorded WebAudio is unavailable"));
+        return;
+      }
+      fileSystem.readFile({
+        filePath: path,
+        success: ({ data }: { data: ArrayBuffer }) => {
+          let settled = false;
+          const succeed = (buffer: AudioBuffer) => {
+            if (settled) return;
+            settled = true;
+            resolve(buffer);
+          };
+          const fail = (error: unknown) => {
+            if (settled) return;
+            settled = true;
+            reject(error instanceof Error ? error : new Error(String(error)));
+          };
+          try {
+            const decoded = this.audio.decodeAudioData(data, succeed, fail);
+            if (decoded?.then) void decoded.then(succeed, fail);
+          } catch (error) {
+            fail(error);
+          }
+        },
+        fail: (error: unknown) => reject(new Error(`Could not read audio asset ${path}: ${String(error)}`)),
+      });
+    });
+  }
+
+  private beginMusicAssetLoad(track: MusicTrack): void {
+    if (this.musicAssetLoads[track] || !this.audio || !this.soundscape) return;
+    const soundscape = this.soundscape;
+    const asset = WECHAT_MUSIC_ASSETS[track];
+    // New library tracks stay outside the current WeChat package budget until
+    // a CDN/subpackage is assigned. The player remains usable through the
+    // synth fallback and WebHost still loads the compressed local asset.
+    if (!asset) {
+      soundscape.useSynthMusicFallback(track);
+      return;
+    }
+    soundscape.expectMusicBuffer(track);
+    let guarded: Promise<void>;
+    guarded = this.loadAssetSubpackage(asset.subpackage)
+      .then(() => this.decodeAudioAsset(asset.path))
+      .then((buffer) => {
+        if (this.musicAssetLoads[track] !== guarded || this.retainedMusicTrack !== track) return;
+        soundscape.setMusicBuffer(track, buffer, RECORDED_MUSIC_LOOP_DURATIONS[track]);
+      })
+      .catch(() => {
+        if (this.musicAssetLoads[track] === guarded) {
+          soundscape.useSynthMusicFallback(track);
+          delete this.musicAssetLoads[track];
+        }
+      });
+    this.musicAssetLoads[track] = guarded;
+  }
+
+  private beginEffectsAssetLoad(): void {
+    if (this.effectsAssetLoading || !this.audio || !this.soundscape) return;
+    const soundscape = this.soundscape;
+    let guarded: Promise<void>;
+    guarded = this.loadAssetSubpackage("audio")
+      .then(async () => {
+        await Promise.all(RECORDED_SOUND_KINDS.map(async (kind) => {
+          try { soundscape.setSoundBuffer(kind, await this.decodeAudioAsset(`audio/sfx/${kind}.mp3`)); } catch { /* oscillator fallback remains */ }
+        }));
+      })
+      .catch(() => {
+        if (this.effectsAssetLoading === guarded) this.effectsAssetLoading = undefined;
+      });
+    this.effectsAssetLoading = guarded;
+  }
+
   sound(kind: SoundKind): void {
     try {
       this.audio ??= wx.createWebAudioContext?.();
       if (!this.audio) return;
-      const context = this.audio;
-      if (context.state === "suspended") void context.resume?.();
-      const now = context.currentTime;
-      const oscillator = context.createOscillator();
-      const gain = context.createGain();
-      const frequencies: Record<SoundKind, number> = {
-        select: 420, move: 520, blocked: 140, exit: 720, ice: 880, win: 1040, button: 600, fail: 110,
-      };
-      oscillator.type = kind === "blocked" || kind === "fail" ? "sawtooth" : "sine";
-      oscillator.frequency.setValueAtTime(frequencies[kind], now);
-      if (kind === "exit" || kind === "win") oscillator.frequency.exponentialRampToValueAtTime(frequencies[kind] * 1.8, now + 0.16);
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(kind === "win" ? 0.13 : 0.07, now + 0.012);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + (kind === "win" ? 0.35 : 0.12));
-      oscillator.connect(gain).connect(context.destination);
-      oscillator.start(now);
-      oscillator.stop(now + (kind === "win" ? 0.36 : 0.14));
+      this.soundscape ??= new ProceduralSoundscape(this.audio as AudioContext);
+      this.beginEffectsAssetLoad();
+      const track = this.musicEnabled ? musicTrackForScene(this.musicScene, this.selectedMusicTrack) : undefined;
+      if (track) this.beginMusicAssetLoad(track);
+      this.soundscape.setMusic(this.musicScene, this.musicEnabled, this.selectedMusicTrack);
+      this.soundscape.play(kind);
     } catch { /* sound is optional on older base libraries */ }
   }
 

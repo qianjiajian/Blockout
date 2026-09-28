@@ -1,0 +1,16 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {loadApi} from '../../native-block-repair-v143.mjs';
+import {digest} from '../../revised-preview-validation-v160.mjs';
+const out='deliverables/remake31-200-v145-20260924/batches/lv061-070/author68-69',baseFile=out+'/manual69-stage-1790255012227.json',targetFile=out+'/tail69-complete-1790255046871.json',recipeFile=out+'/recipe69-final.json';
+if(!fs.existsSync(recipeFile)){
+ const base=JSON.parse(fs.readFileSync(baseFile)),target=JSON.parse(fs.readFileSync(targetFile));assert.deepEqual(target.drags.slice(0,base.drags.length),base.drags);
+ const placements=target.level.blocks.filter(b=>['v147-69-cover18','v147-69-lift2'].includes(b.shutterId)).map(b=>({blockId:b.id,x:b.x,y:b.y,shape:b.shape}));
+ const recipe={schema:'fixed-explicit-placement-recipe-v1',baseFile,baseFileSha256:digest(fs.readFileSync(baseFile)),baseLevelSha256:digest(base.level),targetLevelSha256:digest(target.level),targetRouteSha256:digest(target.drags),tailPlacements:placements,tailDrags:target.drags.slice(base.drags.length),provenance:{openingAndEarlierStages:'Immutable base contains the manually reordered 19-clear/U8 prefix and the deliberate yellow-ice9 gate placement at right0. It is not attributed to one random seed.',baseAuthoringTool:'tools/campaign-v145/lv061-070/manual69-eight.mjs',tailAuthoringTool:'tools/campaign-v145/lv061-070/refine69-tail.mjs',tailRandomSeed:1475669,tailIteration:9,authority:'The explicit final placements and fixed witness are the reproducible recipe. Random seed/iteration are provenance, not a claim that timing-limited search returns the same route on every machine.'}};
+ fs.writeFileSync(recipeFile,JSON.stringify(recipe,null,2)+'\n',{flag:'wx'});
+}
+const recipe=JSON.parse(fs.readFileSync(recipeFile));assert.equal(digest(fs.readFileSync(recipe.baseFile)),recipe.baseFileSha256);const base=JSON.parse(fs.readFileSync(recipe.baseFile)),target=JSON.parse(fs.readFileSync(targetFile)),level=structuredClone(base.level);assert.equal(digest(level),recipe.baseLevelSha256);
+for(const p of recipe.tailPlacements){const b=level.blocks.find(b=>b.id===p.blockId);assert(b);assert(['v147-69-cover18','v147-69-lift2'].includes(b.shutterId));Object.assign(b,{x:p.x,y:p.y,shape:p.shape});}
+assert.deepEqual(level,target.level);assert.equal(digest(level),recipe.targetLevelSha256);const drags=[...base.drags,...recipe.tailDrags];assert.deepEqual(drags,target.drags);assert.equal(digest(drags),recipe.targetRouteSha256);
+const {api}=await loadApi(),replay=api.replayRevisedRoute(level,drags);assert(replay.valid&&replay.complete&&replay.nonClearingDrags===10);
+const output=out+'/reproduction69-'+Date.now()+'.json';fs.writeFileSync(output,JSON.stringify({passed:true,recipeFile,recipeSha256:digest(fs.readFileSync(recipeFile)),baseFile:recipe.baseFile,baseFileSha256:recipe.baseFileSha256,targetFile,targetFileSha256:digest(fs.readFileSync(targetFile)),levelSha256:digest(level),routeSha256:digest(drags),exactLevel:true,exactRoute:true,authoritativeReplay:replay,toolSha256:digest(fs.readFileSync('tools/campaign-v145/lv061-070/reproduce69-final.mjs'))},null,2)+'\n',{flag:'wx'});console.log(JSON.stringify({output,recipeFile,levelSha256:digest(level),U:replay.nonClearingDrags}));

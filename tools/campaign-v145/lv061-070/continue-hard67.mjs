@@ -1,0 +1,6 @@
+import fs from 'node:fs';
+import {loadApi} from '../../native-block-repair-v143.mjs';
+import {digest} from '../../revised-preview-validation-v160.mjs';
+import {searchLiftWitness} from './lift-witness-search.mjs';
+const root='deliverables/remake31-200-v145-20260924/batches/lv061-070/author65-67',{api}=await loadApi(),files=process.argv.slice(2),floor=Number(process.env.FLOOR??16);
+for(const file of files){const d=JSON.parse(fs.readFileSync(file)),r=searchLiftWitness(d.level,{floor,fastEdges:true,maxMilliseconds:Number(process.env.SEARCH_MS??15000),maxStates:Number(process.env.MAX_STATES??500000),orderSeed:Number(process.env.ORDER_SEED??0),weight:Number(process.env.WEIGHT??1000)}),out=file.replace(/\.json$/,'.continue-'+Date.now()+'.json');let replay;if(r.status==='witness'){replay=api.replayRevisedRoute(d.level,r.drags);if(!replay.valid||!replay.complete)throw Error('Bad witness');}fs.writeFileSync(out,JSON.stringify({...d,drags:r.drags,replay,search:r,continuation:{baseFile:file,baseFileSha256:digest(fs.readFileSync(file)),toolSha256:digest(fs.readFileSync(import.meta.filename)),floor,weight:Number(process.env.WEIGHT??1000)}},null,2));console.log(JSON.stringify({out,status:r.status,U:r.cost,clears:r.best?.clears,cost:r.best?.cost,states:r.states,ms:r.ms}));if(r.status==='witness'&&r.cost<=15)break;}

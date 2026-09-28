@@ -1,0 +1,1032 @@
+{
+  "schemaVersion": 1,
+  "scope": "source-mechanism-inventory-review",
+  "ruleVersion": "1.2.1",
+  "runtimeProfile": "revised-2026-09-21-v1.2",
+  "reviewedOn": "2026-09-21",
+  "sourceVideo": "C:/Users/Administrator/Desktop/block out/参考视频/21-30.mp4",
+  "truth": {
+    "path": "deliverables/level-generation-blueprint/blockout-lv001-lv100-video-parity-truth-v6.json",
+    "sha256": "28040fe1779fee54d8c03a92949df26ff6517687b3f9c7cfdbb5353a2c6c41a9"
+  },
+  "direct": {
+    "path": ".codex-temp/video-audit-21-30-independent/audit-lv021-030.json",
+    "sha256": "a9701747b9c115ad8c85d4abf231540d9f1b182a08c82816319a996d3b3551d0"
+  },
+  "method": "只读检查已有原视频取帧（view_image）：每关稳定开局、每一批隐藏完整揭开及后段空场；11机制族逐项核实。有依据写明确0，不将未序列化字段自动补0。来源数量修订独立记录，不修改旧truth、正式关卡或冻结规则。",
+  "rulesLockCommand": "node tools/verify-rules-lock.mjs",
+  "rulesLockResult": "PASS active v1.2.1; 4 immutable versions",
+  "levels": [
+    {
+      "level": 28,
+      "evidence": [
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0414.jpg",
+          "sha256": "f8f75b92f781b6bc6c7a3c37e8f5961987bff21cc85855914fba09d3aa79cf7f",
+          "reason": "414s：开局6个H3、上帘7和下帘3；5普通出口、1冰出口初值2。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/10fps/lv28-r3/f-0037.jpg",
+          "sha256": "60acb999fb2371f2c78133f4911a80103ec4c3b3bd65871f2a34e175cffd8ea2",
+          "reason": "425.6s：下帘首次完整揭露，7块=4个L3+3个H2；区域6×3=18格。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/10fps/lv28-r7/f-0070.jpg",
+          "sha256": "7938c819a69f04871829e4f6c63e6fb0bbe0cde05853eb051d04faecae4fe778",
+          "reason": "441.9s：上帘完整揭露，6块=4个V3+1个SQ2+1个H2；区域6×3=18格。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0460.jpg",
+          "sha256": "84a4ba2962687d6aae08c2a3d2f42f3e5103b4c13f38482b396b29b3de4dc15c",
+          "reason": "460s：后段空场显示完整6×9紫色矩形地板，无彩色地格、电梯或内部阻挡。"
+        }
+      ],
+      "mechanisms": {
+        "generators": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "414s开局、425.6s下帘、441.9s上帘的四边完整可见，无生成器机身、库存或投放口；后续新增块全部由可数卷帘揭露。"
+        },
+        "axisBlocks": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "414s开局、425.6s下帘、441.9s上帘覆盖全部开局块和每批首次揭露的全部块，块上没有横/纵双向箭头标记。"
+        },
+        "keyLocks": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "414s开局、425.6s下帘、441.9s上帘覆盖全部开局及隐藏块，无钥匙图标、锁形图标或解锁计数。"
+        },
+        "starBlocks": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "414s开局、425.6s下帘、441.9s上帘块面和全部出口都没有星标；黑白块按画面中的普通颜色块统计，未推断为星块。"
+        },
+        "flipDoors": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "414s开局、425.6s下帘、441.9s上帘各出口为单片箭头出口/数字冰出口，无翻门的双叶结构；后段按颜色清空而暗下/消失的门不误记为翻门。"
+        },
+        "coloredGrids": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "414s开局、425.6s下帘、441.9s上帘及后段腾空区域露出的地板全部为一致紫色格子，无持续彩色地格。"
+        },
+        "bombs": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "414s开局、425.6s下帘、441.9s上帘覆盖全关每个块首次可见的块面，没有表盘、引线或炸弹倒数数字。"
+        },
+        "lifts": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "414s开局、425.6s下帘、441.9s上帘全部隐藏区域为带数字和横卷帘条的卷帘；揭完后无电梯双扇或下一层区域。"
+        },
+        "numericIce": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "414s开局、425.6s下帘、441.9s上帘全部块为普通凸粒表面或可见外壳，没有数字冰块；冰门的数字不算块冰。"
+        },
+        "shells": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "414s开局6块、425.6s下帘7块及441.9s上帘6块均为单色完整凸粒块，无异色内芯和外壳边界。"
+        },
+        "covers": {
+          "count": 2,
+          "values": [
+            3,
+            7
+          ],
+          "hidden_batch_counts": [
+            7,
+            6
+          ],
+          "hidden_batch_histograms": [
+            {
+              "H2": 3,
+              "L3": 4
+            },
+            {
+              "H2": 1,
+              "V3": 4,
+              "SQ2": 1
+            }
+          ],
+          "items": [
+            {
+              "initialValue": 3,
+              "position": "lower",
+              "region": {
+                "x": 0,
+                "y": 3,
+                "width": 6,
+                "height": 3
+              },
+              "hiddenCount": 7
+            },
+            {
+              "initialValue": 7,
+              "position": "upper",
+              "region": {
+                "x": 0,
+                "y": 0,
+                "width": 6,
+                "height": 3
+              },
+              "hiddenCount": 6
+            }
+          ],
+          "reason": "414s两卷帘初值3/7；425.6s与441.9s逐区完整计数，各18格。"
+        },
+        "exits": {
+          "ordinary_count": 5,
+          "frozen_values": [
+            2
+          ],
+          "star_count": 0,
+          "star_frozen_count": 0,
+          "star_frozen_values": [],
+          "physical_count": 6,
+          "reason": "414s左粉/黄、右青/绿、下红共5普通口，右下蓝门冰2；揭帘与后段出口仍无星标。"
+        },
+        "irregularBlocks": {
+          "openingCount": 0,
+          "fullCount": 4,
+          "openingShapeHistogram": {
+            "H3": 6
+          },
+          "fullShapeHistogram": {
+            "H3": 6,
+            "L3": 4,
+            "H2": 4,
+            "V3": 4,
+            "SQ2": 1
+          },
+          "reason": "三批各18格：开局6个H3；下帘4个L3+3个H2；上帘4个V3+SQ2+H2。完整矩形条块和方块不计异形。"
+        },
+        "irregularBoard": {
+          "count": 0,
+          "cols": 6,
+          "rows": 9,
+          "playableCellCount": 54,
+          "sourcePlayableMask": [
+            "######",
+            "######",
+            "######",
+            "######",
+            "######",
+            "######",
+            "######",
+            "######",
+            "######"
+          ],
+          "reason": "460s腾空区域与开局/揭帘位置共同确认6×9完整矩形，无缺格。"
+        }
+      },
+      "observations": [
+        "独立核对opening=6、hidden=7+6、full=19，形状占格18+18+18=54；本关数量无修订。",
+        "所有11机制族都有逐帧判断；未使用旧truth缺字段作为0的依据。"
+      ],
+      "unknownFields": []
+    },
+    {
+      "level": 29,
+      "evidence": [
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0473.jpg",
+          "sha256": "355f0f3b6cec0e82edd509e2773f1209eb1299962c4b7d3a778a91a270ec17a5",
+          "reason": "473s：3×9开局区=18单格+V2+L3+T4，共21块；左右帘20/25；门冰20/20/20/10。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/10fps/lv29-reveals/f-0030.jpg",
+          "sha256": "2a055d9e098e4f12886f3da696f10e00abcbcb7a31f81cb71802ffe9d51f19c6",
+          "reason": "505.9s：左帘20完整揭露；4个T4外壳+2个独立绿单格，共6块/18格。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/10fps/lv29-reveals/f-0137.jpg",
+          "sha256": "16e9dd43acade13536008c275cd1987f6749a74308030da7a2b126fdc9b5f2c9",
+          "reason": "516.6s：右帘25完整揭露，右下红壳L4外侧还有独立绿L4。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0517.jpg",
+          "sha256": "1da0f7a5f3aa612cd08dd665a1e39b0aac1222b281617aa07e1ddfddaffbdbf2",
+          "reason": "517s：右帘全露可数为黄壳SQ2、蓝壳SQ2、黄壳H2、红壳L4、普通绿L4，共5块/18格。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0520.jpg",
+          "sha256": "d45abe9a31c362c67d502e4869f6d4c330fc5f1db054a62e76436f11e9d15140",
+          "reason": "520s：移开黄SQ2后，右下红壳L4和普通绿L4的独立边界更加清楚；普通绿L4不是红壳内芯外露。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0523.jpg",
+          "sha256": "cbe837ac62d036313d92c755661429e266ccd6dbe5eedabd01c97bb344f2ae2a",
+          "reason": "523s：右下两块仍明确独立，占四行两列的8格；红壳L4占4格，外侧绿L4占4格。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0535.jpg",
+          "sha256": "85356f45104437c803e325648dcb487f978009470bc54556f212c10b1e09c129",
+          "reason": "535s：最后绿色块离场，7×9完整紫色地板，无持久彩色地格和电梯。"
+        }
+      ],
+      "mechanisms": {
+        "generators": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "473s开局、505.9s左帘、516.6–517s右帘的四边完整可见，无生成器机身、库存或投放口；后续新增块全部由可数卷帘揭露。"
+        },
+        "axisBlocks": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "473s开局、505.9s左帘、516.6–517s右帘覆盖全部开局块和每批首次揭露的全部块，块上没有横/纵双向箭头标记。"
+        },
+        "keyLocks": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "473s开局、505.9s左帘、516.6–517s右帘覆盖全部开局及隐藏块，无钥匙图标、锁形图标或解锁计数。"
+        },
+        "starBlocks": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "473s开局、505.9s左帘、516.6–517s右帘块面和全部出口都没有星标；黑白块按画面中的普通颜色块统计，未推断为星块。"
+        },
+        "flipDoors": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "473s开局、505.9s左帘、516.6–517s右帘各出口为单片箭头出口/数字冰出口，无翻门的双叶结构；后段按颜色清空而暗下/消失的门不误记为翻门。"
+        },
+        "coloredGrids": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "473s开局、505.9s左帘、516.6–517s右帘及后段腾空区域露出的地板全部为一致紫色格子，无持续彩色地格。"
+        },
+        "bombs": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "473s开局、505.9s左帘、516.6–517s右帘覆盖全关每个块首次可见的块面，没有表盘、引线或炸弹倒数数字。"
+        },
+        "lifts": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "473s开局、505.9s左帘、516.6–517s右帘全部隐藏区域为带数字和横卷帘条的卷帘；揭完后无电梯双扇或下一层区域。"
+        },
+        "numericIce": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "473s开局、505.9s左帘、516.6–517s右帘全部块为普通凸粒表面或可见外壳，没有数字冰块；冰门的数字不算块冰。"
+        },
+        "shells": {
+          "count": 8,
+          "values": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "opening_visible_count": 0,
+          "extra_layers": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "shape_histogram": {
+            "T4": 4,
+            "SQ2": 2,
+            "H2": 1,
+            "L4": 1
+          },
+          "items": [
+            {
+              "shape": "T4",
+              "stage_id": "cover-1",
+              "extra_layers": 1,
+              "source_outer_color": "red",
+              "source_core_color": "green"
+            },
+            {
+              "shape": "T4",
+              "stage_id": "cover-1",
+              "extra_layers": 1,
+              "source_outer_color": "blue",
+              "source_core_color": "green"
+            },
+            {
+              "shape": "T4",
+              "stage_id": "cover-1",
+              "extra_layers": 1,
+              "source_outer_color": "yellow",
+              "source_core_color": "green"
+            },
+            {
+              "shape": "T4",
+              "stage_id": "cover-1",
+              "extra_layers": 1,
+              "source_outer_color": "red",
+              "source_core_color": "green"
+            },
+            {
+              "shape": "SQ2",
+              "stage_id": "cover-2",
+              "extra_layers": 1,
+              "source_outer_color": "yellow",
+              "source_core_color": "green"
+            },
+            {
+              "shape": "SQ2",
+              "stage_id": "cover-2",
+              "extra_layers": 1,
+              "source_outer_color": "blue",
+              "source_core_color": "green"
+            },
+            {
+              "shape": "H2",
+              "stage_id": "cover-2",
+              "extra_layers": 1,
+              "source_outer_color": "yellow",
+              "source_core_color": "green"
+            },
+            {
+              "shape": "L4",
+              "stage_id": "cover-2",
+              "extra_layers": 1,
+              "source_outer_color": "red",
+              "source_core_color": "green"
+            }
+          ],
+          "reason": "505.9s左帘4个T4、517s右帘SQ2×2/H2/L4各有异色外框和绿内芯；520/523s还可确认右下另有普通绿L4，不增加外壳计数。"
+        },
+        "covers": {
+          "count": 2,
+          "values": [
+            20,
+            25
+          ],
+          "hidden_batch_counts": [
+            6,
+            5
+          ],
+          "hidden_batch_histograms": [
+            {
+              "SINGLE": 2,
+              "T4": 4
+            },
+            {
+              "H2": 1,
+              "SQ2": 2,
+              "L4": 2
+            }
+          ],
+          "items": [
+            {
+              "initialValue": 20,
+              "position": "left",
+              "region": {
+                "x": 0,
+                "y": 0,
+                "width": 2,
+                "height": 9
+              },
+              "hiddenCount": 6
+            },
+            {
+              "initialValue": 25,
+              "position": "right",
+              "region": {
+                "x": 5,
+                "y": 0,
+                "width": 2,
+                "height": 9
+              },
+              "hiddenCount": 5
+            }
+          ],
+          "reason": "473s初值20/25；左18格=4×T4+2×SINGLE；右18格=2×SQ2+H2+2×L4，旧记录漏右下普通绿L4。"
+        },
+        "exits": {
+          "ordinary_count": 2,
+          "frozen_values": [
+            20,
+            20,
+            20,
+            10
+          ],
+          "star_count": 0,
+          "star_frozen_count": 0,
+          "star_frozen_values": [],
+          "physical_count": 6,
+          "reason": "473s顶部中央红和底部白2普通口；左上20、右上20、左下20和底部偏左10共4冰口；各出口无星标。"
+        },
+        "irregularBlocks": {
+          "openingCount": 2,
+          "fullCount": 8,
+          "openingShapeHistogram": {
+            "SINGLE": 18,
+            "V2": 1,
+            "L3": 1,
+            "T4": 1
+          },
+          "fullShapeHistogram": {
+            "SINGLE": 20,
+            "H2": 1,
+            "V2": 1,
+            "SQ2": 2,
+            "L3": 1,
+            "L4": 2,
+            "T4": 5
+          },
+          "reason": "开局L3和T4共2异形；左帘4个T4；右帘红壳L4及普通绿L4各1，共8。"
+        },
+        "irregularBoard": {
+          "count": 0,
+          "cols": 7,
+          "rows": 9,
+          "playableCellCount": 63,
+          "sourcePlayableMask": [
+            "#######",
+            "#######",
+            "#######",
+            "#######",
+            "#######",
+            "#######",
+            "#######",
+            "#######",
+            "#######"
+          ],
+          "reason": "535s腾空格与三批占位合计27+18+18=63格，完整7×9矩形。"
+        }
+      },
+      "sourceCorrections": {
+        "id": "lv029-right-cover-missing-plain-green-l4",
+        "reason": "旧truth/direct把右卷帘25记4块/14格，遗漏红外壳L4右下独立的普通绿L4。517/520/523s实际图像证实5块/18格；只修订独立review，不改旧源文档或正式LEVELS。",
+        "previous": {
+          "opening_piece_count": 21,
+          "source_full_piece_count": 31,
+          "cover25_hidden_count": 4,
+          "source_occupied_cell_count": 59
+        },
+        "composition": {
+          "opening_piece_count": 21,
+          "source_full_piece_count": 32,
+          "opening_shape_histogram": {
+            "SINGLE": 18,
+            "V2": 1,
+            "L3": 1,
+            "T4": 1
+          },
+          "source_full_shape_histogram": {
+            "SINGLE": 20,
+            "H2": 1,
+            "V2": 1,
+            "SQ2": 2,
+            "L3": 1,
+            "L4": 2,
+            "T4": 5
+          },
+          "effective_design_piece_count": 32,
+          "effective_design_shape_histogram": {
+            "SINGLE": 20,
+            "H2": 1,
+            "V2": 1,
+            "SQ2": 2,
+            "L3": 1,
+            "L4": 2,
+            "T4": 5
+          },
+          "source_occupied_cell_count": 63,
+          "effective_design_occupied_cell_count": 63
+        },
+        "stage_seeds": [
+          {
+            "id": "opening",
+            "kind": "opening",
+            "count": 21,
+            "shape_histogram": {
+              "SINGLE": 18,
+              "V2": 1,
+              "L3": 1,
+              "T4": 1
+            },
+            "provenance": "source_frames_independent_inventory_review"
+          },
+          {
+            "id": "cover-1",
+            "kind": "countdown_cover",
+            "trigger_value": 20,
+            "position": "left",
+            "source_stage_id": "countdown_cover_20_left",
+            "count": 6,
+            "shape_histogram": {
+              "SINGLE": 2,
+              "T4": 4
+            },
+            "provenance": "source_frames_independent_inventory_review"
+          },
+          {
+            "id": "cover-2",
+            "kind": "countdown_cover",
+            "trigger_value": 25,
+            "position": "right",
+            "source_stage_id": "countdown_cover_25_right",
+            "count": 5,
+            "shape_histogram": {
+              "H2": 1,
+              "SQ2": 2,
+              "L4": 2
+            },
+            "provenance": "source_frames_independent_inventory_review"
+          }
+        ]
+      },
+      "observations": [
+        "黑白块没有数字冰或星标，属于开局普通颜色块。",
+        "开局独立逐行计数：头1行3块；其后2行L3+3单格=4块；中3行T4+5单格=6块；末3行V2+7单格=8块，总21。",
+        "完整来源为21+6+5=32块，63格；外壳与内芯仍算同一个块。"
+      ],
+      "unknownFields": []
+    },
+    {
+      "level": 30,
+      "stableOpeningEvidence": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0548.jpg",
+      "evidence": [
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0547.jpg",
+          "sha256": "b67df726fbe7e639de1a86ef81eef08be4d2a33a5b254851a4ca757ea96b5570",
+          "reason": "547s：进场末尾全盘可见，左3×3九单格、右3×3六单格+红L3；倒数UI仍大字。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0548.jpg",
+          "sha256": "930f5029726c62b2ebaef78e78a97bea33306ae936d271c85bd15fd217130ee6",
+          "reason": "548s：稳定可操作画面timer01:45，帘12/冰门9未减；开局16块=15单格+红L3。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/10fps/lv30-r12/f-0078.jpg",
+          "sha256": "8dfc282237483d512feff673dde30d342dd6bb43da1c0427cf2db54097d75995",
+          "reason": "567.7s：帘尚为1；原开局红L3在右侧，形状为3格，隐藏区尚未露出。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/10fps/lv30-r12/f-0085.jpg",
+          "sha256": "4d42c4f70c1f5eb54b2e422b2362cee2ec265d02e8a632ebe053bca23a7edb24",
+          "reason": "568.4s：原红L3从右门消除后卷帘打开，区域底部已可见新红/绿块，不能当作开局旧块。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/10fps/lv30-r12/f-0092.jpg",
+          "sha256": "3a213b45a6d9a39736df65410745b56f674d2a97fe4d7eef76d26e837e635e6f",
+          "reason": "569.1s：2×9卷帘区完整揭露：红/绿V3各1、白SQ2、红/绿L4各1，5块合18格。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0570.jpg",
+          "sha256": "95474b02a70b2c898d852c2f63f70a158da34e6a00f487e291a5fbeb21b89532",
+          "reason": "570s：新红L4独立拖出（3格竖臂+底部右1格），绿L4仍在原卷帘底部，验证两块不是同一块或外壳。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0571.jpg",
+          "sha256": "a43e44f45bbd7c06110b71c676a2b3e5bc284a02c858ca508c031e1ff5e56ec5",
+          "reason": "571s：绿L4向下门完整离场，红L4留在左侧；后方无新增层。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0581.jpg",
+          "sha256": "620e2109602cd7a0863e3699c613114b633f4e8131b5b248fb96b9c87acaf7a6",
+          "reason": "581s：最后白SQ2离场，完整T形棋盘地板可见，紫色格子无持续彩色地格。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0584.jpg",
+          "sha256": "1946d2e06dcf881b428c35a3987e77fe403b74de8c6c95f25f2bdff850c93a23",
+          "reason": "584s：完成画面；视频这一关已展示全部有限块。"
+        }
+      ],
+      "mechanisms": {
+        "generators": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "548s稳定开局、569.1s完整揭帘以及570–581s后段的四边完整可见，无生成器机身、库存或投放口；后续新增块全部由可数卷帘揭露。"
+        },
+        "axisBlocks": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "548s稳定开局、569.1s完整揭帘以及570–581s后段覆盖全部开局块和每批首次揭露的全部块，块上没有横/纵双向箭头标记。"
+        },
+        "keyLocks": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "548s稳定开局、569.1s完整揭帘以及570–581s后段覆盖全部开局及隐藏块，无钥匙图标、锁形图标或解锁计数。"
+        },
+        "starBlocks": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "548s稳定开局、569.1s完整揭帘以及570–581s后段块面和全部出口都没有星标；黑白块按画面中的普通颜色块统计，未推断为星块。"
+        },
+        "flipDoors": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "548s稳定开局、569.1s完整揭帘以及570–581s后段各出口为单片箭头出口/数字冰出口，无翻门的双叶结构；后段按颜色清空而暗下/消失的门不误记为翻门。"
+        },
+        "coloredGrids": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "548s稳定开局、569.1s完整揭帘以及570–581s后段及后段腾空区域露出的地板全部为一致紫色格子，无持续彩色地格。"
+        },
+        "bombs": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "548s稳定开局、569.1s完整揭帘以及570–581s后段覆盖全关每个块首次可见的块面，没有表盘、引线或炸弹倒数数字。"
+        },
+        "lifts": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "548s稳定开局、569.1s完整揭帘以及570–581s后段全部隐藏区域为带数字和横卷帘条的卷帘；揭完后无电梯双扇或下一层区域。"
+        },
+        "numericIce": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "548s稳定开局、569.1s完整揭帘以及570–581s后段全部块为普通凸粒表面或可见外壳，没有数字冰块；冰门的数字不算块冰。"
+        },
+        "shells": {
+          "count": 0,
+          "values": [],
+          "status": "observed-absent",
+          "reason": "548s15单格+红L3以及569.1s隐藏5块全是单色凸粒块；570/571s红L4和绿L4可独立移走，属于两块，不是异色内芯。"
+        },
+        "covers": {
+          "count": 1,
+          "values": [
+            12
+          ],
+          "hidden_batch_counts": [
+            5
+          ],
+          "hidden_batch_histograms": [
+            {
+              "V3": 2,
+              "SQ2": 1,
+              "L4": 2
+            }
+          ],
+          "items": [
+            {
+              "initialValue": 12,
+              "position": "center",
+              "region": {
+                "x": 3,
+                "y": 0,
+                "width": 2,
+                "height": 9
+              },
+              "hiddenCount": 5
+            }
+          ],
+          "reason": "548s初值12；569.1s覆盖区全部18格由5块填满，原记录只列前10格的3块，漏底部两L4。"
+        },
+        "exits": {
+          "ordinary_count": 5,
+          "frozen_values": [
+            9
+          ],
+          "star_count": 0,
+          "star_frozen_count": 0,
+          "star_frozen_values": [],
+          "physical_count": 6,
+          "reason": "548s顶部白、底部绿、左侧红/白/黑5普通口和右侧冰9口；右冰解冻后红。竞品实际重复红/白出口保留为来源事实。"
+        },
+        "irregularBlocks": {
+          "openingCount": 1,
+          "fullCount": 3,
+          "openingShapeHistogram": {
+            "SINGLE": 15,
+            "L3": 1
+          },
+          "fullShapeHistogram": {
+            "SINGLE": 15,
+            "L3": 1,
+            "V3": 2,
+            "SQ2": 1,
+            "L4": 2
+          },
+          "reason": "548s开局只有红L3异形；569.1s新增红/绿L4各1，完整矩形V3/SQ2不计异形。"
+        },
+        "irregularBoard": {
+          "count": 1,
+          "cols": 8,
+          "rows": 9,
+          "playableCellCount": 36,
+          "sourcePlayableMask": [
+            "...##...",
+            "...##...",
+            "...##...",
+            "...##...",
+            "...##...",
+            "...##...",
+            "########",
+            "########",
+            "########"
+          ],
+          "reason": "548s外轮廓、581s腾空地板共同确认上6行中间2列+下3行8列，36格；无内部孔洞。"
+        }
+      },
+      "sourceCorrections": {
+        "id": "lv030-opening-and-cover-full-inventory",
+        "reason": "548s稳定开局左9单格、右6单格+L3，共16；569.1s揭帘为V3×2+SQ2+L4×2，共5。旧truth/direct漏1开局单格及2隐藏L4。568.4s可见原红L3先消除，570/571s证明两个新L4独立存在。",
+        "previous": {
+          "opening_piece_count": 15,
+          "source_full_piece_count": 18,
+          "cover12_hidden_count": 3,
+          "source_occupied_cell_count": 27
+        },
+        "composition": {
+          "opening_piece_count": 16,
+          "source_full_piece_count": 21,
+          "opening_shape_histogram": {
+            "SINGLE": 15,
+            "L3": 1
+          },
+          "source_full_shape_histogram": {
+            "SINGLE": 15,
+            "L3": 1,
+            "V3": 2,
+            "SQ2": 1,
+            "L4": 2
+          },
+          "effective_design_piece_count": 21,
+          "effective_design_shape_histogram": {
+            "SINGLE": 15,
+            "L3": 1,
+            "V3": 2,
+            "SQ2": 1,
+            "L4": 2
+          },
+          "source_occupied_cell_count": 36,
+          "effective_design_occupied_cell_count": 36
+        },
+        "stage_seeds": [
+          {
+            "id": "opening",
+            "kind": "opening",
+            "count": 16,
+            "shape_histogram": {
+              "SINGLE": 15,
+              "L3": 1
+            },
+            "provenance": "source_frames_independent_inventory_review"
+          },
+          {
+            "id": "cover-1",
+            "kind": "countdown_cover",
+            "trigger_value": 12,
+            "position": "center",
+            "source_stage_id": "countdown_cover_12",
+            "count": 5,
+            "shape_histogram": {
+              "V3": 2,
+              "SQ2": 1,
+              "L4": 2
+            },
+            "provenance": "source_frames_independent_inventory_review"
+          }
+        ],
+        "openingInventory": {
+          "coordinateConvention": "0-based x/y",
+          "singleCells": [
+            {
+              "color": "black",
+              "x": 0,
+              "y": 6
+            },
+            {
+              "color": "white",
+              "x": 1,
+              "y": 6
+            },
+            {
+              "color": "black",
+              "x": 2,
+              "y": 6
+            },
+            {
+              "color": "white",
+              "x": 0,
+              "y": 7
+            },
+            {
+              "color": "black",
+              "x": 1,
+              "y": 7
+            },
+            {
+              "color": "white",
+              "x": 2,
+              "y": 7
+            },
+            {
+              "color": "red",
+              "x": 0,
+              "y": 8
+            },
+            {
+              "color": "white",
+              "x": 1,
+              "y": 8
+            },
+            {
+              "color": "red",
+              "x": 2,
+              "y": 8
+            },
+            {
+              "color": "black",
+              "x": 6,
+              "y": 6
+            },
+            {
+              "color": "red",
+              "x": 7,
+              "y": 6
+            },
+            {
+              "color": "white",
+              "x": 7,
+              "y": 7
+            },
+            {
+              "color": "white",
+              "x": 5,
+              "y": 8
+            },
+            {
+              "color": "red",
+              "x": 6,
+              "y": 8
+            },
+            {
+              "color": "black",
+              "x": 7,
+              "y": 8
+            }
+          ],
+          "redL3Cells": [
+            [
+              5,
+              6
+            ],
+            [
+              5,
+              7
+            ],
+            [
+              6,
+              7
+            ]
+          ]
+        },
+        "hiddenInventory": {
+          "coordinateConvention": "0-based x/y in full board",
+          "pieces": [
+            {
+              "color": "green",
+              "shape": "V3",
+              "cells": [
+                [
+                  3,
+                  0
+                ],
+                [
+                  3,
+                  1
+                ],
+                [
+                  3,
+                  2
+                ]
+              ]
+            },
+            {
+              "color": "red",
+              "shape": "V3",
+              "cells": [
+                [
+                  4,
+                  0
+                ],
+                [
+                  4,
+                  1
+                ],
+                [
+                  4,
+                  2
+                ]
+              ]
+            },
+            {
+              "color": "white",
+              "shape": "SQ2",
+              "cells": [
+                [
+                  3,
+                  3
+                ],
+                [
+                  4,
+                  3
+                ],
+                [
+                  3,
+                  4
+                ],
+                [
+                  4,
+                  4
+                ]
+              ]
+            },
+            {
+              "color": "green",
+              "shape": "L4",
+              "cells": [
+                [
+                  3,
+                  5
+                ],
+                [
+                  4,
+                  5
+                ],
+                [
+                  4,
+                  6
+                ],
+                [
+                  4,
+                  7
+                ]
+              ]
+            },
+            {
+              "color": "red",
+              "shape": "L4",
+              "cells": [
+                [
+                  3,
+                  6
+                ],
+                [
+                  3,
+                  7
+                ],
+                [
+                  3,
+                  8
+                ],
+                [
+                  4,
+                  8
+                ]
+              ]
+            }
+          ]
+        }
+      },
+      "observations": [
+        "来源普通门5+冰门1不因竞品颜色重复或候选色板容量而删改。",
+        "548s已经恢复小型timer且帘/冰门未减，适合固定为首个稳定开局证据；547s只作进场时交叉检查。",
+        "开局18格、隐藏18格，全关36格；已填满真实棋盘。"
+      ],
+      "unknownFields": []
+    }
+  ]
+}

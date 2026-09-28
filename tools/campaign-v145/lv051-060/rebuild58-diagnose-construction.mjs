@@ -1,0 +1,20 @@
+// Finite construction-only diagnosis. No route search or lower-bound proof runs.
+import fs from 'node:fs';
+import {pathToFileURL} from 'node:url';
+const author='tools/campaign-v145/lv051-060/rebuild58-author.mjs';
+let code=fs.readFileSync(author,'utf8');
+code=code.replace("const sourceFile=process.argv[2];", "const diagnostic={packing:0,gates:0,spatial:0,errors:{}};const sourceFile=process.argv[2];");
+code=code.replace('if(!packed)return null;', 'if(!packed){diagnostic.packing++;return null;}');
+code=code.replace('if(!gates(0))return null;', 'if(!gates(0)){diagnostic.gates++;return null;}');
+code=code.replace('catch{return null;}', 'catch(e){diagnostic.errors[e.message]=(diagnostic.errors[e.message]??0)+1;return null;}');
+code=code.replace('if(!auditSpatial(l,api).passed)return null;', 'if(!auditSpatial(l,api).passed){diagnostic.spatial++;return null;}');
+code=code.replace('assert(prefixReplay.valid&&prefixReplay.clearEvents===4);', "if(!prefixReplay.valid||prefixReplay.clearEvents!==4)throw new Error(JSON.stringify({valid:prefixReplay.valid,error:prefixReplay.error,clearEvents:prefixReplay.clearEvents,nonClearingDrags:prefixReplay.nonClearingDrags,effectiveDrags:prefixReplay.effectiveDrags}));");
+code=code.replace('counts.valid++;', 'counts.valid++;continue;');
+code=code.replace('while(Date.now()<deadline){const d=make(++counts.attempts);', 'while(Date.now()<deadline&&counts.attempts<Number(process.env.DIAG_ATTEMPTS??1e9)){const d=make(++counts.attempts);');
+code=code.replace("const summary=save('summary'", "console.log(JSON.stringify({constructionOnly:true,diagnostic}));const summary=save('summary'");
+code=code.replace('input,counts,rows,fullBatchValidated', 'input,counts,rows,diagnostic,constructionOnly:true,fullBatchValidated');
+const out=`tools/campaign-v145/lv051-060/rebuild58-diagnose-generated-${Date.now()}.mjs`;
+fs.writeFileSync(out,code,{flag:'wx'});
+process.env.SECONDS=process.env.DIAG_ATTEMPTS?'10':'2';
+delete process.env.REPRODUCE;
+await import(pathToFileURL(fs.realpathSync(out)).href);

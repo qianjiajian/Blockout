@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+import {loadApi} from '../../../native-block-repair-v143.mjs';
+import {verifyRulesLock} from '../../../verify-rules-lock.mjs';
+import {digest} from '../../../revised-preview-validation-v160.mjs';
+import {checkFullGeneratorFloor,verifyFullGeneratorRouteProjection} from '../../../remake31to40-full-generator-floor-v141.mjs';
+const lock=verifyRulesLock();if(!lock.ok)throw Error(lock.errors.join('\n'));
+const file=process.argv[2],data=JSON.parse(fs.readFileSync(file)),{api}=await loadApi();
+const replay=api.replayRevisedRoute(data.level,data.drags);
+const floor=checkFullGeneratorFloor(data.level,api,{floor:11,maxStates:500000,maxMilliseconds:Number(process.env.FLOOR_MS??30000)});
+const result={ruleVersion:lock.activeVersion,file,levelSha256:digest(data.level),replay,floor,formalAdopted:false,pointerValidated:false,releaseApproved:false};
+const out=`deliverables/remake131-140-v146-20260924/agent131-134/check132-${Date.now()}.json`;
+fs.writeFileSync(out,JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({out,replay:{valid:replay.valid,complete:replay.complete,U:replay.nonClearingDrags},floor}));

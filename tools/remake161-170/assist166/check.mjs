@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {api,project,audit,digest} from '../author164-167/common.mjs';
+import {searchSpatial,compileSpatial,assertStateMatches,settle,NONE} from '../../remake111to120-spatial-floor-v147.mjs';
+import {ruleGate,writeNew,ROOT} from '../common.mjs';
+ruleGate();
+const file=process.argv[2],data=JSON.parse(fs.readFileSync(file)),l=data.level;
+const spatial=audit(l),replay=api.replayRevisedRoute(l,data.drags);assert(replay.valid&&replay.complete);
+const budget={floor:5,maxMilliseconds:8000,maxStates:150000,maxTransitions:2500000,prove:true,normalize:false};
+const lower=searchSpatial(project(l),api,budget);
+const out=ROOT+'/assist166/check-'+Date.now()+'.json';writeNew(out,{candidate:file,levelSha256:digest(l),spatial,replay,lower,budget,projection:{profileOnly:'1.5 to 1.4',reason:'No flip gates, generators, time mechanics or color grids. v1.5 only changes frozen flip-gate toggling; complete inventory, actual lift reveal counts and hidden ice retained. Optional contact and ignored exit sweep form a cost-nonincreasing superset for lower proof. No clear normalization.'},inventoryCorrection:{knownSourceBodies:46,newOrdinaryOpeningBodies:3,openingBodies:11,totalBodies:49,openingCells:27,sourceKnownOpeningBodies:8,sourceOpeningCells:21,remark:'Original author candidate adaptation prose is stale (10 opening/48 total/two additions); actual JSON and this correction define the authored design. No existing evidence is rewritten.'}});
+console.log(JSON.stringify({file:out,U:replay.nonClearingDrags,total:replay.totalDrags,lower}));

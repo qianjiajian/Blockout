@@ -26,7 +26,9 @@ await page.evaluate(({ stars, moves }) => {
     coins: 2480,
     sound: false,
     haptic: false,
+    reducedMotion: false,
     featureSeen: ["ice-door", "ice-block", "layer", "shutter"],
+    boosterUnlockSeen: ["time", "rocket", "pulse"],
     boosters: { time: 3, rocket: 3, pulse: 3 },
     bestStars: stars,
     bestMoves: moves,
@@ -35,32 +37,40 @@ await page.evaluate(({ stars, moves }) => {
 }, { stars, moves });
 await page.reload({ waitUntil: "networkidle" });
 await page.waitForTimeout(1000);
-let state = await page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
+const debug = () => page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
+const clickTarget = async (name, waitMs = 280) => {
+  const current = await debug();
+  const hit = current.interactionTargets?.targets?.[name]?.hit;
+  const bounds = await page.locator("canvas").boundingBox();
+  if (!hit || !bounds) throw new Error(`Progression E2E: missing ${name} target`);
+  await page.mouse.click(
+    bounds.x + current.viewportTransform.offsetX + (hit.x + hit.width / 2) * current.viewportTransform.scale,
+    bounds.y + current.viewportTransform.offsetY + (hit.y + hit.height / 2) * current.viewportTransform.scale,
+  );
+  await page.waitForTimeout(waitMs);
+  return debug();
+};
+let state = await debug();
 if (state.level.id !== 100 || state.progression.highestLevel !== 100) throw new Error("Progression save did not restore level 100");
 await page.screenshot({ path: shot("round35-home-level100.png") });
 
-await page.mouse.click(347, 1008);
-await page.waitForTimeout(260);
-state = await page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
+state = await clickTarget("navigation.3");
 if (state.screen !== "levels") throw new Error("Level-select navigation did not open");
-if (state.levelPage !== 9) throw new Error("Journey did not open on the current level's ten-level segment");
+if (JSON.stringify(state.journey.displayedLevels) !== JSON.stringify([100, 99, 98])) {
+  throw new Error(`Journey end-state level window is wrong (${JSON.stringify(state.journey)})`);
+}
 await page.screenshot({ path: shot("round35-level-select-81-100.png") });
 
-// Level 93: third node on the 91-100 journey segment.
-await page.mouse.click(213, 691);
-state = await page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
-if (state.screen !== "home" || state.level.id !== 93) throw new Error("Level-select did not choose level 93");
+state = await clickTarget("journeyNode.0");
+if (state.screen !== "home" || state.level.id !== 100) throw new Error("Journey current card did not return to level 100");
+await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(93, false));
 
-await page.mouse.click(446, 1008);
-await page.waitForTimeout(260);
-state = await page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
+state = await clickTarget("navigation.4");
 if (state.screen !== "records") throw new Error("Achievement navigation did not open");
 await page.waitForTimeout(100);
 await page.screenshot({ path: shot("round4-achievements.png") });
 
-await page.mouse.click(248, 1008);
-await page.waitForTimeout(260);
-state = await page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
+state = await clickTarget("navigation.2");
 if (state.screen !== "home") throw new Error("Collection Home tab did not return to the hub");
 
 await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(100, true));
@@ -68,16 +78,13 @@ await page.waitForTimeout(120);
 await page.screenshot({ path: shot("round35-level100-gameplay.png") });
 
 await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(100, false));
-await page.mouse.click(347, 1008);
-await page.waitForTimeout(260);
+await clickTarget("navigation.3");
 await page.setViewportSize({ width: 320, height: 568 });
 await page.waitForTimeout(120);
 await page.screenshot({ path: shot("round4-mobile-level-select-320x568.png") });
 await page.setViewportSize({ width: 496, height: 1078 });
-await page.mouse.click(248, 1008);
-await page.waitForTimeout(260);
-await page.mouse.click(446, 1008);
-await page.waitForTimeout(260);
+await clickTarget("navigation.2");
+await clickTarget("navigation.4");
 await page.setViewportSize({ width: 320, height: 568 });
 await page.waitForTimeout(120);
 await page.screenshot({ path: shot("round4-mobile-achievements-320x568.png") });
@@ -85,4 +92,4 @@ await page.screenshot({ path: shot("round4-mobile-achievements-320x568.png") });
 await page.close();
 await browser.close();
 if (errors.length) throw new Error(errors.join("\n"));
-console.log("Progression restore, paged level selection, achievements, and level-100 visual checks passed.");
+console.log("Progression restore, formal Journey milestones/current card, Collection, and level-100 visual checks passed.");

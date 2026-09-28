@@ -47,10 +47,35 @@ const mechanicFixture = (): LevelSpec => ({
   ],
 });
 
+const movableTimerFixture = (): LevelSpec => ({
+  id: 996,
+  name: "movable timer fixture",
+  difficulty: "normal",
+  timeSeconds: 180,
+  reward: 0,
+  width: 3,
+  height: 3,
+  gates: [{ id: "red-top", side: "top", offset: 1, size: 1, color: "red" }],
+  blocks: [{ id: "red", x: 1, y: 1, shape: [[0, 0]], color: "red" }],
+});
+
 describe("level data", () => {
-  it("validates every one of the 100 authored levels", () => {
-    expect(LEVELS).toHaveLength(100);
-    for (const level of LEVELS) expect(() => validateLevel(level)).not.toThrow();
+  it("validates every one of the 200 authored levels", () => {
+    expect(LEVELS).toHaveLength(200);
+    for (const level of LEVELS) {
+      expect(level.blocks.every((block) => (block.layers?.length ?? 1) <= 2), `Lv${level.id} shell cap`).toBe(true);
+      expect(() => validateLevel(level)).not.toThrow();
+    }
+  });
+
+  it("rejects empty, over-deep, and same-color shell layers", () => {
+    const withLayers = (layers: LevelSpec["blocks"][number]["layers"]): LevelSpec => ({
+      ...LEVELS[0],
+      blocks: LEVELS[0].blocks.map((block, index) => index === 0 ? { ...block, layers } : block),
+    });
+    expect(() => validateLevel(withLayers([]))).toThrow(/must contain the body color/);
+    expect(() => validateLevel(withLayers(["blue", "green", "purple"]))).toThrow(/at most one extra shell/);
+    expect(() => validateLevel(withLayers(["blue", "blue"]))).toThrow(/distinct outer and inner shell colors/);
   });
 });
 
@@ -204,11 +229,9 @@ describe("PuzzleModel", () => {
   });
 
   it("counts one explicit move even when the timer advances during the action", () => {
-    const model = new PuzzleModel(getLevel(2));
-    const action = solutionFor(2).find((candidate) => candidate.type === "move");
-    expect(action?.type).toBe("move");
+    const model = new PuzzleModel(movableTimerFixture());
     model.beginAction();
-    expect(model.moveBlockStep(action!.blockId, action!.x, action!.y)).toBe(true);
+    expect(model.moveBlockStep("red", 1, 0)).toBe(true);
     model.tick(0.25);
     expect(model.commitAction()).toBe(true);
     expect(model.snapshot().moves).toBe(1);
@@ -253,18 +276,16 @@ describe("PuzzleModel", () => {
   });
 
   it("does not refund elapsed time when a real drag is cancelled in a running level", () => {
-    const model = new PuzzleModel(getLevel(2));
-    const action = solutionFor(2).find((candidate) => candidate.type === "move");
-    expect(action?.type).toBe("move");
-    const origin = model.getBlock(action!.blockId)!;
+    const model = new PuzzleModel(movableTimerFixture());
+    const origin = model.getBlock("red")!;
     const before = { x: origin.x, y: origin.y };
     model.start();
     model.beginAction();
-    expect(model.moveBlockStep(action!.blockId, action!.x, action!.y)).toBe(true);
+    expect(model.moveBlockStep("red", 1, 0)).toBe(true);
     model.tick(0.5);
     model.cancelAction();
 
-    expect(model.getBlock(action!.blockId)).toMatchObject(before);
+    expect(model.getBlock("red")).toMatchObject(before);
     expect(model.snapshot().remainingSeconds).toBeCloseTo(model.level.timeSeconds - 0.5, 5);
     expect(model.snapshot().moves).toBe(0);
   });

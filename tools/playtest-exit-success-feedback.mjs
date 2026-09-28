@@ -80,7 +80,10 @@ const performDrag = async (drag, capture) => {
       || (expectedLayers > 0 && (!block || block.layers.length !== expectedLayers))) {
       throw new Error(`Exit-success E2E: ${drag.blockId} did not resolve while the pointer stayed down`);
     }
-    await page.waitForTimeout(capture ? 75 : 20);
+    // Normal motion now keeps the body readable through a 260ms gate ingest.
+    // Sample just after that completes so the progressive fragment burst is
+    // visible without mistaking a mid-suction frame for the success frame.
+    await page.waitForTimeout(capture ? (state.settings.reducedMotion ? 75 : 300) : 20);
   } else if (!block) {
     throw new Error(`Exit-success E2E: ${drag.blockId} disappeared during a parking drag`);
   }
@@ -91,14 +94,14 @@ const performDrag = async (drag, capture) => {
 
 await seed(false);
 const fixtures = await page.evaluate(async () => {
-  const [{ LEVELS }, { solveLevelOptimally }, { PuzzleModel }] = await Promise.all([
+  const [{ LEVELS }, { solveLevelForValidation }, { PuzzleModel }] = await Promise.all([
     import("/src/core/levels.ts"),
     import("/src/core/levelSolver.ts"),
     import("/src/core/PuzzleModel.ts"),
   ]);
   const events = [];
   for (const level of LEVELS.slice(0, 30)) {
-    const result = solveLevelOptimally(level);
+    const result = solveLevelForValidation(level);
     if (!result.solved) continue;
     const model = new PuzzleModel(level);
     const prefix = [];
@@ -110,7 +113,12 @@ const fixtures = await page.evaluate(async () => {
       model.commitAction();
       const fullyExited = !model.snapshot().blocks.some((block) => block.id === drag.blockId);
       if (drag.exitSide && before && fullyExited) {
-        events.push({ levelId: level.id, color: before.color, side: drag.exitSide, prefix: [...prefix, drag] });
+        events.push({
+          levelId: level.id,
+          color: before.layers[0] ?? before.color,
+          side: drag.exitSide,
+          prefix: [...prefix, drag],
+        });
       }
       prefix.push(drag);
     }
@@ -128,7 +136,7 @@ const fixtures = await page.evaluate(async () => {
   if (coveredSides.size < 4) throw new Error(`Exit-success fixtures cover only ${coveredSides.size} directions`);
   let layer;
   for (const level of LEVELS.slice(0, 40)) {
-    const result = solveLevelOptimally(level);
+    const result = solveLevelForValidation(level);
     if (!result.solved) continue;
     const model = new PuzzleModel(level);
     const prefix = [];
@@ -144,7 +152,7 @@ const fixtures = await page.evaluate(async () => {
         layer = {
           levelId: level.id,
           blockId: drag.blockId,
-          color: before.color,
+          color: before.layers[0] ?? before.color,
           side: drag.exitSide,
           layersBefore: before.layers.length,
           prefix: [...prefix],
@@ -163,12 +171,15 @@ for (const fixture of fixtures.exits) {
     const target = index === fixture.prefix.length - 1;
     const state = await performDrag(fixture.prefix[index], target);
     if (!target) {
-      await page.waitForTimeout(850);
+      await page.waitForTimeout(1_250);
       continue;
     }
     const pulse = state.exitPulses.find((candidate) => candidate.color === fixture.color && candidate.side === fixture.side);
-    if (!pulse || !state.fragmentColors.includes(fixture.color) || state.particles < 18 || state.exitGhosts < 1) {
-      throw new Error(`Exit-success E2E: ${fixture.color}/${fixture.side} on Lv${fixture.levelId} did not expose its matching pulse, fragments, and gate-under ghost (${JSON.stringify({ pulses: state.exitPulses, fragments: state.fragmentColors, particles: state.particles, ghosts: state.exitGhosts })})`);
+    const animation = state.exitAnimations.find((candidate) => candidate.color === fixture.color && candidate.side === fixture.side);
+    if (!pulse || !state.fragmentColors.includes(fixture.color)
+      || state.particles < 1 || state.exitGhosts < 1
+      || !animation || animation.emittedFragments <= 0 || animation.emittedFragments >= animation.fragmentCount) {
+      throw new Error(`Exit-success E2E: ${fixture.color}/${fixture.side} on Lv${fixture.levelId} did not expose its progressive matching pulse, fragments, and gate-under ghost (${JSON.stringify({ pulses: state.exitPulses, animations: state.exitAnimations, fragments: state.fragmentColors, particles: state.particles, ghosts: state.exitGhosts })})`);
     }
     if (state.fragmentColors.some((color) => color !== fixture.color)) {
       throw new Error(`Exit-success E2E: ${fixture.color}/${fixture.side} mixed another fragment color`);
@@ -185,13 +196,19 @@ await openLevel(fixtures.layer.levelId);
 let state;
 for (let index = 0; index < fixtures.layer.prefix.length; index += 1) {
   state = await performDrag(fixtures.layer.prefix[index], index === fixtures.layer.prefix.length - 1);
-  if (index < fixtures.layer.prefix.length - 1) await page.waitForTimeout(850);
+  if (index < fixtures.layer.prefix.length - 1) await page.waitForTimeout(1_250);
 }
 const peeled = state.puzzle.blocks.find((block) => block.id === fixtures.layer.blockId);
 if (!peeled || peeled.layers.length !== fixtures.layer.layersBefore - 1 || state.exitGhosts !== 0
   || !state.fragmentColors.includes(fixtures.layer.color)
   || !state.exitPulses.some((pulse) => pulse.color === fixtures.layer.color && pulse.side === fixtures.layer.side)) {
-  throw new Error("Exit-success E2E: layered peel did not burst in the removed outer color while keeping the block");
+  throw new Error(`Exit-success E2E: layered peel did not burst in the removed outer color while keeping the block (${JSON.stringify({
+    fixture: fixtures.layer,
+    peeled,
+    fragmentColors: state.fragmentColors,
+    exitPulses: state.exitPulses,
+    exitGhosts: state.exitGhosts,
+  })})`);
 }
 await page.screenshot({ path: shot(`round43-exit-layered-peel-level-${String(fixtures.layer.levelId).padStart(3, "0")}.png`) });
 

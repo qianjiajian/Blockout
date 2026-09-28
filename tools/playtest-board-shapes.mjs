@@ -18,20 +18,23 @@ await page.evaluate(() => localStorage.clear());
 await page.reload({ waitUntil: "networkidle" });
 await page.waitForTimeout(800);
 
-const levels = [1, 14, 15, 20, 23, 48, 72, 100];
+const levels = [1, 12, 15, 16, 20, 24, 48, 72];
 const signatures = new Set();
+let irregularCount = 0;
 for (const levelId of levels) {
   await page.evaluate((id) => window.__COLOR_ESCAPE__.loadLevel(id, true), levelId);
   await page.waitForTimeout(180);
   const state = await page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
   const playable = state.puzzle.playable;
-  if (!playable?.length || (levelId !== 1 && playable.length >= state.puzzle.width * state.puzzle.height)) {
-    throw new Error(`Board-shape E2E: level ${levelId} is not visibly irregular`);
-  }
+  if (!playable?.length) throw new Error(`Board-shape E2E: level ${levelId} has no playable mask`);
+  if (playable.length < state.puzzle.width * state.puzzle.height) irregularCount += 1;
   const signature = `${state.puzzle.width}x${state.puzzle.height}:${playable.map(([x, y]) => `${x},${y}`).join("|")}`;
   if (signatures.has(signature)) throw new Error(`Board-shape E2E: repeated checkpoint silhouette at level ${levelId}`);
   signatures.add(signature);
   await page.screenshot({ path: shot(`round37-shape-level-${String(levelId).padStart(3, "0")}.png`) });
+}
+if (irregularCount < levels.length - 1) {
+  throw new Error(`Board-shape E2E: expected at least ${levels.length - 1} irregular checkpoints, got ${irregularCount}`);
 }
 
 await page.setViewportSize({ width: 320, height: 568 });
@@ -41,4 +44,4 @@ await page.screenshot({ path: shot("round37-shape-level-072-320x568.png") });
 
 await browser.close();
 if (errors.length) throw new Error(`Board-shape browser errors:\n${errors.join("\n")}`);
-console.log(`Benchmark-cadence board visual E2E passed for ${levels.length} silhouettes plus 320x568.`);
+console.log(`Formal board visual E2E passed for ${levels.length} distinct checkpoints (${irregularCount} irregular) plus 320x568.`);

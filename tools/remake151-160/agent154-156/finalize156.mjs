@@ -1,0 +1,32 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {api,digest,write,audit,OUT,adjacent,BASE} from './common.mjs';
+import {measureRoute} from '../../remake21to30-quality.mjs';
+import {proveOpening156} from './opening-floor156.mjs';
+const input=OUT+'/candidate-156-4209.json',d=JSON.parse(fs.readFileSync(input)),l=d.level;
+const sourceReviewFile='deliverables/remake151-160-20260927/agent151-153/review-root-source155-156-1790517242114.json',sourceReview=JSON.parse(fs.readFileSync(sourceReviewFile));
+const observed=sourceReview.observations['156'];
+const source={...observed,id:156,sourceVideo:'C:/Users/Administrator/Desktop/block out/参考视频/149-161.mp4',openingFrame:OUT+'/source156-pristine.png',openingFrameTimeSeconds:562,
+ flipDoors:[{color:'yellow',side:'top',initiallyOpen:false},{color:'green',side:'top',initiallyOpen:true},{color:'red',side:'left-neck',initiallyOpen:true},{color:'cyan',side:'right-neck',initiallyOpen:true},{color:'orange',side:'bottom',initiallyOpen:true}],
+ absentMechanisms:['shell','shutter','lift','key','lock','star','coloredGrid','bomb','movementAxis'],
+ verification:'Original opening and573 ice-reveal personally re-inspected; all16FIFO entries independently traced in bound source review. No source UNKNOWN promoted to PASS.',bindings:sourceReview.bindings};
+const sourceLedger=write('source156-ledger-'+Date.now(),{source,sourceReviewFile,sourceReviewSha256:digest(fs.readFileSync(sourceReviewFile))});
+const checks=audit(l),replay=api.replayRevisedRoute(l,d.drags),measurement=measureRoute(l,d.drags,api),proof=proveOpening156(l,d.drags);
+assert(checks.passed&&replay.valid&&replay.complete);assert.equal(replay.nonClearingDrags,10);assert.equal(d.drags.length,39);assert(proof.native.proof.thresholdProven);assert(measurement.multiCellDrags>measurement.singleCellDrags);
+assert.equal(l.blocks.length,29);assert.equal(l.generators.length,4);assert(l.generators.every(g=>g.queueBlockIds.length===4));assert.equal(l.flipDoors.length,5);assert(l.flipDoors.every(g=>g.initiallyOpen===(g.color!=='yellow')&&!g.frozen));
+const q=new Set(l.generators.flatMap(g=>g.queueBlockIds)),opening=l.blocks.filter(b=>!q.has(b.id));assert.equal(opening.length,13);assert.equal(opening.reduce((n,b)=>n+b.shape.length,0),42);
+for(const [id,color,shape,ice]of [['o0','yellow',[[0,0],[0,1]],0],['o1','yellow',[[0,0],[0,1]],0],['o2','red',[[0,0],[1,0],[2,0]],1],['o3','yellow',[[0,0],[1,0]],1]]){const b=l.blocks.find(b=>b.id==='r102-156-'+id);assert.equal(b.color,color);assert.deepEqual(b.shape,shape);assert.equal(b.frozen??0,ice);}
+assert.equal(l.blocks.filter(b=>b.frozen).length,2);assert(l.blocks.filter(b=>q.has(b.id)).every(b=>!b.frozen));
+const irregular=l.blocks.filter(b=>{const xs=b.shape.map(p=>p[0]),ys=b.shape.map(p=>p[1]);return b.shape.length!==(1+Math.max(...xs)-Math.min(...xs))*(1+Math.max(...ys)-Math.min(...ys));});assert.equal(irregular.length,8);assert(irregular.length/l.blocks.length<=.3);
+const model=new api.PuzzleModel(l),snap=model.snapshot(),visible=snap.blocks;assert.equal(visible.length,13);for(const a of visible)for(const b of visible)if(a!==b&&a.layers[0]===b.layers[0])assert(!adjacent(a,b),'All-visible initial outer colors including ice');
+for(const g of l.flipDoors)assert(l.blocks.some(b=>b.color===g.color));
+for(const k of ['name','timeLimit','parMoves','reward','preservedMoveTarget','preservedTimeTarget'])assert.deepEqual(l[k],BASE.levels[155].level[k]);
+model.startCountdown();const events=[];for(const [i,drag]of d.drags.entries()){const before=model.snapshot();model.beginAction();for(const p of drag.path)assert(model.moveBlockStep(drag.blockId,...p));if(drag.exitSide)assert(model.tryExit(drag.blockId,drag.exitSide).ok);assert(model.commitAction());const after=model.snapshot();events.push({step:i+1,blockId:drag.blockId,exitSide:drag.exitSide,clearedBefore:before.cleared,clearedAfter:after.cleared,queues:after.generators.map(g=>({id:g.id,head:g.head,remaining:g.remaining})),flip:after.flipDoors.map(g=>({id:g.id,open:g.open})),ice:after.blocks.filter(b=>b.frozen).map(b=>({id:b.id,frozen:b.frozen}))});}assert(model.snapshot().complete);assert(model.snapshot().queuedBlocks.length===0);assert(model.snapshot().generators.every(g=>g.head===4&&g.remaining===0));
+const queueDiffs=['LT','LB','RT','RB'].flatMap((name,m)=>observed.generators.queues[name].map((src,j)=>({sourceMachine:name,sourceOrder:j,source:src,authored:l.blocks.find(b=>b.id===l.generators[m].queueBlockIds[j])})));
+const file=write('verified156-'+Date.now(),{...d,source:{ledger:sourceLedger},sourceLedger,sourceReview:{passed:true,sourceReviewFile,sourceReviewSha256:digest(fs.readFileSync(sourceReviewFile)),source,queueDiffs,
+ facts:'Source4opening+16FIFO=20 bodies,2V2 yellow +redH3ice1 +yellowH2ice1;4machines×4;5flip phases yellowclosed,othersopen;12sourceM11. Sourceboard79cells has large empty space.',
+ minimumAdaptation:'Preserved formal6×7 rectangle42cells instead of source79. Full opening9→42: retain allfour source opening body shapes/colors/ice and add8SQ2+1S actual ordinary bodies. Four real rim machines moved from source side rails to two top/two bottom mouths. Original20 bodies remain represented, no inventory deletion. M11 net12→8 is maximum permitted for29 bodies (8/29≤30%).',
+ userAuthorizedOriginalDesign:'v1.102 permits changed block colors/shapes/layout when bounds fail. SourceFIFO inventory order/count kept with row-wise authored q0 shape and color substitutions recorded above; some rectangle↔irregular substitutions beyond minimum net-count adaptation are original design. SourceRT red/red adjacency repaired. 14yellow/15other bodies permit alternating realflip completion. Five truecolored exits and allsource phases remain, with original position/width assignments.',
+ originality:'New full42-cell board packing with staggered SQ2 groups and13visible bodies, compared with sparse4body source79-cell neck board; not a source mirror/rotation.'},
+ audit:checks,replay,measurement,proof,mechanismEvents:events,lowerBound:5,upperBound:10,difficultyCertificate:'Opening-only cost-nonincreasing relaxation L5 plus independent full inventory originalv1.5 U10; not exact full-inventory lower graph and not claimed optimum.',pointerValidated:false,naturalClockValidated:false,formalAdopted:false});
+console.log(JSON.stringify({file,sourceLedger,L:5,U:10,total:39,multi:measurement.multiCellDrags,single:measurement.singleCellDrags}));

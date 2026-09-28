@@ -17,8 +17,9 @@ const save = (currentLevel = 1, highestLevel = Math.max(10, currentLevel)) => ({
   coins: 1000,
   sound: false,
   haptic: false,
-  reducedMotion: true,
+  reducedMotion: false,
   featureSeen: ["basics"],
+  boosterUnlockSeen: ["time", "rocket", "pulse"],
   boosters: { time: 3, rocket: 9, pulse: 3 },
   bestStars: {},
   bestMoves: { "1": 17 },
@@ -39,6 +40,17 @@ const openWithSave = async (page, value) => {
   await page.waitForTimeout(120);
 };
 
+const clickInteractionTarget = async (page, name) => {
+  const state = await page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
+  const hit = state.interactionTargets?.targets?.[name]?.hit;
+  const canvas = await page.locator("canvas").boundingBox();
+  if (!hit || !canvas) throw new Error(`Continuous-next E2E: missing ${name} target or canvas bounds`);
+  await page.mouse.click(
+    canvas.x + state.viewportTransform.offsetX + (hit.x + hit.width / 2) * state.viewportTransform.scale,
+    canvas.y + state.viewportTransform.offsetY + (hit.y + hit.height / 2) * state.viewportTransform.scale,
+  );
+};
+
 const pageCoordinates = (width, height) => {
   const scale = Math.min(width / 496, height / 1078);
   const offsetX = (width - 496 * scale) / 2;
@@ -53,7 +65,10 @@ const completeAssisted = async (page, coordinates) => {
   let state = await page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
   const assistedBlock = state.puzzle.blocks[0];
   if (!assistedBlock) return;
-  await coordinates.click(page, 248, 990);
+  await clickInteractionTarget(page, "booster.rocket");
+  await page.waitForFunction(() => (
+    window.__COLOR_ESCAPE__?.getDebugState().boosterTarget === "rocket"
+  ), undefined, { timeout: 1_000 });
   state = await page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
   const target = state.puzzle.blocks.find((block) => block.id === assistedBlock.id) ?? state.puzzle.blocks[0];
   const [targetAnchorX, targetAnchorY] = target.shape[0];
@@ -62,7 +77,12 @@ const completeAssisted = async (page, coordinates) => {
     state.board.innerX + (target.x + targetAnchorX + 0.5) * state.board.cell,
     state.board.innerY + (target.y + targetAnchorY + 0.5) * state.board.cell,
   );
-  await page.waitForTimeout(220);
+  await page.waitForFunction((blockId) => {
+    const current = window.__COLOR_ESCAPE__?.getDebugState();
+    return current
+      && !current.puzzle.blocks.some((block) => block.id === blockId)
+      && (current.activeRun?.boosterSpent.rocket ?? 0) > 0;
+  }, target.id, { timeout: 1_000 });
 
   const solution = await page.evaluate(async () => {
     const current = window.__COLOR_ESCAPE__.getDebugState();
@@ -116,84 +136,86 @@ const page = await browser.newPage({ viewport: { width: 496, height: 1078 } });
 attachErrors(page);
 const standard = pageCoordinates(496, 1078);
 const debug = () => page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
+const waitForFormalWin = (targetPage) => targetPage.waitForFunction(() => {
+  const current = window.__COLOR_ESCAPE__?.getDebugState();
+  return current?.screen === "win" && current.art.win.ready;
+}, undefined, { timeout: 3_000 });
 await openWithSave(page, save());
-const firstFeature = await page.evaluate(async () => {
-  const { LEVELS } = await import("/src/core/levels.ts");
-  const level = LEVELS.find((candidate) => candidate.id > 1 && candidate.featureIntro);
-  if (!level?.featureIntro) throw new Error("Continuous-next E2E: campaign has no feature intro");
-  return { levelId: level.id, previousLevelId: level.id - 1, kind: level.featureIntro.kind };
-});
 await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(1, true));
 let state = await debug();
 await completeAssisted(page, standard);
-await page.waitForTimeout(1350);
+await page.waitForFunction(() => {
+  const current = window.__COLOR_ESCAPE__?.getDebugState();
+  return current?.completionFlow.directTransition?.fromLevel === 1;
+}, undefined, { timeout: 3_000 });
 state = await debug();
-if (state.screen !== "win" || state.winAction !== "下一关" || state.winSecondaryAction !== "返回主页") {
-  throw new Error("Continuous-next E2E: normal result did not expose clear continue/home choices");
+if (state.screen !== "playing" || state.art.win.ready
+  || state.completionFlow.directTransition.toLevel !== 2) {
+  throw new Error("Continuous-next E2E: Lv1 did not start its result-free direct transition");
 }
 if (!state.assistedClear || state.progression.bestMoves["1"] !== 17) {
-  throw new Error("Continuous-next E2E: rocket-assisted clear overwrote the existing fair best-move record");
+  throw new Error(`Continuous-next E2E: rocket-assisted clear overwrote the existing fair best-move record: ${JSON.stringify({
+    assistedClear: state.assistedClear,
+    bestMoves: state.progression.bestMoves,
+    settlement: state.settlement,
+  })}`);
 }
-await page.screenshot({ path: shot("round21-win-next-or-home.png") });
+await page.screenshot({ path: shot("direct-transition-assisted-lv1.png") });
 
-await standard.click(page, 248, 754);
+await page.waitForFunction(() => {
+  const current = window.__COLOR_ESCAPE__?.getDebugState();
+  return current?.screen === "playing" && current.level.id === 2
+    && !current.completionFlow.directTransition;
+}, undefined, { timeout: 3_000 });
 state = await debug();
 if (state.screen !== "playing" || state.level.id !== 2 || state.puzzle.moves !== 0 || state.activeRun?.levelId !== 2) {
-  throw new Error("Continuous-next E2E: next did not begin a clean level 2 run directly");
+  throw new Error("Continuous-next E2E: auto-advance did not begin a clean level 2 run directly");
 }
-await page.screenshot({ path: shot("round21-level2-direct-start.png") });
+await page.screenshot({ path: shot("level2-direct-start.png") });
 
-// The secondary route remains a real home exit and does not leave a run journal behind.
-await openWithSave(page, save());
-await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(1, true));
+// Lv5+ keeps the formal result. Continue returns Home and starts the settled
+// reward flight instead of silently launching another run.
+await openWithSave(page, save(5));
+await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(5, true));
 await completeAssisted(page, standard);
-await page.waitForTimeout(1350);
-await standard.click(page, 248, 833);
+await waitForFormalWin(page);
+state = await debug();
+if (state.screen !== "win" || state.winAction !== "返回主页" || state.winSecondaryAction !== "关闭") {
+  throw new Error("Continuous-next E2E: Lv5 result did not expose Continue-to-Home and close choices");
+}
+const settledReward = state.settlement.coinReward;
+const settledCoins = state.economy.coins;
+await page.screenshot({ path: shot("formal-result-lv5.png") });
+await clickInteractionTarget(page, "modalPrimary");
 state = await debug();
 const replayDisk = await page.evaluate(() => JSON.parse(localStorage.getItem("color-escape-save-v1")));
-if (state.screen !== "home" || state.level.id !== 1 || state.activeRun
-  || replayDisk.currentLevel !== 1 || replayDisk.highestLevel !== 10) {
-  throw new Error("Continuous-next E2E: result home route did not settle cleanly");
+if (state.screen !== "home" || state.level.id !== 5 || state.activeRun
+  || !state.completionFlow.coinFlight
+  || state.completionFlow.coinFlight.reward !== settledReward
+  || state.completionFlow.coinFlight.endCoins !== settledCoins
+  || replayDisk.currentLevel !== 5 || replayDisk.highestLevel !== 10) {
+  throw new Error("Continuous-next E2E: Continue did not return Home with a clean settled coin flight");
 }
+await page.waitForFunction(() => !window.__COLOR_ESCAPE__?.getDebugState().completionFlow.coinFlight);
 
-// Seamless continuation must still stop for the next unseen mechanism intro.
-await openWithSave(page, save(firstFeature.previousLevelId));
-await page.evaluate((levelId) => window.__COLOR_ESCAPE__.loadLevel(levelId, true), firstFeature.previousLevelId);
+// Replay at the standard viewport, then shrink the ready result: this keeps
+// the completion gesture independent from the minimum-viewport hit-area audit.
+await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(5, true));
 await completeAssisted(page, standard);
-await page.waitForTimeout(1350);
-await standard.click(page, 248, 754);
-state = await debug();
-if (state.screen !== "feature" || state.level.id !== firstFeature.levelId
-  || state.level.featureIntro?.kind !== firstFeature.kind || state.activeRun?.levelId !== firstFeature.levelId) {
-  throw new Error(`Continuous-next E2E: unseen level-${firstFeature.levelId} mechanism intro was bypassed`);
+await waitForFormalWin(page);
+await page.setViewportSize({ width: 320, height: 568 });
+let smallState = await debug();
+if (smallState.screen !== "win" || smallState.winAction !== "返回主页") {
+  throw new Error("Continuous-next E2E: 320x568 result choices are incorrect");
 }
-await page.screenshot({ path: shot("round21-next-stops-for-feature.png") });
-await standard.click(page, 248, 755);
-state = await debug();
-if (state.screen !== "playing" || state.level.id !== firstFeature.levelId
-  || state.puzzle.moves !== 0 || state.activeRun?.levelId !== firstFeature.levelId) {
-  throw new Error("Continuous-next E2E: mechanism confirmation did not resume the prepared next run");
+await page.screenshot({ path: shot("formal-result-lv5-320x568.png") });
+await clickInteractionTarget(page, "modalPrimary");
+smallState = await debug();
+if (smallState.screen !== "home" || !smallState.completionFlow.coinFlight) {
+  throw new Error("Continuous-next E2E: 320x568 Continue-to-Home action was not clickable");
 }
 await page.close();
 
-// Minimum viewport: both result actions remain readable and the lower action is clickable.
-const small = await browser.newPage({ viewport: { width: 320, height: 568 } });
-attachErrors(small);
-const compact = pageCoordinates(320, 568);
-await openWithSave(small, save());
-await small.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(1, true));
-await completeAssisted(small, compact);
-await small.waitForTimeout(1350);
-let smallState = await small.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
-if (smallState.screen !== "win" || smallState.winSecondaryAction !== "返回主页") {
-  throw new Error("Continuous-next E2E: 320x568 result choices are incorrect");
-}
-await small.screenshot({ path: shot("round21-win-next-or-home-320x568.png") });
-await compact.click(small, 248, 833);
-smallState = await small.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
-if (smallState.screen !== "home") throw new Error("Continuous-next E2E: 320x568 home action was not clickable");
-await small.close();
-
 await browser.close();
 if (errors.length) throw new Error(`Continuous-next browser errors:\n${errors.join("\n")}`);
-console.log("Direct next-level flow, explicit home choice, feature-intro preservation, and 320x568 result actions passed.");
+console.log("Early direct transition, Lv5 Continue-to-Home coin flight, assisted record protection, and 320x568 passed.");

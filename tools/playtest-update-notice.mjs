@@ -14,14 +14,18 @@ const attachErrors = (page) => {
   page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
   page.on("pageerror", (error) => errors.push(error.message));
 };
-const logical = (width, height, x, y) => {
-  const scale = Math.min(width / 496, height / 1078);
-  return {
-    x: (width - 496 * scale) / 2 + x * scale,
-    y: (height - 1078 * scale) / 2 + y * scale,
-  };
-};
 const state = (page) => page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
+const clickInteractionTarget = async (page, name) => {
+  const current = await state(page);
+  const hit = current.interactionTargets?.targets?.[name]?.hit;
+  const transform = current.viewportTransform;
+  const canvas = await page.locator("canvas").boundingBox();
+  if (!hit || !transform || !canvas) throw new Error(`Update notice E2E: missing ${name} target or canvas bounds`);
+  await page.mouse.click(
+    canvas.x + transform.offsetX + (hit.x + hit.width / 2) * transform.scale,
+    canvas.y + transform.offsetY + (hit.y + hit.height / 2) * transform.scale,
+  );
+};
 
 const page = await browser.newPage({ viewport: { width: 720, height: 1584 } });
 attachErrors(page);
@@ -44,7 +48,7 @@ if (itemWidths.some((width) => width > 258)) {
 }
 await page.screenshot({ path: shot("round62-update-toast-720x1584.png") });
 
-await page.mouse.click(...Object.values(logical(720, 1584, 248, 178)));
+await clickInteractionTarget(page, "updateToast");
 await page.waitForTimeout(100);
 current = await state(page);
 if (current.screen !== "updates" || current.updateNotice.returnScreen !== "home") {
@@ -52,7 +56,7 @@ if (current.screen !== "updates" || current.updateNotice.returnScreen !== "home"
 }
 await page.screenshot({ path: shot("round62-update-modal-720x1584.png") });
 
-await page.mouse.click(...Object.values(logical(720, 1584, 248, 755)));
+await clickInteractionTarget(page, "modalPrimary");
 current = await state(page);
 if (current.screen !== "home" || !current.updateNotice.seen || current.updateNotice.toastVisible) {
   throw new Error("Update notice E2E: acknowledgement did not return home and persist the seen version");
@@ -64,16 +68,15 @@ if (current.updateNotice.toastVisible || !current.updateNotice.seen) {
   throw new Error("Update notice E2E: acknowledged version reappeared after reload");
 }
 
-await page.mouse.click(...Object.values(logical(720, 1584, 456, 90)));
-await page.mouse.click(...Object.values(logical(720, 1584, 248, 782)));
+await clickInteractionTarget(page, "homeSettings");
 current = await state(page);
-if (current.screen !== "updates" || current.updateNotice.returnScreen !== "settings") {
-  throw new Error("Update notice E2E: settings did not provide a permanent release-notes route");
+if (current.screen !== "settings" || current.interactionTargets.targets.settingsUpdates) {
+  throw new Error("Update notice E2E: supplied Settings layout did not remain limited to its documented controls");
 }
-await page.mouse.click(...Object.values(logical(720, 1584, 248, 755)));
+await clickInteractionTarget(page, "menuBack");
 current = await state(page);
-if (current.screen !== "settings") {
-  throw new Error("Update notice E2E: settings release notes did not return to settings");
+if (current.screen !== "home") {
+  throw new Error("Update notice E2E: supplied Settings close control did not return home");
 }
 
 const small = await browser.newPage({ viewport: { width: 320, height: 568 } });
@@ -82,7 +85,7 @@ await small.goto(playtestUrl, { waitUntil: "networkidle" });
 await small.evaluate(() => localStorage.clear());
 await small.reload({ waitUntil: "networkidle" });
 await small.waitForTimeout(180);
-await small.mouse.click(...Object.values(logical(320, 568, 248, 178)));
+await clickInteractionTarget(small, "updateToast");
 await small.waitForTimeout(80);
 current = await state(small);
 if (current.screen !== "updates") throw new Error("Update notice E2E: 320x568 notice did not open");
@@ -95,7 +98,7 @@ await direct.goto(playtestUrl, { waitUntil: "networkidle" });
 await direct.evaluate(() => localStorage.clear());
 await direct.reload({ waitUntil: "networkidle" });
 await direct.waitForTimeout(180);
-await direct.mouse.click(248, 812);
+await clickInteractionTarget(direct, "homePlay");
 await direct.waitForTimeout(100);
 current = await state(direct);
 if (current.screen !== "playing" || !current.updateNotice.seen) {
@@ -106,4 +109,4 @@ await direct.close();
 await page.close();
 await browser.close();
 if (errors.length) throw new Error(`Update notice browser errors:\n${errors.join("\n")}`);
-console.log("Non-blocking update toast, full notes, persistence, settings replay, direct play, and 320x568 passed.");
+console.log("Non-blocking update toast, full notes, persistence, supplied Settings controls, direct play, and 320x568 passed.");

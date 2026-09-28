@@ -1,0 +1,9159 @@
+import type { LevelSpec } from './types';
+
+// v1.72: only fully reviewed members of the 131–140 batch.
+export const REMADE_131_140_IDS: readonly number[] = [131,132,133,134,135,136,137,138,139,140];
+const reviewed: Record<number, Omit<LevelSpec, 'blocks'> & { blocks: Array<LevelSpec['blocks'][number] & { generatorId?: string }> }> = {
+  "131": {
+    "mechanismRules": "revised-2026-09-23-v1.4",
+    "width": 6,
+    "height": 11,
+    "playable": [
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        4,
+        1
+      ],
+      [
+        5,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        5,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        0,
+        6
+      ],
+      [
+        1,
+        6
+      ],
+      [
+        2,
+        6
+      ],
+      [
+        3,
+        6
+      ],
+      [
+        4,
+        6
+      ],
+      [
+        5,
+        6
+      ],
+      [
+        0,
+        7
+      ],
+      [
+        1,
+        7
+      ],
+      [
+        2,
+        7
+      ],
+      [
+        3,
+        7
+      ],
+      [
+        4,
+        7
+      ],
+      [
+        5,
+        7
+      ],
+      [
+        0,
+        8
+      ],
+      [
+        1,
+        8
+      ],
+      [
+        2,
+        8
+      ],
+      [
+        3,
+        8
+      ],
+      [
+        4,
+        8
+      ],
+      [
+        5,
+        8
+      ],
+      [
+        0,
+        9
+      ],
+      [
+        1,
+        9
+      ],
+      [
+        2,
+        9
+      ],
+      [
+        3,
+        9
+      ],
+      [
+        4,
+        9
+      ],
+      [
+        5,
+        9
+      ],
+      [
+        0,
+        10
+      ],
+      [
+        1,
+        10
+      ],
+      [
+        2,
+        10
+      ],
+      [
+        3,
+        10
+      ],
+      [
+        4,
+        10
+      ],
+      [
+        5,
+        10
+      ]
+    ],
+    "gates": [
+      {
+        "id": "purple",
+        "color": "purple",
+        "side": "top",
+        "offset": 1,
+        "size": 3
+      },
+      {
+        "id": "red",
+        "color": "red",
+        "side": "right",
+        "offset": 7,
+        "size": 3
+      },
+      {
+        "id": "yellow",
+        "color": "yellow",
+        "side": "bottom",
+        "offset": 2,
+        "size": 3
+      },
+      {
+        "id": "green-ice",
+        "color": "green",
+        "side": "left",
+        "offset": 7,
+        "size": 3,
+        "frozen": 2
+      },
+      {
+        "id": "blue-ice",
+        "color": "blue",
+        "side": "left",
+        "offset": 1,
+        "size": 3,
+        "frozen": 2
+      },
+      {
+        "id": "blue-star",
+        "color": "blue",
+        "side": "right",
+        "offset": 1,
+        "size": 3,
+        "star": true
+      },
+      {
+        "id": "yellow-star",
+        "color": "yellow",
+        "side": "left",
+        "offset": 4,
+        "size": 2,
+        "star": true
+      }
+    ],
+    "blocks": [
+      {
+        "id": "r172-131-source-opening-7",
+        "x": 1,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "purple"
+      },
+      {
+        "id": "r172-131-source-opening-2",
+        "x": 3,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "blue",
+        "star": true
+      },
+      {
+        "id": "r172-131-source-opening-15",
+        "x": 4,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "yellow",
+        "star": true
+      },
+      {
+        "id": "r172-131-source-opening-1",
+        "x": 0,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "r172-131-source-opening-4",
+        "x": 1,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "r172-131-capacity-2",
+        "x": 4,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "r172-131-source-opening-5",
+        "x": 0,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "r172-131-source-opening-14",
+        "x": 4,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "blue",
+        "star": true
+      },
+      {
+        "id": "r172-131-source-opening-9",
+        "x": 5,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "r172-131-source-opening-0",
+        "x": 0,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "yellow",
+        "star": true
+      },
+      {
+        "id": "r172-131-source-opening-8",
+        "x": 4,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "r172-131-source-opening-12",
+        "x": 5,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "purple"
+      },
+      {
+        "id": "r172-131-source-opening-13",
+        "x": 0,
+        "y": 7,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "r172-131-source-opening-11",
+        "x": 1,
+        "y": 7,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "r172-131-source-opening-6",
+        "x": 3,
+        "y": 7,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "r172-131-source-opening-10",
+        "x": 2,
+        "y": 8,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "purple"
+      },
+      {
+        "id": "r172-131-source-opening-3",
+        "x": 5,
+        "y": 8,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "r172-131-capacity-1",
+        "x": 0,
+        "y": 9,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "r172-131-capacity-0",
+        "x": 2,
+        "y": 9,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "r172-131-hidden-0",
+        "x": 2,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "green",
+        "shutterId": "r172-131-cover5"
+      },
+      {
+        "id": "r172-131-hidden-1",
+        "x": 3,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "red",
+        "shutterId": "r172-131-cover5"
+      },
+      {
+        "id": "r172-131-hidden-2",
+        "x": 2,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "yellow",
+        "shutterId": "r172-131-cover5"
+      },
+      {
+        "id": "r172-131-hidden-3",
+        "x": 2,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "green",
+        "shutterId": "r172-131-cover5"
+      }
+    ],
+    "shutters": [
+      {
+        "id": "r172-131-cover5",
+        "x": 2,
+        "y": 2,
+        "width": 2,
+        "height": 5,
+        "count": 5
+      }
+    ],
+    "id": 131,
+    "name": "竞品映射 Lv131",
+    "difficulty": "easy",
+    "timeSeconds": 105,
+    "reward": 200,
+    "parMoves": 50,
+    "preservedMoveTarget": 28
+  },
+  "132": {
+    "mechanismRules": "revised-2026-09-23-v1.4",
+    "width": 7,
+    "height": 8,
+    "playable": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        5,
+        0
+      ],
+      [
+        6,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        4,
+        1
+      ],
+      [
+        5,
+        1
+      ],
+      [
+        6,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        5,
+        2
+      ],
+      [
+        6,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        6,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        6,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        6,
+        5
+      ],
+      [
+        0,
+        6
+      ],
+      [
+        1,
+        6
+      ],
+      [
+        2,
+        6
+      ],
+      [
+        3,
+        6
+      ],
+      [
+        4,
+        6
+      ],
+      [
+        5,
+        6
+      ],
+      [
+        6,
+        6
+      ],
+      [
+        0,
+        7
+      ],
+      [
+        1,
+        7
+      ],
+      [
+        2,
+        7
+      ],
+      [
+        3,
+        7
+      ],
+      [
+        4,
+        7
+      ],
+      [
+        5,
+        7
+      ],
+      [
+        6,
+        7
+      ]
+    ],
+    "gates": [
+      {
+        "id": "red-top",
+        "color": "red",
+        "side": "top",
+        "offset": 0,
+        "size": 3
+      },
+      {
+        "id": "blue-top",
+        "color": "blue",
+        "side": "top",
+        "offset": 4,
+        "size": 3
+      },
+      {
+        "id": "green-bottom",
+        "color": "green",
+        "side": "bottom",
+        "offset": 0,
+        "size": 3,
+        "frozen": 3
+      },
+      {
+        "id": "yellow-bottom",
+        "color": "yellow",
+        "side": "bottom",
+        "offset": 4,
+        "size": 3,
+        "frozen": 3
+      }
+    ],
+    "blocks": [
+      {
+        "id": "r169-132-adapted-opening-1",
+        "x": 2,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "r169-132-adapted-opening-14",
+        "x": 3,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "r169-132-adapted-opening-13",
+        "x": 5,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "r169-132-adapted-opening-12",
+        "x": 4,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "r169-132-adapted-opening-15",
+        "x": 0,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "r169-132-adapted-opening-3",
+        "x": 2,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "r169-132-adapted-opening-16",
+        "x": 3,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "r169-132-adapted-opening-8",
+        "x": 6,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "red",
+        "frozen": 14
+      },
+      {
+        "id": "r169-132-adapted-opening-4",
+        "x": 1,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "r169-132-adapted-opening-9",
+        "x": 4,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "yellow",
+        "frozen": 14
+      },
+      {
+        "id": "r169-132-adapted-opening-2",
+        "x": 3,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "r169-132-adapted-opening-19",
+        "x": 6,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "r169-132-adapted-opening-11",
+        "x": 1,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "r169-132-adapted-opening-17",
+        "x": 5,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "r169-132-adapted-opening-5",
+        "x": 0,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "r169-132-adapted-opening-10",
+        "x": 3,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "r169-132-adapted-opening-0",
+        "x": 5,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "r169-132-adapted-opening-20",
+        "x": 6,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "r169-132-adapted-opening-18",
+        "x": 2,
+        "y": 7,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "r169-132-bootstrap-red",
+        "x": 0,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "r169-132-adapted-opening-6",
+        "x": 0,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "blue",
+        "frozen": 14
+      },
+      {
+        "id": "r169-132-adapted-opening-7",
+        "x": 5,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "green",
+        "frozen": 14
+      },
+      {
+        "id": "r169-132-machine0-q0",
+        "x": 0,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "r169-132-machine0-q1",
+        "x": 0,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "r169-132-machine0-q2",
+        "x": 0,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "r169-132-machine1-q0",
+        "x": 0,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "r169-132-machine1-q1",
+        "x": 0,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "r169-132-machine1-q2",
+        "x": 0,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "r169-132-machine2-q0",
+        "x": 0,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "r169-132-machine2-q1",
+        "x": 0,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "r169-132-machine2-q2",
+        "x": 0,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "r169-132-machine3-q0",
+        "x": 0,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "r169-132-machine3-q1",
+        "x": 0,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "r169-132-machine3-q2",
+        "x": 0,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "green"
+      }
+    ],
+    "id": 132,
+    "name": "竞品映射 Lv132",
+    "difficulty": "normal",
+    "timeSeconds": 120,
+    "reward": 200,
+    "parMoves": 66,
+    "generators": [
+      {
+        "id": "r169-132-machine0",
+        "side": "left",
+        "offset": 2,
+        "spawn": [
+          0,
+          2
+        ],
+        "rimMount": "rim",
+        "rimSpan": 3,
+        "queueBlockIds": [
+          "r169-132-machine0-q0",
+          "r169-132-machine0-q1",
+          "r169-132-machine0-q2"
+        ]
+      },
+      {
+        "id": "r169-132-machine1",
+        "side": "left",
+        "offset": 5,
+        "spawn": [
+          0,
+          4
+        ],
+        "rimMount": "rim",
+        "rimSpan": 3,
+        "queueBlockIds": [
+          "r169-132-machine1-q0",
+          "r169-132-machine1-q1",
+          "r169-132-machine1-q2"
+        ]
+      },
+      {
+        "id": "r169-132-machine2",
+        "side": "right",
+        "offset": 2,
+        "spawn": [
+          5,
+          1
+        ],
+        "rimMount": "rim",
+        "rimSpan": 3,
+        "queueBlockIds": [
+          "r169-132-machine2-q0",
+          "r169-132-machine2-q1",
+          "r169-132-machine2-q2"
+        ]
+      },
+      {
+        "id": "r169-132-machine3",
+        "side": "right",
+        "offset": 5,
+        "spawn": [
+          5,
+          4
+        ],
+        "rimMount": "rim",
+        "rimSpan": 3,
+        "queueBlockIds": [
+          "r169-132-machine3-q0",
+          "r169-132-machine3-q1",
+          "r169-132-machine3-q2"
+        ]
+      }
+    ],
+    "preservedMoveTarget": 49
+  },
+  "133": {
+    "mechanismRules": "revised-2026-09-23-v1.4",
+    "width": 7,
+    "height": 11,
+    "playable": [
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        5,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        4,
+        1
+      ],
+      [
+        5,
+        1
+      ],
+      [
+        6,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        5,
+        2
+      ],
+      [
+        6,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        6,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        6,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        6,
+        5
+      ],
+      [
+        0,
+        6
+      ],
+      [
+        1,
+        6
+      ],
+      [
+        2,
+        6
+      ],
+      [
+        3,
+        6
+      ],
+      [
+        4,
+        6
+      ],
+      [
+        5,
+        6
+      ],
+      [
+        6,
+        6
+      ],
+      [
+        0,
+        7
+      ],
+      [
+        1,
+        7
+      ],
+      [
+        2,
+        7
+      ],
+      [
+        3,
+        7
+      ],
+      [
+        4,
+        7
+      ],
+      [
+        5,
+        7
+      ],
+      [
+        6,
+        7
+      ],
+      [
+        0,
+        8
+      ],
+      [
+        1,
+        8
+      ],
+      [
+        2,
+        8
+      ],
+      [
+        3,
+        8
+      ],
+      [
+        4,
+        8
+      ],
+      [
+        5,
+        8
+      ],
+      [
+        6,
+        8
+      ],
+      [
+        0,
+        9
+      ],
+      [
+        1,
+        9
+      ],
+      [
+        2,
+        9
+      ],
+      [
+        3,
+        9
+      ],
+      [
+        4,
+        9
+      ],
+      [
+        5,
+        9
+      ],
+      [
+        6,
+        9
+      ],
+      [
+        0,
+        10
+      ],
+      [
+        1,
+        10
+      ],
+      [
+        2,
+        10
+      ],
+      [
+        3,
+        10
+      ],
+      [
+        4,
+        10
+      ],
+      [
+        5,
+        10
+      ],
+      [
+        6,
+        10
+      ]
+    ],
+    "gates": [
+      {
+        "id": "yellow",
+        "color": "yellow",
+        "side": "left",
+        "offset": 8,
+        "size": 3
+      },
+      {
+        "id": "pink4",
+        "color": "pink",
+        "side": "right",
+        "offset": 8,
+        "size": 3,
+        "frozen": 4
+      },
+      {
+        "id": "red9",
+        "color": "red",
+        "side": "bottom",
+        "offset": 2,
+        "size": 3,
+        "frozen": 9
+      },
+      {
+        "id": "green12",
+        "color": "green",
+        "side": "left",
+        "offset": 5,
+        "size": 3,
+        "frozen": 12
+      },
+      {
+        "id": "purple20",
+        "color": "purple",
+        "side": "top",
+        "offset": 1,
+        "size": 3,
+        "frozen": 20
+      },
+      {
+        "id": "cyan23",
+        "color": "cyan",
+        "side": "right",
+        "offset": 4,
+        "size": 3,
+        "frozen": 23
+      },
+      {
+        "id": "blue26",
+        "color": "blue",
+        "side": "left",
+        "offset": 1,
+        "size": 3,
+        "frozen": 26
+      }
+    ],
+    "blocks": [
+      {
+        "id": "r172-133-source-opening-14",
+        "x": 0,
+        "y": 8,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "yellow",
+        "movementAxis": "horizontal"
+      },
+      {
+        "id": "r172-133-source-opening-3",
+        "x": 1,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "r172-133-source-opening-2",
+        "x": 2,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "r172-133-source-opening-10",
+        "x": 3,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "yellow",
+        "frozen": 3
+      },
+      {
+        "id": "r172-133-source-opening-6",
+        "x": 5,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "r172-133-source-opening-8",
+        "x": 6,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "r172-133-source-opening-7",
+        "x": 6,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "pink"
+      },
+      {
+        "id": "r172-133-source-opening-4",
+        "x": 6,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "r172-133-source-opening-16",
+        "x": 3,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "r172-133-capacity-1",
+        "x": 0,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "r172-133-source-opening-17",
+        "x": 2,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "r172-133-capacity-0",
+        "x": 4,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            2
+          ]
+        ],
+        "color": "pink"
+      },
+      {
+        "id": "r172-133-source-opening-12",
+        "x": 1,
+        "y": 8,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "pink",
+        "layers": [
+          "pink",
+          "green"
+        ]
+      },
+      {
+        "id": "r172-133-source-opening-1",
+        "x": 3,
+        "y": 8,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "r172-133-source-opening-13",
+        "x": 1,
+        "y": 9,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "r172-133-source-opening-15",
+        "x": 3,
+        "y": 9,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "r172-133-source-opening-0",
+        "x": 4,
+        "y": 9,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "r172-133-capacity-3",
+        "x": 5,
+        "y": 9,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "r172-133-source-opening-9",
+        "x": 6,
+        "y": 9,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "r172-133-source-opening-11",
+        "x": 0,
+        "y": 10,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "red",
+        "frozen": 3
+      },
+      {
+        "id": "r172-133-source-opening-5",
+        "x": 2,
+        "y": 10,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "r172-133-capacity-2",
+        "x": 4,
+        "y": 10,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "pink"
+      },
+      {
+        "id": "r172-133-middle-5",
+        "x": 0,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "pink",
+        "shutterId": "middle15"
+      },
+      {
+        "id": "r172-133-middle-7",
+        "x": 2,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "green",
+        "layers": [
+          "green",
+          "purple"
+        ],
+        "shutterId": "middle15"
+      },
+      {
+        "id": "r172-133-middle-1",
+        "x": 3,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "red",
+        "movementAxis": "vertical",
+        "shutterId": "middle15"
+      },
+      {
+        "id": "r172-133-middle-3",
+        "x": 4,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "green",
+        "shutterId": "middle15"
+      },
+      {
+        "id": "r172-133-middle-6",
+        "x": 0,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "yellow",
+        "shutterId": "middle15"
+      },
+      {
+        "id": "r172-133-middle-2",
+        "x": 4,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "yellow",
+        "shutterId": "middle15"
+      },
+      {
+        "id": "r172-133-middle-4",
+        "x": 0,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "green",
+        "shutterId": "middle15"
+      },
+      {
+        "id": "r172-133-middle-8",
+        "x": 1,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "pink",
+        "shutterId": "middle15"
+      },
+      {
+        "id": "r172-133-middle-0",
+        "x": 4,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "pink",
+        "shutterId": "middle15"
+      },
+      {
+        "id": "r172-133-left-bar",
+        "x": 0,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "red",
+        "shutterId": "left19"
+      },
+      {
+        "id": "r172-133-left-square",
+        "x": 1,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "green",
+        "shutterId": "left19"
+      },
+      {
+        "id": "r172-133-right-bar",
+        "x": 4,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "green",
+        "shutterId": "right21"
+      },
+      {
+        "id": "r172-133-right-square",
+        "x": 5,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "cyan",
+        "shutterId": "right21"
+      }
+    ],
+    "shutters": [
+      {
+        "id": "middle15",
+        "x": 0,
+        "y": 1,
+        "width": 6,
+        "height": 3,
+        "count": 15
+      },
+      {
+        "id": "left19",
+        "x": 0,
+        "y": 4,
+        "width": 3,
+        "height": 2,
+        "count": 19
+      },
+      {
+        "id": "right21",
+        "x": 4,
+        "y": 4,
+        "width": 3,
+        "height": 2,
+        "count": 21
+      }
+    ],
+    "id": 133,
+    "name": "竞品映射 Lv133",
+    "difficulty": "hard",
+    "timeSeconds": 120,
+    "reward": 200,
+    "parMoves": 62,
+    "preservedMoveTarget": 57
+  },
+  "134": {
+    "mechanismRules": "revised-2026-09-23-v1.4",
+    "width": 8,
+    "height": 13,
+    "playable": [
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        5,
+        0
+      ],
+      [
+        6,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        4,
+        1
+      ],
+      [
+        5,
+        1
+      ],
+      [
+        6,
+        1
+      ],
+      [
+        7,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        5,
+        2
+      ],
+      [
+        6,
+        2
+      ],
+      [
+        7,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        6,
+        3
+      ],
+      [
+        7,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        6,
+        4
+      ],
+      [
+        7,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        6,
+        5
+      ],
+      [
+        7,
+        5
+      ],
+      [
+        0,
+        6
+      ],
+      [
+        1,
+        6
+      ],
+      [
+        2,
+        6
+      ],
+      [
+        3,
+        6
+      ],
+      [
+        4,
+        6
+      ],
+      [
+        5,
+        6
+      ],
+      [
+        6,
+        6
+      ],
+      [
+        7,
+        6
+      ],
+      [
+        0,
+        7
+      ],
+      [
+        1,
+        7
+      ],
+      [
+        2,
+        7
+      ],
+      [
+        3,
+        7
+      ],
+      [
+        4,
+        7
+      ],
+      [
+        5,
+        7
+      ],
+      [
+        6,
+        7
+      ],
+      [
+        7,
+        7
+      ],
+      [
+        0,
+        8
+      ],
+      [
+        1,
+        8
+      ],
+      [
+        2,
+        8
+      ],
+      [
+        3,
+        8
+      ],
+      [
+        4,
+        8
+      ],
+      [
+        5,
+        8
+      ],
+      [
+        6,
+        8
+      ],
+      [
+        7,
+        8
+      ],
+      [
+        0,
+        9
+      ],
+      [
+        1,
+        9
+      ],
+      [
+        2,
+        9
+      ],
+      [
+        3,
+        9
+      ],
+      [
+        4,
+        9
+      ],
+      [
+        5,
+        9
+      ],
+      [
+        6,
+        9
+      ],
+      [
+        7,
+        9
+      ],
+      [
+        0,
+        10
+      ],
+      [
+        1,
+        10
+      ],
+      [
+        2,
+        10
+      ],
+      [
+        3,
+        10
+      ],
+      [
+        4,
+        10
+      ],
+      [
+        5,
+        10
+      ],
+      [
+        6,
+        10
+      ],
+      [
+        7,
+        10
+      ],
+      [
+        0,
+        11
+      ],
+      [
+        1,
+        11
+      ],
+      [
+        2,
+        11
+      ],
+      [
+        3,
+        11
+      ],
+      [
+        4,
+        11
+      ],
+      [
+        5,
+        11
+      ],
+      [
+        6,
+        11
+      ],
+      [
+        7,
+        11
+      ],
+      [
+        0,
+        12
+      ],
+      [
+        1,
+        12
+      ],
+      [
+        2,
+        12
+      ],
+      [
+        3,
+        12
+      ],
+      [
+        4,
+        12
+      ],
+      [
+        5,
+        12
+      ],
+      [
+        6,
+        12
+      ],
+      [
+        7,
+        12
+      ]
+    ],
+    "gates": [
+      {
+        "side": "left",
+        "offset": 10,
+        "size": 3,
+        "id": "v111-134-g0",
+        "color": "pink"
+      },
+      {
+        "side": "bottom",
+        "offset": 5,
+        "size": 3,
+        "frozen": 2,
+        "id": "v111-134-g1",
+        "color": "yellow"
+      },
+      {
+        "side": "right",
+        "offset": 10,
+        "size": 3,
+        "frozen": 7,
+        "id": "v111-134-g2",
+        "color": "blue"
+      },
+      {
+        "side": "left",
+        "offset": 7,
+        "size": 3,
+        "frozen": 12,
+        "id": "v111-134-g3",
+        "color": "red"
+      },
+      {
+        "side": "left",
+        "offset": 4,
+        "size": 3,
+        "frozen": 15,
+        "id": "v111-134-g4",
+        "color": "green"
+      },
+      {
+        "side": "right",
+        "offset": 7,
+        "size": 3,
+        "frozen": 16,
+        "id": "v111-134-g5",
+        "color": "cyan"
+      },
+      {
+        "side": "right",
+        "offset": 4,
+        "size": 3,
+        "frozen": 16,
+        "id": "v111-134-g6",
+        "color": "purple"
+      },
+      {
+        "side": "top",
+        "offset": 2,
+        "size": 3,
+        "frozen": 18,
+        "id": "v111-134-g7",
+        "color": "orange"
+      }
+    ],
+    "blocks": [
+      {
+        "id": "r172-134-v111-134-b02",
+        "x": 5,
+        "y": 8,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            2
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "r172-134-v111-134-b01",
+        "x": 0,
+        "y": 10,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            2
+          ]
+        ],
+        "color": "pink"
+      },
+      {
+        "id": "r172-134-v111-134-b07",
+        "x": 4,
+        "y": 8,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "pink"
+      },
+      {
+        "id": "r172-134-v111-134-b11",
+        "x": 0,
+        "y": 9,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "r172-134-v111-134-b06",
+        "x": 1,
+        "y": 9,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "yellow",
+        "lockedBy": "blue-keys",
+        "lockCount": 3
+      },
+      {
+        "id": "r172-134-v111-134-b03",
+        "x": 3,
+        "y": 9,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "r172-134-v111-134-b05",
+        "x": 3,
+        "y": 11,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "r172-134-v111-134-b04",
+        "x": 4,
+        "y": 11,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "pink",
+        "layers": [
+          "pink",
+          "yellow"
+        ]
+      },
+      {
+        "id": "r172-134-v111-134-b08",
+        "x": 7,
+        "y": 11,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "r172-134-v111-134-b09",
+        "x": 5,
+        "y": 12,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "r172-134-v111-134-b10",
+        "x": 6,
+        "y": 12,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "r172-134-v111-134-b13",
+        "x": 1,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "cyan",
+        "shutterId": "v111-134-cover0"
+      },
+      {
+        "id": "r172-134-v111-134-b12",
+        "x": 2,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "green",
+        "shutterId": "v111-134-cover0"
+      },
+      {
+        "id": "r172-134-v111-134-b14",
+        "x": 4,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "red",
+        "shutterId": "v111-134-cover1",
+        "keyId": "blue-keys"
+      },
+      {
+        "id": "r172-134-v111-134-b15",
+        "x": 5,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "cyan",
+        "shutterId": "v111-134-cover1"
+      },
+      {
+        "id": "r172-134-v111-134-b23",
+        "x": 0,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "purple",
+        "shutterId": "v111-134-cover2"
+      },
+      {
+        "id": "r172-134-v111-134-b20",
+        "x": 1,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "pink",
+        "shutterId": "v111-134-cover2"
+      },
+      {
+        "id": "r172-134-v111-134-b16",
+        "x": 2,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "yellow",
+        "shutterId": "v111-134-cover2"
+      },
+      {
+        "id": "r172-134-v111-134-b24",
+        "x": 5,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "blue",
+        "shutterId": "v111-134-cover2"
+      },
+      {
+        "id": "r172-134-v111-134-b19",
+        "x": 6,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "yellow",
+        "shutterId": "v111-134-cover2"
+      },
+      {
+        "id": "r172-134-v111-134-b17",
+        "x": 3,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "red",
+        "shutterId": "v111-134-cover2"
+      },
+      {
+        "id": "r172-134-v111-134-b22",
+        "x": 7,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "green",
+        "shutterId": "v111-134-cover2"
+      },
+      {
+        "id": "r172-134-v111-134-b21",
+        "x": 0,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "orange",
+        "shutterId": "v111-134-cover2"
+      },
+      {
+        "id": "r172-134-v111-134-b18",
+        "x": 1,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "green",
+        "shutterId": "v111-134-cover2",
+        "keyId": "red-keys"
+      },
+      {
+        "id": "r172-134-v111-134-b25",
+        "x": 4,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "yellow",
+        "layers": [
+          "yellow",
+          "orange"
+        ],
+        "shutterId": "v111-134-cover2"
+      },
+      {
+        "id": "r172-134-v111-134-b26",
+        "x": 0,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "purple",
+        "shutterId": "v111-134-cover3"
+      },
+      {
+        "id": "r172-134-v111-134-b27",
+        "x": 2,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "pink",
+        "shutterId": "v111-134-cover3"
+      },
+      {
+        "id": "r172-134-v111-134-b28",
+        "x": 4,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "purple",
+        "shutterId": "v111-134-cover4"
+      },
+      {
+        "id": "r172-134-v111-134-b29",
+        "x": 6,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "cyan",
+        "shutterId": "v111-134-cover4",
+        "keyId": "blue-keys"
+      },
+      {
+        "id": "r172-134-v111-134-b31",
+        "x": 0,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "orange",
+        "shutterId": "v111-134-cover5",
+        "lockedBy": "red-keys",
+        "lockCount": 3
+      },
+      {
+        "id": "r172-134-v111-134-b32",
+        "x": 1,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "purple",
+        "shutterId": "v111-134-cover5",
+        "keyId": "red-keys"
+      },
+      {
+        "id": "r172-134-v111-134-b34",
+        "x": 0,
+        "y": 7,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "yellow",
+        "shutterId": "v111-134-cover5"
+      },
+      {
+        "id": "r172-134-v111-134-b30",
+        "x": 2,
+        "y": 7,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "blue",
+        "shutterId": "v111-134-cover5",
+        "keyId": "red-keys"
+      },
+      {
+        "id": "r172-134-v111-134-b33",
+        "x": 3,
+        "y": 7,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "yellow",
+        "shutterId": "v111-134-cover5"
+      },
+      {
+        "id": "r172-134-v111-134-b35",
+        "x": 4,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "yellow",
+        "shutterId": "v111-134-cover6"
+      },
+      {
+        "id": "r172-134-v111-134-b37",
+        "x": 5,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "blue",
+        "shutterId": "v111-134-cover6"
+      },
+      {
+        "id": "r172-134-v111-134-b36",
+        "x": 6,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "pink",
+        "shutterId": "v111-134-cover6"
+      },
+      {
+        "id": "r172-134-v111-134-b39",
+        "x": 4,
+        "y": 7,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "red",
+        "shutterId": "v111-134-cover7",
+        "keyId": "blue-keys"
+      },
+      {
+        "id": "r172-134-v111-134-b38",
+        "x": 6,
+        "y": 7,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "blue",
+        "shutterId": "v111-134-cover7"
+      }
+    ],
+    "shutters": [
+      {
+        "x": 1,
+        "y": 0,
+        "width": 3,
+        "height": 1,
+        "count": 15,
+        "id": "v111-134-cover0"
+      },
+      {
+        "x": 4,
+        "y": 0,
+        "width": 3,
+        "height": 1,
+        "count": 15,
+        "id": "v111-134-cover1"
+      },
+      {
+        "x": 0,
+        "y": 1,
+        "width": 8,
+        "height": 3,
+        "count": 15,
+        "id": "v111-134-cover2"
+      },
+      {
+        "x": 0,
+        "y": 4,
+        "width": 4,
+        "height": 2,
+        "count": 15,
+        "id": "v111-134-cover3"
+      },
+      {
+        "x": 4,
+        "y": 4,
+        "width": 4,
+        "height": 2,
+        "count": 15,
+        "id": "v111-134-cover4"
+      },
+      {
+        "x": 0,
+        "y": 6,
+        "width": 4,
+        "height": 3,
+        "count": 10,
+        "id": "v111-134-cover5"
+      },
+      {
+        "x": 4,
+        "y": 6,
+        "width": 4,
+        "height": 1,
+        "count": 3,
+        "id": "v111-134-cover6"
+      },
+      {
+        "x": 4,
+        "y": 7,
+        "width": 4,
+        "height": 1,
+        "count": 3,
+        "id": "v111-134-cover7"
+      }
+    ],
+    "id": 134,
+    "name": "竞品映射 Lv134",
+    "difficulty": "easy",
+    "timeSeconds": 140,
+    "reward": 200,
+    "parMoves": 50,
+    "preservedMoveTarget": 51
+  },
+  "135": {
+    "mechanismRules": "revised-2026-09-23-v1.4",
+    "width": 6,
+    "height": 8,
+    "playable": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        5,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        4,
+        1
+      ],
+      [
+        5,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        5,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        0,
+        6
+      ],
+      [
+        1,
+        6
+      ],
+      [
+        2,
+        6
+      ],
+      [
+        3,
+        6
+      ],
+      [
+        4,
+        6
+      ],
+      [
+        5,
+        6
+      ],
+      [
+        0,
+        7
+      ],
+      [
+        1,
+        7
+      ],
+      [
+        2,
+        7
+      ],
+      [
+        3,
+        7
+      ],
+      [
+        4,
+        7
+      ],
+      [
+        5,
+        7
+      ]
+    ],
+    "gates": [
+      {
+        "id": "r135-yellow",
+        "side": "top",
+        "offset": 1,
+        "size": 3,
+        "color": "yellow"
+      },
+      {
+        "id": "r135-blue",
+        "side": "left",
+        "offset": 3,
+        "size": 2,
+        "color": "blue"
+      },
+      {
+        "id": "r135-cyan",
+        "side": "bottom",
+        "offset": 0,
+        "size": 3,
+        "color": "cyan"
+      },
+      {
+        "id": "r135-green",
+        "side": "right",
+        "offset": 5,
+        "size": 3,
+        "color": "green"
+      },
+      {
+        "id": "r135-red",
+        "side": "right",
+        "offset": 1,
+        "size": 3,
+        "color": "red",
+        "frozen": 3
+      }
+    ],
+    "blocks": [
+      {
+        "id": "r135-o0",
+        "x": 2,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "frozen": 7,
+        "color": "green"
+      },
+      {
+        "id": "r135-o1",
+        "x": 3,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "frozen": 7,
+        "color": "yellow"
+      },
+      {
+        "id": "r135-o2",
+        "x": 4,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "frozen": 7,
+        "color": "red"
+      },
+      {
+        "id": "r135-o3",
+        "x": 5,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "frozen": 10,
+        "color": "yellow"
+      },
+      {
+        "id": "r135-o4",
+        "x": 2,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "frozen": 7,
+        "color": "red"
+      },
+      {
+        "id": "r135-o5",
+        "x": 4,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "frozen": 7,
+        "color": "green"
+      },
+      {
+        "id": "r135-o6",
+        "x": 2,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "r135-o7",
+        "x": 3,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "movementAxis": "horizontal",
+        "color": "blue"
+      },
+      {
+        "id": "r135-o8",
+        "x": 5,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "cyan"
+      },
+      {
+        "id": "r135-o9",
+        "x": 2,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "cyan"
+      },
+      {
+        "id": "r135-o10",
+        "x": 2,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "r135-o11",
+        "x": 3,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "cyan"
+      },
+      {
+        "id": "r135-o12",
+        "x": 4,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "r135-o13",
+        "x": 2,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "cyan"
+      },
+      {
+        "id": "r135-o14",
+        "x": 3,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "r135-o15",
+        "x": 4,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "cyan"
+      },
+      {
+        "id": "r135-o16",
+        "x": 5,
+        "y": 7,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "green"
+      },
+      {
+        "id": "r135-h-square",
+        "x": 0,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "red",
+        "shutterId": "r131-140-135-cover10"
+      },
+      {
+        "id": "r135-h-cyan",
+        "x": 0,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "cyan",
+        "movementAxis": "vertical",
+        "shutterId": "r131-140-135-cover10"
+      },
+      {
+        "id": "r135-h-yellow",
+        "x": 1,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "yellow",
+        "movementAxis": "vertical",
+        "shutterId": "r131-140-135-cover10"
+      },
+      {
+        "id": "r135-h-green",
+        "x": 0,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "green",
+        "shutterId": "r131-140-135-cover10"
+      },
+      {
+        "id": "r135-h-fill",
+        "x": 1,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "yellow",
+        "shutterId": "r131-140-135-cover10"
+      }
+    ],
+    "shutters": [
+      {
+        "id": "r131-140-135-cover10",
+        "x": 0,
+        "y": 0,
+        "width": 2,
+        "height": 8,
+        "count": 10
+      }
+    ],
+    "id": 135,
+    "name": "竞品映射 Lv135",
+    "difficulty": "normal",
+    "timeSeconds": 100,
+    "reward": 200,
+    "parMoves": 45,
+    "preservedMoveTarget": 36
+  },
+  "136": {
+    "mechanismRules": "revised-2026-09-23-v1.4",
+    "width": 6,
+    "height": 7,
+    "playable": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        5,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        4,
+        1
+      ],
+      [
+        5,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        5,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        0,
+        6
+      ],
+      [
+        1,
+        6
+      ],
+      [
+        2,
+        6
+      ],
+      [
+        3,
+        6
+      ],
+      [
+        4,
+        6
+      ],
+      [
+        5,
+        6
+      ]
+    ],
+    "gates": [
+      {
+        "id": "a136-red",
+        "color": "red",
+        "side": "top",
+        "offset": 0,
+        "size": 1
+      },
+      {
+        "id": "a136-orange",
+        "color": "orange",
+        "side": "top",
+        "offset": 2,
+        "size": 2,
+        "frozen": 2
+      },
+      {
+        "id": "a136-blue",
+        "color": "blue",
+        "side": "bottom",
+        "offset": 0,
+        "size": 2,
+        "frozen": 9
+      },
+      {
+        "id": "a136-cyan",
+        "color": "cyan",
+        "side": "bottom",
+        "offset": 4,
+        "size": 2
+      },
+      {
+        "id": "a136-green",
+        "color": "green",
+        "side": "left",
+        "offset": 0,
+        "size": 1
+      },
+      {
+        "id": "a136-pink",
+        "color": "pink",
+        "side": "left",
+        "offset": 2,
+        "size": 2,
+        "frozen": 4
+      },
+      {
+        "id": "a136-purple",
+        "color": "purple",
+        "side": "right",
+        "offset": 3,
+        "size": 2,
+        "frozen": 9
+      },
+      {
+        "id": "a136-yellow",
+        "color": "yellow",
+        "side": "right",
+        "offset": 0,
+        "size": 1,
+        "frozen": 1
+      }
+    ],
+    "blocks": [
+      {
+        "x": 0,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "id": "a136-b0",
+        "color": "red"
+      },
+      {
+        "x": 1,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "id": "a136-b1",
+        "color": "yellow"
+      },
+      {
+        "x": 3,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "id": "a136-b2",
+        "color": "blue"
+      },
+      {
+        "x": 4,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "id": "a136-b3",
+        "color": "yellow"
+      },
+      {
+        "x": 1,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "id": "a136-b4",
+        "color": "green"
+      },
+      {
+        "x": 2,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "id": "a136-b5",
+        "color": "pink"
+      },
+      {
+        "x": 5,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "id": "a136-b6",
+        "color": "red"
+      },
+      {
+        "x": 0,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "id": "a136-b7",
+        "color": "orange"
+      },
+      {
+        "x": 4,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "id": "a136-b8",
+        "color": "purple"
+      },
+      {
+        "x": 0,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "id": "a136-b9",
+        "color": "purple"
+      },
+      {
+        "x": 2,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "id": "a136-b10",
+        "color": "red"
+      },
+      {
+        "x": 3,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "id": "a136-b11",
+        "color": "orange"
+      },
+      {
+        "x": 5,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "id": "a136-b12",
+        "color": "pink"
+      },
+      {
+        "x": 1,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "id": "a136-b13",
+        "color": "blue"
+      },
+      {
+        "x": 0,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "id": "a136-b14",
+        "color": "pink"
+      },
+      {
+        "x": 2,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "id": "a136-b15",
+        "color": "yellow"
+      },
+      {
+        "x": 4,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "id": "a136-b16",
+        "color": "green"
+      },
+      {
+        "x": 0,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "shutterId": "a136-cover13",
+        "id": "a136-b17",
+        "color": "orange"
+      },
+      {
+        "x": 2,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "shutterId": "a136-cover13",
+        "id": "a136-b18",
+        "color": "cyan"
+      },
+      {
+        "x": 4,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "shutterId": "a136-cover13",
+        "id": "a136-b19",
+        "color": "yellow"
+      }
+    ],
+    "shutters": [
+      {
+        "id": "a136-cover13",
+        "x": 0,
+        "y": 6,
+        "width": 6,
+        "height": 1,
+        "count": 13
+      }
+    ],
+    "id": 136,
+    "name": "竞品映射 Lv136",
+    "difficulty": "super",
+    "timeSeconds": 135,
+    "reward": 200,
+    "parMoves": 60,
+    "preservedMoveTarget": 49
+  },
+  "137": {
+    "mechanismRules": "revised-2026-09-23-v1.4",
+    "width": 7,
+    "height": 8,
+    "playable": [
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        5,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        4,
+        1
+      ],
+      [
+        5,
+        1
+      ],
+      [
+        6,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        5,
+        2
+      ],
+      [
+        6,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        6,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        6,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        6,
+        5
+      ],
+      [
+        0,
+        6
+      ],
+      [
+        1,
+        6
+      ],
+      [
+        2,
+        6
+      ],
+      [
+        3,
+        6
+      ],
+      [
+        4,
+        6
+      ],
+      [
+        5,
+        6
+      ],
+      [
+        6,
+        6
+      ],
+      [
+        1,
+        7
+      ],
+      [
+        2,
+        7
+      ],
+      [
+        3,
+        7
+      ],
+      [
+        4,
+        7
+      ],
+      [
+        5,
+        7
+      ]
+    ],
+    "gates": [
+      {
+        "id": "a137-yellow",
+        "color": "yellow",
+        "side": "left",
+        "offset": 4,
+        "size": 3
+      },
+      {
+        "id": "a137-green",
+        "color": "green",
+        "side": "left",
+        "offset": 1,
+        "size": 3,
+        "frozen": 3
+      },
+      {
+        "id": "a137-cyan",
+        "color": "cyan",
+        "side": "top",
+        "offset": 2,
+        "size": 3,
+        "frozen": 6
+      },
+      {
+        "id": "a137-purple",
+        "color": "purple",
+        "side": "bottom",
+        "offset": 1,
+        "size": 2,
+        "frozen": 8
+      },
+      {
+        "id": "a137-orange",
+        "color": "orange",
+        "side": "bottom",
+        "offset": 3,
+        "size": 3,
+        "frozen": 1
+      },
+      {
+        "id": "a137-red",
+        "color": "red",
+        "side": "right",
+        "offset": 1,
+        "size": 3,
+        "frozen": 8
+      },
+      {
+        "id": "a137-blue",
+        "color": "blue",
+        "side": "right",
+        "offset": 4,
+        "size": 3,
+        "frozen": 8
+      }
+    ],
+    "blocks": [
+      {
+        "x": 5,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "id": "a137-0",
+        "color": "blue",
+        "frozen": 8
+      },
+      {
+        "x": 0,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "id": "a137-1",
+        "color": "yellow"
+      },
+      {
+        "x": 5,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "id": "a137-2",
+        "color": "green",
+        "frozen": 8
+      },
+      {
+        "x": 6,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "id": "a137-3",
+        "color": "yellow"
+      },
+      {
+        "x": 0,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "id": "a137-4",
+        "color": "green"
+      },
+      {
+        "x": 1,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "id": "a137-5",
+        "color": "yellow"
+      },
+      {
+        "x": 3,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "id": "a137-6",
+        "color": "green"
+      },
+      {
+        "x": 4,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "id": "a137-7",
+        "color": "orange"
+      },
+      {
+        "x": 5,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "id": "a137-8",
+        "color": "yellow"
+      },
+      {
+        "x": 0,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "id": "a137-9",
+        "color": "yellow"
+      },
+      {
+        "x": 1,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "id": "a137-10",
+        "color": "orange"
+      },
+      {
+        "x": 2,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "id": "a137-11",
+        "color": "blue"
+      },
+      {
+        "x": 4,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "id": "a137-12",
+        "color": "yellow"
+      },
+      {
+        "x": 5,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "id": "a137-13",
+        "color": "orange"
+      },
+      {
+        "x": 6,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "id": "a137-14",
+        "color": "green"
+      },
+      {
+        "x": 2,
+        "y": 7,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "id": "a137-15",
+        "color": "red"
+      },
+      {
+        "x": 1,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "shutterId": "a137-cover3",
+        "id": "a137-16",
+        "color": "yellow"
+      },
+      {
+        "x": 3,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "shutterId": "a137-cover3",
+        "id": "a137-17",
+        "color": "purple"
+      },
+      {
+        "x": 1,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "shutterId": "a137-cover3",
+        "id": "a137-18",
+        "color": "orange"
+      },
+      {
+        "x": 3,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "shutterId": "a137-cover3",
+        "id": "a137-19",
+        "color": "red"
+      },
+      {
+        "x": 1,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "shutterId": "a137-cover3",
+        "id": "a137-20",
+        "color": "cyan"
+      },
+      {
+        "x": 3,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "shutterId": "a137-cover3",
+        "id": "a137-21",
+        "color": "blue"
+      },
+      {
+        "x": 1,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "shutterId": "a137-cover3",
+        "id": "a137-22",
+        "color": "blue"
+      },
+      {
+        "x": 3,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "shutterId": "a137-cover3",
+        "id": "a137-23",
+        "color": "purple"
+      }
+    ],
+    "id": 137,
+    "name": "竞品映射 Lv137",
+    "difficulty": "easy",
+    "timeSeconds": 135,
+    "reward": 200,
+    "parMoves": 54,
+    "shutters": [
+      {
+        "id": "a137-cover3",
+        "x": 1,
+        "y": 0,
+        "width": 4,
+        "height": 4,
+        "count": 3
+      }
+    ],
+    "preservedMoveTarget": 34
+  },
+  "138": {
+    "mechanismRules": "revised-2026-09-23-v1.4",
+    "width": 7,
+    "height": 9,
+    "playable": [
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        5,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        4,
+        1
+      ],
+      [
+        5,
+        1
+      ],
+      [
+        6,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        5,
+        2
+      ],
+      [
+        6,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        6,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        6,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        6,
+        5
+      ],
+      [
+        0,
+        6
+      ],
+      [
+        1,
+        6
+      ],
+      [
+        2,
+        6
+      ],
+      [
+        3,
+        6
+      ],
+      [
+        4,
+        6
+      ],
+      [
+        5,
+        6
+      ],
+      [
+        6,
+        6
+      ],
+      [
+        0,
+        7
+      ],
+      [
+        1,
+        7
+      ],
+      [
+        2,
+        7
+      ],
+      [
+        3,
+        7
+      ],
+      [
+        4,
+        7
+      ],
+      [
+        5,
+        7
+      ],
+      [
+        6,
+        7
+      ],
+      [
+        0,
+        8
+      ],
+      [
+        1,
+        8
+      ],
+      [
+        2,
+        8
+      ],
+      [
+        3,
+        8
+      ],
+      [
+        4,
+        8
+      ],
+      [
+        5,
+        8
+      ],
+      [
+        6,
+        8
+      ]
+    ],
+    "gates": [
+      {
+        "id": "a138-blue",
+        "color": "blue",
+        "side": "left",
+        "offset": 1,
+        "size": 2
+      },
+      {
+        "id": "a138-purple",
+        "color": "purple",
+        "side": "right",
+        "offset": 1,
+        "size": 2
+      },
+      {
+        "id": "a138-yellow",
+        "color": "yellow",
+        "side": "top",
+        "offset": 1,
+        "size": 3
+      },
+      {
+        "id": "a138-pink",
+        "color": "pink",
+        "side": "top",
+        "offset": 4,
+        "size": 2
+      },
+      {
+        "id": "a138-orange",
+        "color": "orange",
+        "side": "left",
+        "offset": 4,
+        "size": 3
+      },
+      {
+        "id": "a138-cyan",
+        "color": "cyan",
+        "side": "right",
+        "offset": 4,
+        "size": 3
+      },
+      {
+        "id": "a138-green",
+        "color": "green",
+        "side": "bottom",
+        "offset": 0,
+        "size": 2,
+        "frozen": 3
+      },
+      {
+        "id": "a138-red",
+        "color": "red",
+        "side": "bottom",
+        "offset": 5,
+        "size": 2,
+        "frozen": 5
+      }
+    ],
+    "blocks": [
+      {
+        "x": 1,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "id": "a138-b0",
+        "color": "yellow"
+      },
+      {
+        "x": 3,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "id": "a138-b1",
+        "color": "pink"
+      },
+      {
+        "x": 4,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "id": "a138-b2",
+        "color": "purple",
+        "layers": [
+          "purple",
+          "pink"
+        ]
+      },
+      {
+        "x": 0,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "id": "a138-b3",
+        "color": "orange",
+        "layers": [
+          "orange",
+          "yellow"
+        ]
+      },
+      {
+        "x": 2,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "id": "a138-b4",
+        "color": "purple"
+      },
+      {
+        "x": 4,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "id": "a138-b5",
+        "color": "blue"
+      },
+      {
+        "x": 6,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "id": "a138-b6",
+        "color": "yellow"
+      },
+      {
+        "x": 1,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "id": "a138-b7",
+        "color": "blue"
+      },
+      {
+        "x": 2,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "id": "a138-b8",
+        "color": "yellow",
+        "layers": [
+          "yellow",
+          "cyan"
+        ]
+      },
+      {
+        "x": 4,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "id": "a138-b9",
+        "color": "purple"
+      },
+      {
+        "x": 5,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "id": "a138-b10",
+        "color": "pink"
+      },
+      {
+        "x": 0,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "shutterId": "a138-cover8",
+        "id": "a138-b11",
+        "color": "red"
+      },
+      {
+        "x": 0,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "shutterId": "a138-cover8",
+        "id": "a138-b12",
+        "color": "pink"
+      },
+      {
+        "x": 1,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "shutterId": "a138-cover8",
+        "id": "a138-b13",
+        "color": "purple"
+      },
+      {
+        "x": 0,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "shutterId": "a138-cover8",
+        "id": "a138-b14",
+        "color": "blue"
+      },
+      {
+        "x": 1,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "shutterId": "a138-cover8",
+        "id": "a138-b15",
+        "color": "red"
+      },
+      {
+        "x": 0,
+        "y": 7,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "shutterId": "a138-cover8",
+        "id": "a138-b16",
+        "color": "orange",
+        "layers": [
+          "orange",
+          "blue"
+        ]
+      },
+      {
+        "x": 2,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "shutterId": "a138-cover10",
+        "id": "a138-b17",
+        "color": "blue"
+      },
+      {
+        "x": 2,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "shutterId": "a138-cover10",
+        "id": "a138-b18",
+        "color": "orange"
+      },
+      {
+        "x": 2,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "shutterId": "a138-cover10",
+        "id": "a138-b19",
+        "color": "green"
+      },
+      {
+        "x": 4,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "shutterId": "a138-cover10",
+        "id": "a138-b20",
+        "color": "cyan"
+      },
+      {
+        "x": 2,
+        "y": 7,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "shutterId": "a138-cover10",
+        "id": "a138-b21",
+        "color": "cyan"
+      },
+      {
+        "x": 4,
+        "y": 7,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "shutterId": "a138-cover10",
+        "id": "a138-b22",
+        "color": "purple"
+      },
+      {
+        "x": 2,
+        "y": 8,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "shutterId": "a138-cover10",
+        "id": "a138-b23",
+        "color": "yellow"
+      },
+      {
+        "x": 5,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "shutterId": "a138-cover14",
+        "id": "a138-b24",
+        "color": "green"
+      },
+      {
+        "x": 5,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "shutterId": "a138-cover14",
+        "id": "a138-b25",
+        "color": "orange"
+      },
+      {
+        "x": 5,
+        "y": 6,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "shutterId": "a138-cover14",
+        "id": "a138-b26",
+        "color": "green"
+      },
+      {
+        "x": 5,
+        "y": 7,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "shutterId": "a138-cover14",
+        "id": "a138-b27",
+        "color": "pink"
+      },
+      {
+        "id": "a138-q0",
+        "x": 3,
+        "y": 8,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "purple",
+        "generatorId": "a138-machine"
+      },
+      {
+        "id": "a138-q1",
+        "x": 3,
+        "y": 8,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "pink",
+        "generatorId": "a138-machine"
+      }
+    ],
+    "shutters": [
+      {
+        "id": "a138-cover8",
+        "x": 0,
+        "y": 3,
+        "width": 2,
+        "height": 6,
+        "count": 8
+      },
+      {
+        "id": "a138-cover10",
+        "x": 2,
+        "y": 3,
+        "width": 3,
+        "height": 6,
+        "count": 10
+      },
+      {
+        "id": "a138-cover14",
+        "x": 5,
+        "y": 3,
+        "width": 2,
+        "height": 6,
+        "count": 14
+      }
+    ],
+    "generators": [
+      {
+        "id": "a138-machine",
+        "side": "bottom",
+        "offset": 3,
+        "rimSpan": 3,
+        "rimMount": "rim",
+        "spawn": [
+          3,
+          8
+        ],
+        "queueBlockIds": [
+          "a138-q0",
+          "a138-q1"
+        ],
+        "trigger": "move"
+      }
+    ],
+    "id": 138,
+    "name": "竞品映射 Lv138",
+    "difficulty": "normal",
+    "timeSeconds": 150,
+    "reward": 200,
+    "parMoves": 74,
+    "preservedMoveTarget": 47
+  },
+  "139": {
+    "mechanismRules": "revised-2026-09-23-v1.4",
+    "width": 9,
+    "height": 13,
+    "playable": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        6,
+        0
+      ],
+      [
+        7,
+        0
+      ],
+      [
+        8,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        4,
+        1
+      ],
+      [
+        5,
+        1
+      ],
+      [
+        6,
+        1
+      ],
+      [
+        7,
+        1
+      ],
+      [
+        8,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        5,
+        2
+      ],
+      [
+        6,
+        2
+      ],
+      [
+        7,
+        2
+      ],
+      [
+        8,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        6,
+        3
+      ],
+      [
+        7,
+        3
+      ],
+      [
+        8,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        6,
+        4
+      ],
+      [
+        7,
+        4
+      ],
+      [
+        8,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        6,
+        5
+      ],
+      [
+        7,
+        5
+      ],
+      [
+        8,
+        5
+      ],
+      [
+        0,
+        6
+      ],
+      [
+        1,
+        6
+      ],
+      [
+        2,
+        6
+      ],
+      [
+        3,
+        6
+      ],
+      [
+        4,
+        6
+      ],
+      [
+        5,
+        6
+      ],
+      [
+        6,
+        6
+      ],
+      [
+        7,
+        6
+      ],
+      [
+        8,
+        6
+      ],
+      [
+        0,
+        7
+      ],
+      [
+        1,
+        7
+      ],
+      [
+        2,
+        7
+      ],
+      [
+        3,
+        7
+      ],
+      [
+        4,
+        7
+      ],
+      [
+        5,
+        7
+      ],
+      [
+        6,
+        7
+      ],
+      [
+        7,
+        7
+      ],
+      [
+        8,
+        7
+      ],
+      [
+        0,
+        8
+      ],
+      [
+        1,
+        8
+      ],
+      [
+        2,
+        8
+      ],
+      [
+        3,
+        8
+      ],
+      [
+        4,
+        8
+      ],
+      [
+        5,
+        8
+      ],
+      [
+        6,
+        8
+      ],
+      [
+        7,
+        8
+      ],
+      [
+        8,
+        8
+      ],
+      [
+        0,
+        9
+      ],
+      [
+        1,
+        9
+      ],
+      [
+        2,
+        9
+      ],
+      [
+        3,
+        9
+      ],
+      [
+        4,
+        9
+      ],
+      [
+        5,
+        9
+      ],
+      [
+        6,
+        9
+      ],
+      [
+        7,
+        9
+      ],
+      [
+        8,
+        9
+      ],
+      [
+        0,
+        10
+      ],
+      [
+        1,
+        10
+      ],
+      [
+        2,
+        10
+      ],
+      [
+        3,
+        10
+      ],
+      [
+        4,
+        10
+      ],
+      [
+        5,
+        10
+      ],
+      [
+        6,
+        10
+      ],
+      [
+        7,
+        10
+      ],
+      [
+        8,
+        10
+      ],
+      [
+        0,
+        11
+      ],
+      [
+        1,
+        11
+      ],
+      [
+        2,
+        11
+      ],
+      [
+        3,
+        11
+      ],
+      [
+        4,
+        11
+      ],
+      [
+        5,
+        11
+      ],
+      [
+        6,
+        11
+      ],
+      [
+        7,
+        11
+      ],
+      [
+        8,
+        11
+      ],
+      [
+        0,
+        12
+      ],
+      [
+        1,
+        12
+      ],
+      [
+        2,
+        12
+      ],
+      [
+        3,
+        12
+      ],
+      [
+        4,
+        12
+      ],
+      [
+        5,
+        12
+      ],
+      [
+        6,
+        12
+      ],
+      [
+        7,
+        12
+      ],
+      [
+        8,
+        12
+      ]
+    ],
+    "gates": [
+      {
+        "id": "n139-blue",
+        "color": "blue",
+        "side": "left",
+        "offset": 4,
+        "size": 3,
+        "frozen": 12
+      },
+      {
+        "id": "n139-yellow",
+        "color": "yellow",
+        "side": "right",
+        "offset": 0,
+        "size": 3,
+        "frozen": 20
+      },
+      {
+        "id": "n139-purple",
+        "color": "purple",
+        "side": "right",
+        "offset": 8,
+        "size": 3
+      },
+      {
+        "id": "n139-cyan",
+        "color": "cyan",
+        "side": "right",
+        "offset": 4,
+        "size": 3,
+        "frozen": 20
+      },
+      {
+        "id": "n139-green",
+        "color": "green",
+        "side": "left",
+        "offset": 0,
+        "size": 3,
+        "frozen": 26
+      },
+      {
+        "id": "n139-red",
+        "color": "red",
+        "side": "left",
+        "offset": 9,
+        "size": 3,
+        "frozen": 19
+      },
+      {
+        "id": "n139-orange",
+        "color": "orange",
+        "side": "bottom",
+        "offset": 1,
+        "size": 3,
+        "frozen": 18
+      },
+      {
+        "id": "n139-pink",
+        "color": "pink",
+        "side": "bottom",
+        "offset": 5,
+        "size": 3,
+        "frozen": 25
+      }
+    ],
+    "blocks": [
+      {
+        "id": "n139-opening-1",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "x": 6,
+        "y": 2,
+        "color": "purple"
+      },
+      {
+        "id": "n139-opening-2",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ]
+        ],
+        "x": 6,
+        "y": 4,
+        "color": "yellow"
+      },
+      {
+        "id": "n139-opening-3",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "x": 0,
+        "y": 0,
+        "color": "purple"
+      },
+      {
+        "id": "n139-opening-4",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "x": 6,
+        "y": 0,
+        "color": "purple"
+      },
+      {
+        "id": "n139-opening-5",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "x": 0,
+        "y": 1,
+        "color": "blue"
+      },
+      {
+        "id": "n139-opening-6",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "x": 0,
+        "y": 2,
+        "color": "orange"
+      },
+      {
+        "id": "n139-opening-7",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "x": 0,
+        "y": 3,
+        "color": "blue"
+      },
+      {
+        "id": "n139-opening-8",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "x": 0,
+        "y": 5,
+        "color": "blue"
+      },
+      {
+        "id": "n139-opening-9",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "x": 0,
+        "y": 7,
+        "color": "blue"
+      },
+      {
+        "id": "n139-opening-10",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "x": 6,
+        "y": 1,
+        "color": "blue"
+      },
+      {
+        "id": "n139-opening-11",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "x": 7,
+        "y": 3,
+        "color": "blue"
+      },
+      {
+        "id": "n139-opening-12",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "x": 0,
+        "y": 6,
+        "color": "orange"
+      },
+      {
+        "id": "n139-opening-13",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "x": 6,
+        "y": 7,
+        "color": "cyan"
+      },
+      {
+        "id": "m139-right-mid-0",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "x": 0,
+        "y": 4,
+        "color": "orange"
+      },
+      {
+        "id": "m139-right-mid-1",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "x": 7,
+        "y": 4,
+        "color": "purple"
+      },
+      {
+        "id": "m139-right-mid-2",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "x": 6,
+        "y": 6,
+        "color": "purple"
+      },
+      {
+        "id": "m139-top-gap",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "x": 2,
+        "y": 0,
+        "color": "blue"
+      },
+      {
+        "id": "n139-opening-0",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            2
+          ]
+        ],
+        "x": 6,
+        "y": 8,
+        "color": "purple",
+        "movementAxis": "horizontal"
+      },
+      {
+        "id": "hcut139-top-fill",
+        "x": 1,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "orange"
+      },
+      {
+        "id": "hcut139-row-1",
+        "x": 1,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "hcut139-row-2",
+        "x": 1,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "hcut139-row-3",
+        "x": 1,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "orange"
+      },
+      {
+        "id": "hcut139-row-4",
+        "x": 1,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "yellow"
+      },
+      {
+        "id": "a139-checker-purple-0",
+        "x": 0,
+        "y": 8,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "purple"
+      },
+      {
+        "id": "a139-checker-purple-1",
+        "x": 0,
+        "y": 10,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "purple"
+      },
+      {
+        "id": "a139-checker-purple-2",
+        "x": 3,
+        "y": 11,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "purple"
+      },
+      {
+        "id": "a139-checker-purple-3",
+        "x": 0,
+        "y": 12,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "purple"
+      },
+      {
+        "id": "a139-checker-purple-4",
+        "x": 6,
+        "y": 12,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "purple"
+      },
+      {
+        "id": "a139-checker-fill-0",
+        "x": 3,
+        "y": 8,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "n139-opening-14",
+        "x": 0,
+        "y": 9,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "n139-opening-15",
+        "x": 3,
+        "y": 9,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "cyan"
+      },
+      {
+        "id": "a139-checker-fill-3",
+        "x": 4,
+        "y": 9,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "orange"
+      },
+      {
+        "id": "a139-checker-fill-4",
+        "x": 0,
+        "y": 11,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "a139-checker-fill-5",
+        "x": 6,
+        "y": 11,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "red"
+      },
+      {
+        "id": "a139-checker-fill-6",
+        "x": 3,
+        "y": 12,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "n139-c16-1",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "green",
+        "x": 5,
+        "y": 1,
+        "shutterId": "n139-cover16",
+        "frozen": 3
+      },
+      {
+        "id": "n139-c16-2",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "red",
+        "x": 4,
+        "y": 1,
+        "shutterId": "n139-cover16",
+        "frozen": 4
+      },
+      {
+        "id": "n139-c16-0",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "purple",
+        "x": 2,
+        "y": 1,
+        "shutterId": "n139-cover16"
+      },
+      {
+        "id": "n139-c16-3",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "blue",
+        "x": 3,
+        "y": 1,
+        "shutterId": "n139-cover16"
+      },
+      {
+        "id": "n139-c16-4",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "blue",
+        "x": 4,
+        "y": 2,
+        "shutterId": "n139-cover16"
+      },
+      {
+        "id": "n139-c16-5",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "pink",
+        "x": 2,
+        "y": 3,
+        "shutterId": "n139-cover16"
+      },
+      {
+        "id": "n139-c16-6",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "orange",
+        "x": 3,
+        "y": 3,
+        "shutterId": "n139-cover16"
+      },
+      {
+        "id": "n139-c16-7",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "purple",
+        "x": 4,
+        "y": 3,
+        "shutterId": "n139-cover16"
+      },
+      {
+        "id": "n139-c16-8",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "blue",
+        "x": 5,
+        "y": 3,
+        "shutterId": "n139-cover16"
+      },
+      {
+        "id": "n139-c20-4",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "yellow",
+        "x": 5,
+        "y": 4,
+        "shutterId": "n139-cover20"
+      },
+      {
+        "id": "n139-c20-1",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "blue",
+        "x": 2,
+        "y": 4,
+        "shutterId": "n139-cover20"
+      },
+      {
+        "id": "n139-c20-0",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ]
+        ],
+        "color": "orange",
+        "x": 3,
+        "y": 4,
+        "shutterId": "n139-cover20"
+      },
+      {
+        "id": "n139-c20-5",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "blue",
+        "x": 5,
+        "y": 6,
+        "shutterId": "n139-cover20"
+      },
+      {
+        "id": "n139-c20-2",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "red",
+        "x": 2,
+        "y": 6,
+        "shutterId": "n139-cover20"
+      },
+      {
+        "id": "n139-c20-6",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "yellow",
+        "x": 3,
+        "y": 6,
+        "shutterId": "n139-cover20"
+      },
+      {
+        "id": "n139-c20-3",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "purple",
+        "x": 4,
+        "y": 6,
+        "shutterId": "n139-cover20"
+      },
+      {
+        "id": "n139-queue-0",
+        "x": 0,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "purple"
+      },
+      {
+        "id": "n139-queue-1",
+        "x": 0,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "blue"
+      },
+      {
+        "id": "n139-queue-2",
+        "x": 0,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "orange"
+      },
+      {
+        "id": "n139-queue-3",
+        "x": 0,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "green"
+      }
+    ],
+    "shutters": [
+      {
+        "id": "n139-cover16",
+        "x": 2,
+        "y": 1,
+        "width": 4,
+        "height": 3,
+        "count": 16
+      },
+      {
+        "id": "n139-cover20",
+        "x": 2,
+        "y": 4,
+        "width": 4,
+        "height": 4,
+        "count": 20
+      }
+    ],
+    "generators": [
+      {
+        "id": "n139-generator",
+        "side": "top",
+        "offset": 7,
+        "spawn": [
+          7,
+          0
+        ],
+        "rimMount": "rim",
+        "rimSpan": 3,
+        "queueBlockIds": [
+          "n139-queue-0",
+          "n139-queue-1",
+          "n139-queue-2",
+          "n139-queue-3"
+        ]
+      }
+    ],
+    "id": 139,
+    "name": "竞品映射 Lv139",
+    "difficulty": "normal",
+    "timeSeconds": 120,
+    "reward": 200,
+    "parMoves": 99,
+    "preservedMoveTarget": 70
+  },
+  "140": {
+    "mechanismRules": "revised-2026-09-23-v1.4",
+    "width": 5,
+    "height": 12,
+    "playable": [
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        4,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        0,
+        6
+      ],
+      [
+        1,
+        6
+      ],
+      [
+        2,
+        6
+      ],
+      [
+        3,
+        6
+      ],
+      [
+        4,
+        6
+      ],
+      [
+        0,
+        7
+      ],
+      [
+        1,
+        7
+      ],
+      [
+        2,
+        7
+      ],
+      [
+        3,
+        7
+      ],
+      [
+        4,
+        7
+      ],
+      [
+        0,
+        8
+      ],
+      [
+        1,
+        8
+      ],
+      [
+        2,
+        8
+      ],
+      [
+        3,
+        8
+      ],
+      [
+        4,
+        8
+      ],
+      [
+        0,
+        9
+      ],
+      [
+        1,
+        9
+      ],
+      [
+        2,
+        9
+      ],
+      [
+        3,
+        9
+      ],
+      [
+        4,
+        9
+      ],
+      [
+        0,
+        10
+      ],
+      [
+        1,
+        10
+      ],
+      [
+        2,
+        10
+      ],
+      [
+        3,
+        10
+      ],
+      [
+        4,
+        10
+      ],
+      [
+        1,
+        11
+      ],
+      [
+        2,
+        11
+      ],
+      [
+        3,
+        11
+      ]
+    ],
+    "gates": [
+      {
+        "id": "n140-blue",
+        "color": "blue",
+        "side": "top",
+        "offset": 1,
+        "size": 1
+      },
+      {
+        "id": "n140-cyan",
+        "color": "orange",
+        "side": "top",
+        "offset": 2,
+        "size": 1
+      },
+      {
+        "id": "n140-yellow",
+        "color": "yellow",
+        "side": "top",
+        "offset": 3,
+        "size": 1,
+        "frozen": 2
+      },
+      {
+        "id": "n140-red",
+        "color": "red",
+        "side": "bottom",
+        "offset": 1,
+        "size": 3,
+        "frozen": 4
+      },
+      {
+        "id": "n140-purple",
+        "color": "purple",
+        "side": "left",
+        "offset": 1,
+        "size": 3,
+        "frozen": 3
+      },
+      {
+        "id": "n140-green",
+        "color": "green",
+        "side": "right",
+        "offset": 1,
+        "size": 3
+      },
+      {
+        "id": "n140-orange",
+        "color": "cyan",
+        "side": "left",
+        "offset": 4,
+        "size": 3
+      },
+      {
+        "id": "n140-pink",
+        "color": "pink",
+        "side": "right",
+        "offset": 4,
+        "size": 3
+      }
+    ],
+    "blocks": [
+      {
+        "id": "n140-axis-0",
+        "x": 1,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "blue",
+        "movementAxis": "vertical"
+      },
+      {
+        "id": "n140-axis-1",
+        "x": 2,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "orange",
+        "movementAxis": "vertical"
+      },
+      {
+        "id": "n140-axis-2",
+        "x": 3,
+        "y": 9,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "yellow",
+        "movementAxis": "vertical"
+      },
+      {
+        "id": "n140-axis-3",
+        "x": 1,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "red",
+        "movementAxis": "vertical"
+      },
+      {
+        "id": "n140-ordinary-1",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "cyan",
+        "x": 2,
+        "y": 0
+      },
+      {
+        "id": "n140-ordinary-6",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "green",
+        "x": 0,
+        "y": 1
+      },
+      {
+        "id": "n140-ordinary-8",
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "pink",
+        "x": 4,
+        "y": 1
+      },
+      {
+        "id": "n140-ordinary-5",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ]
+        ],
+        "color": "purple",
+        "x": 2,
+        "y": 2
+      },
+      {
+        "id": "n140-ordinary-7",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "red",
+        "x": 3,
+        "y": 3
+      },
+      {
+        "id": "n140-ordinary-4",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "pink",
+        "x": 4,
+        "y": 3
+      },
+      {
+        "id": "n140-ordinary-2",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "cyan",
+        "x": 0,
+        "y": 4
+      },
+      {
+        "id": "n140-ordinary-0",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "pink",
+        "x": 0,
+        "y": 9
+      },
+      {
+        "id": "a140-capacity-0",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "orange",
+        "x": 4,
+        "y": 9
+      },
+      {
+        "id": "n140-ordinary-3",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "red",
+        "x": 1,
+        "y": 10
+      },
+      {
+        "id": "n140-hidden-4",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "red",
+        "x": 0,
+        "y": 6,
+        "shutterId": "n140-cover8"
+      },
+      {
+        "id": "n140-hidden-2",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "green",
+        "layers": [
+          "green",
+          "cyan"
+        ],
+        "x": 3,
+        "y": 6,
+        "shutterId": "n140-cover8"
+      },
+      {
+        "id": "n140-hidden-1",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "color": "cyan",
+        "layers": [
+          "cyan",
+          "green"
+        ],
+        "x": 4,
+        "y": 6,
+        "shutterId": "n140-cover8"
+      },
+      {
+        "id": "n140-hidden-3",
+        "shape": [
+          [
+            1,
+            0
+          ],
+          [
+            2,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "cyan",
+        "x": 0,
+        "y": 7,
+        "shutterId": "n140-cover8"
+      },
+      {
+        "id": "n140-hidden-0",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "red",
+        "layers": [
+          "red",
+          "green"
+        ],
+        "x": 2,
+        "y": 8,
+        "shutterId": "n140-cover8"
+      }
+    ],
+    "shutters": [
+      {
+        "id": "n140-cover8",
+        "x": 0,
+        "y": 6,
+        "width": 5,
+        "height": 3,
+        "count": 8
+      }
+    ],
+    "id": 140,
+    "name": "竞品映射 Lv140",
+    "difficulty": "hard",
+    "timeSeconds": 70,
+    "reward": 200,
+    "parMoves": 37,
+    "preservedMoveTarget": 42
+  }
+};
+
+export const applyRemake131to140 = (level: LevelSpec): LevelSpec => reviewed[level.id] ?? level;

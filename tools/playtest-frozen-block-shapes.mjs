@@ -49,17 +49,31 @@ const audit = await page.evaluate(async () => {
     frozen: frozen.length,
     bars: frozen.filter(({ kind }) => kind === "bar").length,
     rectangles: frozen.filter(({ kind }) => kind === "rectangle").length,
-    violations: frozen.filter(({ kind }) => !kind),
+    irregular: frozen.filter(({ kind }) => kind !== "bar" && kind !== "rectangle").length,
+    chapterOne: LEVELS.slice(0, 10).map((level) => level.blocks
+      .filter((block) => (block.frozen ?? 0) > 0).length),
   };
 });
 
-if (audit.levels !== 100 || audit.frozen !== 123 || audit.violations.length) {
+const expectedChapterOne = [0, 0, 0, 0, 0, 0, 0, 0, 0, 9];
+if (audit.levels !== 100
+  || audit.frozen !== 154
+  || audit.bars !== 102
+  || audit.rectangles !== 32
+  || audit.irregular !== 20
+  || JSON.stringify(audit.chapterOne) !== JSON.stringify(expectedChapterOne)) {
   throw new Error(`Frozen-shape browser audit failed: ${JSON.stringify(audit)}`);
 }
 
-for (const levelId of [6, 15, 21, 55]) {
+for (const levelId of [10, 37, 49, 76]) {
   await page.evaluate((id) => window.__COLOR_ESCAPE__.loadLevel(id, true), levelId);
-  await page.waitForTimeout(300);
+  await page.waitForFunction((id) => {
+    const state = window.__COLOR_ESCAPE__?.getDebugState();
+    return state?.level.id === id
+      && state?.screen === "playing"
+      && !state.art.formalGameplay.requestedIceSignature
+      && !state.art.formalGameplay.iceError;
+  }, levelId);
   const state = await page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
   if (state.level.id !== levelId || state.screen !== "playing") {
     throw new Error(`Frozen-shape E2E: Lv${levelId} did not reach the playing screen`);
@@ -70,12 +84,12 @@ for (const levelId of [6, 15, 21, 55]) {
 }
 
 await page.setViewportSize({ width: 320, height: 568 });
-await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(6, true));
+await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(10, true));
 await page.waitForTimeout(300);
-await page.screenshot({ path: resolve(output, "round114-frozen-shapes-level-006-320x568.png") });
+await page.screenshot({ path: resolve(output, "formal-frozen-shapes-level-010-320x568.png") });
 
 await browser.close();
 if (errors.length) throw new Error(`Frozen-shape browser errors:\n${errors.join("\n")}`);
 console.log(
-  `Frozen-shape visual E2E passed: ${audit.frozen} blocks = ${audit.bars} bars + ${audit.rectangles} rectangles, 0 irregular.`,
+  `Frozen-shape visual E2E passed: ${audit.frozen} blocks = ${audit.bars} bars + ${audit.rectangles} rectangles + ${audit.irregular} irregular.`,
 );

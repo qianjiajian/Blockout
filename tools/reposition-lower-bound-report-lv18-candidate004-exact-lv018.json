@@ -1,0 +1,130 @@
+{
+  "generated_at": "2026-09-14T23:24:35.489Z",
+  "prototype_only": true,
+  "report_tag": "lv18-candidate004-exact",
+  "input": ".codex-temp/video-parity-floor-lv18-24/lv18/gate-permutation-work/candidate-004.json",
+  "input_sha256": "4F120AD314C1785F1A9A60BDB88A0BB99DA46EAF064289E11F47F1C478D37EDF",
+  "witness_input": null,
+  "witness_input_sha256": null,
+  "level_solver_source": "src/core/levelSolver.ts",
+  "level_solver_sha256": "5014CD308E500EF9CAECEA5024135E7919E8CF5AAB307222611600FCFEF96A13",
+  "requested_levels": [
+    "Lv018"
+  ],
+  "parameters": {
+    "algorithm": "bounded-dfs",
+    "proof_max_states": 500000,
+    "proof_max_memory_mb": 1000,
+    "transposition_cap": 500000,
+    "symmetry_reduction": true,
+    "zero_cost_closure_reduction": true,
+    "relaxed_bound_pruning": false,
+    "relaxed_bound_root_only": false,
+    "relaxed_bound_max_states_per_call": 5000,
+    "official_optimal_max_states": 8000,
+    "official_crosscheck_enabled": false,
+    "validation_max_states": 20000,
+    "continue_after_floor": true
+  },
+  "semantics": {
+    "zero_cost_edge": "A legal drag that exits and clears exactly one visible layer.",
+    "one_cost_edge": "A legal drag ending at an internal resting position without clearing a layer.",
+    "objective_equivalence": "Every complete route clears the fixed initial layer load, so totalDrags = clearLoad + nonExitDrags; minimizing total drags and minimizing reposition overhead are equivalent.",
+    "proof_rule": "A floor is proven only after every state reachable with reposition cost < target has been exhausted.",
+    "bounded_dfs_rule": "The default memory-bounded DFS exhausts every state with non-exit cost <= target-1; zero-cost edges strictly clear one layer, and bounded transposition eviction may repeat work but cannot remove a legal branch.",
+    "zero_cost_closure_rule": "When enabled, a state with a legal free clear follows one deterministic free clear before considering reposition edges, but only on single-layer levels without shutters, elevators, conveyors, or shutter-bound blocks. In that scope a free clear removes space and only decreases monotone counters, so taking it immediately cannot remove a solution or increase its reposition cost.",
+    "symmetry_rule": "Interchangeable-block canonicalization is opt-in, normalizes shape point order, binds every discovered block-id reference, and disables interchangeability for unknown top-level level fields.",
+    "relaxed_bound_rule": "The relaxed-parking bound is opt-in and is used only without conveyors/elevators. Root-only mode invokes it once at the initial proof state; an uncertified root result immediately falls back to the ordinary bounded search. A per-call state or memory cap is unproven and never authorizes pruning.",
+    "state_identity": "Block presence/order/id/position/current color/layer stack/frozen counters, gate frozen counters, and shutter counters; conveyor movement is applied after each clear exactly as in levelSolver.ts.",
+    "inconclusive_rule": "A state cap with frontier below target is inconclusive. It is never converted into a pass or fail proof.",
+    "playability_rule": "A lower bound is publishable only when accompanied by a completion route replayed through PuzzleModel.",
+    "supported_scope": "Matches src/core/levelSolver.ts semantics. Any mechanism unsupported by that solver is outside this prototype's proof scope."
+  },
+  "counts": {
+    "requested": 1,
+    "available_candidates": 1,
+    "missing_candidates": 0,
+    "exact_minimum_proven": 0,
+    "target_floor_certified": 0,
+    "target_floor_disproven": 0,
+    "inconclusive_before_target": 0,
+    "graph_exhausted_without_solution": 1,
+    "replayed_authored_witnesses": 0,
+    "crosscheck_mismatches": 0
+  },
+  "reports": [
+    {
+      "level_id": "Lv018",
+      "available": true,
+      "target_reposition_overhead": 10,
+      "proof": {
+        "algorithm": "zero-one",
+        "status": "no_solution_in_complete_levelsolver_graph",
+        "target_reposition_overhead": 10,
+        "exact_minimum_reposition_overhead": null,
+        "lower_bound_statement_proven": true,
+        "lower_bound_proven_at_states": 398,
+        "floor_disproven": false,
+        "graph_exhausted": true,
+        "halt_reason": "state_graph_exhausted",
+        "frontier_minimum_cost": null,
+        "explored_states": 8648,
+        "discovered_states": 8648,
+        "generated_transitions": 47668,
+        "zero_cost_transitions": 8,
+        "one_cost_transitions": 47660,
+        "peak_frontier": 977,
+        "highest_processed_cost": 28,
+        "memory_guard_mb": 1000,
+        "memory_stop_threshold_mb": 992,
+        "peak_rss_mb": 245.4,
+        "end_rss_mb": 245.4,
+        "elapsed_ms": 920,
+        "route": null,
+        "replay": null
+      },
+      "official_optimal_crosscheck": {
+        "solved": null,
+        "exact_minimum_reposition_overhead": null,
+        "minimum_drags": null,
+        "clear_load": null,
+        "explored_states": 0,
+        "cap": 8000,
+        "termination": "not_run_disabled",
+        "route": null,
+        "replay": null,
+        "elapsed_ms": 0
+      },
+      "authored_solution_witness": {
+        "available": false,
+        "route": null,
+        "replay": null
+      },
+      "validation_solution_witness": {
+        "solved": false,
+        "route_reposition_overhead": null,
+        "drags": null,
+        "clear_load": 16,
+        "explored_states": 8648,
+        "cap": 20000,
+        "termination": "state_graph_exhausted_no_solution",
+        "route": null,
+        "elapsed_ms": 1176.71,
+        "replay": null
+      },
+      "selected_solution_witness": null,
+      "crosscheck": {
+        "exact_minimum_agreement_when_both_solved": null,
+        "lower_bound_compatible_with_official_minimum": null,
+        "replayed_upper_bound_compatible_with_proof": null,
+        "mismatch": false
+      },
+      "certification": {
+        "lower_bound_only": true,
+        "has_authoritative_replayed_solution_witness": false,
+        "target_floor_certified_for_playable_level": false,
+        "note": "Do not publish the target as guaranteed unless both the lower-bound proof and a replayed completion witness are present."
+      }
+    }
+  ]
+}

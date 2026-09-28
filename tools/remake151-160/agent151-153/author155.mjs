@@ -1,0 +1,26 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import {execFileSync} from 'node:child_process';
+import {api as baseApi,baseline,shapes,recolor,audit,save,digest,OUT,guard} from './common.mjs';
+import {tile,rng} from '../agent154-156/common.mjs';
+import {loadSpatialApi,searchSpatial} from '../agent154-156/witness-v15.mjs';
+import {openDoorFloorProjection} from '../spatial-bridge.mjs';
+import {payload} from '../../campaign-v145/lv141-150/round2-c/assist146/native-stars.mjs';
+const api={...baseApi,...await loadSpatialApi()},source='tools/campaign-v145/lv141-150/round2-c/native96.cs',sourceHash=digest(fs.readFileSync(source)),exe=path.resolve(OUT,'native-'+sourceHash.slice(0,16)+'.exe');
+guard();if(!fs.existsSync(exe))execFileSync('C:/Windows/Microsoft.NET/Framework64/v4.0.30319/csc.exe',['/nologo','/optimize+','/r:System.Web.Extensions.dll','/out:'+exe,path.resolve(source)],{windowsHide:true,stdio:'pipe'});
+export function floor155(l,budget={floor:16,maxStates:60000,maxMilliseconds:600}){const projection=openDoorFloorProjection(l,api),data=payload(projection.level,api,budget),input=save('native155-input',data),output=path.resolve(OUT,'native155-output-'+Date.now()+'-'+process.pid+'.json');execFileSync(exe,[path.resolve(input),output],{windowsHide:true,stdio:'pipe',timeout:10000});return {projection,budget,input,inputSha256:digest(fs.readFileSync(input)),output,outputSha256:digest(fs.readFileSync(output)),source,sourceHash,exe,exeHash:digest(fs.readFileSync(exe)),proof:JSON.parse(fs.readFileSync(output))};}
+const cases=[
+ [{side:'bottom',offset:0,size:2},{side:'right',offset:4,size:2},{side:'bottom',offset:3,size:2},{side:'top',offset:1,size:3},{side:'left',offset:1,size:2},{side:'left',offset:5,size:2}],
+ [{side:'right',offset:1,size:2},{side:'bottom',offset:0,size:2},{side:'bottom',offset:3,size:2},{side:'top',offset:1,size:3},{side:'right',offset:5,size:2},{side:'left',offset:2,size:2}],
+ [{side:'left',offset:1,size:2},{side:'bottom',offset:0,size:2},{side:'bottom',offset:3,size:2},{side:'top',offset:1,size:3},{side:'right',offset:1,size:2},{side:'right',offset:5,size:2}],
+ [{side:'left',offset:1,size:2},{side:'right',offset:1,size:2},{side:'bottom',offset:0,size:2},{side:'bottom',offset:2,size:3},{side:'left',offset:5,size:2},{side:'right',offset:5,size:2}],
+];
+export function generate(seed){const l=structuredClone(baseline.levels[154].level);for(const k of ['blocks','gates','shutters','generators','flipDoors','coloredGrids','elevators','conveyors'])delete l[k];Object.assign(l,{mechanismRules:'revised-2026-09-27-v1.5',difficulty:'hard',blocks:[],gates:[]});const r=rng(seed),geo=cases[seed%cases.length];l.gates=['blue','purple','red'].map((color,i)=>({id:'r102-155-ice-'+color,color,...geo[i],frozen:5}));l.flipDoors=[{id:'r102-155-flip-green',color:'green',...geo[3],initiallyOpen:false},{id:'r102-155-flip-yellow',color:'yellow',...geo[4],initiallyOpen:true},{id:'r102-155-flip-star-red',color:'red',...geo[5],initiallyOpen:false,star:true}];
+ const ids=[...Array(7).fill(1),...Array(6).fill(0).map(()=>r.random()<.5?2:8),3,6,8,8,8,4,4];
+ const specs=ids.map((shape,i)=>({id:'r102-155-x'+i,shape:shapes[shape],...(i===19?{star:true}:{}),color:'red'})),bs=tile(specs,l.playable,seed,4000);if(!bs)return null;
+ l.blocks=bs;const starters=r.shuffle(bs.filter(b=>!b.star&&b.id!=='r102-155-x13')).filter(b=>{const q=structuredClone(l);q.blocks.find(x=>x.id===b.id).color='yellow';return new api.PuzzleModel(q).tryExit(b.id,l.flipDoors[1].side).ok;});if(!starters.length)return null;
+ if(!recolor(bs,['red','blue','purple','yellow','green'],{seed,pins:{'r102-155-x19':'red','r102-155-x13':'green','r102-155-x14':'yellow',[starters[0].id]:'yellow'},filter:(b,c)=>api.auditCandidateBlockArt({blocks:[{...b,color:c}]}).passed}))return null;l.blocks=bs;return l;
+}
+export function attempt(l,seed){guard();let a;try{a=audit(l);}catch(e){return {seed,status:'invalid',reason:e.message,levelSha256:digest(l)};}const row={seed,level:l,levelSha256:digest(l),audit:a,status:'audit-failed'};if(a.passed){row.floor=floor155(l);row.status=row.floor.proof.status;if(row.floor.proof.thresholdProven){row.witnessBudget={maxStates:12000,maxMilliseconds:4000,maxTransitions:200000,symmetry:true,orderSeed:seed%20};row.result=searchSpatial(l,api,row.witnessBudget);row.drags=row.result.drags??[];row.status=row.result.status;if(row.drags.length){row.replay=api.replayRevisedRoute(l,row.drags);row.U=row.replay.nonClearingDrags;row.total=row.drags.length;assert(row.replay.complete&&row.replay.valid);if(row.U<=20)row.status='PASS_CANDIDATE';}}}const file=save('candidate155',row);return{file,seed,status:row.status,U:row.U,total:row.total,floorStatus:row.floor?.proof.status,floorRelaxed:row.floor?.proof.relaxedNonClearingDrags,explored:row.floor?.proof.exploredStates};}
+if(process.argv[1]?.endsWith('author155.mjs')){const start=Number(process.argv[2]??1000),count=Number(process.argv[3]??50),rows=[];for(let seed=start;seed<start+count;seed++){const l=generate(seed);const row=l?attempt(l,seed):{seed,status:'tiling-color-failed'};rows.push(row);console.log(JSON.stringify(row));if(row.status==='PASS_CANDIDATE')break;}console.log(save('round155',rows));}

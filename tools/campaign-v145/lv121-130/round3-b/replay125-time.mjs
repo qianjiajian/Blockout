@@ -1,0 +1,14 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {apiLoad} from '../round3-a/author.mjs';
+import {digest} from '../../../revised-preview-validation-v160.mjs';
+import {save} from './common.mjs';
+export function replayBomb(level,drags,api,timed=true){const r={valid:false,complete:false,nonClearingDrags:0,effectiveDrags:0,clearEvents:0,naturalClockValidated:false,pointerValidated:false,simulatedTimeValidated:false};let seconds=0;
+ try{assert([125].includes(level.id));api.validateLevel(level);const m=new api.PuzzleModel(level);m.startCountdown();const bombs=level.blocks.filter(b=>b.timedBombSeconds!==undefined).map(b=>({id:b.id,initial:b.timedBombSeconds}));const tick=t=>{if(timed){m.tick(t);seconds+=t;assert(!m.snapshot().failed,`Expired after ${seconds}s`);}};
+  function auto(id,previous){const b=m.getBlock(id);if(!b||!m.isBlockActive(b))return;const s=m.possibleExitSides(b);if(!s.length)return;const snap=m.snapshot(),portals=api.matchingContinuousExitPortals(snap,b,s),[x,y]=b.shape[0],inferred=previous?(b.x<previous[0]?'left':b.x>previous[0]?'right':b.y<previous[1]?'top':b.y>previous[1]?'bottom':undefined):undefined;return api.choosePortalReleaseCandidate(portals,{x:b.x+x+.5,y:b.y+y+.5},{innerX:0,innerY:0,innerWidth:snap.width,innerHeight:snap.height,cell:1},inferred)?.portal.side;}
+  for(const d of drags){tick(.75);tick(.08);const before=m.snapshot();m.beginAction();let side=auto(d.blockId);assert(!side||!d.path.length,'Down auto exit before moves');for(const[i,p]of d.path.entries()){const b=m.getBlock(d.blockId);assert(b);const prior=[b.x,b.y];assert.equal(Math.abs(p[0]-b.x)+Math.abs(p[1]-b.y),1);tick(.12);assert(m.moveBlockStep(b.id,...p));side=auto(b.id,prior);assert(!side||i===d.path.length-1);}assert.equal(side,d.exitSide);if(side)assert(m.tryExit(d.blockId,side).ok);assert(m.commitAction());const after=m.snapshot();assert(!after.failed);assert.equal(after.moves,before.moves+1);r.effectiveDrags++;r.clearEvents+=after.cleared-before.cleared;r.nonClearingDrags+=Number(after.cleared===before.cleared);for(const b of bombs)if(b.disarmedAt===undefined&&m.getBlock(b.id)?.timedBombSeconds===undefined)b.disarmedAt=seconds;tick(.08);}
+  return{...r,valid:true,complete:m.snapshot().complete,simulatedTimeValidated:timed&&m.snapshot().complete,simulatedSeconds:seconds,bombs,levelSha256:digest(level),routeSha256:digest(drags)};
+ }catch(e){return{...r,error:e.message,simulatedSeconds:seconds};}
+}
+
+if(process.argv[1]?.endsWith("replay125-time.mjs")){const input=process.argv[2],raw=JSON.parse(fs.readFileSync(input)),c=raw.candidate??raw,level=c.level,drags=c.drags??c.search.drags,api=await apiLoad();const result=replayBomb(level,drags,api,true);console.log(JSON.stringify({file:save('timed125-091',{input,result}),result}));}

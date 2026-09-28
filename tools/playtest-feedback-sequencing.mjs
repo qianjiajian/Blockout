@@ -92,7 +92,7 @@ const replayPrefixToHeldEvent = async (prefix) => {
   for (let index = 0; index < prefix.length - 1; index += 1) {
     await beginSolverDrag(prefix[index]);
     await finishPointer();
-    await page.waitForTimeout(prefix[index].exitSide ? 700 : 180);
+    await page.waitForTimeout(prefix[index].exitSide ? 1_250 : 180);
   }
   return beginSolverDrag(prefix.at(-1));
 };
@@ -149,63 +149,64 @@ const mechanicRoutes = await page.evaluate(async () => {
       model.commitAction();
       const after = model.snapshot();
       prefix.push(drag);
-      if (reached(before, after, drag)) return prefix;
+      const targetId = reached(before, after, drag);
+      if (targetId) return { prefix, targetId };
     }
     throw new Error(`Feedback-sequencing E2E: mechanic event absent from Lv${levelId}`);
   };
   return {
-    ice: routeUntil(12, (before, after) => (
-      before.gates.find((gate) => gate.id === "load-bottom")?.frozen > 0
-      && after.gates.find((gate) => gate.id === "load-bottom")?.frozen === 0
-    )),
-    layer: routeUntil(15, (before, after, drag) => (
-      drag.blockId === "layer-a"
-      && (before.blocks.find((block) => block.id === drag.blockId)?.layers.length ?? 0)
-      > (after.blocks.find((block) => block.id === drag.blockId)?.layers.length ?? 0)
-      && after.blocks.some((block) => block.id === drag.blockId)
-    )),
-    shutter: routeUntil(35, (before, after) => (
-      before.shutters.find((shutter) => shutter.id === "shutter-a")?.count > 0
-      && after.shutters.find((shutter) => shutter.id === "shutter-a")?.count === 0
-    )),
+    ice: routeUntil(12, (before, after) => before.gates.find((gate) => (
+      gate.frozen > 0 && after.gates.find((candidate) => candidate.id === gate.id)?.frozen === 0
+    ))?.id),
+    layer: routeUntil(15, (before, after, drag) => {
+      const beforeBlock = before.blocks.find((block) => block.id === drag.blockId);
+      const afterBlock = after.blocks.find((block) => block.id === drag.blockId);
+      return beforeBlock && afterBlock && beforeBlock.layers.length > afterBlock.layers.length
+        ? drag.blockId
+        : undefined;
+    }),
+    shutter: routeUntil(35, (before, after) => before.shutters.find((shutter) => (
+      shutter.count > 0
+      && after.shutters.find((candidate) => candidate.id === shutter.id)?.count === 0
+    ))?.id),
   };
 });
 
 // Ice: the colored block/gate exit owns the first frame, then the thaw response appears.
 await openLevel(12);
-let state = await replayPrefixToHeldEvent(mechanicRoutes.ice);
-expectQueuedExitFirst(state, "ice", "load-bottom", "ice unlock");
+let state = await replayPrefixToHeldEvent(mechanicRoutes.ice.prefix);
+expectQueuedExitFirst(state, "ice", mechanicRoutes.ice.targetId, "ice unlock");
 await page.screenshot({ path: shot("round44-ice-exit-first.png") });
 await finishPointer();
-await page.waitForTimeout(255);
+await page.waitForTimeout(485);
 state = await debug();
-expectMechanicSecond(state, "ice", "load-bottom", "ice unlock");
+expectMechanicSecond(state, "ice", mechanicRoutes.ice.targetId, "ice unlock");
 await page.screenshot({ path: shot("round44-ice-mechanic-second.png") });
 
 // Layer: the removed outer color exits first; the revealed inner layer responds second.
 await page.waitForTimeout(850);
 await openLevel(15);
-state = await replayPrefixToHeldEvent(mechanicRoutes.layer);
-expectQueuedExitFirst(state, "layer", "layer-a", "layer peel");
+state = await replayPrefixToHeldEvent(mechanicRoutes.layer.prefix);
+expectQueuedExitFirst(state, "layer", mechanicRoutes.layer.targetId, "layer peel");
 if (state.exitGhosts !== 0) throw new Error("Feedback-sequencing E2E: layer peel incorrectly removed the whole block");
 await page.screenshot({ path: shot("round44-layer-exit-first.png") });
 await finishPointer();
 await page.waitForTimeout(255);
 state = await debug();
-expectMechanicSecond(state, "layer", "layer-a", "layer peel");
+expectMechanicSecond(state, "layer", mechanicRoutes.layer.targetId, "layer peel");
 await page.screenshot({ path: shot("round44-layer-mechanic-second.png") });
 
 // Shutter: prime the countdown, clear old FX, then verify the opening beat after the second exit.
 await page.waitForTimeout(900);
 await openLevel(35);
-state = await replayPrefixToHeldEvent(mechanicRoutes.shutter);
-expectQueuedExitFirst(state, "shutter", "shutter-a", "shutter opening");
+state = await replayPrefixToHeldEvent(mechanicRoutes.shutter.prefix);
+expectQueuedExitFirst(state, "shutter", mechanicRoutes.shutter.targetId, "shutter opening");
 await page.screenshot({ path: shot("round44-shutter-exit-first.png") });
 await finishPointer();
-await page.waitForTimeout(255);
+await page.waitForTimeout(485);
 state = await debug();
-expectMechanicSecond(state, "shutter", "shutter-a", "shutter opening");
-if (state.puzzle.shutters.find((item) => item.id === "shutter-a")?.count !== 0) {
+expectMechanicSecond(state, "shutter", mechanicRoutes.shutter.targetId, "shutter opening");
+if (state.puzzle.shutters.find((item) => item.id === mechanicRoutes.shutter.targetId)?.count !== 0) {
   throw new Error("Feedback-sequencing E2E: shutter visual beat did not match its open state");
 }
 await page.screenshot({ path: shot("round44-shutter-mechanic-second.png") });
@@ -214,13 +215,13 @@ await page.screenshot({ path: shot("round44-shutter-mechanic-second.png") });
 await page.setViewportSize({ width: 320, height: 568 });
 await seed(true);
 await openLevel(12);
-state = await replayPrefixToHeldEvent(mechanicRoutes.ice);
-expectQueuedExitFirst(state, "ice", "load-bottom", "reduced-motion ice unlock");
+state = await replayPrefixToHeldEvent(mechanicRoutes.ice.prefix);
+expectQueuedExitFirst(state, "ice", mechanicRoutes.ice.targetId, "reduced-motion ice unlock");
 await page.screenshot({ path: shot("round44-reduced-small-exit-first-320x568.png") });
 await finishPointer();
-await page.waitForTimeout(135);
+await page.waitForTimeout(165);
 state = await debug();
-expectMechanicSecond(state, "ice", "load-bottom", "reduced-motion ice unlock", false);
+expectMechanicSecond(state, "ice", mechanicRoutes.ice.targetId, "reduced-motion ice unlock", false);
 await page.screenshot({ path: shot("round44-reduced-small-mechanic-second-320x568.png") });
 
 await browser.close();

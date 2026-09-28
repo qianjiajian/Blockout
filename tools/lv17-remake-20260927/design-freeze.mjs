@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {loadPreviewCore,digest} from '../revised-preview-validation-v160.mjs';
+import {verifyRulesLock} from '../verify-rules-lock.mjs';
+const lock=verifyRulesLock();assert(lock.ok);assert.equal(lock.activeVersion,'1.85.0');
+const source='deliverables/lv17-remake-20260927/design-bottom-1790495976071/attempt-2.json';
+const {level,drags}=JSON.parse(fs.readFileSync(source)),{api}=await loadPreviewCore();
+const replay=api.replayRevisedRoute(level,drags);assert(replay.valid&&replay.complete);assert.equal(replay.nonClearingDrags,13);assert.equal(replay.clearEvents,31);assert.equal(drags.length,44);
+const file=`deliverables/lv17-remake-20260927/design-final-${Date.now()}.json`;fs.writeFileSync(file,JSON.stringify({level,drags},null,2)+'\n',{flag:'wx'});
+console.log(JSON.stringify({file,levelSha256:digest(level),fileSha256:digest(fs.readFileSync(file)),total:44,events:31,upper:13,qualificationPending:true}));

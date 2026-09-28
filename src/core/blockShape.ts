@@ -1,16 +1,17 @@
 import type { BlockSpec, LevelSpec, Point } from "./types";
+import { exitFrontierSpan } from "./blockExitFrontier";
 
-export type IceEligibleShape = "bar" | "rectangle";
+export type IceEligibleShape = "bar" | "rectangle" | "irregular";
 
 const pointKey = ([x, y]: Point): string => `${x},${y}`;
 
 /**
- * Ice is rendered as one continuous shell, so it may only wrap a solid,
- * axis-aligned footprint. A single cell is deliberately excluded: the visual
- * language for this mechanic is a bar or a larger rectangle.
+ * Numeric ice follows the block's real footprint. Any non-empty shape made of
+ * unique integer cells is legal when all cells form one orthogonally connected
+ * component. This includes single cells, L/T/CROSS pieces and solid rectangles.
  */
 export const classifyIceEligibleShape = (shape: readonly Point[]): IceEligibleShape | undefined => {
-  if (shape.length < 2) return undefined;
+  if (!shape.length) return undefined;
   const cells = new Set<string>();
   for (const point of shape) {
     const [x, y] = point;
@@ -22,12 +23,26 @@ export const classifyIceEligibleShape = (shape: readonly Point[]): IceEligibleSh
     cells.add(key);
   }
 
+  const visited = new Set<string>();
+  const queue: Point[] = [shape[0]];
+  visited.add(pointKey(shape[0]));
+  for (let index = 0; index < queue.length; index += 1) {
+    const [x, y] = queue[index];
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
+      const neighbor = `${x + dx},${y + dy}`;
+      if (!cells.has(neighbor) || visited.has(neighbor)) continue;
+      visited.add(neighbor);
+      queue.push([x + dx, y + dy]);
+    }
+  }
+  if (visited.size !== cells.size) return undefined;
+
   const xs = shape.map(([x]) => x);
   const ys = shape.map(([, y]) => y);
   const width = Math.max(...xs) - Math.min(...xs) + 1;
   const height = Math.max(...ys) - Math.min(...ys) + 1;
-  if (width * height !== cells.size) return undefined;
-  return width === 1 || height === 1 ? "bar" : "rectangle";
+  if (width * height === cells.size) return width === 1 || height === 1 ? "bar" : "rectangle";
+  return "irregular";
 };
 
 export const isIceEligibleBlockShape = (shape: readonly Point[]): boolean => (
@@ -44,7 +59,7 @@ const blockColors = (block: BlockSpec) => block.layers?.length ? block.layers : 
 const hasCompatibleExits = (level: LevelSpec, block: BlockSpec, width: number, height: number): boolean => (
   blockColors(block).every((color) => level.gates.some((gate) => {
     if (gate.color !== color || (block.star && !gate.star)) return false;
-    const requiredSpan = gate.side === "top" || gate.side === "bottom" ? width : height;
+    const requiredSpan = exitFrontierSpan(rectangle(width, height), gate.side);
     return gate.size >= requiredSpan;
   }))
 );
@@ -184,7 +199,7 @@ export const normalizeFrozenBlockShapes = (level: LevelSpec): LevelSpec => {
       || level.conveyors?.some((conveyor) => conveyor.blockId === block.id)
       || level.onboardingHint?.blockId === block.id
       || level.strategyNudge?.blockId === block.id) {
-      throw new Error(`Lv${level.id} frozen block ${block.id} must be authored as a bar or rectangle`);
+      throw new Error(`Lv${level.id} frozen block ${block.id} must use unique integer orthogonally connected cells`);
     }
     const candidate = nearestLegalRectangle(level, blocks, index);
     if (!candidate) throw new Error(`Lv${level.id} frozen block ${block.id} has no legal rectangular placement`);
@@ -203,7 +218,7 @@ export const normalizeFrozenBlockShapes = (level: LevelSpec): LevelSpec => {
 export const assertFrozenBlockShapes = (level: LevelSpec): void => {
   for (const block of level.blocks) {
     if ((block.frozen ?? 0) > 0 && !isIceEligibleBlockShape(block.shape)) {
-      throw new Error(`Level ${level.id}: frozen block ${block.id} must be a solid bar or rectangle`);
+      throw new Error(`Level ${level.id}: frozen block ${block.id} must use unique integer orthogonally connected cells`);
     }
   }
 };

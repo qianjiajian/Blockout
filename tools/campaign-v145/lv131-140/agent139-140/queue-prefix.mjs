@@ -1,0 +1,24 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';import{createHash}from 'node:crypto';import{digest}from '../../../revised-preview-validation-v160.mjs';import{projectPrepaidQueues}from '../agent136-138/prepaid-queue-floor.mjs';import{runNativePrefix}from './native-prefix-pruned.mjs';
+export const NATIVE_PREFIX_QUALIFICATION='deliverables/remake131-140-v146-20260924/agent139-140/qualification-native-prefix-pruned-1790475285894.json';
+export function projectQueueFreePrefix(level,api,K){
+ assert(Number.isSafeInteger(K)&&K>0);const compatibility=projectPrepaidQueues(level,api),ids=new Set(compatibility.removedQueueIds),queueFacts=[];
+ assert(ids.size>0);for(const b of level.blocks.filter(b=>ids.has(b.id))){assert((b.layers??[b.color]).length===1,'Prefix implementation accepts single-stage queues only');assert.equal((b.layers??[b.color])[0],b.color,'Queue outer layer must agree with authored color');const exits=level.gates.filter(g=>g.color===b.color);assert.equal(exits.length,1,'Queue color must have exactly one gate');assert((exits[0].frozen??0)>=K,'Queue may clear before prefix goal');queueFacts.push({id:b.id,color:b.color,gateId:exits[0].id,initialFrozen:exits[0].frozen});}
+ const projected=structuredClone(level);delete projected.generators;projected.blocks=projected.blocks.filter(b=>!ids.has(b.id));for(const b of projected.blocks)delete b.generatorId;api.validateLevel(projected);
+ return{level:projected,sourceLevelSha256:digest(level),projectedLevelSha256:digest(projected),queueFacts,prefixClearGoal:K,removedQueueIds:[...ids],counterPrepayment:0,proofArgument:'By induction, no queue body can clear before total clearK because its sole gate requires at leastK prior clear events. Remove queued/spawned obstacles and omit queue gestures before that goal; retained trajectories remain legal with unchanged counters and hidden inventory. Stop exactly at retained clearK. Excluding prefix paths belowfloor lower-bounds every complete real route. This is not a full-completion proof for a queue-deleted map.'};
+}
+export function checkProjectedPrefixRoute(level,drags,api,K){
+ const projection=projectQueueFreePrefix(level,api,K),real=new api.PuzzleModel(level),relaxed=new api.PuzzleModel(projection.level),queued=new Set(projection.removedQueueIds),projectedDrags=[];real.startCountdown();relaxed.startCountdown();let realCost=0,projectedCost=0,realDrags=0,unitSteps=0,stutters=0;
+ const aligned=()=>{const a=real.snapshot(),b=relaxed.snapshot();assert.equal(a.cleared,b.cleared);const facts=s=>s.blocks.filter(x=>!queued.has(x.id)).map(x=>[x.id,x.x,x.y,x.layers,x.frozen,x.hidden]).sort((a,b)=>a[0].localeCompare(b[0]));assert.deepEqual(facts(a),facts(b));assert.deepEqual(a.gates,b.gates);assert.deepEqual(a.shutters,b.shutters);};aligned();
+ for(const d of drags){assert(real.snapshot().cleared<K);const queuedBody=queued.has(d.blockId),a=real.snapshot().cleared,b=relaxed.snapshot().cleared;real.beginAction();if(!queuedBody)relaxed.beginAction();else stutters++;
+  for(const p of d.path){assert(real.moveBlockStep(d.blockId,...p));if(!queuedBody)assert(relaxed.moveBlockStep(d.blockId,...p));unitSteps++;aligned();}
+  if(d.exitSide){assert(real.tryExit(d.blockId,d.exitSide).ok);assert(!queuedBody,'Queue cleared before prefix goal');assert(relaxed.tryExit(d.blockId,d.exitSide).ok);aligned();}
+  assert(real.commitAction());if(!queuedBody){assert(relaxed.commitAction());projectedCost+=Number(relaxed.snapshot().cleared===b);projectedDrags.push(d);}realCost+=Number(real.snapshot().cleared===a);realDrags++;aligned();if(real.snapshot().cleared===K)break;
+ }
+ assert.equal(real.snapshot().cleared,K);assert.equal(relaxed.snapshot().cleared,K);assert(projectedCost<=realCost);
+ return{passed:true,sourceLevelSha256:digest(level),projectionLevelSha256:projection.projectedLevelSha256,goalClears:K,realPrefixDrags:realDrags,projectedPrefixDrags:projectedDrags.length,realCost,projectedCost,stutters,unitSteps,allRetainedUnitStatesEqual:true,projectedDrags};
+}
+export function checkQueuePrefixFloor(level,api,{goalClears=12,floor=11,maxMilliseconds=8000,maxStates=2000000}={}){
+ let projection;try{projection=projectQueueFreePrefix(level,api,goalClears);}catch(e){return{status:'unsupported',thresholdProven:false,reason:e.message};}
+ const qualification=JSON.parse(fs.readFileSync(NATIVE_PREFIX_QUALIFICATION));assert(qualification.passed);for(const[file,hash]of Object.entries(qualification.bindings))assert.equal(createHash('sha256').update(fs.readFileSync(file)).digest('hex'),hash,'Qualification binding drift: '+file);
+ const proof=runNativePrefix(projection.level,api,{goalClears,floor,maxMilliseconds,maxStates});return{...proof,sourceLevelSha256:projection.sourceLevelSha256,projection,qualification:NATIVE_PREFIX_QUALIFICATION,backend:'native128-masked-prefix-single-stage-last-layer-pruning',solvabilityValidated:false,pointerValidated:false,timeValidated:false,releaseApproved:false};
+}

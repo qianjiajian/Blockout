@@ -1,0 +1,31 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';
+const from='tools/star-targets151-160',to='tools/star-targets182-185-20260928/pointer-support';
+const put=(name,s)=>fs.writeFileSync(to+'/'+name,s,{flag:'wx'});
+let browser=fs.readFileSync(from+'/browser.mjs','utf8').replace('if(![157,158].includes(id))','if(![182,185].includes(id))');
+browser=browser.replace("    if(overlay)throw Error('Star target verification only allows unmodified formal LEVELS');",`    const originalFormal=structuredClone(level);
+    if(id===182&&overlay)throw Error('182 is formal-only');
+    if(id===185&&!overlay)throw Error('185 is candidate-only until source approval');
+    if(overlay){if(overlay.id!==185)throw Error('Wrong overlay ID');for(const k of Object.keys(level))delete level[k];Object.assign(level,structuredClone(overlay));}`);
+browser=browser.replace('formalObjectIdentity:true,candidateOverlay:Boolean(overlay)','formalObjectIdentity:id===182,testLoadedObjectIdentity:true,candidateOverlay:Boolean(overlay),originalFormal');put('browser.mjs',browser);
+put('pointer.html',fs.readFileSync(from+'/pointer.html','utf8').replaceAll('/tools/star-targets151-160/','/'+to+'/').replace('157/158 三星目标正式验收','182正式及185候选三星目标验收'));
+put('observed-timing.mjs',fs.readFileSync(from+'/observed-timing.mjs','utf8').replace("'../revised-preview-validation-v160.mjs'","'../../revised-preview-validation-v160.mjs'"));
+let s=fs.readFileSync(from+'/pointer.mjs','utf8');
+s=s.replace("ROOT,ruleGate,audit,VERSION,expectedTargets","ROOT,ruleGate,audit,auditPacket,ORIGINALS,VERSION,expectedTargets");
+s=s.replace("'../native-block-repair-v143.mjs'","'../../native-block-repair-v143.mjs'").replace("'../revised-preview-validation-v160.mjs'","'../../revised-preview-validation-v160.mjs'");
+s=s.replace("assert(process.env.CANDIDATE_ONLY!=='1','This rating task is formal-only');\nconst candidateOnly=false;","const candidateOnly=process.env.CANDIDATE_ONLY==='1';");
+s=s.replace("assert.deepEqual([...requestedIds].sort((a,b)=>a-b),[157,158],'Both and only changed rating levels');\nconst fullBatch=true;","assert.deepEqual(requestedIds,[candidateOnly?185:182],'182 formal and185 candidate must be separate runs');\nconst fullBatch=false;");
+const start=s.indexOf('for(const {data}of candidates){\n for(const [p,h]of Object.entries(data.sourceReview');const end=s.indexOf('const bindings={};',start);assert(start>=0&&end>start);
+s=s.slice(0,start)+`for(const {data}of candidates){
+ const original=ORIGINALS[data.level.id];sourceBind(original,digest(fs.readFileSync(original)));
+ const checked=auditPacket(data),verified=api.replayRevisedRoute(data.level,data.drags);assert(verified.valid&&verified.complete);preflight.push({audit:checked,replay:verified});
+ if(!candidateOnly)assert.deepEqual(JSON.parse(JSON.stringify(api.LEVELS[data.level.id-1])),data.level);
+}
+`+s.slice(end);
+s=s.replaceAll('tools/star-targets151-160/',to+'/');
+s=s.replace('two-level-star-target-change','182-formal-or185-candidate-score-only');
+s=s.replace('assert(entry.formalObjectIdentity);assert.equal(entry.candidateOverlay,candidateOnly);','assert.equal(entry.formalObjectIdentity,!candidateOnly);assert(entry.testLoadedObjectIdentity);assert.equal(entry.candidateOverlay,candidateOnly);if(candidateOnly)assert.deepEqual(entry.originalFormal,JSON.parse(JSON.stringify(api.LEVELS[184])));');
+s=s.replace('changedMoveTargetsValidated:true,timeTargetsPreserved:true','changedMoveTargetsValidated:true,timeTargetsPreserved:true,sourceApprovalInferred:false,sourceInitialPhaseApprovalPending:candidateOnly');
+s=s.replace(" if(!candidateOnly){const fresh=await loadApi();for(const {data}of candidates)assert.deepEqual(JSON.parse(JSON.stringify(fresh.api.LEVELS[data.level.id-1])),data.level,'Current formal target changed during input run');}"," {const fresh=await loadApi();for(const {data}of candidates)assert.deepEqual(JSON.parse(JSON.stringify(fresh.api.LEVELS[data.level.id-1])),candidateOnly?JSON.parse(JSON.stringify(api.LEVELS[184])):data.level,'Current production target changed during input run');}");
+s=s.replace("report.status='PASS';report.fullBatchValidated=fullBatch;","report.status='PASS';report.fullBatchValidated=false;report.scoreSubsetValidated=true;");
+assert(!s.includes('157,158'));assert(s.includes('testLoadedObjectIdentity'));assert(s.includes('expectedStars,3'));put('pointer.mjs',s);
+console.log('Created independent182-formal/185-candidate score harness; old files unchanged.');

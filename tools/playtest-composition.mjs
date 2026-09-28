@@ -7,10 +7,22 @@ const output = fileURLToPath(new URL("../playtest-results/composition/", import.
 const playtestUrl = process.env.PLAYTEST_URL ?? "http://127.0.0.1:5173/";
 await mkdir(output, { recursive: true });
 
-const expectedCounts = new Map([
-  [1, 2], [2, 3], [3, 5], [5, 6], [6, 8], [8, 9], [9, 10], [10, 4],
+const chapterOneComposition = new Map([
+  [1, { total: 3, shapes: { "##/##": 3 } }],
+  [2, { total: 9, shapes: { "##/##": 9 } }],
+  [3, { total: 8, shapes: { "#/#/#": 5, "##/#.": 2, "###/.#.": 1 } }],
+  [4, { total: 18, shapes: { "#": 12, "###": 6 } }],
+  [5, { total: 20, shapes: { "#": 18, "#/#/#": 2 } }],
+  [6, { total: 21, shapes: { "#": 17, "##": 4 } }],
+  [7, { total: 16, shapes: { "#/#": 12, "##/##": 4 } }],
+  [8, { total: 25, shapes: { "#": 24, "##/##/##": 1 } }],
+  [9, { total: 10, shapes: { "##/##": 10 } }],
+  [10, { total: 25, shapes: { "#": 16, "#/#/#": 4, "##/##": 5 } }],
+]);
+const fullLevelBlockFloors = new Map([
   [14, 10], [15, 4], [19, 12], [20, 12], [39, 8], [58, 11], [78, 12], [98, 12], [100, 14],
 ]);
+const auditedLevelIds = [...new Set([...chapterOneComposition.keys(), ...fullLevelBlockFloors.keys()])];
 const save = {
   schemaVersion: 1,
   currentLevel: 1,
@@ -44,9 +56,23 @@ const connected = (shape) => {
   return remaining.size === 0;
 };
 const shapeSignature = (shape) => {
-  const minX = Math.min(...shape.map(([x]) => x));
-  const minY = Math.min(...shape.map(([, y]) => y));
-  return shape.map(([x, y]) => [x - minX, y - minY]).sort().map(([x, y]) => `${x},${y}`).join(";");
+  const maxX = Math.max(...shape.map(([x]) => x));
+  const maxY = Math.max(...shape.map(([, y]) => y));
+  const cells = new Set(shape.map(([x, y]) => `${x},${y}`));
+  return Array.from({ length: maxY + 1 }, (_, y) => (
+    Array.from({ length: maxX + 1 }, (_, x) => cells.has(`${x},${y}`) ? "#" : ".").join("")
+  )).join("/");
+};
+const shapeHistogram = (blocks) => Object.fromEntries(
+  [...blocks.reduce((counts, block) => {
+    const signature = shapeSignature(block.shape);
+    counts.set(signature, (counts.get(signature) ?? 0) + 1);
+    return counts;
+  }, new Map())].sort(([left], [right]) => left.localeCompare(right)),
+);
+const sameHistogram = (actual, expected) => {
+  const keys = new Set([...Object.keys(actual), ...Object.keys(expected)]);
+  return [...keys].every((shape) => actual[shape] === expected[shape]);
 };
 const screenPoint = (page, logical) => {
   const viewport = page.viewportSize();
@@ -83,15 +109,23 @@ const openAndAudit = async (page, levelId) => {
   if ((state.level.blocked ?? []).length) throw new Error(`Composition E2E: Lv${levelId} restored fixed interior cells`);
   const closed = new Set(state.puzzle.shutters.filter((shutter) => shutter.count > 0).map((shutter) => shutter.id));
   const visible = state.puzzle.blocks.filter((block) => !block.shutterId || !closed.has(block.shutterId));
-  const expected = expectedCounts.get(levelId);
-  if (expected !== undefined && visible.length < expected) {
-    throw new Error(`Composition E2E: Lv${levelId} has ${visible.length} visible blocks, expected at least ${expected}`);
+  const expectedComposition = chapterOneComposition.get(levelId);
+  if (expectedComposition) {
+    const actualShapes = shapeHistogram(state.puzzle.blocks);
+    if (state.puzzle.blocks.length !== expectedComposition.total) {
+      throw new Error(`Composition E2E: Lv${levelId} has ${state.puzzle.blocks.length} total blocks, expected exactly ${expectedComposition.total}`);
+    }
+    if (!sameHistogram(actualShapes, expectedComposition.shapes)) {
+      throw new Error(`Composition E2E: Lv${levelId} total shape mix ${JSON.stringify(actualShapes)}, expected ${JSON.stringify(expectedComposition.shapes)}`);
+    }
   }
-  if (visible.some((block) => block.shape.length < 2 || !connected(block.shape))) {
-    throw new Error(`Composition E2E: Lv${levelId} contains a disconnected or single-cell visible block`);
+  const fullLevelFloor = fullLevelBlockFloors.get(levelId);
+  if (fullLevelFloor !== undefined && state.puzzle.blocks.length < fullLevelFloor) {
+    throw new Error(`Composition E2E: Lv${levelId} has ${state.puzzle.blocks.length} total blocks, expected at least ${fullLevelFloor}`);
   }
-  if (visible.length >= 5 && new Set(visible.map((block) => shapeSignature(block.shape))).size < 3) {
-    throw new Error(`Composition E2E: Lv${levelId} has fewer than three visible shape families`);
+  const auditedBlocks = state.puzzle.blocks;
+  if (auditedBlocks.some((block) => !connected(block.shape))) {
+    throw new Error(`Composition E2E: Lv${levelId} contains a disconnected block`);
   }
   return state;
 };
@@ -133,7 +167,11 @@ const exerciseOneCellDrag = async (page, levelId) => {
   await page.waitForTimeout(280);
   const moved = await page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
   const block = moved.puzzle.blocks.find((candidate) => candidate.id === move.blockId);
-  if (!block || block.x !== move.fromX + move.dx || block.y !== move.fromY + move.dy) {
+  const parkedAtTarget = block
+    && block.x === move.fromX + move.dx
+    && block.y === move.fromY + move.dy;
+  const clearedThroughAlignedGate = !block && moved.puzzle.cleared > state.puzzle.cleared;
+  if (!parkedAtTarget && !clearedThroughAlignedGate) {
     throw new Error(`Composition E2E: Lv${levelId} failed a legal hybrid one-cell drag for ${move.blockId}`);
   }
 };
@@ -141,9 +179,9 @@ const exerciseOneCellDrag = async (page, levelId) => {
 const standard = await browser.newPage({ viewport: { width: 496, height: 1078 } });
 attachErrors(standard);
 await seed(standard);
-for (const levelId of expectedCounts.keys()) {
+for (const levelId of auditedLevelIds) {
   await openAndAudit(standard, levelId);
-  await standard.screenshot({ path: resolve(output, `level-${String(levelId).padStart(3, "0")}.png`) });
+  await standard.screenshot({ path: resolve(output, `level-${String(levelId).padStart(3, "0")}.png`), timeout: 120_000 });
 }
 for (const levelId of [19, 58, 98]) await exerciseOneCellDrag(standard, levelId);
 await standard.close();
@@ -159,4 +197,4 @@ await small.close();
 
 await browser.close();
 if (errors.length) throw new Error(`Composition browser errors:\n${errors.join("\n")}`);
-console.log("Composition passed: competitor-paced count wave, connected multi-cell shape families, ImageGen block art, mobile layouts, and hybrid one-cell drags.");
+console.log("Composition passed: exact Lv1-10 totals, formal full-level floors, connected blocks, mobile layouts, and hybrid drags.");

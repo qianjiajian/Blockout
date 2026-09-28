@@ -1,0 +1,23 @@
+import fs from 'node:fs';
+import {digest} from '../../revised-preview-validation-v160.mjs';
+import {verifyRulesLock} from '../../verify-rules-lock.mjs';
+
+const root='deliverables/remake31-200-v145-20260924/batches/lv051-060';
+const summaryFile=`${root}/summary.json`;
+const candidateFile=`${root}/agent58-59/enriched59-1790318705675.json`;
+const stageFile=`${root}/agent58-59/stages-check59-1790318723248.json`;
+const pointerFile=`${root}/pointer-isolated-1790319708100/report.json`;
+const proofFile=`${root}/agent58-59/continued-proof59-1790319398101-3.json`;
+const qualificationFile=`${root}/agent55-57/new59review/qualification59-1790320385920.json`;
+const qualificationProof=`${root}/agent55-57/new59review/proof59-1790320446079.json`;
+const lock=verifyRulesLock(); if(!lock.ok||lock.activeVersion!=='1.51.0') throw new Error('v1.51 lock required');
+const summary=JSON.parse(fs.readFileSync(summaryFile)); const row=summary.rows.find(r=>r.id===59); if(!row) throw new Error('missing row59');
+const candidate=JSON.parse(fs.readFileSync(candidateFile)); const stage=JSON.parse(fs.readFileSync(stageFile)); const pointer=JSON.parse(fs.readFileSync(pointerFile)); const proof=JSON.parse(fs.readFileSync(proofFile)); const qp=JSON.parse(fs.readFileSync(qualificationProof));
+const pr=pointer.rows?.find(r=>r.id===59) ?? pointer.row; const candidateSha256=digest(fs.readFileSync(candidateFile)); const levelSha256=digest(candidate.level); const routeSha256=digest(candidate.drags);
+if(stage.status!=='STAGES_PASS_FLOOR_NOT_CHECKED'||stage.levelSha256!==levelSha256||stage.routeSha256!==routeSha256) throw new Error('stage mismatch');
+if(pointer.status!=='PASS'||pointer.ruleVersion!==lock.activeVersion||!pr||pr.status!=='PASS'||pr.levelSha256!==levelSha256||pr.routeSha256!==routeSha256||pr.candidateInjected!==true||pr.candidateObjectIdentity!==true||pr.oldStarTargetsPreserved!==true||pr.naturalTimingReplay?.passed!==true) throw new Error('pointer mismatch');
+if(proof.ruleVersion!==lock.activeVersion||proof.candidateSha256!==candidateSha256||proof.result?.status!=='unknown'||proof.result?.thresholdProven===true) throw new Error('unexpected fresh proof result');
+if(qp.status!=='unknown'||qp.candidateSha256!==candidateSha256) throw new Error('unexpected dynamic proof result');
+Object.assign(row,{ruleVersion:lock.activeVersion,candidate:candidateFile,candidateSha256,levelSha256,routeSha256,L:null,U:candidate.replay.nonClearingDrags,totalDrags:candidate.drags.length,status:'IN_PROGRESS',source:'PASS',static:'PASS',native:'PASS',route:'PASS',floor:'UNKNOWN',decisions:'PASS',pointer:'PASS',formalAdopted:false,sourceCheck:candidate.sourceReview??null,stageCheck:stageFile,pointerReport:pointerFile,naturalElapsedSeconds:pr.naturalTimingReplay?.activeTickSeconds??null,upperBoundRange:'PASS',latestProof:proofFile,proofProgress:{elapsedMilliseconds:proof.totalSearchMs,discoveredStates:proof.result.discoveredStates,exploredStates:proof.result.exploredStates,pending:proof.result.pendingQueueRecords,termination:proof.result.termination,lowestQueuedCost:proof.result.lowestQueuedCost,checkpoint:proof.checkpointFile??null,continuationActive:false},qualificationProof,missing:[`Fresh L16 remains UNKNOWN after ${(proof.totalSearchMs/1000).toFixed(3)} search seconds / ${proof.result.discoveredStates} discovered states; lowest queued cost ${proof.result.lowestQueuedCost??'unknown'}; dynamic quotient proof also UNKNOWN after ${(qp.elapsedMs/1000).toFixed(3)} seconds / ${qp.result?.discoveredStates??'unknown'} discovered states.`],note:'Alt3 candidate generated with randomized gate assignment; U20/51 route and fresh Pointer pass. L16 remains unproven; this row stays pending and is not formal-eligible.'});
+summary.updatedAt=new Date().toISOString(); summary.ruleVersion=lock.activeVersion; summary.rulesLock='PASS'; summary.candidatePass=summary.rows.filter(r=>r.status==='CANDIDATE_PASS').map(r=>r.id); summary.candidatePassUserException=summary.rows.filter(r=>r.status==='CANDIDATE_PASS_USER_EXCEPTION').map(r=>r.id); summary.formalEligible=summary.rows.filter(r=>['CANDIDATE_PASS','CANDIDATE_PASS_USER_EXCEPTION'].includes(r.status)).map(r=>r.id); summary.allTenComplete=false; summary.formalAdopted=false; summary.finalProductionPointerValidated=false; summary.published=false;
+fs.writeFileSync(summaryFile,JSON.stringify(summary,null,2)+'\n'); console.log(JSON.stringify({id:59,status:row.status,L:row.L,U:row.U,totalDrags:row.totalDrags,candidatePass:summary.candidatePass,formalEligible:summary.formalEligible,proof:proofFile,pointer:pointerFile}));

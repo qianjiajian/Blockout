@@ -1,12 +1,10 @@
-import type { BlockColor, LevelSpec, Point, Side } from "./types";
+import { shutterHasPhysicalFootprint, type BlockColor, type LevelSpec, type Point, type Side } from "./types";
+import { gateCoversExitFrontier } from "./blockExitFrontier";
 
-// Based on the observed Block Out cadence: low-count tutorials, quick early
-// density growth, a quiet mechanic-introduction beat, then 7–14 block waves.
-// Values are authored floors; a level that already contains more keeps them.
+// Lv1–10 are exact observed competitor block-count targets. Lv11–100 retain the
+// authored campaign floors; a generated level that already contains more keeps it.
 export const COMPETITOR_VISIBLE_BLOCK_TARGETS = [
-  // Lv1 is the two-action novice tutorial. Lv2–10 are normalized to the
-  // current Lv3 structural difficulty band while keeping distinct routes.
-  2, 6, 5, 8, 10, 8, 9, 11, 11, 7,
+  3, 9, 8, 18, 20, 21, 16, 25, 10, 25,
   7, 9, 8, 10, 5, 8, 9, 10, 13, 13,
   5, 7, 8, 9, 5, 8, 9, 10, 8, 10,
   6, 8, 9, 10, 4, 9, 8, 10, 8, 11,
@@ -18,10 +16,10 @@ export const COMPETITOR_VISIBLE_BLOCK_TARGETS = [
   9, 11, 12, 13, 9, 12, 11, 12, 12, 14,
 ] as const;
 
-// Executable-route calibration. Lv1 uses two direct clears; Lv2–10 use the
-// Lv3-parity candidates and later chapters retain the Round 54 budgets.
+// Executable-route calibration. Lv1–10 are exact solver routes for the
+// competitor-composition redesign; later chapters retain the Round 54 budgets.
 export const VALIDATED_ROUTE_PAR_MOVES = [
-  2, 11, 13, 11, 13, 11, 12, 14, 14, 12,
+  3, 10, 9, 21, 20, 21, 16, 25, 10, 25,
   8, 11, 10, 12, 6, 9, 10, 14, 14, 12,
   7, 8, 10, 10, 7, 11, 11, 12, 12, 10,
   11, 13, 12, 10, 7, 10, 15, 12, 11, 13,
@@ -32,6 +30,12 @@ export const VALIDATED_ROUTE_PAR_MOVES = [
   17, 18, 23, 19, 17, 29, 18, 23, 27, 17,
   16, 24, 33, 23, 21, 35, 21, 36, 24, 31,
 ] as const;
+
+// buildExtendedLevels still constructs the legacy generated Lv1–10 before
+// levels.ts replaces that slice with CHAPTER_ONE_COMPETITOR_LEVELS. Keeping the
+// pre-overlay values stable preserves difficulty-override hashes for Lv11–100.
+const GENERATED_PILOT_VISIBLE_BLOCK_TARGETS = [2, 6, 5, 8, 10, 8, 9, 11, 11, 7] as const;
+const GENERATED_PILOT_PAR_MOVES = [2, 11, 13, 11, 13, 11, 12, 14, 14, 12] as const;
 
 const key = (x: number, y: number): string => `${x},${y}`;
 
@@ -106,7 +110,7 @@ const isTwoByTwoSquare = (shape: readonly Point[]): boolean => {
 const closedShutterCells = (level: LevelSpec): Set<string> => {
   const cells = new Set<string>();
   for (const shutter of level.shutters ?? []) {
-    if (shutter.count <= 0) continue;
+    if (!shutterHasPhysicalFootprint(shutter)) continue;
     for (let y = shutter.y; y < shutter.y + shutter.height; y += 1) {
       for (let x = shutter.x; x < shutter.x + shutter.width; x += 1) cells.add(key(x, y));
     }
@@ -154,14 +158,7 @@ const placementFitsGate = (
   y: number,
 ): boolean => {
   const cells = shape.map(([dx, dy]) => [x + dx, y + dy] as const);
-  const minX = Math.min(...cells.map(([cellX]) => cellX));
-  const maxX = Math.max(...cells.map(([cellX]) => cellX));
-  const minY = Math.min(...cells.map(([, cellY]) => cellY));
-  const maxY = Math.max(...cells.map(([, cellY]) => cellY));
-  if (gate.side === "top") return minY === 0 && minX >= gate.offset && maxX < gate.offset + gate.size;
-  if (gate.side === "bottom") return maxY === level.height - 1 && minX >= gate.offset && maxX < gate.offset + gate.size;
-  if (gate.side === "left") return minX === 0 && minY >= gate.offset && maxY < gate.offset + gate.size;
-  return maxX === level.width - 1 && minY >= gate.offset && maxY < gate.offset + gate.size;
+  return gateCoversExitFrontier(level, cells, gate);
 };
 
 const canReachGateIgnoringBlocks = (
@@ -250,7 +247,10 @@ const reservedOpeningCorridor = (level: LevelSpec): Set<string> => {
 };
 
 const addVisibleBlocks = (input: LevelSpec): LevelSpec => {
-  const target = Math.max(5, COMPETITOR_VISIBLE_BLOCK_TARGETS[input.id - 1] ?? input.blocks.length);
+  const authoredTarget = input.id <= 10
+    ? GENERATED_PILOT_VISIBLE_BLOCK_TARGETS[input.id - 1]
+    : COMPETITOR_VISIBLE_BLOCK_TARGETS[input.id - 1];
+  const target = Math.max(5, authoredTarget ?? input.blocks.length);
   const level: LevelSpec = { ...input, blocks: input.blocks.map((block) => ({ ...block, shape: [...block.shape] })) };
   const closedIds = new Set((level.shutters ?? []).filter((shutter) => shutter.count > 0).map((shutter) => shutter.id));
   const visible = (): LevelSpec["blocks"] => level.blocks.filter((block) => !block.shutterId || !closedIds.has(block.shutterId));
@@ -350,10 +350,13 @@ export const applyCompetitiveComposition = (input: LevelSpec): LevelSpec => {
   if (input.id === 1) {
     return {
       ...input,
-      parMoves: VALIDATED_ROUTE_PAR_MOVES[0],
+      parMoves: GENERATED_PILOT_PAR_MOVES[0],
       blocks: input.blocks.map((block) => ({ ...block, shape: [...block.shape] })),
     };
   }
   const level = addVisibleBlocks(addStrategyGateGuards(diversifySquares(addStrategyParkingCells(input))));
-  return { ...level, parMoves: VALIDATED_ROUTE_PAR_MOVES[level.id - 1] ?? level.parMoves };
+  const parMoves = level.id <= 10
+    ? GENERATED_PILOT_PAR_MOVES[level.id - 1]
+    : VALIDATED_ROUTE_PAR_MOVES[level.id - 1];
+  return { ...level, parMoves: parMoves ?? level.parMoves };
 };

@@ -1,0 +1,15 @@
+import fs from 'node:fs';
+import {loadApi,replay} from '../replay.mjs';
+import {writeNew,digest,auditSpatial} from '../common.mjs';
+import {witnessNative} from './native-witness.mjs';
+import {prove} from './prefix-quotient.mjs';
+const file='deliverables/remake171-180-20260927/author178-180/assist172/shell172-1790528936005.json',d=JSON.parse(fs.readFileSync(file));
+const l=structuredClone(d.level),g=l.gates.find(g=>g.color==='pink');g.size=2;g.offset=2;
+const {api:raw}=await loadApi(),api={...raw,replayRevisedRoute:(l,r)=>replay(l,r,raw,{requirePointerCompatible:true})};
+auditSpatial(l,raw);
+const search=witnessNative(l,api,{goalClears:13,floor:21,maxMilliseconds:2000,maxStates:180000});
+const route=search.drags?replay(l,search.drags,raw,{requirePointerCompatible:true}):null;
+const proof=route?.nonClearingDrags>=16?prove(l,raw,{goalClears:13,floor:16,maxMilliseconds:3500,maxStates:300000}):null;
+const out='deliverables/remake171-180-20260927/assist172/narrow-prefix-'+Date.now()+'.json';
+writeNew(out,{level:l,baseFile:file,mapping:d.mapping,sha256:digest(l),search,route,proof,note:'Separate closed-cover prefix diagnosis after one bounded full discovery; no full search budget extension. Any hidden repaint is a new candidate and needs complete fresh validation.'});
+console.log(JSON.stringify({out,status:search.status,U:route?.nonClearingDrags,proof:proof?.status}));

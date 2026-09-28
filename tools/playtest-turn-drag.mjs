@@ -35,15 +35,24 @@ const fixtures = await page.evaluate(async () => {
         const model = new PuzzleModel(level);
         const block = model.getBlock(authored.id);
         if (!block || !model.isBlockActive(block)) continue;
+        if (model.possibleExitSides(block).length > 0) continue;
         const initial = model.snapshot();
+        const coveredByClosedShutter = initial.shutters.some((shutter) => shutter.count > 0
+          && model.blockCells(block).some(([cellX, cellY]) => (
+            cellX >= shutter.x && cellX < shutter.x + shutter.width
+            && cellY >= shutter.y && cellY < shutter.y + shutter.height
+          )));
+        if (coveredByClosedShutter) continue;
         const origin = [block.x, block.y];
         if (!model.moveBlockStep(block.id, block.x + turn.first[0], block.y + turn.first[1])) continue;
         const afterFirst = model.getBlock(block.id);
-        if (!afterFirst || !model.moveBlockStep(
+        if (!afterFirst || model.possibleExitSides(afterFirst).length > 0 || !model.moveBlockStep(
           block.id,
           afterFirst.x + turn.second[0],
           afterFirst.y + turn.second[1],
         )) continue;
+        const afterSecond = model.getBlock(block.id);
+        if (!afterSecond || model.possibleExitSides(afterSecond).length > 0) continue;
         const start = {
           x: origin[0] + turn.first[0] * 0.61,
           y: origin[1] + turn.first[1] * 0.61,
@@ -94,7 +103,15 @@ for (const fixture of fixtures) {
   const firstGrid = state.puzzle.blocks.find((candidate) => candidate.id === fixture.blockId);
   const expectedFirst = [fixture.origin[0] + fixture.first[0], fixture.origin[1] + fixture.first[1]];
   if (!firstGrid || firstGrid.x !== expectedFirst[0] || firstGrid.y !== expectedFirst[1]) {
-    throw new Error(`Turn-drag E2E: ${fixture.name} did not cross the first hysteresis boundary`);
+    throw new Error(`Turn-drag E2E: ${fixture.name} did not cross the first hysteresis boundary ${JSON.stringify({
+      fixture,
+      expectedFirst,
+      firstGrid,
+      dragMotion: state.dragMotion,
+      selectionFeedback: state.selectionFeedback,
+      screen: state.screen,
+      overlay: state.overlay,
+    })}`);
   }
 
   const secondPose = [afterFirstPose[0] + fixture.second[0], afterFirstPose[1] + fixture.second[1]];

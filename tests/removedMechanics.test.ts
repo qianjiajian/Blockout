@@ -1,117 +1,181 @@
 import { describe, expect, it } from "vitest";
-import { LEVELS } from "../src/core/levels";
-import { validateLevel } from "../src/core/PuzzleModel";
-import type { LevelSpec } from "../src/core/types";
-import originalLevelsRaw from "../deliverables/original-levels/blockout-original-levels-101-120.json?raw";
-import completedLevelsRaw from "../deliverables/original-levels/blockout-original-levels-101-120-completed.json?raw";
-import alignedLevelsRaw from "../deliverables/original-levels/blockout-original-levels-101-105-benchmark-aligned.json?raw";
-import trialLevelsRaw from "../deliverables/original-levels/blockout-original-levels-101-105-trial.json?raw";
+import { PuzzleModel, validateLevel } from "../src/core/PuzzleModel";
+import { rect, type LevelSpec } from "../src/core/types";
 
-const REMOVED_MECHANISMS = ["钥匙方块", "钥匙与锁", "双向箭头方块"] as const;
-const ORIGINAL_LEVEL_FILES = [
-  ["blockout-original-levels-101-120.json", originalLevelsRaw],
-  ["blockout-original-levels-101-120-completed.json", completedLevelsRaw],
-  ["blockout-original-levels-101-105-benchmark-aligned.json", alignedLevelsRaw],
-  ["blockout-original-levels-101-105-trial.json", trialLevelsRaw],
-] as const;
+const baseLevel = (overrides: Partial<LevelSpec> = {}): LevelSpec => ({
+  id: 980,
+  name: "竞品机制夹具",
+  difficulty: "normal",
+  timeSeconds: 60,
+  reward: 0,
+  width: 5,
+  height: 4,
+  gates: [
+    { id: "red-left", side: "left", offset: 0, size: 2, color: "red" },
+    { id: "blue-right", side: "right", offset: 0, size: 2, color: "blue" },
+  ],
+  blocks: [
+    { id: "red", x: 0, y: 0, shape: rect(1, 1), color: "red" },
+    { id: "blue", x: 4, y: 0, shape: rect(1, 1), color: "blue" },
+  ],
+  ...overrides,
+});
 
-interface OriginalLevelRecord {
-  level_id: number;
-  mechanism?: string[];
-  mechanism_config?: Record<string, unknown>;
-  exits?: Array<Record<string, unknown>>;
-  number_elements?: Array<Record<string, unknown>>;
-}
+describe("video-authored arrow, key-lock, lift and timed-feeder mechanics", () => {
+  it("restricts arrow blocks to their authored movement axis", () => {
+    const model = new PuzzleModel(baseLevel({
+      blocks: [
+        { id: "horizontal-arrow", x: 1, y: 2, shape: rect(1, 1), color: "red", movementAxis: "horizontal" },
+        { id: "vertical-arrow", x: 3, y: 1, shape: rect(1, 1), color: "blue", movementAxis: "vertical" },
+      ],
+    }));
 
-describe("removed key-lock and arrow-block mechanics", () => {
-  it("keeps removed mechanics out of every maintained original-level config", () => {
-    const violations: string[] = [];
-    for (const [relativePath, raw] of ORIGINAL_LEVEL_FILES) {
-      const levels = JSON.parse(raw) as OriginalLevelRecord[];
-      for (const level of levels) {
-        for (const removed of REMOVED_MECHANISMS) {
-          if (level.mechanism?.includes(removed) || Object.hasOwn(level.mechanism_config ?? {}, removed)) {
-            violations.push(`${relativePath}:Lv${level.level_id}:${removed}`);
-          }
-        }
-        for (const exit of level.exits ?? []) {
-          for (const field of ["locked", "unlock_counter_id", "required_key"]) {
-            if (Object.hasOwn(exit, field)) violations.push(`${relativePath}:Lv${level.level_id}:exit:${field}`);
-          }
-        }
-        for (const element of level.number_elements ?? []) {
-          if (element.role === "exit_lock") violations.push(`${relativePath}:Lv${level.level_id}:counter:exit_lock`);
-          if (Object.hasOwn(element, "locks_exit_id")) violations.push(`${relativePath}:Lv${level.level_id}:counter:locks_exit_id`);
-        }
-      }
-    }
-    expect(violations).toEqual([]);
+    expect(model.moveBlockStep("horizontal-arrow", 1, 1)).toBe(false);
+    expect(model.moveBlockStep("horizontal-arrow", 2, 2)).toBe(true);
+    expect(model.moveBlockStep("vertical-arrow", 2, 1)).toBe(false);
+    expect(model.moveBlockStep("vertical-arrow", 3, 2)).toBe(true);
   });
 
-  it("does not expose removed mechanics in playable level names or tutorials", () => {
-    const removedWording = /钥匙|箭头方块/;
-    const violations = LEVELS.flatMap((level) => [
-      { level: level.id, field: "name", text: level.name },
-      { level: level.id, field: "feature-title", text: level.featureIntro?.title ?? "" },
-      { level: level.id, field: "feature-description", text: level.featureIntro?.description ?? "" },
-    ]).filter((entry) => removedWording.test(entry.text));
-    expect(violations).toEqual([]);
+  it("unlocks every matching chained block only after the key block is fully removed", () => {
+    const model = new PuzzleModel(baseLevel({
+      blocks: [
+        { id: "key-piece", x: 0, y: 0, shape: rect(1, 1), color: "red", keyId: "key-a" },
+        { id: "locked-a", x: 4, y: 0, shape: rect(1, 1), color: "blue", lockedBy: "key-a" },
+        { id: "locked-b", x: 3, y: 2, shape: rect(1, 1), color: "blue", lockedBy: "key-a" },
+      ],
+    }));
+    expect(model.isBlockActive(model.getBlock("locked-a")!)).toBe(false);
+
+    model.beginAction();
+    expect(model.tryExit("key-piece", "left").ok).toBe(true);
+    expect(model.commitAction()).toBe(true);
+
+    expect(model.getBlock("locked-a")?.lockedBy).toBeUndefined();
+    expect(model.getBlock("locked-b")?.lockedBy).toBeUndefined();
+    expect(model.isBlockActive(model.getBlock("locked-a")!)).toBe(true);
   });
 
-  it("keeps block and gate schemas free of key-link and axis-lock fields", () => {
-    const allowedBlockFields = new Set(["id", "x", "y", "shape", "color", "layers", "frozen", "shutterId", "star"]);
-    const allowedGateFields = new Set(["id", "side", "offset", "size", "color", "frozen", "star"]);
-    const violations = LEVELS.flatMap((level) => [
-      ...level.blocks.flatMap((block) => Object.keys(block)
-        .filter((field) => !allowedBlockFields.has(field))
-        .map((field) => `Lv${level.id}:block:${block.id}:${field}`)),
-      ...level.gates.flatMap((gate) => Object.keys(gate)
-        .filter((field) => !allowedGateFields.has(field))
-        .map((field) => `Lv${level.id}:gate:${gate.id}:${field}`)),
-    ]);
-    expect(violations).toEqual([]);
+  it("decrements a numbered lock once per matching key and unlocks only at zero", () => {
+    const model = new PuzzleModel(baseLevel({
+      gates: [
+        { id: "red-left", side: "left", offset: 0, size: 2, color: "red" },
+        { id: "blue-right", side: "right", offset: 0, size: 2, color: "blue" },
+      ],
+      blocks: [
+        { id: "key-a-1", x: 0, y: 0, shape: rect(1, 1), color: "red", keyId: "key-a" },
+        { id: "key-a-2", x: 0, y: 1, shape: rect(1, 1), color: "red", keyId: "key-a" },
+        { id: "locked", x: 4, y: 0, shape: rect(1, 1), color: "blue", lockedBy: "key-a", lockCount: 2 },
+      ],
+    }));
+
+    model.beginAction();
+    expect(model.tryExit("key-a-1", "left").ok).toBe(true);
+    model.commitAction();
+    expect(model.getBlock("locked")).toMatchObject({ lockedBy: "key-a", lockCount: 1 });
+    expect(model.isBlockActive(model.getBlock("locked")!)).toBe(false);
+
+    model.beginAction();
+    expect(model.tryExit("key-a-2", "left").ok).toBe(true);
+    model.commitAction();
+    expect(model.getBlock("locked")?.lockedBy).toBeUndefined();
+    expect(model.getBlock("locked")?.lockCount).toBeUndefined();
+    expect(model.isBlockActive(model.getBlock("locked")!)).toBe(true);
   });
 
-  it("keeps runtime identifiers free of retired key and arrow-block semantics", () => {
-    const retiredId = /(?:^|[-_])(key|arrow-block|belt-lock)(?:$|[-_])/i;
-    const violations = LEVELS.flatMap((level) => [
-      ...level.blocks.filter((block) => retiredId.test(block.id)).map((block) => `Lv${level.id}:block:${block.id}`),
-      ...level.gates.filter((gate) => retiredId.test(gate.id)).map((gate) => `Lv${level.id}:gate:${gate.id}`),
-      ...(level.shutters ?? []).filter((shutter) => retiredId.test(shutter.id)).map((shutter) => `Lv${level.id}:shutter:${shutter.id}`),
-      ...(level.conveyors ?? []).filter((conveyor) => retiredId.test(conveyor.id) || retiredId.test(conveyor.blockId))
-        .map((conveyor) => `Lv${level.id}:conveyor:${conveyor.id}:${conveyor.blockId}`),
-      ...(level.strategyNudge && retiredId.test(level.strategyNudge.blockId)
-        ? [`Lv${level.id}:strategy:${level.strategyNudge.blockId}`]
-        : []),
-    ]);
-    expect(violations).toEqual([]);
+  it("reveals a lift batch after every block in the current layer is removed", () => {
+    const model = new PuzzleModel(baseLevel({
+      width: 3,
+      height: 3,
+      gates: [{ id: "red-top", side: "top", offset: 0, size: 1, color: "red" }],
+      shutters: [{
+        id: "lift-layer-2",
+        x: 0,
+        y: 0,
+        width: 1,
+        height: 1,
+        count: 1,
+        skin: "lift",
+        triggerBlockIds: ["layer-1"],
+      }],
+      blocks: [
+        { id: "layer-1", x: 0, y: 0, shape: rect(1, 1), color: "red" },
+        { id: "layer-2", x: 0, y: 0, shape: rect(1, 1), color: "red", shutterId: "lift-layer-2" },
+      ],
+    }));
+    expect(model.isBlockActive(model.getBlock("layer-2")!)).toBe(false);
+
+    model.beginAction();
+    expect(model.tryExit("layer-1", "top").ok).toBe(true);
+    model.commitAction();
+
+    expect(model.snapshot().shutters[0].count).toBe(0);
+    expect(model.isBlockActive(model.getBlock("layer-2")!)).toBe(true);
   });
 
-  it("rejects legacy key-lock fields even when an old level bypasses TypeScript", () => {
-    const base = LEVELS[0];
-    const legacyGate = {
-      ...base,
-      gates: base.gates.map((gate, index) => index === 0 ? { ...gate, locked: true, required_key: "red-key" } : gate),
-    } as unknown as LevelSpec;
-    const legacyMechanism = {
-      ...base,
-      mechanism: ["钥匙与锁"],
-      mechanism_config: { "钥匙与锁": { key: "A", lock: "X1" } },
-    } as unknown as LevelSpec;
+  it("does not advance a lift when a block outside its framed cohort clears", () => {
+    const model = new PuzzleModel(baseLevel({
+      width: 3,
+      height: 3,
+      gates: [
+        { id: "red-top", side: "top", offset: 0, size: 1, color: "red" },
+        { id: "blue-right", side: "right", offset: 2, size: 1, color: "blue" },
+      ],
+      shutters: [{
+        id: "lift-layer-2",
+        x: 0,
+        y: 0,
+        width: 1,
+        height: 1,
+        count: 1,
+        skin: "lift",
+        triggerBlockIds: ["framed"],
+      }],
+      blocks: [
+        { id: "framed", x: 0, y: 0, shape: rect(1, 1), color: "red" },
+        { id: "outside", x: 2, y: 2, shape: rect(1, 1), color: "blue" },
+        { id: "layer-2", x: 0, y: 0, shape: rect(1, 1), color: "red", shutterId: "lift-layer-2" },
+      ],
+    }));
 
-    expect(() => validateLevel(legacyGate)).toThrow(/retired key-lock\/arrow-block/);
-    expect(() => validateLevel(legacyMechanism)).toThrow(/retired key-lock\/arrow-block/);
+    model.beginAction();
+    expect(model.tryExit("outside", "right").ok).toBe(true);
+    model.commitAction();
+
+    expect(model.snapshot().shutters[0].count).toBe(1);
+    expect(model.isBlockActive(model.getBlock("layer-2")!)).toBe(false);
   });
 
-  it("rejects legacy arrow-block movement restrictions instead of silently ignoring them", () => {
-    const base = LEVELS[0];
-    const legacyArrowBlock = {
-      ...base,
-      blocks: base.blocks.map((block, index) => index === 0
-        ? { ...block, arrow_direction: "horizontal", allowedDirections: ["left", "right"] }
-        : block),
-    } as unknown as LevelSpec;
+  it("releases timed feeder cargo on wall-clock intervals", () => {
+    const model = new PuzzleModel(baseLevel({
+      generators: [{
+        id: "timed-feeder",
+        side: "top",
+        offset: 2,
+        spawn: [2, 2],
+        queueBlockIds: ["queued"],
+        trigger: "time",
+        intervalSeconds: 0.5,
+      }],
+      blocks: [
+        { id: "red", x: 0, y: 0, shape: rect(1, 1), color: "red" },
+        { id: "queued", x: 2, y: 2, shape: rect(1, 1), color: "blue" },
+      ],
+    }));
+    model.start();
+    expect(model.tick(0.49)).toBe(false);
+    expect(model.getBlock("queued")).toBeUndefined();
+    expect(model.tick(0.02)).toBe(true);
+    expect(model.getBlock("queued")).toMatchObject({ x: 2, y: 2 });
+  });
 
-    expect(() => validateLevel(legacyArrowBlock)).toThrow(/retired key-lock\/arrow-block/);
+  it("accepts canonical fields but rejects ambiguous legacy aliases", () => {
+    expect(() => validateLevel(baseLevel({
+      blocks: [{ id: "key", x: 0, y: 0, shape: rect(1, 1), color: "red", keyId: "a", movementAxis: "horizontal" }],
+    }))).not.toThrow();
+
+    const legacy = baseLevel({
+      blocks: [{ id: "legacy", x: 0, y: 0, shape: rect(1, 1), color: "red", arrow_direction: "horizontal" } as never],
+    });
+    expect(() => validateLevel(legacy)).toThrow(/retired key-lock\/arrow-block/);
   });
 });

@@ -4,7 +4,8 @@ import { pathToFileURL } from "node:url";
 
 const root = path.resolve(import.meta.dirname, "..");
 const outputDir = path.join(root, "deliverables", "original-levels", "pipeline");
-const scoredPath = path.join(outputDir, "blockout-original-levels-001-100-scored.json");
+const levelSummaryPath = path.join(root, "playtest-results", "latest-level-design-summary.json");
+const finalAuditPath = path.join(root, "playtest-results", "experiments", "lv1-10-competitor-composition", "lv1-10-final-audit.json");
 const svgPath = path.join(outputDir, "blockout-lv1-10-difficulty-uplift.svg");
 const pngPath = path.join(outputDir, "blockout-lv1-10-difficulty-uplift.png");
 const reportPath = path.join(outputDir, "blockout-lv1-10-difficulty-uplift.json");
@@ -22,20 +23,28 @@ const before = [
   { level: 10, calibrated: 45.55, raw: 39.17, drags: 14, repositions: 7 },
 ];
 
-const scored = JSON.parse(fs.readFileSync(scoredPath, "utf8")).slice(0, 10);
-const after = scored.map((record) => ({
-  level: record.level_id,
-  name: record.name,
-  calibrated: record.difficulty.calibrated_to_competitor,
-  raw: record.difficulty.score,
-  drags: record.solver_validation.minimum_drags,
-  repositions: record.solver_validation.reposition_overhead,
-  blocks: record.level_spec.blocks.length,
-}));
+const levelSummary = JSON.parse(fs.readFileSync(levelSummaryPath, "utf8")).summary.levels.slice(0, 10);
+const finalAudit = JSON.parse(fs.readFileSync(finalAuditPath, "utf8"));
+const verifiedById = new Map(finalAudit.levels.map((record) => [record.level_id, record]));
+const after = levelSummary.map((record) => {
+  const verified = verifiedById.get(record.id);
+  const drags = verified?.exact.drags ?? record.parMoves;
+  const repositions = verified?.exact.reposition_overhead ?? drags - record.clearLoad;
+  return {
+    level: record.id,
+    name: record.name,
+    calibrated: record.calibratedDifficulty,
+    raw: (record.calibratedDifficulty - 13.161835) / 0.826935,
+    drags,
+    repositions,
+    blocks: verified?.total_blocks ?? record.visibleBlocks,
+  };
+});
 
 const mean = (items, key) => items.reduce((sum, item) => sum + item[key], 0) / items.length;
 const sum = (items, key) => items.reduce((total, item) => total + item[key], 0);
 const round = (value) => Number(value.toFixed(2));
+const signed = (value, digits = 2) => `${value > 0 ? "+" : ""}${Number(value).toFixed(digits)}`;
 const summary = {
   calibrated_mean: {
     before: round(mean(before, "calibrated")),
@@ -70,9 +79,9 @@ const perLevel = after.map((item, index) => ({
 }));
 
 fs.writeFileSync(reportPath, `${JSON.stringify({
-  scope: "Block Out original Lv1-Lv10 difficulty uplift pilot",
+  scope: "Block Out original Lv1-Lv10 competitor-composition redesign comparison",
   calibration: "blockout-d1-baseline-2026-09-05 (fixed)",
-  solver_note: "Drag counts are executable validation-route counts, not optimality proofs.",
+  solver_note: "Drag counts are solver-proven optima; Lv1–10 are replayed through PuzzleModel and real Pointer input.",
   summary,
   per_level: perLevel,
 }, null, 2)}\n`, "utf8");
@@ -85,19 +94,20 @@ const chartWidth = width - left - right;
 const x = (level) => left + ((level - 1) / 9) * chartWidth;
 const topA = 205;
 const heightA = 310;
-const yDifficulty = (value) => topA + heightA - (value / 80) * heightA;
+const yDifficulty = (value) => topA + heightA - (value / 90) * heightA;
 const topB = 635;
 const heightB = 160;
-const yDrags = (value) => topB + heightB - (value / 30) * heightB;
+const dragCeiling = Math.ceil(Math.max(...before.map((item) => item.drags), ...after.map((item) => item.drags)) / 10) * 10;
+const yDrags = (value) => topB + heightB - (value / dragCeiling) * heightB;
 const n = (value) => Number(value).toFixed(2);
 const pathFor = (items, key, yScale) => items.map((item, index) => (
   `${index === 0 ? "M" : "L"}${n(x(item.level))},${n(yScale(item[key]))}`
 )).join(" ");
 
-const difficultyGrid = [0, 10, 20, 30, 40, 50, 60, 70, 80].map((value) => `
+const difficultyGrid = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90].map((value) => `
   <line x1="${left}" y1="${n(yDifficulty(value))}" x2="${width - right}" y2="${n(yDifficulty(value))}" class="grid"/>
   <text x="84" y="${n(yDifficulty(value) + 6)}" text-anchor="end" class="axis-label">${value}</text>`).join("");
-const dragGrid = [0, 5, 10, 15, 20, 25, 30].map((value) => `
+const dragGrid = Array.from({ length: dragCeiling / 10 + 1 }, (_, index) => index * 10).map((value) => `
   <line x1="${left}" y1="${n(yDrags(value))}" x2="${width - right}" y2="${n(yDrags(value))}" class="grid"/>
   <text x="84" y="${n(yDrags(value) + 6)}" text-anchor="end" class="axis-label">${value}</text>`).join("");
 
@@ -105,7 +115,7 @@ const pointLabels = perLevel.map((item) => `
   <line x1="${n(x(item.level_id))}" y1="${n(yDifficulty(item.before.calibrated))}" x2="${n(x(item.level_id))}" y2="${n(yDifficulty(item.after.calibrated))}" class="uplift-line"/>
   <circle cx="${n(x(item.level_id))}" cy="${n(yDifficulty(item.before.calibrated))}" r="5" class="before-point"/>
   <circle cx="${n(x(item.level_id))}" cy="${n(yDifficulty(item.after.calibrated))}" r="6" class="after-point"/>
-  <text x="${n(x(item.level_id))}" y="${n(yDifficulty(item.after.calibrated) - 14)}" text-anchor="middle" class="delta">+${item.calibrated_delta.toFixed(2)}</text>`).join("");
+  <text x="${n(x(item.level_id))}" y="${n(yDifficulty(item.after.calibrated) - 14)}" text-anchor="middle" class="delta">${signed(item.calibrated_delta)}</text>`).join("");
 
 const bars = perLevel.map((item) => {
   const center = x(item.level_id);
@@ -147,30 +157,30 @@ const svg = `<?xml version="1.0" encoding="UTF-8"?>
     </style>
   </defs>
   <rect width="${width}" height="${height}" fill="#F3F6FA"/>
-  <text x="${left}" y="55" class="title">Block Out Lv1–10 加难效果</text>
-  <text x="${left}" y="88" class="subtitle">固定基线标尺对比；拖动次数为可执行验证路线，并非严格最优解证明</text>
+  <text x="${left}" y="55" class="title">Block Out Lv1–10 竞品构成重制对比</text>
+  <text x="${left}" y="88" class="subtitle">固定基线标尺对比；调整后拖动次数为求解器证明的严格最优值</text>
 
   <g transform="translate(${left},110)">
     <rect width="280" height="64" rx="13" fill="#EAF2FF"/>
     <text x="20" y="25" class="card-label">章节平均难度</text>
     <text x="20" y="52" class="card-value" fill="#1769E0">${summary.calibrated_mean.before.toFixed(2)} → ${summary.calibrated_mean.after.toFixed(2)}</text>
-    <text x="248" y="43" text-anchor="end" class="card-label" fill="#218653">+${summary.calibrated_mean.delta.toFixed(2)}</text>
+    <text x="248" y="43" text-anchor="end" class="card-label" fill="#218653">${signed(summary.calibrated_mean.delta)}</text>
   </g>
   <g transform="translate(${left + 298},110)">
     <rect width="280" height="64" rx="13" fill="#EAF8F0"/>
     <text x="20" y="25" class="card-label">验证路线拖动合计</text>
     <text x="20" y="52" class="card-value" fill="#218653">${summary.validation_route_drags.before} → ${summary.validation_route_drags.after}</text>
-    <text x="248" y="43" text-anchor="end" class="card-label" fill="#218653">+${summary.validation_route_drags.delta_percent.toFixed(1)}%</text>
+    <text x="248" y="43" text-anchor="end" class="card-label" fill="#218653">${signed(summary.validation_route_drags.delta_percent, 1)}%</text>
   </g>
   <g transform="translate(${left + 596},110)">
     <rect width="280" height="64" rx="13" fill="#FFF7E8"/>
     <text x="20" y="25" class="card-label">必要换位合计</text>
     <text x="20" y="52" class="card-value" fill="#C96800">${summary.reposition_overhead.before} → ${summary.reposition_overhead.after}</text>
-    <text x="248" y="43" text-anchor="end" class="card-label" fill="#218653">+${summary.reposition_overhead.delta}</text>
+    <text x="248" y="43" text-anchor="end" class="card-label" fill="#218653">${signed(summary.reposition_overhead.delta, 0)}</text>
   </g>
 
   <rect x="${left}" y="${topA}" width="${chartWidth}" height="${heightA}" rx="14" fill="#FFFFFF" filter="url(#shadow)"/>
-  <text x="${left + 18}" y="${topA + 28}" class="panel-title">校准难度分（0–80 显示区间）</text>
+  <text x="${left + 18}" y="${topA + 28}" class="panel-title">校准难度分（0–90 显示区间）</text>
   ${difficultyGrid}
   <path d="${pathFor(before, "calibrated", yDifficulty)}" class="before-line"/>
   <path d="${pathFor(after, "calibrated", yDifficulty)}" class="after-line"/>
@@ -181,7 +191,7 @@ const svg = `<?xml version="1.0" encoding="UTF-8"?>
   </g>
 
   <rect x="${left}" y="${topB}" width="${chartWidth}" height="${heightB}" rx="14" fill="#FFFFFF" filter="url(#shadow)"/>
-  <text x="${left + 18}" y="${topB + 28}" class="panel-title">验证路线拖动次数</text>
+  <text x="${left + 18}" y="${topB + 28}" class="panel-title">最优路线拖动次数</text>
   ${dragGrid}
   ${bars}
 </svg>`;

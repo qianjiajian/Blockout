@@ -1,0 +1,34 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {loadApi} from '../../native-block-repair-v143.mjs';
+import {digest} from '../../revised-preview-validation-v160.mjs';
+const dir='deliverables/remake31-200-v145-20260924/batches/lv051-060';
+const candidate=dir+'/agent58-59/enriched59-1790249672856.json',sourceFile=dir+'/agent58-59/source-review-1790249506526.json',contractFile=dir+'/agent58-59/source-contract59-1790250079904.json';
+const d=JSON.parse(fs.readFileSync(candidate)),s=JSON.parse(fs.readFileSync(sourceFile)),contract=JSON.parse(fs.readFileSync(contractFile)),l=d.level;
+assert.equal(digest(fs.readFileSync(candidate)),contract.candidateSha256);assert.equal(digest(fs.readFileSync(sourceFile)),contract.sourceReviewSha256);
+const {api}=await loadApi(),base=JSON.parse(fs.readFileSync('deliverables/remake31-200-v145-20260924/baseline.json')).levels[58];
+for(const k of ['id','name','width','height','playable','blocked','seams','timeSeconds','reward'])assert.deepEqual(l[k],base.level[k],k);assert.deepEqual(api.levelStarTargets(l),base.starTargets);
+const shapeIds={SINGLE:1,V2:2,SQ2:7,H2:8,T4:6,SQ3:14},facts=s.facts['59'];
+const specimens=[...facts.opening.map(b=>({...b,count:null})),...facts.covers.flatMap(c=>c.specs.map(b=>({...b,count:c.count})))];
+const carriers=specimens.map(p=>{
+ const b=l.blocks.find(b=>b.id==='v146-59-'+p.sourceId);assert(b,p.sourceId);assert.equal(b.color,p.color);assert.deepEqual(b.layers??[b.color],p.layers??[p.color]);assert.equal(b.frozen??0,p.frozen??0);
+ const match=api.matchFormalBlockShape(b.shape,'native-only');assert.equal(match.shapeId,shapeIds[p.kind]);assert.equal(match.quarterTurns,0);
+ assert.equal(b.shutterId?l.shutters.find(c=>c.id===b.shutterId).count:null,p.count);
+ for(const attr of ['keyId','lockedBy','lockCount','movementAxis','bombSeconds'])assert.equal(b[attr],undefined,p.sourceId+':'+attr);
+ return{sourceId:p.sourceId,color:b.color,area:b.shape.length,nativeShapeId:match.shapeId,cover:p.count};
+});
+const hidden=l.shutters.map(c=>{
+ const bs=l.blocks.filter(b=>b.shutterId===c.id),xy=bs.flatMap(b=>b.shape.map(([x,y])=>[x+b.x,y+b.y]));
+ assert.equal(xy.length,c.width*c.height);assert.equal(new Set(xy.map(p=>p.join(','))).size,xy.length);assert(xy.every(([x,y])=>x>=c.x&&x<c.x+c.width&&y>=c.y&&y<c.y+c.height));
+ return{count:c.count,blocks:bs.length,area:xy.length,fullCoverage:true};
+});
+assert.deepEqual(hidden.map(x=>[x.count,x.blocks,x.area]),[[6,5,20],[12,4,12]]);
+const known=new Set(carriers.map(c=>'v146-59-'+c.sourceId)),added=l.blocks.filter(b=>!known.has(b.id));
+for(const b of added)assert.deepEqual(Object.keys(b).sort(),['id','x','y','color','shape'].sort());
+const sourceOpeningArea=carriers.filter(c=>c.cover===null).reduce((n,b)=>n+b.area,0),sourceTotalArea=carriers.reduce((n,b)=>n+b.area,0),addedArea=added.reduce((n,b)=>n+b.shape.length,0);
+assert.equal(sourceOpeningArea,32);assert.equal(sourceTotalArea,64);assert.equal(l.playable.length,73);assert.equal(addedArea,9);assert.equal(added.length,5);assert.equal(addedArea,l.playable.length-sourceTotalArea);
+assert.deepEqual(Object.fromEntries(l.gates.map(g=>[g.color,g.frozen??0])),facts.gates);
+const frames=s.frames.filter(f=>f.level===59);for(const f of frames)assert.equal(digest(fs.readFileSync(f.path)),f.sha256);
+const replay=api.replayRevisedRoute(l,d.drags);assert(replay.valid&&replay.complete);
+const report={candidate,candidateSha256:digest(fs.readFileSync(candidate)),sourceFile,sourceSha256:digest(fs.readFileSync(sourceFile)),contractFile,contractSha256:digest(fs.readFileSync(contractFile)),checkedAt:new Date().toISOString(),visualFramesViewed:frames.map(f=>f.frame),carriers,hidden,sourceOpeningArea,sourceTotalArea,baselineCells:l.playable.length,addedOrdinaryBlocks:added,addedArea,geometryMetadataPreserved:true,gateCountsAndValuesPreserved:true,nativeQ0:true,replay:{valid:replay.valid,complete:replay.complete,drags:replay.effectiveDrags,repositions:replay.nonClearingDrags},keyLockCarrierIds:['c6-red-key','c6-red-lock','c12-blue-key','c12-yellow-lock'],findings:[{severity:'documentation',sourceId:'c6-red-lock',sourceCells:[[1,0],[0,1],[1,1],[1,2]],designCells:[[1,0],[0,1],[1,1],[2,1]],message:'源625红锁侧向T4改为完整现有原向朝上T4，面积/颜色/批次均保持，需明确列为朝向适配；四个carrier并非全部只去钥锁属性而足迹不变。'}],limits:['9格是必要新增覆盖面积；本审查没有证明新增5块数量是所有可能形状配置中的最少块数。','只读交叉复核；未重跑下界、Pointer，也未写作者文件。','源两笑脸图按已有动态fact为非机械印花，没有把印花误增成轴向。']};
+const output=dir+'/agent51-54/independent-source59-'+Date.now()+'.json';fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify({output,carriers:carriers.length,hidden,addedArea,documentationFindings:report.findings.length,replay:report.replay}));

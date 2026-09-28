@@ -1,0 +1,741 @@
+{
+  "ruleVersion": "1.87.0",
+  "level": {
+    "id": 20,
+    "name": "双重卷帘·异形停车重排",
+    "difficulty": "easy",
+    "timeSeconds": 75,
+    "reward": 85,
+    "parMoves": 24,
+    "preservedMoveTarget": 24,
+    "featureIntro": {
+      "title": "倒计时覆盖区！",
+      "description": "每次有效清除使数字减一；归零后开放覆盖区和隐藏色块。",
+      "kind": "shutter"
+    },
+    "width": 5,
+    "height": 6,
+    "playable": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        4,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        5
+      ]
+    ],
+    "blocked": [],
+    "seams": [],
+    "blocks": [
+      {
+        "id": "lv20-b1-07",
+        "color": "green",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "x": 0,
+        "y": 3
+      },
+      {
+        "id": "lv20-b1-02",
+        "color": "yellow",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "x": 1,
+        "y": 3
+      },
+      {
+        "id": "lv20-b1-01",
+        "color": "red",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "x": 3,
+        "y": 3
+      },
+      {
+        "id": "lv20-b1-04",
+        "color": "red",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "x": 1,
+        "y": 4
+      },
+      {
+        "id": "lv20-b1-05",
+        "color": "pink",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "x": 3,
+        "y": 4
+      },
+      {
+        "id": "lv20-b1-06",
+        "color": "yellow",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "x": 1,
+        "y": 5
+      },
+      {
+        "id": "lv20-b1-03",
+        "color": "blue",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "x": 3,
+        "y": 5
+      },
+      {
+        "id": "lv20-b2-07",
+        "color": "yellow",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            2
+          ]
+        ],
+        "x": 4,
+        "y": 0,
+        "shutterId": "lv20-cover"
+      },
+      {
+        "id": "lv20-b2-02",
+        "color": "orange",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "x": 0,
+        "y": 0,
+        "shutterId": "lv20-cover"
+      },
+      {
+        "id": "lv20-b2-03",
+        "color": "red",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "x": 2,
+        "y": 0,
+        "shutterId": "lv20-cover"
+      },
+      {
+        "id": "lv20-b2-01",
+        "color": "blue",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "x": 0,
+        "y": 1,
+        "shutterId": "lv20-cover"
+      },
+      {
+        "id": "lv20-b2-05",
+        "color": "green",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "x": 2,
+        "y": 1,
+        "shutterId": "lv20-cover"
+      },
+      {
+        "id": "lv20-b2-06",
+        "color": "purple",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "x": 0,
+        "y": 2,
+        "shutterId": "lv20-cover"
+      },
+      {
+        "id": "lv20-b2-04",
+        "color": "cyan",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "x": 2,
+        "y": 2,
+        "shutterId": "lv20-cover"
+      }
+    ],
+    "gates": [
+      {
+        "side": "bottom",
+        "offset": 1,
+        "size": 2,
+        "id": "lv20-gate-yellow",
+        "color": "yellow"
+      },
+      {
+        "side": "top",
+        "offset": 3,
+        "size": 2,
+        "id": "lv20-gate-orange",
+        "color": "orange",
+        "frozen": 6
+      },
+      {
+        "side": "right",
+        "offset": 5,
+        "size": 1,
+        "id": "lv20-gate-cyan",
+        "color": "cyan",
+        "frozen": 10
+      },
+      {
+        "side": "right",
+        "offset": 4,
+        "size": 1,
+        "id": "lv20-gate-red",
+        "color": "red",
+        "frozen": 3
+      },
+      {
+        "side": "bottom",
+        "offset": 3,
+        "size": 2,
+        "id": "lv20-gate-blue",
+        "color": "blue",
+        "frozen": 2
+      },
+      {
+        "side": "left",
+        "offset": 1,
+        "size": 1,
+        "id": "lv20-gate-purple",
+        "color": "purple",
+        "frozen": 7
+      },
+      {
+        "side": "left",
+        "offset": 3,
+        "size": 3,
+        "id": "lv20-gate-green",
+        "color": "green",
+        "frozen": 8
+      },
+      {
+        "side": "right",
+        "offset": 3,
+        "size": 1,
+        "id": "lv20-gate-pink",
+        "color": "pink",
+        "frozen": 1
+      }
+    ],
+    "shutters": [
+      {
+        "id": "lv20-cover",
+        "x": 0,
+        "y": 0,
+        "width": 5,
+        "height": 3,
+        "count": 6,
+        "skin": "shutter"
+      }
+    ],
+    "mechanismRules": "revised-2026-09-23-v1.4"
+  },
+  "drags": [
+    {
+      "blockId": "lv20-b1-06",
+      "path": [],
+      "exitSide": "bottom"
+    },
+    {
+      "blockId": "lv20-b1-04",
+      "path": [
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    {
+      "blockId": "lv20-b1-02",
+      "path": [
+        [
+          1,
+          4
+        ]
+      ]
+    },
+    {
+      "blockId": "lv20-b1-01",
+      "path": [
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    {
+      "blockId": "lv20-b1-05",
+      "path": [
+        [
+          3,
+          3
+        ]
+      ],
+      "exitSide": "right"
+    },
+    {
+      "blockId": "lv20-b1-03",
+      "path": [],
+      "exitSide": "bottom"
+    },
+    {
+      "blockId": "lv20-b1-01",
+      "path": [
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          4
+        ]
+      ],
+      "exitSide": "right"
+    },
+    {
+      "blockId": "lv20-b1-04",
+      "path": [
+        [
+          2,
+          5
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          3,
+          4
+        ]
+      ],
+      "exitSide": "right"
+    },
+    {
+      "blockId": "lv20-b1-02",
+      "path": [
+        [
+          1,
+          5
+        ]
+      ],
+      "exitSide": "bottom"
+    },
+    {
+      "blockId": "lv20-b2-07",
+      "path": [
+        [
+          4,
+          1
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          2,
+          3
+        ]
+      ],
+      "exitSide": "bottom"
+    },
+    {
+      "blockId": "lv20-b2-04",
+      "path": [
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          1,
+          5
+        ]
+      ]
+    },
+    {
+      "blockId": "lv20-b2-05",
+      "path": [
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    {
+      "blockId": "lv20-b2-03",
+      "path": [
+        [
+          3,
+          0
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          4
+        ]
+      ],
+      "exitSide": "right"
+    },
+    {
+      "blockId": "lv20-b1-07",
+      "path": [],
+      "exitSide": "left"
+    },
+    {
+      "blockId": "lv20-b2-02",
+      "path": [
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ]
+      ],
+      "exitSide": "top"
+    },
+    {
+      "blockId": "lv20-b2-01",
+      "path": [
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "exitSide": "bottom"
+    },
+    {
+      "blockId": "lv20-b2-05",
+      "path": [
+        [
+          0,
+          3
+        ]
+      ],
+      "exitSide": "left"
+    },
+    {
+      "blockId": "lv20-b2-06",
+      "path": [
+        [
+          0,
+          1
+        ]
+      ],
+      "exitSide": "left"
+    },
+    {
+      "blockId": "lv20-b2-04",
+      "path": [
+        [
+          2,
+          5
+        ],
+        [
+          3,
+          5
+        ]
+      ],
+      "exitSide": "right"
+    }
+  ]
+}

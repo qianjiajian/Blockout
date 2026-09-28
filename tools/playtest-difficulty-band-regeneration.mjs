@@ -6,9 +6,23 @@ import { chromium } from "playwright";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const output = resolve(root, "playtest-results/difficulty-band-regeneration");
 const playtestUrl = process.env.PLAYTEST_URL ?? "http://127.0.0.1:5173/";
-const regeneratedIds = [5, 11, 13, 15, 16, 17, 21, 22, 24, 25, 26, 28, 30, 34, 65, 70];
-const rampTargets = { 6: 70, 7: 72, 8: 74, 9: 75.5, 10: 77 };
-const rampIds = Object.keys(rampTargets).map(Number);
+const formalSampleIds = [11, 13, 15, 16, 17, 21, 22, 24, 25, 26, 28, 30, 34, 65, 70];
+// Lv1-Lv10 retain their approved measured values after the complete Lv2/Lv3
+// slot swap. The formal campaign target is a separate authored contract and
+// must never be relabeled as a D1 measurement.
+const lockedReferenceCurve = [
+  { levelId: 1, measured: 30.87, band: null },
+  { levelId: 2, measured: 54.74, band: "normal" },
+  { levelId: 3, measured: 48.7, band: "entry" },
+  { levelId: 4, measured: 56.34, band: "normal" },
+  { levelId: 5, measured: 60.61, band: "advanced" },
+  { levelId: 6, measured: 62.28, band: "advanced" },
+  { levelId: 7, measured: 60.07, band: "advanced" },
+  { levelId: 8, measured: 62.17, band: "advanced" },
+  { levelId: 9, measured: 57.91, band: "normal" },
+  { levelId: 10, measured: 60.7, band: "advanced" },
+];
+const referenceIds = lockedReferenceCurve.map(({ levelId }) => levelId);
 const captures = [
   { levelId: 21, width: 496, height: 1078, suffix: "desktop" },
   { levelId: 70, width: 496, height: 1078, suffix: "desktop" },
@@ -47,18 +61,25 @@ await page.evaluate(() => localStorage.setItem("color-escape-save-v1", JSON.stri
 await page.reload({ waitUntil: "networkidle" });
 
 const scores = await page.evaluate(async (ids) => {
-  const [{ LEVELS }, difficulty] = await Promise.all([
+  const [{ LEVELS }, difficulty, targets] = await Promise.all([
     import("/src/core/levels.ts"),
     import("/src/core/blockOutDifficulty.ts"),
+    import("/src/core/campaignDifficultyTargets.ts"),
   ]);
   return ids.map((levelId) => {
     const level = LEVELS[levelId - 1];
     const scored = difficulty.scoreBlockOutLevel(level);
     const calibrated = difficulty.calibratedBlockOutDifficulty(scored.score);
+    const authoredTarget = level.designTargets?.calibratedDifficulty ?? null;
+    const expectedTarget = targets.campaignTargetD1(levelId);
+    const expectedPacing = targets.campaignPacingForTarget(expectedTarget);
     return {
       levelId,
       difficulty: level.difficulty,
       timeSeconds: level.timeSeconds,
+      authoredTarget,
+      expectedTarget,
+      expectedPacing,
       calibrated,
       band: difficulty.blockOutDifficultyBand(calibrated)?.id ?? null,
       playableCells: level.playable?.length ?? level.width * level.height,
@@ -70,17 +91,27 @@ const scores = await page.evaluate(async (ids) => {
         .map((block) => ({ id: block.id, layers: block.layers })),
     };
   });
-}, [...regeneratedIds, ...rampIds]);
+}, [...formalSampleIds, ...referenceIds]);
 
-const entryScores = scores.filter(({ levelId }) => regeneratedIds.includes(levelId));
-const rampScores = scores.filter(({ levelId }) => rampIds.includes(levelId));
-const invalidScores = entryScores.filter(({ calibrated, band }) => calibrated < 45 || calibrated >= 50 || band !== "entry");
-if (invalidScores.length) throw new Error(`Difficulty-band E2E: invalid scores ${JSON.stringify(invalidScores)}`);
-const invalidRamp = rampScores.filter(({ levelId, calibrated, band, difficulty, timeSeconds }) => {
-  const target = rampTargets[levelId];
-  return calibrated < target || calibrated >= target + 0.25 || band !== "hard" || difficulty !== "hard" || timeSeconds !== 150;
+const formalScores = scores.filter(({ levelId }) => formalSampleIds.includes(levelId));
+const referenceScores = scores.filter(({ levelId }) => referenceIds.includes(levelId));
+const invalidFormal = formalScores.filter((score) => (
+  score.authoredTarget !== score.expectedTarget
+  || score.authoredTarget < 70
+  || score.difficulty !== score.expectedPacing.difficulty
+  || score.timeSeconds !== score.expectedPacing.timeSeconds
+));
+if (invalidFormal.length) throw new Error(`Difficulty-band E2E: invalid formal targets ${JSON.stringify(invalidFormal)}`);
+const referenceByLevel = new Map(referenceScores.map((score) => [score.levelId, score]));
+const invalidReference = lockedReferenceCurve.flatMap(({ levelId, measured, band }) => {
+  const score = referenceByLevel.get(levelId);
+  if (!score) return [{ levelId, measured, error: "missing runtime level" }];
+  const errors = [];
+  if (score.calibrated !== measured) errors.push(`measured D1 ${score.calibrated} != locked ${measured}`);
+  if (score.band !== band) errors.push(`band ${score.band} != ${band}`);
+  return errors.length ? [{ levelId, measured, errors }] : [];
 });
-if (invalidRamp.length) throw new Error(`Difficulty-band E2E: invalid Lv6–10 ramp ${JSON.stringify(invalidRamp)}`);
+if (invalidReference.length) throw new Error(`Difficulty-band E2E: invalid Lv1–10 measured profile ${JSON.stringify(invalidReference)}`);
 
 for (const capture of captures) {
   await page.setViewportSize({ width: capture.width, height: capture.height });
@@ -100,8 +131,9 @@ for (const capture of captures) {
 
 await writeFile(resolve(output, "report.json"), `${JSON.stringify({
   levelsPassed: scores.length,
-  entryLevelsPassed: entryScores.length,
-  rampLevelsPassed: rampScores.length,
+  formalTargetLevelsPassed: formalScores.length,
+  referenceLevelsPassed: referenceScores.length,
+  lockedReferenceCurve,
   scoreRange: {
     min: Math.min(...scores.map(({ calibrated }) => calibrated)),
     max: Math.max(...scores.map(({ calibrated }) => calibrated)),
@@ -112,4 +144,4 @@ await writeFile(resolve(output, "report.json"), `${JSON.stringify({
 
 await browser.close();
 if (errors.length) throw new Error(`Difficulty-band browser errors:\n${errors.join("\n")}`);
-console.log(`Difficulty-band visual E2E passed ${scores.length}/${regeneratedIds.length + rampIds.length} levels with ${captures.length} screenshots.`);
+console.log(`Difficulty-band visual E2E passed ${scores.length}/${formalSampleIds.length + referenceIds.length} levels with ${captures.length} screenshots.`);

@@ -76,6 +76,14 @@ describe("mechanism feedback events", () => {
     expect(event).toMatchObject({ id: "cargo-door", skin: "generator", unlocked: true });
   });
 
+  it("keeps internal staging countdowns out of player-facing mechanism events", () => {
+    const fixture = eventFixture();
+    fixture.shutters![0].skin = "staging";
+    const events = clearAndDetect(fixture, "red", "top");
+
+    expect(events.some((event) => event.target === "shutter")).toBe(false);
+  });
+
   it("reports the exact conveyor payload movement caused by a successful clear", () => {
     const fixture: LevelSpec = {
       id: 993, name: "conveyor event fixture", difficulty: "normal", timeSeconds: 180, reward: 0,

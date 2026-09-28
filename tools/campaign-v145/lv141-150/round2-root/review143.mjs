@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {loadApi,checkCandidate,baseline,mechanismInventory,OUTPUT} from '../../../remake141to150-v173.mjs';
+import {project143,verify143Prefix} from './floor143.mjs';
+import {digest} from '../../../revised-preview-validation-v160.mjs';
+const input='deliverables/remake31-200-v145-20260924/batches/lv141-150/round2-a/enriched143-1790477808753.json',d=JSON.parse(fs.readFileSync(input)),{api}=await loadApi();
+const sorted=a=>a.sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));
+const expectedInventory={bodies:37,shells:1,bombs:[],ice:[9],axes:[],stars:0,keys:[],locks:[],covers:[{skin:'shutter',count:19}],generators:[2],gates:sorted([['green',0],['yellow',0],['red',4],['pink',6],['blue',13],['cyan',11]].map(([color,frozen])=>({color,frozen,star:false}))),flips:[]};
+assert.deepEqual(mechanismInventory(d.level),expectedInventory);
+d.sourceReview={passed:true,bindings:{...d.sourceBindings,[d.sourceFile]:digest(fs.readFileSync(d.sourceFile)),[input]:digest(fs.readFileSync(input))},expectedInventory,...d.sourceAdaptation,sourceKnownInventoryPreserved:true,unknowns:[]};d.decisionReview={...d.mechanismProcess,humanBlindTested:false};
+const controls=[['count18',l=>l.shutters[0].count=18],['spawnOutside',l=>l.generators[0].spawn=[0,0]],['oneQueue',l=>l.generators[0].queueBlockIds.pop()],['frozenQueue',l=>l.blocks.find(b=>b.id===l.generators[0].queueBlockIds[0]).frozen=1],['wrongOpeningCount',l=>l.blocks.find(b=>b.layers).layers=undefined],['lift',l=>l.shutters[0].skin='lift']].map(([name,f])=>{const x=structuredClone(d.level);f(x);assert.throws(()=>project143(x,api));return{name,rejected:true};});
+const result=await checkCandidate(d,baseline(),api),file=OUTPUT+'/reviewed143-'+Date.now()+'.json';fs.writeFileSync(file,JSON.stringify(d,null,2),{flag:'wx'});fs.writeFileSync(OUTPUT+'/independent143-'+Date.now()+'.json',JSON.stringify({input,file,result,prefix:verify143Prefix(d.level,d.drags,api),negative:controls},null,2),{flag:'wx'});console.log(JSON.stringify({file,L:result.lowerBound,U:result.upperBound,proof:result.proof}));

@@ -1,0 +1,16 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {build} from 'esbuild';
+import {loadApi} from '../../native-block-repair-v143.mjs';
+import {digest} from '../../revised-preview-validation-v160.mjs';
+import {verifyRulesLock} from '../../verify-rules-lock.mjs';
+import {checkImmediateGeneratorFloor,projectImmediateRoute} from './immediate-generator-floor56-v146.mjs';
+const dir='deliverables/remake31-200-v145-20260924/batches/lv051-060/agent58-59',candidate=process.argv[2]??dir+'/enriched58-1790250804977.json',d=JSON.parse(fs.readFileSync(candidate));assert.equal(d.level.id,58);
+const lock=verifyRulesLock();assert(lock.ok);assert(['1.46.0','1.47.0'].includes(lock.activeVersion));const {api,inputs}=await loadApi(),entry='tools/campaign-v145/lv051-060/prove-immediate58-v146.mjs';
+const meta=await build({entryPoints:[entry],bundle:true,write:false,metafile:true,platform:'node',format:'esm',packages:'external',logLevel:'silent'}),paths=[...new Set([...Object.keys(meta.metafile.inputs),...inputs,'docs/rules/manifest.json','docs/mechanism-rules-v1.47.0.md',candidate,d.sourceReview])].sort();
+const bindings=Object.fromEntries(paths.map(p=>[p,digest(fs.readFileSync(p))])),run=Date.now(),write=(name,data)=>{const p=`${dir}/${name}-${run}.json`;fs.writeFileSync(p,JSON.stringify(data,null,2)+'\n',{flag:'wx'});return p;};
+const projection=projectImmediateRoute(d.level,d.drags,api);assert(projection.passed);const options={floor:11,maxStates:Number(process.env.STATES??500000),maxMilliseconds:Number(process.env.MS??180000)};
+const input=write('immediate-inputs58',{capturedBeforeSearchAt:new Date().toISOString(),candidate,levelSha256:digest(d.level),routeSha256:digest(d.drags),ruleVersion:lock.activeVersion,options,bindings,projection});console.log(JSON.stringify({kind:'inputs',input,bindings:paths.length}));
+const proof=checkImmediateGeneratorFloor(d.level,api,options),shortcutReplay=proof.relaxedRoute?api.replayRevisedRoute(d.level,proof.relaxedRoute):null;
+const out=write('immediate-proof58',{checkedAt:new Date().toISOString(),candidate,levelSha256:digest(d.level),routeSha256:digest(d.drags),ruleVersion:lock.activeVersion,input,bindings,projection,proof,shortcutReplay,pointerValidated:false,formalAdopted:false});
+console.log(JSON.stringify({out,status:proof.status,states:proof.discoveredStates,expanded:proof.exploredStates,shortcut:proof.relaxedNonClearingDrags,shortcutReplay:shortcutReplay?{valid:shortcutReplay.valid,complete:shortcutReplay.complete,nonClearingDrags:shortcutReplay.nonClearingDrags}:null}));

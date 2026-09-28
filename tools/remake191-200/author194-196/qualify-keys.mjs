@@ -1,0 +1,13 @@
+import fs from'node:fs';import assert from'node:assert/strict';import{keyPayload,runKeys}from'./key-floor.mjs';
+import{each,clearCount}from'../../campaign-v145/lv131-140/agent139-140/axis128-graph.mjs';
+import{save,digest}from'./common.mjs';
+const file=process.argv[2],d=JSON.parse(fs.readFileSync(file)),l=d.level,{p,c}=keyPayload(l,{floor:16,maxMilliseconds:1000,maxStates:1000});
+const unlocked=(s,i)=>p.blocks[i].keyIndices.filter(j=>s[j]===511).length>=p.blocks[i].lockCount;
+function eachKey(s,visit){each(c,s,(i,v,cost,get)=>{if(unlocked(s,i))return visit(i,v,cost,get);});}
+function normalize(input){let s=input;for(;;){let found;eachKey(s,(i,v,k)=>{if(k===0&&v===511){found={i,v};return false;}});if(!found)return s;s=s.slice();s[found.i]=found.v;}}
+const canonical=s=>{s=s.slice();for(const g of p.groups){const vs=g.map(i=>s[i]).sort((a,b)=>a-b);g.forEach((i,j)=>s[i]=vs[j]);}return s;};
+const text=s=>{const b=Buffer.alloc(s.length*2);s.forEach((v,i)=>b.writeUInt16LE(v,i*2));return b.toString('base64');};
+const states=[c.initial],seen=new Set([text(c.initial)]);for(let i=0;i<states.length&&states.length<80;i++)eachKey(states[i],(bi,v)=>{const s=states[i].slice();s[bi]=v;const k=text(s);if(!seen.has(k)){states.push(s);seen.add(k);}if(states.length>=80)return false;});
+let routeState=c.initial.slice();for(const drag of d.drags??[]){const i=l.blocks.findIndex(b=>b.id===drag.blockId);if(drag.exitSide)routeState[i]=511;else if(drag.path.length){const[x,y]=drag.path.at(-1);routeState[i]=y*l.width+x;}if(!seen.has(text(routeState))){states.push(routeState.slice());seen.add(text(routeState));}}
+const actual=runKeys({...p,successorsOnly:true,states:states.map(s=>[...s])});let transitions=0;for(let i=0;i<states.length;i++){const expected=new Set();eachKey(states[i],(bi,v,cost)=>{const s=states[i].slice();s[bi]=v;expected.add(cost+':'+text(canonical(normalize(s))));});assert.deepEqual([...actual.rows[i].successors].sort(),[...expected].sort());assert.equal(actual.rows[i].normalized,text(normalize(states[i])));assert.equal(actual.rows[i].canonical,text(canonical(normalize(states[i]))));transitions+=expected.size;}
+console.log(save('keys-qualified',{passed:true,levelSha256:digest(l),file,states:states.length,transitions,actual,reason:'Exact key-group identity retained in quotient. Eligibility counts only NONE(511) whole-body removals; stage1 shell survivors contribute no key. Forced full removals are monotone for locks, occupancy, ice and fixed countdowns. No flips/lifts/generator admitted. Existing axis128 parent domain qualification inherited; extension cross-check uses JS graph with explicit lock filtering on 80 initial-branch states and all supplied-route states.'}));

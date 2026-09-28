@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {preserveOther199} from './validation-contract.mjs';
+import {loadApi} from '../native-block-repair-v143.mjs';
+const baseline=JSON.parse(fs.readFileSync('deliverables/lv70-remake-20260927/baseline.json')),{api}=await loadApi();
+const targets={35:38,36:31,38:49,39:44,41:45,43:24,44:39,46:41,47:46,48:43,50:27,52:45,54:48,55:34,56:40,58:41,59:51};
+test('current 199 objects differ only by exact frozen-flip profile migration and seventeen authorized scores',t=>{const r=preserveOther199(api.LEVELS,baseline);assert(r.passed);t.diagnostic(JSON.stringify(r.concurrent));});
+test('complete seventeen-score allowance preserves every other field and records the individual rule',()=>{const levels=structuredClone(baseline.levels);for(const l of levels)if(targets[l.id])l.preservedMoveTarget=targets[l.id];const result=preserveOther199(levels,baseline);assert.equal(result.concurrent.length,17);for(const row of result.concurrent){assert.equal(row.changes.length,1);assert.equal(row.changes[0].authority,row.id<40?'v1.92':row.id<=50?'v1.95':'v1.94');}});
+test('reject wrong authorized score, extra unlisted score, geometry and time drift',()=>{for(const [id,mutate]of [[52,l=>l.preservedMoveTarget=44],[51,l=>l.preservedMoveTarget=999],[54,l=>l.width++],[59,l=>l.timeSeconds++]]){const levels=structuredClone(baseline.levels);mutate(levels.find(l=>l.id===id));assert.throws(()=>preserveOther199(levels,baseline));}});

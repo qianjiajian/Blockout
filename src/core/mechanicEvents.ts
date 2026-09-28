@@ -52,6 +52,7 @@ export const detectMechanicEvents = (before: PuzzleSnapshot, after: PuzzleSnapsh
   }
 
   for (const shutter of after.shutters) {
+    if (shutter.skin === "staging") continue;
     const previous = before.shutters.find((item) => item.id === shutter.id)?.count ?? shutter.count;
     if (shutter.count < previous) {
       events.push({

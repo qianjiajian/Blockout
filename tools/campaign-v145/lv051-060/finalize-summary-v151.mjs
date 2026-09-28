@@ -1,0 +1,26 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {digest} from '../../revised-preview-validation-v160.mjs';
+import {verifyRulesLock} from '../../verify-rules-lock.mjs';
+
+const root='deliverables/remake31-200-v145-20260924/batches/lv051-060';
+const summaryFile=`${root}/summary.json`;
+const candidate=`${root}/rebuild58/enriched-1790264423906.json`;
+const stages=`${root}/root58/independent-check58-1790309156759.json`;
+const pointer=`${root}/pointer-playable58-1790309187457/report.json`;
+const waiver=fs.readdirSync(`${root}/root58`).filter(f=>/^user-exception58-\d+\.json$/.test(f)).sort().at(-1);
+if(!waiver)throw new Error('missing user exception report');
+const waiverFile=`${root}/root58/${waiver}`;
+const lock=verifyRulesLock();
+if(!lock.ok||lock.activeVersion!=='1.51.0')throw new Error('v1.51 lock required');
+const report=JSON.parse(fs.readFileSync(summaryFile));
+const row=report.rows.find(r=>r.id===58);if(!row)throw new Error('level58 row missing');
+const d=JSON.parse(fs.readFileSync(candidate)),s=JSON.parse(fs.readFileSync(stages)),p=JSON.parse(fs.readFileSync(pointer)),w=JSON.parse(fs.readFileSync(waiverFile));
+const levelSha256=digest(d.level),routeSha256=digest(d.drags),pr=p.rows.find(r=>r.id===58);
+if(s.levelSha256!==levelSha256||s.routeSha256!==routeSha256)throw new Error('stage hash mismatch');
+if(pr?.levelSha256!==levelSha256||pr.routeSha256!==routeSha256||p.status!=='PASS')throw new Error('pointer hash/status mismatch');
+if(w.status!=='PASS_USER_EXCEPTION_NO_FLOOR'||w.levelSha256!==levelSha256)throw new Error('waiver mismatch');
+Object.assign(row,{ruleVersion:lock.activeVersion,candidate, candidateSha256:digest(fs.readFileSync(candidate)),levelSha256,routeSha256,U:s.replay.nonClearingDrags,totalDrags:d.drags.length,L:null,status:'CANDIDATE_PASS_USER_EXCEPTION',source:'PASS',static:'PASS',native:'PASS',route:'PASS',floor:'WAIVED_BY_USER',decisions:'PASS',pointer:'PASS',stageCheck:stages,pointerReport:pointer,naturalElapsedSeconds:pr.naturalTimingReplay.activeTickSeconds,upperBoundRange:'WAIVED_BY_USER',rangeException:'User latest instruction waives the requirement to search/exclude routes below 11 for level 58; no L11 is claimed.',userException:{file:waiverFile,sha256:digest(fs.readFileSync(waiverFile)),status:w.status},latestProof:`${root}/root58/continued-proof-1790308482114.json`,lowerBoundCertified:false,missing:[],note:'Current v1.51 fresh stage and Pointer PASS. User explicitly removed the below-11 search requirement for level 58; this row is eligible by user exception and does not claim a lower-bound certificate.'});
+report.updatedAt=new Date().toISOString();report.ruleVersion=lock.activeVersion;report.rulesLock='PASS';report.candidatePass=report.rows.filter(r=>r.status==='CANDIDATE_PASS').map(r=>r.id);report.candidatePassUserException=report.rows.filter(r=>r.status==='CANDIDATE_PASS_USER_EXCEPTION').map(r=>r.id);report.formalEligible=report.rows.filter(r=>['CANDIDATE_PASS','CANDIDATE_PASS_USER_EXCEPTION'].includes(r.status)).map(r=>r.id);report.allTenComplete=false;report.formalAdopted=false;report.finalProductionPointerValidated=false;report.published=false;
+fs.writeFileSync(summaryFile,JSON.stringify(report,null,2)+'\n');
+console.log(JSON.stringify({file:summaryFile,ruleVersion:report.ruleVersion,candidatePass:report.candidatePass,candidatePassUserException:report.candidatePassUserException,formalEligible:report.formalEligible}));

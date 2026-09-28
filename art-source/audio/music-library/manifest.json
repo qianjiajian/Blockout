@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "batch": 1,
+  "encoding": {
+    "codec": "mp3",
+    "encoder": "libmp3lame",
+    "bitrateKbps": 160,
+    "sampleRate": 44100,
+    "channels": 2,
+    "writeXing": true,
+    "metadataStripped": true,
+    "videoAndCoverArtRemoved": true
+  },
+  "rightsNotice": "曲目来自用户提供的下载文件。发布前须逐首确认商业游戏授权并保留作者署名与来源链接；‘No Copyright’或‘Copyright Free’不等同于商业授权。",
+  "tracks": [
+    {
+      "id": "tides-smiles",
+      "title": "暖阳微风",
+      "artist": "Moavii",
+      "file": "[No Copyright Background Music] Happy Fun Feel Good Guitar ｜ Tides & Smiles by Moavii.mp3",
+      "runtimeFile": "assets/audio/music-library/tides-smiles.mp3",
+      "unlockLevel": 15,
+      "sourceFile": "art-source/audio/music-library/source/[No Copyright Background Music] Happy Fun Feel Good Guitar ｜ Tides & Smiles by Moavii.mp3",
+      "sourceBytes": 3193160,
+      "sourceSha256": "691e0ff21d78d6d822f5185a01ee7bdb8f671d358acb85479cd210b73cc035ad",
+      "runtimeBytes": 1575183,
+      "runtimeSha256": "bce63088fafb98b657b79901866f9bb89bf530cc94a79e03bb66ffc16ed8aacf",
+      "durationSeconds": 78.73,
+      "loop": {
+        "startSeconds": 0,
+        "endSeconds": 78.73
+      },
+      "attribution": "暖阳微风 by Moavii; source filename: [No Copyright Background Music] Happy Fun Feel Good Guitar ｜ Tides & Smiles by Moavii.mp3",
+      "rights": "USER_PROVIDED_NEEDS_COMMERCIAL_LICENSE_CONFIRMATION"
+    },
+    {
+      "id": "dreamscape",
+      "title": "梦境漫游",
+      "artist": "Roa",
+      "file": "Dreamscape – Pop Background Music ｜ Roa.mp3",
+      "runtimeFile": "assets/audio/music-library/dreamscape.mp3",
+      "unlockLevel": 30,
+      "sourceFile": "art-source/audio/music-library/source/Dreamscape – Pop Background Music ｜ Roa.mp3",
+      "sourceBytes": 7795224,
+      "sourceSha256": "9cc8636abdde6e721e70235d37dcfad7d300051df0f405cab56c70e7f302ea2a",
+      "runtimeBytes": 3829028,
+      "runtimeSha256": "e7ea0945a86a18106165561b6c8341827861ecdde8fe7ed4b76d96c6bbc141e1",
+      "durationSeconds": 191.43,
+      "loop": {
+        "startSeconds": 0,
+        "endSeconds": 191.43
+      },
+      "attribution": "梦境漫游 by Roa; source filename: Dreamscape – Pop Background Music ｜ Roa.mp3",
+      "rights": "USER_PROVIDED_NEEDS_COMMERCIAL_LICENSE_CONFIRMATION"
+    },
+    {
+      "id": "do-you-see-me",
+      "title": "霓虹节拍",
+      "artist": "Bass Rebels",
+      "file": "Melodic Uplifting EDM Copyright Free Music ｜ Do You See Me [Bass Rebels].mp3",
+      "runtimeFile": "assets/audio/music-library/do-you-see-me.mp3",
+      "unlockLevel": 45,
+      "sourceFile": "art-source/audio/music-library/source/Melodic Uplifting EDM Copyright Free Music ｜ Do You See Me [Bass Rebels].mp3",
+      "sourceBytes": 6777156,
+      "sourceSha256": "16d1e422a36fb65ea2c4a75e7a17368ccc5d03ad501db37e3b27322675e484c6",
+      "runtimeBytes": 3333747,
+      "runtimeSha256": "e14d4dfeff971b3f842b07283ed9d38fde2b23c80f9aa52c7e974ddf33971e5d",
+      "durationSeconds": 166.66,
+      "loop": {
+        "startSeconds": 0,
+        "endSeconds": 166.66
+      },
+      "attribution": "霓虹节拍 by Bass Rebels; source filename: Melodic Uplifting EDM Copyright Free Music ｜ Do You See Me [Bass Rebels].mp3",
+      "rights": "USER_PROVIDED_NEEDS_COMMERCIAL_LICENSE_CONFIRMATION"
+    },
+    {
+      "id": "smile",
+      "title": "欢乐漫步",
+      "artist": "Scandinavianz",
+      "file": "Smile – Happy Background Music ｜ Scandinavianz.mp3",
+      "runtimeFile": "assets/audio/music-library/smile.mp3",
+      "unlockLevel": 60,
+      "sourceFile": "art-source/audio/music-library/source/Smile – Happy Background Music ｜ Scandinavianz.mp3",
+      "sourceBytes": 6143428,
+      "sourceSha256": "cbe5a28033e4ce313c9f3c9f0905203e3e5279d3339cc68f60b0037fd7955155",
+      "runtimeBytes": 2964375,
+      "runtimeSha256": "71e33d2b919b6b16941d970f6054f9486881845c2c69acc6577e8d6d512ce15f",
+      "durationSeconds": 148.19,
+      "loop": {
+        "startSeconds": 0,
+        "endSeconds": 148.19
+      },
+      "attribution": "欢乐漫步 by Scandinavianz; source filename: Smile – Happy Background Music ｜ Scandinavianz.mp3",
+      "rights": "USER_PROVIDED_NEEDS_COMMERCIAL_LICENSE_CONFIRMATION"
+    },
+    {
+      "id": "splash",
+      "title": "海湾水花",
+      "artist": "Roa",
+      "file": "Splash – Roa (No Copyright Music).mp3",
+      "runtimeFile": "assets/audio/music-library/splash.mp3",
+      "unlockLevel": 75,
+      "sourceFile": "art-source/audio/music-library/source/Splash – Roa (No Copyright Music).mp3",
+      "sourceBytes": 8041349,
+      "sourceSha256": "3bde43eb830fb588762ba149abfa9bb744ca417e7d39280f25e321631a5caa7f",
+      "runtimeBytes": 3906351,
+      "runtimeSha256": "24c3e4a47d22ad78aff42c3b961d4cc4cbca1c8a0d65f8825053e5ceb4a2608c",
+      "durationSeconds": 195.29,
+      "loop": {
+        "startSeconds": 0,
+        "endSeconds": 195.29
+      },
+      "attribution": "海湾水花 by Roa; source filename: Splash – Roa (No Copyright Music).mp3",
+      "rights": "USER_PROVIDED_NEEDS_COMMERCIAL_LICENSE_CONFIRMATION"
+    }
+  ]
+}

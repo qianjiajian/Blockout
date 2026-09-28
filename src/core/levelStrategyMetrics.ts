@@ -1,4 +1,5 @@
-import type { LevelSpec, Point } from "./types";
+import { shutterHasPhysicalFootprint, type LevelSpec, type Point } from "./types";
+import { gateCoversExitFrontier } from "./blockExitFrontier";
 
 const pointKey = (x: number, y: number): string => `${x},${y}`;
 
@@ -10,14 +11,7 @@ const placementFitsGate = (
   y: number,
 ): boolean => {
   const cells = block.shape.map(([dx, dy]) => [x + dx, y + dy] as const);
-  const minX = Math.min(...cells.map(([cellX]) => cellX));
-  const maxX = Math.max(...cells.map(([cellX]) => cellX));
-  const minY = Math.min(...cells.map(([, cellY]) => cellY));
-  const maxY = Math.max(...cells.map(([, cellY]) => cellY));
-  if (gate.side === "top") return minY === 0 && minX >= gate.offset && maxX < gate.offset + gate.size;
-  if (gate.side === "bottom") return maxY === level.height - 1 && minX >= gate.offset && maxX < gate.offset + gate.size;
-  if (gate.side === "left") return minX === 0 && minY >= gate.offset && maxY < gate.offset + gate.size;
-  return maxX === level.width - 1 && minY >= gate.offset && maxY < gate.offset + gate.size;
+  return gateCoversExitFrontier(level, cells, gate);
 };
 
 const placementTouchesGateMouth = (
@@ -47,7 +41,7 @@ const activeBlocks = (level: LevelSpec): LevelSpec["blocks"] => {
 const closedShutterCells = (level: LevelSpec): Set<string> => {
   const cells = new Set<string>();
   for (const shutter of level.shutters ?? []) {
-    if (shutter.count <= 0) continue;
+    if (!shutterHasPhysicalFootprint(shutter)) continue;
     for (let y = shutter.y; y < shutter.y + shutter.height; y += 1) {
       for (let x = shutter.x; x < shutter.x + shutter.width; x += 1) cells.add(pointKey(x, y));
     }

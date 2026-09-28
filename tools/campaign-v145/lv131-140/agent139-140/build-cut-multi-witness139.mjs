@@ -1,0 +1,12 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';
+const root='tools/campaign-v145/lv131-140/agent139-140/';
+let cs=fs.readFileSync(root+'native-cut-witness139.cs','utf8');
+assert(cs.includes('public int target,weight;'));cs=cs.replace('public int target,weight;','public int target,weight;public int[] forbiddenMoves;').replace('if(at!=start){pending=','if(at!=start&&Array.IndexOf(input.forbiddenMoves,i)<0){pending=');
+fs.writeFileSync(root+'native-cut-multi-witness139.cs',cs,{flag:'wx'});
+let js=fs.readFileSync(root+'native-cut-witness139.mjs','utf8').replaceAll('native-cut-witness139','native-cut-multi-witness139');
+const marker='const cache=new Map();const groups=new Map();';
+assert(js.includes(marker));js=js.replace(marker,`const cache=new Map();const immobile=b=>b.layers[0]!==color&&b.shape.length===1&&!(b.initial%c.W<2&&Math.floor(b.initial/c.W)>=1&&Math.floor(b.initial/c.W)<=7);p.forbiddenMoves=c.blocks.map((b,i)=>immobile(b)?i:-1).filter(i=>i>=0);const groups=new Map();`);
+js=js.replace('shape:b.shape,purple,axis:', 'shape:b.shape,purple,immobile:immobile(b),axis:');
+fs.writeFileSync(root+'native-cut-multi-witness139.mjs',js,{flag:'wx'});
+let driver=fs.readFileSync(root+'solve-cut-witness139.mjs','utf8').replace("'./native-cut-witness139.mjs'","'./native-cut-multi-witness139.mjs'").replace("'/cut-witness-solve139-'","'/cut-multi-witness-solve139-'");
+fs.writeFileSync(root+'solve-cut-multi-witness139.mjs',driver,{flag:'wx'});

@@ -11,7 +11,7 @@ const expected = [
   "04-achievements.png",
   "05-result.png",
   "06-onboarding.png",
-  "07-daily-challenge.png",
+  "07-home-progress.png",
   "08-mechanic-ice.png",
   "09-mechanic-layer.png",
   "10-mechanic-generator.png",

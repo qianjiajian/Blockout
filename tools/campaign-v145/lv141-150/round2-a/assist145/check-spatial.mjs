@@ -1,0 +1,2 @@
+import fs from'node:fs';import{api,digest}from'../common.mjs';import{floor145,project,save}from'./floor145.mjs';
+const input=process.argv[2],d=JSON.parse(fs.readFileSync(input)),replay=api.replayRevisedRoute(project(d.level),d.drags),proof=floor145(d.level,{prefix:false,maxMilliseconds:5000,maxStates:700000});console.log(JSON.stringify({file:save('checked145',{...d,replay,proof,levelSha256:digest(d.level),sourceCandidate:input}),replay,proof}));

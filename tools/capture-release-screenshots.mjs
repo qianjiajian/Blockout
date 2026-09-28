@@ -1,4 +1,4 @@
-import { access, copyFile, mkdir } from "node:fs/promises";
+import { access, copyFile, mkdir, rm } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { resolve } from "node:path";
 import { chromium } from "playwright";
@@ -11,27 +11,31 @@ const releaseNames = [
   "01-home.png",
   "02-gameplay.png",
   "03-level-select.png",
-  "03-levels.png",
   "04-achievements.png",
   "05-result.png",
   "06-onboarding.png",
-  "07-daily-challenge.png",
+  "07-home-progress.png",
   "08-mechanic-ice.png",
   "09-mechanic-layer.png",
-  "10-mechanic-shutter.png",
+  "10-mechanic-generator.png",
 ];
-const updateId = "2026-09-04-r76";
 
 await mkdir(archive, { recursive: true });
-for (const name of releaseNames) {
+for (const name of [...releaseNames, "07-daily-challenge.png"]) {
   const source = resolve(output, name);
   const destination = resolve(archive, name);
+  try {
+    await access(source);
+  } catch {
+    continue;
+  }
   try {
     await access(destination);
   } catch {
     await copyFile(source, destination);
   }
 }
+await rm(resolve(output, "07-daily-challenge.png"), { force: true });
 
 const completed = (count) => Array.from({ length: count }, (_, index) => index + 1);
 const stars = (count) => Object.fromEntries(completed(count).map((id) => [String(id), 3]));
@@ -45,13 +49,14 @@ const makeSave = ({ currentLevel = 1, highestLevel = currentLevel, completedCoun
   haptic: false,
   reducedMotion: true,
   featureSeen: featureSeen ?? ["basics", "ice-door", "ice-block", "layer", "shutter", "generator", "elevator", "conveyor", "star"],
+  boosterUnlockSeen: ["time", "rocket", "pulse"],
   boosters: { time: 3, rocket: 3, pulse: 3 },
   bestStars: stars(completedCount),
   bestMoves: moves(completedCount),
   rewardedLevels: completed(completedCount),
   dailyStreak: 4,
   lastDailyCompletedDay: "",
-  lastSeenUpdate: updateId,
+  lastSeenUpdate: "",
 });
 
 const browser = await chromium.launch({ headless: true });
@@ -64,20 +69,30 @@ const scale = Math.min(720 / 496, 1584 / 1078);
 const offsetX = (720 - 496 * scale) / 2;
 const offsetY = (1584 - 1078 * scale) / 2;
 const toPage = ({ x, y }) => ({ x: offsetX + x * scale, y: offsetY + y * scale });
-const click = async (x, y) => {
-  const point = toPage({ x, y });
-  await page.mouse.click(point.x, point.y);
+const clickTarget = async (name) => {
+  const current = await state();
+  const hit = current.interactionTargets?.targets?.[name]?.hit;
+  const bounds = await page.locator("canvas").boundingBox();
+  if (!hit || !bounds) throw new Error(`Release capture: missing ${name} interaction target`);
+  await page.mouse.click(
+    bounds.x + current.viewportTransform.offsetX + (hit.x + hit.width / 2) * current.viewportTransform.scale,
+    bounds.y + current.viewportTransform.offsetY + (hit.y + hit.height / 2) * current.viewportTransform.scale,
+  );
 };
 const openWithSave = async (save) => {
   await page.goto(playtestUrl, { waitUntil: "networkidle" });
-  await page.evaluate((value) => localStorage.setItem("color-escape-save-v1", JSON.stringify(value)), save);
+  const currentUpdateId = await page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState().updateNotice.id);
+  await page.evaluate((value) => localStorage.setItem("color-escape-save-v1", JSON.stringify(value)), {
+    ...save,
+    lastSeenUpdate: currentUpdateId,
+  });
   await page.reload({ waitUntil: "networkidle" });
   await page.waitForFunction(() => window.__COLOR_ESCAPE__?.getDebugState().art.ready, undefined, { timeout: 5_000 });
   await page.waitForTimeout(40);
 };
 const capture = async (name) => page.screenshot({ path: resolve(output, name) });
 
-// 01: clean first-session home, with current ImageGen main-screen composition.
+// 01: clean first-session home, with the current formal bitmap composition.
 await openWithSave(makeSave({ currentLevel: 1, highestLevel: 1, completedCount: 0, coins: 1000, featureSeen: [] }));
 await capture("01-home.png");
 
@@ -89,12 +104,20 @@ await capture("02-gameplay.png");
 
 // 03/04: fully unlocked season pages demonstrate 100 levels and 300 stars.
 await openWithSave(makeSave({ currentLevel: 100, highestLevel: 100, completedCount: 100 }));
-await click(347, 1035);
-if ((await state()).screen !== "levels") throw new Error("Release capture: level select did not open");
+await clickTarget("navigation.3");
+await page.waitForFunction(() => {
+  const current = window.__COLOR_ESCAPE__?.getDebugState();
+  return current?.screen === "levels" && !current.navigation.transition
+    && current.art.formalPage.loaded === "levels" && !current.art.formalPage.error;
+});
 await capture("03-level-select.png");
 await openWithSave(makeSave({ currentLevel: 100, highestLevel: 100, completedCount: 100 }));
-await click(446, 1035);
-if ((await state()).screen !== "records") throw new Error("Release capture: achievements did not open");
+await clickTarget("navigation.4");
+await page.waitForFunction(() => {
+  const current = window.__COLOR_ESCAPE__?.getDebugState();
+  return current?.screen === "records" && !current.navigation.transition
+    && current.art.formalPage.loaded === "records" && !current.art.formalPage.error;
+});
 await capture("04-achievements.png");
 
 // 05: naturally solve Level 5 so the store result shows fair stars/reward copy.
@@ -145,14 +168,19 @@ await capture("05-result.png");
 
 // 06: current route-synchronized first-move hand.
 await openWithSave(makeSave({ currentLevel: 1, highestLevel: 1, completedCount: 0, coins: 1000, featureSeen: [] }));
-await click(248, 812);
+await clickTarget("homePlay");
 await page.waitForTimeout(260);
-if (!(await state()).onboarding.guide) throw new Error("Release capture: onboarding guide is missing");
+if (!(await state()).onboarding.guide) {
+  throw new Error("Release capture: current Level 1 route has no synchronized onboarding guide");
+}
 await capture("06-onboarding.png");
 
-// 07: unlocked daily challenge entrance with live selected level and streak.
+// 07: progressed Home without the retired Daily task entry.
 await openWithSave(makeSave({ currentLevel: 22, highestLevel: 22, completedCount: 21 }));
-await capture("07-daily-challenge.png");
+if ((await state()).interactionTargets.targets.homeDaily) {
+  throw new Error("Release capture: retired Daily task still exposes a Home target");
+}
+await capture("07-home-progress.png");
 
 const captureFeature = async (levelId, name) => {
   const level = await page.evaluate(async (id) => {
@@ -163,7 +191,7 @@ const captureFeature = async (levelId, name) => {
   const seen = ["basics", "ice-door", "ice-block", "layer", "shutter", "generator", "elevator", "conveyor", "star"]
     .filter((kind) => kind !== level.featureIntro.kind);
   await openWithSave(makeSave({ currentLevel: levelId, highestLevel: levelId, completedCount: levelId - 1, featureSeen: seen }));
-  await click(248, 812);
+  await clickTarget("homePlay");
   await page.waitForTimeout(180);
   const current = await state();
   if (current.screen !== "feature" || current.level.featureIntro.kind !== level.featureIntro.kind) {
@@ -172,8 +200,19 @@ const captureFeature = async (levelId, name) => {
   await capture(name);
 };
 
+const captureGameplay = async (levelId, name) => {
+  await openWithSave(makeSave({ currentLevel: levelId, highestLevel: levelId, completedCount: levelId - 1 }));
+  await clickTarget("homePlay");
+  await page.waitForTimeout(180);
+  const current = await state();
+  if (current.screen !== "playing" || current.level.id !== levelId) {
+    throw new Error(`Release capture: Level ${levelId} gameplay did not open`);
+  }
+  await capture(name);
+};
+
 await captureFeature(6, "08-mechanic-ice.png");
-await captureFeature(8, "09-mechanic-layer.png");
+await captureGameplay(15, "09-mechanic-layer.png");
 await captureFeature(35, "10-mechanic-generator.png");
 
 await page.close();

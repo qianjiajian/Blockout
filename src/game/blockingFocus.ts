@@ -1,5 +1,6 @@
 import type { BlockState, PuzzleSnapshot } from "../core/types";
 import type { ContinuousPose } from "./continuousDrag";
+import { isMechanismBlockVisible } from "./revisedMechanismPresentation";
 
 const CONTACT_EPSILON = 1e-3;
 const CONTACT_PROBE = 0.12;
@@ -18,8 +19,7 @@ const overlapsCell = (
 
 const isVisibleMovableBlock = (snapshot: PuzzleSnapshot, block: BlockState): boolean => {
   if (block.frozen > 0) return false;
-  if (!block.shutterId) return true;
-  return !snapshot.shutters.some((shutter) => shutter.id === block.shutterId && shutter.count > 0);
+  return isMechanismBlockVisible(snapshot, block);
 };
 
 /**

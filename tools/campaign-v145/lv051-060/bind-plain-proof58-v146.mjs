@@ -1,0 +1,18 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import {build} from 'esbuild';
+import {loadApi} from '../../native-block-repair-v143.mjs';
+import {digest} from '../../revised-preview-validation-v160.mjs';
+import {verifyRulesLock} from '../../verify-rules-lock.mjs';
+const reportFile=process.argv[2],r=JSON.parse(fs.readFileSync(reportFile)),candidate=JSON.parse(fs.readFileSync(r.candidate));
+assert.equal(digest(candidate.level),r.levelSha256);assert.equal(digest(candidate.drags),r.routeSha256);
+const entry='tools/campaign-v145/lv051-060/generator-plain-clear-floor58-v146.mjs',lock=verifyRulesLock();assert(lock.ok);
+const {inputs}=await loadApi(),bundle=await build({entryPoints:[entry],bundle:true,write:false,platform:'node',format:'esm',metafile:true,packages:'external',logLevel:'silent'});
+const runStartedAt=process.env.RUN_STARTED_AT??null,start=runStartedAt?Date.parse(runStartedAt):null;
+const paths=[...new Set([...Object.keys(bundle.metafile.inputs),...inputs,process.argv[1],reportFile,r.candidate,candidate.sourceReview,'tests/campaign-v145/lv051-060/generator-plain-clear-floor58-v146.test.mjs','docs/rules/manifest.json','docs/mechanism-rules-v1.47.0.md','deliverables/remake31-200-v145-20260924/baseline.json'].map(p=>(path.isAbsolute(p)?path.relative(process.cwd(),p):p).replaceAll('\\','/')))].sort();
+const bindings=Object.fromEntries(paths.map(p=>[p,{sha256:digest(fs.readFileSync(p)),modifiedAt:fs.statSync(p).mtime.toISOString(),mtimePrecedesRunStart:start===null?null:fs.statSync(p).mtimeMs<=start}]));
+const changedSinceStart=start===null?[]:paths.filter(p=>!bindings[p].mtimePrecedesRunStart&&!p.startsWith('deliverables/')&&!p.endsWith('/bind-plain-proof58-v146.mjs'));
+const out=reportFile.replace(/[^/]+$/,`plain-queue-bindings58-${Date.now()}.json`);
+fs.writeFileSync(out,JSON.stringify({schema:'after-run-independent-binding-supplement',collectedAt:new Date().toISOString(),ruleVersion:lock.activeVersion,reportFile,reportSha256:digest(fs.readFileSync(reportFile)),levelSha256:r.levelSha256,routeSha256:r.routeSha256,runStartedAt,bindings,changedSinceStart,qualification:'Hashes were collected after the run. Modification times are supplementary evidence, not a pre-run cryptographic capture. No old report or certificate was relabeled.',proofStatus:r.proof.status,thresholdProven:r.proof.thresholdProven,projectionValid:r.projection.valid,formalAdopted:false},null,2)+'\n',{flag:'wx'});
+console.log(JSON.stringify({out,bindings:paths.length,changedSinceStart,status:r.proof.status,projection:r.projection.valid}));

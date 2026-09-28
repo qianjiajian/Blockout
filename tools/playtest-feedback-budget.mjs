@@ -111,6 +111,16 @@ const fixtures = await page.evaluate(async () => {
 });
 
 const debug = () => page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
+const clickInteractionTarget = async (name) => {
+  const state = await debug();
+  const hit = state.interactionTargets?.targets?.[name]?.hit;
+  const canvas = await page.locator("canvas").boundingBox();
+  if (!hit || !canvas) throw new Error(`Feedback-budget E2E: missing ${name} target or canvas bounds`);
+  await page.mouse.click(
+    canvas.x + state.viewportTransform.offsetX + (hit.x + hit.width / 2) * state.viewportTransform.scale,
+    canvas.y + state.viewportTransform.offsetY + (hit.y + hit.height / 2) * state.viewportTransform.scale,
+  );
+};
 const resetProbe = () => page.evaluate(() => {
   window.__FEEDBACK_PROBE__.tones.length = 0;
   window.__FEEDBACK_PROBE__.vibrations.length = 0;
@@ -133,12 +143,19 @@ const openFixture = async (fixture) => {
 };
 const gaps = (events) => events.slice(1).map((event, index) => event.at - events[index].at);
 
-// Cross the same legal grid boundary at 40 Hz. A move tone should stay near
-// the 90 ms design budget rather than following every candidate transition.
+// Selection and movement remain silent. A gesture that crossed the drag dead
+// zone emits exactly one putdown cue when the pointer is released.
 let { state, block } = await openFixture(fixtures.oscillation);
 let start = logicalPoint(state, block);
 await page.mouse.move(start.x, start.y);
+await resetProbe();
 await page.mouse.down();
+await page.waitForTimeout(30);
+const selectionProbe = await probe();
+const selectionTones = selectionProbe.tones.filter((event) => Math.round(event.frequency) === 540);
+if (selectionTones.length !== 0) {
+  throw new Error(`Feedback-budget E2E: block selection emitted ${selectionTones.length} cancelled tones`);
+}
 await resetProbe();
 for (let cycle = 0; cycle < 18; cycle += 1) {
   let target = logicalPoint(state, block, block.x + fixtures.oscillation.dx, block.y + fixtures.oscillation.dy);
@@ -152,17 +169,34 @@ await page.mouse.up();
 await page.waitForTimeout(120);
 const moveProbe = await probe();
 const moveTones = moveProbe.tones.filter((event) => Math.round(event.frequency) === 520);
-const moveGaps = gaps(moveTones);
-if (moveTones.length < 5 || moveTones.length > 20 || moveTones.length >= 36 * 0.6
-  || moveGaps.some((gap) => gap < 65)) {
-  throw new Error(`Feedback-budget E2E: 90ms move budget failed ${JSON.stringify({ count: moveTones.length, moveGaps })}`);
+const putdownTones = moveProbe.tones.filter((event) => Math.round(event.frequency) === 120);
+if (moveTones.length !== 0) {
+  throw new Error(`Feedback-budget E2E: dragging emitted ${moveTones.length} cancelled tones`);
+}
+if (putdownTones.length !== 1) {
+  throw new Error(`Feedback-budget E2E: drag release emitted ${putdownTones.length} putdown cues instead of one`);
 }
 if (moveProbe.vibrations.length !== 0) {
   throw new Error("Feedback-budget E2E: ordinary grid movement emitted repeated haptics");
 }
 
-// Drive into a wall at 40 Hz for over a second. Blocked feedback should remain
-// perceptible but must not create an oscillator/vibration for every sample.
+// A plain tap selects and releases without moving, so it must not sound like a
+// block was put down.
+({ state, block } = await openFixture(fixtures.oscillation));
+start = logicalPoint(state, block);
+await page.mouse.move(start.x, start.y);
+await resetProbe();
+await page.mouse.down();
+await page.mouse.up();
+await page.waitForTimeout(80);
+const tapProbe = await probe();
+const tapPutdownTones = tapProbe.tones.filter((event) => Math.round(event.frequency) === 120);
+if (tapPutdownTones.length !== 0) {
+  throw new Error(`Feedback-budget E2E: tap-only selection emitted ${tapPutdownTones.length} putdown cues`);
+}
+
+// Drive into a wall at 40 Hz for over a second. Collision audio is silent while
+// the optional haptic cue retains its existing fatigue-safe cadence.
 ({ state, block } = await openFixture(fixtures.blocked));
 start = logicalPoint(state, block);
 await page.mouse.move(start.x, start.y);
@@ -181,16 +215,22 @@ for (let frame = 0; frame < 48; frame += 1) {
 }
 const blockedProbe = await probe();
 const blockedTones = blockedProbe.tones.filter((event) => Math.round(event.frequency) === 140);
-const blockedGaps = gaps(blockedTones);
-if (blockedTones.length < 3 || blockedTones.length > 14 || blockedTones.length >= 48 * 0.35
-  || blockedGaps.some((gap) => gap < 170)) {
-  throw new Error(`Feedback-budget E2E: 220ms blocked budget failed ${JSON.stringify({ count: blockedTones.length, blockedGaps })}`);
+const hapticGaps = gaps(blockedProbe.vibrations);
+if (blockedTones.length !== 0) {
+  throw new Error(`Feedback-budget E2E: collision emitted ${blockedTones.length} cancelled tones`);
 }
-if (blockedProbe.vibrations.length !== blockedTones.length) {
-  throw new Error(`Feedback-budget E2E: blocked tone/haptic cadence diverged ${blockedTones.length}/${blockedProbe.vibrations.length}`);
+if (blockedProbe.vibrations.length < 3 || blockedProbe.vibrations.length > 14
+  || hapticGaps.some((gap) => gap < 170)) {
+  throw new Error(`Feedback-budget E2E: collision haptic budget failed ${JSON.stringify({ count: blockedProbe.vibrations.length, hapticGaps })}`);
 }
 await page.screenshot({ path: resolve(output, "01-wall-pressure-feedback-496x1078.png") });
 await page.mouse.up();
+
+// Initialize audio with a retained UI button before exercising lifecycle.
+await clickInteractionTarget("pause");
+await page.waitForTimeout(30);
+await clickInteractionTarget("pauseResume");
+await page.waitForTimeout(30);
 
 // Backgrounding suspends audio and pauses the game. The first resumed button
 // sound should resume the same context rather than creating a stuck silent UI.
@@ -210,7 +250,7 @@ await page.evaluate(() => {
   Object.defineProperty(document, "visibilityState", { configurable: true, value: "visible" });
   document.dispatchEvent(new Event("visibilitychange"));
 });
-await page.mouse.click(248, 721);
+await clickInteractionTarget("pauseResume");
 await page.waitForTimeout(30);
 state = await debug();
 lifecycleProbe = await probe();
@@ -220,12 +260,14 @@ if (state.screen !== "playing" || lifecycleProbe.resumes !== 1) {
 
 const report = {
   fixtures,
-  move: { tones: moveTones.length, minimumGapMs: Math.min(...moveGaps), haptics: moveProbe.vibrations.length },
-  blocked: { tones: blockedTones.length, minimumGapMs: Math.min(...blockedGaps), haptics: blockedProbe.vibrations.length },
+  selection: { tones: selectionTones.length, haptics: selectionProbe.vibrations.length },
+  move: { tones: moveTones.length, putdownTones: putdownTones.length, haptics: moveProbe.vibrations.length },
+  tap: { putdownTones: tapPutdownTones.length },
+  collision: { tones: blockedTones.length, haptics: blockedProbe.vibrations.length, minimumHapticGapMs: Math.min(...hapticGaps) },
   lifecycle: { suspends: lifecycleProbe.suspends, resumes: lifecycleProbe.resumes },
   browserErrors: errors,
 };
 await writeFile(resolve(output, "feedback-budget-report.json"), `${JSON.stringify(report, null, 2)}\n`, "utf8");
 await browser.close();
 if (errors.length) throw new Error(`Feedback-budget browser errors:\n${errors.join("\n")}`);
-console.log(`Feedback budgets passed: move ${moveTones.length} tones, blocked ${blockedTones.length} tone/haptic pairs, lifecycle suspend/resume.`);
+console.log(`Feedback budgets passed: selection, drag motion and collision remain silent; drag release emits one putdown cue, tap emits none.`);

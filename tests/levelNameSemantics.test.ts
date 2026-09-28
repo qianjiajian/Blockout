@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { LEVELS } from "../src/core/levels";
 import type { LevelSpec } from "../src/core/types";
 
+const VIDEO_PARITY_LEVELS_1_TO_100 = LEVELS.slice(0, 100);
+
 type MechanicRule = {
   label: string;
   pattern: RegExp;
@@ -12,12 +14,15 @@ const rules: MechanicRule[] = [
   {
     label: "卷帘",
     pattern: /卷帘|帘/,
-    present: (level) => level.shutters?.some((shutter) => shutter.skin !== "generator") ?? false,
+    present: (level) => level.shutters?.some((shutter) => (
+      shutter.skin === undefined || shutter.skin === "shutter"
+    )) ?? false,
   },
   {
     label: "生成器",
     pattern: /生成/,
-    present: (level) => level.shutters?.some((shutter) => shutter.skin === "generator") ?? false,
+    present: (level) => Boolean(level.generators?.length)
+      || (level.shutters?.some((shutter) => shutter.skin === "generator") ?? false),
   },
   {
     label: "升降台",
@@ -35,7 +40,7 @@ const rules: MechanicRule[] = [
     present: (level) => level.blocks.some((block) => block.star) || level.gates.some((gate) => gate.star),
   },
   {
-    label: "多层外壳",
+    label: "单层外壳",
     pattern: /外壳|壳后|双色|多层|三层|双层/,
     present: (level) => level.blocks.some((block) => (block.layers?.length ?? 1) > 1),
   },
@@ -43,15 +48,16 @@ const rules: MechanicRule[] = [
 
 describe("player-facing level-name semantics", () => {
   it.each(rules)("only promises $label when that mechanic exists", ({ pattern, present }) => {
-    const mismatches = LEVELS.filter((level) => pattern.test(level.name) && !present(level));
+    const mismatches = VIDEO_PARITY_LEVELS_1_TO_100.filter((level) => pattern.test(level.name) && !present(level));
     expect(mismatches.map((level) => `Lv${level.id} ${level.name}`)).toEqual([]);
   });
 
   it("names every mechanic-introduction stage after the mechanic it teaches", () => {
     const expected = new Map<number, RegExp>([
-      [6, /冰块/],
-      [7, /冰门/],
-      [8, /外壳/],
+      [6, /冰门/],
+      [10, /冰块|冰核/],
+      [15, /外壳/],
+      [34, /闸|遮罩|帘/],
       [35, /生成/],
       [50, /升降/],
       [70, /传送/],
@@ -66,5 +72,9 @@ describe("player-facing level-name semantics", () => {
       name: LEVELS[id - 1].name,
       matches: true,
     })));
+  });
+
+  it("does not promise three or more clear stages in a level name", () => {
+    expect(VIDEO_PARITY_LEVELS_1_TO_100.filter((level) => /(?:三|四|五|六|七|八|九|十)层/.test(level.name)).map((level) => level.name)).toEqual([]);
   });
 });

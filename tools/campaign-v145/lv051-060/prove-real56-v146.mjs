@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+import {search}from './campaign-generator-axis-search-v146.mjs';
+import {digest}from '../../revised-preview-validation-v160.mjs';
+import {loadApi}from '../../remake21to30-v120.mjs';
+const file=process.argv[2],d=JSON.parse(fs.readFileSync(file));
+const {api}=await loadApi();
+const result=search(d.level,{floor:16,maxStates:3000000,maxMilliseconds:180000,weight:Number(process.env.WEIGHT??0)});
+const exhausted=result.status==='unknown'&&result.stop===undefined;
+const replay=result.status==='witness'?api.replayRevisedRoute(d.level,result.drags):undefined;
+const report={ruleVersion:'1.47.0',sourceFile:file,levelSha256:digest(d.level),threshold:16,status:exhausted?'exact-graph-exhausted-awaiting-independent-proof-review':result.status,thresholdProven:false,qualifiedForFinal:false,result,replay,exhausted,notes:'Construction diagnostic using qualified real automatic-spawn axis gesture enumerator. No PASS label until independent proof review of exhaustive queue and state representation.',bindings:{search:digest(fs.readFileSync('tools/campaign-v145/lv051-060/campaign-generator-axis-search-v146.mjs')),tool:digest(fs.readFileSync(process.argv[1]))}};
+const out=`deliverables/remake31-200-v145-20260924/batches/lv051-060/agent55-57/exact-real56-${Date.now()}.json`;
+fs.writeFileSync(out,JSON.stringify(report,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify({out,status:report.status,states:result.states,cost:result.cost,stop:result.stop,replayValid:replay?.valid}));

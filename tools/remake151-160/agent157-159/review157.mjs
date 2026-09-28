@@ -1,0 +1,29 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {api,save,digest,guard} from './common.mjs';
+import {audit} from '../common.mjs';
+import {measureRoute} from '../../remake21to30-quality.mjs';
+import {isGlobalIsometry} from '../../layout-originality-v140.mjs';
+guard();
+const dir='deliverables/remake151-160-20260927/agent157-159';
+const file=dir+'/candidate157-1790516358776.json',data=JSON.parse(fs.readFileSync(file));
+const proofFile=fs.readdirSync(dir).filter(n=>n.startsWith('floor157-')).map(n=>dir+'/'+n).find(p=>JSON.parse(fs.readFileSync(p)).candidate===file);
+const proof=JSON.parse(fs.readFileSync(proofFile));assert(proof.result.thresholdProven);
+const frames=[601,602,603,604,635,636,656,658,667,673,678,681,684,687].map(n=>`.codex-temp/video-audit-135-169/149-161/samples1s/sec-${String(n).padStart(5,'0')}.jpg`);
+const source={level:157,sourceVideo:'C:/Users/Administrator/Desktop/block out/参考视频/149-161.mp4',frameSeconds:frames.map(p=>Number(p.match(/sec-(\d+)/)[1])),opening:{second:602,status:'pristine',width:6,height:11,mask:['######','######','######','######','.####.','.####.','.####.','######','######','######','######'],blocks:[['o0',0,0,'S','red'],['o1',1,0,'S','yellow'],['o2',2,0,'S','red'],['o3',3,0,'S','yellow'],['o4',4,0,'V2','red',{layers:['red','yellow']}],['o5',5,0,'V2','cyan'],['o6',0,1,'S','yellow'],['o7',1,1,'S','red'],['o8',2,1,'S','yellow'],['o9',3,1,'S','lime',{lockCount:1,keyGroup:'gold'}],['o10',0,2,'H2','blue'],['o11',2,2,'V2','purple'],['o12',3,2,'V2','green'],['o13',4,2,'SQ2','yellow'],['o14',0,3,'H2','yellow']]},
+ hidden:[{coverCount:10,region:[1,4,4,3],firstVisible:635,blocks:[['h10-0',1,4,'H2','lime'],['h10-1',3,4,'H2','yellow'],['h10-2',1,5,'V2','cyan'],['h10-3',2,5,'H2','red'],['h10-4',2,5,[[2,0],[0,1],[1,1],[2,1]],'green',{layers:['green','red']}]],coverage:12},{coverCount:14,region:[0,7,6,4],firstReviewed:656,blocks:[['h14-0',0,7,'H2','red'],['h14-1',2,7,[[0,0],[1,0],[0,1]],'red'],['h14-2',4,7,'H2','green'],['h14-3',0,8,'H2','green'],['h14-4',4,8,'H2','yellow'],['h14-5',0,9,'H2','red',{keyGroup:'gold'}],['h14-6',2,9,[[1,0],[0,1],[1,1]],'blue'],['h14-7',4,9,'H2','cyan'],['h14-8',0,10,'H2','lime'],['h14-9',4,10,'H2','blue']],coverage:22,internalWalls:[[3,8],[2,9]],wallConfirmation:[673,678,681]}],
+ gates:[['yellow','top',0,2,0],['red','right',2,2,0],['cyan','top',3,3,4],['lime','left',7,2,14],['blue','right',7,2,14],['purple','left',9,2,20],['green','right',9,2,20]],
+ inventory:{openingBodies:15,fullBodies:30,shells:2,keys:1,locks:[1],blockIce:[],frozenGates:[4,14,14,20,20],curtains:[10,14],generators:0,lifts:0,flipDoors:0,bombs:0,axis:0,starBlocks:0,coloredGrids:0,irregularBodies:3},
+ completionFrames:[684,687],observationalScope:'Full 157 playback sampled opening, both reveals, later clear region and completion; no unseen later inventory assumed',bindings:Object.fromEntries(frames.map(p=>[p,digest(fs.readFileSync(p))]))};
+const sourceFile=save('source157-reviewed',source);
+const replay=api.replayRevisedRoute(data.level,data.drags);assert(replay.valid&&replay.complete);const check=audit(data.level);assert(check.passed);const measurements=measureRoute(data.level,data.drags,api);assert(measurements.multiCellDrags>measurements.singleCellDrags);
+const baseline=JSON.parse(fs.readFileSync('deliverables/remake151-160-20260927/baseline.json')).levels[156];assert(!isGlobalIsometry(baseline.level,data.level));
+const sourceReview={passed:true,reviewScope:'Video source inventory and documented authored adaptation; not independent gameplay acceptance',sourceFile,bindings:{...source.bindings,[sourceFile]:digest(fs.readFileSync(sourceFile))},knownInventory:source.inventory,adaptations:[
+ 'The source mask has 60 nominal cells and two internal wall cells. Retain current formal 64-cell geometry; no internal walls; both added stage cells are real block footprints.',
+ 'Opening 15 bodies/24 source cells become 15 bodies/28 formal cells. Current design uses six S, eight dominoes, one 3x2 block. Both shell instances, lock and hidden key association survive.',
+ 'Cover10 remains count10/area12/5 bodies, relocated to6x2. Unavailable whole-art L4 shell changes to SQ2 shell; ordinary H2 pair becomes L3+S, preserving total3 irregular bodies.',
+ 'Cover14 remains count14/6x4/10 bodies. Two source internal walls replaced by extending two H2 to H3. Both source L3 map native upright L3.',
+ 'All seven gate colors remain mapped: source lime to pink. Gate placements and colors of bodies/layers are authored under v1.102; original colors above remain observed evidence. Ice values and all cover/key/shell counts preserved.',
+ 'No late inventory omitted: inspected source through completion. No source copying or geometric isometry claimed.'
+ ],expectedInventory:{bodies:30,opening:15,hidden:[5,10],shells:2,keyGroups:[{key:'r102-157-key',keys:1,lockedBodies:1,lockCount:1}],frozenGates:[4,14,14,20,20],covers:[10,14],irregularBodies:3}};
+const p=save('candidate157-reviewed',{...data,audit:check,sourceReview,proof:proof.result,proofReference:{file:proofFile,sha256:digest(fs.readFileSync(proofFile)),projection:'No flips exist; v1.5->v1.4 profile-only bridge with full inventory; optional exit/sweep relaxation is optimistic',qualification:'deliverables/remake151-160-20260927/bridge-qualification-1790516145338-60024.json'},measurements,replay,lowerBound:11,upperBound:replay.nonClearingDrags,originality:{globalIsometryToFormalBaseline:false},generationBudgetCorrection:{search:{maxStates:35000,maxMilliseconds:1500,maxTransitions:500000},floor:{maxStates:120000,maxMilliseconds:2000},note:'This corrects inherited draft budget metadata; actual author157 callsite and search results are retained.'},sourceDraft:file,adoptionReady:false,pointerValidated:false,naturalClockValidated:false});console.log(JSON.stringify({p,proofFile,sourceFile,L:11,U:replay.nonClearingDrags,moves:replay.effectiveDrags,auditPassed:check.passed}));

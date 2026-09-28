@@ -1,0 +1,13 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {loadApi} from '../native-block-repair-v143.mjs';
+import {digest} from '../revised-preview-validation-v160.mjs';
+import {verifyRulesLock} from '../verify-rules-lock.mjs';
+import {checkAutomaticGeneratorFloor,adaptation} from './validation-generator-domain.mjs';
+const lock=verifyRulesLock();assert(lock.ok);assert.equal(lock.activeVersion,'1.91.0');
+const file=process.argv[2],{level,drags}=JSON.parse(fs.readFileSync(file)),{api,inputs}=await loadApi();
+const maxMilliseconds=Number(process.argv[3]??5000),maxStates=Number(process.argv[4]??200000),bindings=Object.fromEntries([...inputs,file,'tools/lv70-remake-20260927/design-floor.mjs','tools/lv70-remake-20260927/validation-generator-domain.mjs','tools/remake131to140-generator-floor-v172.mjs','deliverables/remake31-200-v145-20260924/batches/lv061-070/author61-64/local-graph.mjs','docs/rules/manifest.json','docs/rules/mechanism-rules-v1.91.0.md'].map(p=>[p,digest(fs.readFileSync(p))]));
+const replay=api.replayRevisedRoute(level,drags);assert(replay.valid&&replay.complete);
+const floor=checkAutomaticGeneratorFloor(level,api,{floor:11,maxMilliseconds,maxStates}),output=`deliverables/lv70-remake-20260927/design-floor-${Date.now()}.json`;
+const report={ruleVersion:lock.activeVersion,candidate:file,levelSha256:digest(level),routeSha256:digest(drags),replay,floor,adaptation,bindings,drift:Object.entries(bindings).filter(([p,h])=>digest(fs.readFileSync(p))!==h)};
+assert.deepEqual(report.drift,[]);fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify({output,floor}));

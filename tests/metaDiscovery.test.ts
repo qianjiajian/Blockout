@@ -1,12 +1,20 @@
 import { describe, expect, it } from "vitest";
 import {
   DEFAULT_META_DISCOVERY,
+  acknowledgeCollectionItem,
   acknowledgeCollectionUnlocks,
-  acknowledgeDailyUnlock,
-  dailyUnlockPending,
+  collectionItemHasBeenViewed,
+  pendingCollectionItemIds,
   pendingCollectionUnlockLevel,
   sanitizeMetaDiscovery,
 } from "../src/core/metaDiscovery";
+
+const collectionItems = [
+  { id: "color-block", unlockLevel: 1 },
+  { id: "irregular-block", unlockLevel: 3 },
+  { id: "shutter", unlockLevel: 34 },
+  { id: "conveyor", unlockLevel: 70 },
+] as const;
 
 describe("meta discovery milestones", () => {
   it("reveals only newly unlocked collection milestones", () => {
@@ -27,8 +35,8 @@ describe("meta discovery milestones", () => {
     expect(acknowledgeCollectionUnlocks(viewedTen, [1, 3, 6])).toBe(viewedTen);
   });
 
-  it("supports every authored collection threshold without touching daily state", () => {
-    const thresholds = [3, 6, 10, 15, 31, 35, 51, 100];
+  it("supports every authored aggregate-block and mechanism threshold", () => {
+    const thresholds = [3, 6, 8, 10, 15, 34, 35, 50, 70, 91];
     let state = { ...DEFAULT_META_DISCOVERY };
     for (const threshold of thresholds) {
       expect(pendingCollectionUnlockLevel(state, [1, threshold])).toBe(threshold);
@@ -37,13 +45,46 @@ describe("meta discovery milestones", () => {
     }
   });
 
-  it("reveals daily exactly once after it becomes available", () => {
-    expect(dailyUnlockPending(DEFAULT_META_DISCOVERY, false)).toBe(false);
-    expect(dailyUnlockPending(DEFAULT_META_DISCOVERY, true)).toBe(true);
-    const viewed = acknowledgeDailyUnlock(DEFAULT_META_DISCOVERY);
-    expect(dailyUnlockPending(viewed, true)).toBe(false);
-    expect(viewed.collectionViewedThroughLevel).toBe(1);
-    expect(acknowledgeDailyUnlock(viewed)).toBe(viewed);
+  it("tracks newly unlocked Collection entries by stable item id", () => {
+    const unlocked = collectionItems.slice(0, 2);
+    expect(pendingCollectionItemIds(DEFAULT_META_DISCOVERY, unlocked)).toEqual(["irregular-block"]);
+
+    const viewed = acknowledgeCollectionItem(DEFAULT_META_DISCOVERY, unlocked[1], collectionItems);
+    expect(viewed).toEqual({
+      collectionViewedThroughLevel: 3,
+      collectionViewedItemIds: ["color-block", "irregular-block"],
+      dailyUnlockSeen: false,
+    });
+    expect(pendingCollectionItemIds(viewed, unlocked)).toEqual([]);
+    expect(acknowledgeCollectionItem(viewed, unlocked[1], collectionItems)).toBe(viewed);
+  });
+
+  it("clears same-level Collection entries independently", () => {
+    const sameLevelItems = [
+      { id: "foundation", unlockLevel: 1 },
+      { id: "shared-a", unlockLevel: 70 },
+      { id: "shared-b", unlockLevel: 70 },
+    ] as const;
+    const legacyState = { collectionViewedThroughLevel: 69, dailyUnlockSeen: false };
+    const first = acknowledgeCollectionItem(legacyState, sameLevelItems[1], sameLevelItems);
+    expect(pendingCollectionItemIds(first, sameLevelItems)).toEqual(["shared-b"]);
+    expect(collectionItemHasBeenViewed(first, sameLevelItems[1])).toBe(true);
+    expect(collectionItemHasBeenViewed(first, sameLevelItems[2])).toBe(false);
+
+    const second = acknowledgeCollectionItem(first, sameLevelItems[2], sameLevelItems);
+    expect(pendingCollectionItemIds(second, sameLevelItems)).toEqual([]);
+  });
+
+  it("uses an explicit item list as authoritative after migrating", () => {
+    const partiallyViewed = {
+      collectionViewedThroughLevel: 70,
+      collectionViewedItemIds: ["color-block", "shutter"],
+      dailyUnlockSeen: true,
+    };
+    expect(pendingCollectionItemIds(partiallyViewed, collectionItems)).toEqual([
+      "irregular-block",
+      "conveyor",
+    ]);
   });
 
   it("backfills missing legacy fields without replaying historical unlocks", () => {
@@ -80,5 +121,22 @@ describe("meta discovery milestones", () => {
       collectionViewedThroughLevel: 51,
       dailyUnlockSeen: false,
     });
+  });
+
+  it("sanitizes, deduplicates, and preserves an explicit viewed-item ledger", () => {
+    expect(sanitizeMetaDiscovery({
+      collectionViewedThroughLevel: 70,
+      collectionViewedItemIds: ["shutter", "unknown", "shutter", 42, "conveyor"],
+      dailyUnlockSeen: true,
+    }, 1, false, 100, collectionItems.map(({ id }) => id))).toEqual({
+      collectionViewedThroughLevel: 70,
+      collectionViewedItemIds: ["shutter", "conveyor"],
+      dailyUnlockSeen: true,
+    });
+    expect(sanitizeMetaDiscovery({
+      collectionViewedThroughLevel: 70,
+      collectionViewedItemIds: [],
+      dailyUnlockSeen: false,
+    }, 1, false, 100, collectionItems.map(({ id }) => id)).collectionViewedItemIds).toEqual([]);
   });
 });

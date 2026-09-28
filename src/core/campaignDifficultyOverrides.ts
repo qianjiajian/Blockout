@@ -33,11 +33,6 @@ interface DifficultyBandOverride {
  * inner color because route-safe counters alone could not reach the floor.
  */
 export const DIFFICULTY_BAND_OVERRIDES: Partial<Record<number, DifficultyBandOverride>> = {
-  5: {
-    baselineHash: "e0519965",
-    targetScore: 45.25,
-    removedCells: [[5, 0]],
-  },
   11: {
     baselineHash: "c8249310",
     targetScore: 45.25,
@@ -213,11 +208,11 @@ export const CHAPTER_ONE_DIFFICULTY_RAMP_OVERRIDES: Partial<Record<number, Diffi
       "target-top": { frozen: 1 },
     },
     blocks: {
-      "red-target": { frozen: 2, layers: ["blue", "green", "blue", "green"] },
+      "red-target": { frozen: 2, layers: ["blue", "green"] },
       "composition-7-2": { frozen: 4 },
       "composition-7-4": { frozen: 1 },
-      "composition-7-6": { frozen: 1 },
-      "composition-7-7": { frozen: 9 },
+      "composition-7-6": { frozen: 1, layers: ["blue", "green"] },
+      "composition-7-7": { frozen: 9, layers: ["green", "blue"] },
     },
   },
   8: {
@@ -228,8 +223,11 @@ export const CHAPTER_ONE_DIFFICULTY_RAMP_OVERRIDES: Partial<Record<number, Diffi
       "yellow-left": { frozen: 7 },
     },
     blocks: {
-      "red-target": { layers: ["blue", "green", "blue", "green", "blue"] },
+      "red-target": { layers: ["blue", "green"] },
+      "blue-load": { layers: ["green", "blue"] },
       "green-target": { frozen: 9 },
+      "composition-8-3": { layers: ["yellow", "blue"] },
+      "composition-8-4": { layers: ["purple", "green"] },
     },
     addedBlocks: [{
       id: "ramp-load-8-1",
@@ -248,8 +246,12 @@ export const CHAPTER_ONE_DIFFICULTY_RAMP_OVERRIDES: Partial<Record<number, Diffi
       "green-right": { frozen: 9 },
     },
     blocks: {
-      "red-target": { layers: ["blue", "green", "blue", "green", "blue", "green"] },
+      "red-target": { layers: ["blue", "green"] },
+      "composition-9-1": { layers: ["green", "blue"] },
+      "green-target": { layers: ["yellow", "blue"] },
+      "yellow-load": { layers: ["purple", "green"] },
       "composition-9-5": { frozen: 2 },
+      "composition-9-6": { layers: ["yellow", "green"] },
     },
     addedBlocks: [{
       id: "ramp-load-9-1",
@@ -333,11 +335,22 @@ const patchGates = (levelId: number, entries: GateSpec[], patches: Record<string
   return entries.map((entry) => {
     const patch = patches[entry.id];
     if (!patch) return entry;
+    const offset = patch.offset ?? entry.offset;
+    const size = patch.size ?? entry.size;
+    const portals = entry.portals?.map((portal, index) => {
+      if (index !== 0) return { ...portal, origin: [...portal.origin] as Point };
+      const tangentDelta = offset - entry.offset;
+      const origin: Point = portal.side === "top" || portal.side === "bottom"
+        ? [portal.origin[0] + tangentDelta, portal.origin[1]]
+        : [portal.origin[0], portal.origin[1] + tangentDelta];
+      return { ...portal, origin, size };
+    });
     return {
       ...entry,
       ...(patch.frozen === undefined ? {} : { frozen: patch.frozen }),
-      ...(patch.offset === undefined ? {} : { offset: patch.offset }),
-      ...(patch.size === undefined ? {} : { size: patch.size }),
+      ...(patch.offset === undefined ? {} : { offset }),
+      ...(patch.size === undefined ? {} : { size }),
+      ...(portals === undefined ? {} : { portals }),
     };
   });
 };

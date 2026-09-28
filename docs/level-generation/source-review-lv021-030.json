@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "scope": "Independent source-reference corrections only; no candidate, LEVELS or original truth mutation",
+  "reviewedOn": "2026-09-21",
+  "truth": {
+    "path": "deliverables/level-generation-blueprint/blockout-lv001-lv100-video-parity-truth-v6.json",
+    "sha256": "28040fe1779fee54d8c03a92949df26ff6517687b3f9c7cfdbb5353a2c6c41a9"
+  },
+  "levels": [
+    {
+      "level": 23,
+      "correctionId": "lv023-source-internal-wall-reference-mask",
+      "originalRecordedBoard": {
+        "cols": 6,
+        "rows": 8,
+        "playable_cell_count": 48,
+        "source_playable_mask": ["######", "######", "######", "######", "######", "######", "######", "######"]
+      },
+      "correctedReferenceBoard": {
+        "cols": 6,
+        "rows": 8,
+        "playable_cell_count": 46,
+        "source_playable_mask": ["######", "######", "##..##", "######", "######", "######", "######", "######"],
+        "source_mask_status": "four_existing_source_frames_independently_reviewed"
+      },
+      "observations": [
+        "Coordinates are zero-based from the board's top-left playable grid origin. Cells (2,2) and (3,2) form one raised purple wall strip.",
+        "At 130s, 150s and 158s surrounding blocks have moved and empty playable cells show dark subdivided floor, while the purple wall strip remains fixed.",
+        "The 46 occupied-cell source total is supporting consistency evidence, not itself proof that the other two cells are walls.",
+        "Candidate geometry must be original and have no internal wall; this correction is only the truthful reference mask used for comparison."
+      ],
+      "evidence": [
+        { "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0119.jpg", "seconds": 119, "sha256": "adb9d415869cc18b59ac37d5dd8f8d907136fbba5f53cf5cb546fb17164b0592" },
+        { "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0130.jpg", "seconds": 130, "sha256": "43dca8536f5c853eb224826c3046b7d81ad5cf53486df6e1808779d44459c1c0" },
+        { "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0150.jpg", "seconds": 150, "sha256": "321f24e818c0371039acd0276a8f1bebd5827ffd53c3ac6a024606a2395c1f7f" },
+        { "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0158.jpg", "seconds": 158, "sha256": "7f62b7d5d068292a79d9492fa1c003c9350303c225bc9247627a0fa4b271ccc6" }
+      ]
+    }
+  ]
+}

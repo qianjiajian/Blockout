@@ -1,0 +1,39 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import ts from 'typescript';
+import {build} from 'esbuild';
+import {chromium} from 'playwright';
+import {createServer} from 'vite';
+import {verifyRulesLock} from '../verify-rules-lock.mjs';
+import {digest} from '../revised-preview-validation-v160.mjs';
+import {observe as observeFormalModelTiming,replayTiming as replayObservedModelTiming} from '../campaign-v145/lv141-150/observed-timing-flips.mjs';
+import {IDS,BEFORE_SHA,FIXTURE,clean,omitTarget,validateScoringData,replaySpatial} from './verification.mjs';
+const OUTPUT='deliverables/star-targets41-50-20260927/pointer-support';
+const [beforeFile,expectedBeforeSha,ruleVersion,ruleSha,witnessesFile,expectedWitnessesSha]=process.argv.slice(2);
+assert(process.argv.length===8&&beforeFile&&witnessesFile&&/^1\.[0-9]+\.0$/.test(ruleVersion??'')&&[expectedBeforeSha,ruleSha,expectedWitnessesSha].every(s=>/^[a-f0-9]{64}$/.test(s??'')),'Usage: playtest.mjs BEFORE SHA RULE_VERSION RULE_SHA WITNESSES SHA');
+const ruleFile='docs/rules/mechanism-rules-v'+ruleVersion+'.md',lock=verifyRulesLock();assert(lock.ok,lock.errors.join('\n'));assert.equal(lock.activeVersion,ruleVersion);assert.equal(digest(fs.readFileSync(ruleFile)),ruleSha);
+assert.equal(expectedBeforeSha,BEFORE_SHA);assert.equal(digest(fs.readFileSync(beforeFile)),expectedBeforeSha);assert.equal(digest(fs.readFileSync(witnessesFile)),expectedWitnessesSha);
+const before=JSON.parse(fs.readFileSync(beforeFile)),witnesses=JSON.parse(fs.readFileSync(witnessesFile)),fixture=JSON.parse(fs.readFileSync(FIXTURE));
+const viewport={width:Number(process.env.REMAKE_VIEWPORT_WIDTH??496),height:Number(process.env.REMAKE_VIEWPORT_HEIGHT??1078)};assert([[320,568],[496,1078]].some(([w,h])=>viewport.width===w&&viewport.height===h));
+const bindings={};
+function bind(file){const absolute=path.resolve(file),p=path.relative(process.cwd(),absolute).replaceAll('\\','/');assert(!p.startsWith('../')&&!path.isAbsolute(p));if(Object.hasOwn(bindings,p))return;const bytes=fs.readFileSync(p);bindings[p]=digest(bytes);if(/\.[cm]?[jt]s$/.test(p)){const source=ts.createSourceFile(p,bytes.toString('utf8'),ts.ScriptTarget.Latest,true);for(const node of source.statements){if(!ts.isImportDeclaration(node)&&!ts.isExportDeclaration(node))continue;const s=node.moduleSpecifier;if(s&&ts.isStringLiteral(s)&&/^\..*\.[cm]?[jt]s$/.test(s.text))bind(path.resolve(path.dirname(absolute),s.text));}}}
+const tree=dir=>{for(const e of fs.readdirSync(dir,{withFileTypes:true})){const p=path.join(dir,e.name);if(e.isDirectory())tree(p);else bind(p);}};
+tree('src');tree('public/assets/art');for(const p of[beforeFile,witnessesFile,FIXTURE,ruleFile,'docs/rules/manifest.json','tools/star-targets41-50/browser.mjs','tools/star-targets41-50/index.html','tools/star-targets41-50/playtest.mjs','tools/star-targets41-50/prepare.mjs','tools/star-targets41-50/playtest-header.txt'])bind(p);
+for(const[p,h]of Object.entries(before.bindings))if(p!=='src/core/remake41to50.ts')assert.equal(digest(fs.readFileSync(p)),h,'Before runtime/fixture must not drift: '+p);
+const sourceBindings={};for(const[p,h]of Object.entries(witnesses.evidenceBindings??{})){assert.equal(digest(fs.readFileSync(p)),h);sourceBindings[p]=h;bind(p);}
+for(const row of witnesses.rows){assert(row.sourceEvidence,'Every adopted route must name its immutable source');assert.equal(digest(fs.readFileSync(row.sourceEvidence.file)),row.sourceEvidence.sha256);sourceBindings[row.sourceEvidence.file]=row.sourceEvidence.sha256;bind(row.sourceEvidence.file);const doc=JSON.parse(fs.readFileSync(row.sourceEvidence.file)),source=doc.rows?.find(r=>r.id===row.id)??doc;assert.equal(source.id??source.levelId,row.id);assert.deepEqual(source.drags??source.route,row.drags,'Adopted route must match its independently pinned source');if(source.routeSha256)assert.equal(source.routeSha256,row.routeSha256);assert(source.level||source.levelSha256,'Source must bind the exact unchanged gameplay');if(source.level)assert.deepEqual(omitTarget(source.level),omitTarget(row.level));if(source.levelSha256)assert.equal(source.levelSha256,digest(before.priorLevels[row.id-1]),'Original route source uses the pre-score level hash');}
+for(const row of witnesses.rows){
+ const original=row.originalSource;assert(original&&witnesses.evidenceBindings[original.file]===original.sha256);
+ assert.equal(digest(fs.readFileSync(original.file)),original.sha256);
+ const document=JSON.parse(fs.readFileSync(original.file)),source=document.rows?.find(r=>r.id===row.id)??document;
+ assert.equal(source.id??source.levelId,row.id);assert.deepEqual(source.drags,row.drags,'Original immutable route must match the newly audited witness');
+ if(row.id===43){assert.equal(source.status,'witness');assert(source.witnessFound&&source.replay?.valid&&source.replay?.complete);}
+ else assert.deepEqual(omitTarget(source.level),omitTarget(row.level));
+}
+const compiled=await build({stdin:{resolveDir:process.cwd(),contents:"export {LEVELS} from './src/core/levels.ts';export {PuzzleModel} from './src/core/PuzzleModel.ts';export {replayRevisedRoute} from './src/core/revisedLevelSearch.ts';export {levelStarTargets,evaluateLevelStars} from './src/core/levelStarConditions.ts';"},bundle:true,write:false,platform:'node',format:'esm',logLevel:'silent'});
+const api=await import('data:text/javascript;base64,'+Buffer.from(compiled.outputFiles[0].text).toString('base64')),levels=clean(api.LEVELS),scoring=validateScoringData(before,fixture,witnesses,levels,api),TARGETS=scoring.targets;
+const candidates=IDS.map(id=>{const row=witnesses.rows.find(r=>r.id===id),level=levels[id-1],oldStars=api.levelStarTargets(before.priorLevels[id-1]),stars=api.levelStarTargets(level),replay=replaySpatial(level,row.drags,api);assert(replay.valid&&replay.complete,JSON.stringify({id,replay}));assert.equal(replay.effectiveDrags,TARGETS[id]);const prefixStates=row.drags.map((_,i)=>{const r=replaySpatial(level,row.drags.slice(0,i+1),api);assert(r.valid,r.error);return JSON.parse(r.finalStateKey);});return{...row,level,oldStars,stars,prefixStates};});
+const output=path.resolve(OUTPUT,`pointer-${Date.now()}-${viewport.width}x${viewport.height}-${process.pid}`);fs.mkdirSync(output,{recursive:true});
+const report={status:'running',ruleVersion:lock.activeVersion,scope:'41/43/44/46/47/48/50 scoring-only final LEVELS verification',requestedIds:IDS,viewport,beforeFile,beforeSha256:expectedBeforeSha,witnessesFile,witnessesSha256:expectedWitnessesSha,ruleFile,ruleSha256:ruleSha,fixture:FIXTURE,bindings,sourceBindings,scoring,rows:[],errors:[],formalDataValidated:true,all200OnlyAuthorizedFieldsChanged:true,other193Preserved:true,historicalRoutesPreserved:true,timeTargetsPreserved:true,naturalClock:true,clockFrozen:false,playerSaveTouched:false,lowerBoundsRecomputed:false,mechanismRecertificationClaimed:false,humanBlindTested:false,releaseApproved:false};
+if(process.env.STAR_TARGETS_PREFLIGHT_ONLY==='1'){report.status='PREFLIGHT_PASS';report.pointerValidated=false;report.naturalClockValidated=false;report.preflightRows=candidates.map(({id,drags,stars,level})=>({id,drags:drags.length,stars,levelSha256:digest(level),gameplaySha256:digest(omitTarget(level)),routeSha256:digest(drags)}));fs.writeFileSync(path.join(output,'preflight.json'),JSON.stringify(report,null,2));console.log(JSON.stringify({output,status:report.status,rows:report.preflightRows}));process.exit(0);}

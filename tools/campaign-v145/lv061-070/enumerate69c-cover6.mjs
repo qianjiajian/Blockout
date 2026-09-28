@@ -1,0 +1,18 @@
+import fs from 'node:fs';
+import {loadApi} from '../../native-block-repair-v143.mjs';
+import {digest} from '../../revised-preview-validation-v160.mjs';
+import {stateOf} from './lift-floor.mjs';
+import {compile} from '../../../deliverables/remake31-200-v145-20260924/batches/lv061-070/author65-67/lift-search.mjs';
+import {searchStage} from './stage-search69.mjs';
+import {SHAPES,seededRng} from '../../../deliverables/remake21-30-v139-20260924/agent28-30/packing.mjs';
+const data=JSON.parse(fs.readFileSync(process.argv[2])),{api}=await loadApi(),src=JSON.parse(fs.readFileSync(data.sourceReview)),out='deliverables/remake31-200-v145-20260924/batches/lv061-070/author68-69',rng=seededRng(Number(process.env.SEED??1472169));
+const defs=[...src.stages.find(s=>s.id==='cover6').items,{sourceId:'cover6-fill-0',kind:'SINGLE',color:'blue'}],all=[],used=new Set();for(const k of Object.keys(SHAPES))SHAPES[k]=SHAPES[k].filter(s=>api.matchFormalBlockShape(s,'native-only'));
+function enumerate(left,placed){if(!left.length){all.push(placed);return;}let p=0;while(used.has(p))p++;const x=p%4,y=Math.floor(p/4);for(let i=0;i<left.length;i++)for(const shape of SHAPES[left[i].kind])for(const [dx,dy]of shape){const bx=x-dx,by=y-dy,pts=shape.map(([a,b])=>[bx+a,by+b]);if(pts.some(([a,b])=>a<0||a>=4||b<0||b>=3||used.has(b*4+a)))continue;pts.forEach(([a,b])=>used.add(b*4+a));enumerate(left.filter((_,j)=>j!==i),[...placed,{...left[i],x:bx,y:by+7,shape}]);pts.forEach(([a,b])=>used.delete(b*4+a));}}
+enumerate(defs,[]);console.log(JSON.stringify({cover6Layouts:all.length}));const deadline=Date.now()+Number(process.env.SECONDS??180)*1000;let best=0,attempts=0; const bestCosts={};
+for(const layout of rng.shuffle(all)){if(Date.now()>deadline)break;attempts++;const row=structuredClone(data),level=row.level;for(const b of layout)Object.assign(level.blocks.find(v=>v.id===`v147-69-${b.sourceId}`),{x:b.x,y:b.y,shape:b.shape,color:b.color});Object.assign(level.gates.find(g=>g.color==='green'),{side:'bottom',offset:4,size:3});Object.assign(level.gates.find(g=>g.color==='cyan'),{side:'right',offset:0,size:3});Object.assign(level.gates.find(g=>g.color==='yellow'),{side:'right',offset:7,size:3});Object.assign(level.gates.find(g=>g.color==='purple'),{side:'left',offset:7,size:3});
+ for(const [id,x,y]of [['cover9-2',4,7],['cover9-3',4,8],['cover9-0',6,8],['cover9-1',4,8]])Object.assign(level.blocks.find(b=>b.id===`v147-69-${id}`),{x,y});api.validateLevel(level);
+ let drags=[...data.drags],cost=data.cost;const replay=api.replayRevisedRoute(level,drags);if(!replay.valid)continue;let state=stateOf(compile(level),JSON.parse(replay.finalStateKey)),ok=true;
+ for(const [goal,cap]of [[11,6],[18,9],[24,10],[Infinity,10]]){const r=searchStage(level,{startState:state,goalClears:goal,floor:cap-cost+1,maxStates:180000,maxMilliseconds:Number(process.env.MS??2500),orderSeed:attempts%level.blocks.length});if(r.status!=='witness'){ok=false;break;}state=r.state;drags.push(...r.drags);cost+=r.cost;if(goal>best||cost<(bestCosts[goal]??Infinity)){best=Math.max(best,goal);bestCosts[goal]=cost;const file=`${out}/enum69c-stage-${Date.now()}.json`;fs.writeFileSync(file,JSON.stringify({...row,drags,cost,goal,levelSha256:digest(level)},null,2));console.log(JSON.stringify({attempts,goal,cost,file}));}}
+ if(ok){const replay=api.replayRevisedRoute(level,drags);if(!replay.valid||!replay.complete)throw Error('Invalid complete');const file=`${out}/enum69c-complete-${Date.now()}.json`;fs.writeFileSync(file,JSON.stringify({...row,drags,cost,goal:Infinity,replay,levelSha256:digest(level)},null,2));console.log(JSON.stringify({file,U:replay.nonClearingDrags}));break;}
+}
+console.log(JSON.stringify({attempts,best}));

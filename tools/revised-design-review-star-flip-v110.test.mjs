@@ -1,0 +1,23 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {loadPreviewCore,digest} from './revised-preview-validation-v160.mjs';
+import {loadReviewedDesignSource,verifyReviewedDesign} from './revised-design-review-star-flip-v110.mjs';
+const own=path.resolve('.codex-temp/remaining147-v110/late');
+const reviewPath=path.join(own,'source-review-155.json'),sourceReview=JSON.parse(fs.readFileSync(reviewPath));
+const {api}=await loadPreviewCore();
+const {source}=await loadReviewedDesignSource(reviewPath,digest(fs.readFileSync(reviewPath)));
+const raw=JSON.parse(fs.readFileSync(path.join(own,'candidate-155.json')));
+async function changedSource(mutate){const copy=structuredClone(sourceReview);copy.status='synthetic-negative-test-not-certification';mutate(copy);const dir=fs.mkdtempSync(path.join(own,'negative-fixture-')),p=path.join(dir,'review.json');fs.writeFileSync(p,JSON.stringify(copy));return loadReviewedDesignSource(p,digest(fs.readFileSync(p)));}
+test('fresh155 physical six-port,star-flip association and full route',()=>{const result=verifyReviewedDesign(raw,source,api);assert.equal(result.replay.complete,true);assert.equal(result.drags.length,22);assert.equal(raw.level.gates.length,3);assert.equal(raw.level.flipDoors.length,3);assert.equal(raw.level.flipDoors.filter(g=>g.star).length,1);assert.equal(source.sourceFacts.physicalExits.length,6);assert.equal(result.coverage.passed,true);assert.equal(result.art.passed,true);});
+test('unknown initial state is rejected, not coerced to closed',async()=>{await assert.rejects(changedSource(r=>{delete r.sourcePhysicalExits[3].initiallyOpen;}),/Known physical/);});
+test('physical star attribute and normalized count cannot drift',async()=>{await assert.rejects(changedSource(r=>{r.sourcePhysicalExits[5].star=false;}));});
+test('frozen values remain tied to physical ordinary mouths',async()=>{await assert.rejects(changedSource(r=>{r.sourcePhysicalExits[0].frozen=6;}));});
+test('frozen flip requires separate evidence adapter and is rejected',async()=>{await assert.rejects(changedSource(r=>{r.sourcePhysicalExits[3].frozen=5;}),/Ice\/flip/);});
+test('initial-state facts and physical observations must agree',async()=>{await assert.rejects(changedSource(r=>{r.sourcePhysicalExits[3].initiallyOpen=true;}));});
+test('missing independent observation binding cannot be bypassed',async()=>{await assert.rejects(changedSource(r=>{delete r.bindings[r.evidence[0].path];}),/Unbound observation/);});
+test('candidate cannot move star attachment from flip to ordinary ice gate',()=>{const bad=structuredClone(raw),star=bad.level.flipDoors.find(g=>g.star),ordinary=bad.level.gates.find(g=>g.color===star.color);delete star.star;ordinary.star=true;assert.throws(()=>verifyReviewedDesign(bad,source,api),/Physical attribute association/);});
+test('candidate cannot move star to rectangular carrier',()=>{const bad=structuredClone(raw),carrier=bad.level.blocks.find(b=>b.star);delete carrier.star;const rect=bad.level.blocks.find(b=>b.shape.length===(Math.max(...b.shape.map(p=>p[0]))+1)*(Math.max(...b.shape.map(p=>p[1]))+1));rect.star=true;assert.throws(()=>verifyReviewedDesign(bad,source,api),/Star irregular carrier/);});
+test('candidate star flip cannot silently begin open',()=>{const bad=structuredClone(raw);bad.level.flipDoors.find(g=>g.star).initiallyOpen=true;assert.throws(()=>verifyReviewedDesign(bad,source,api),/Physical attribute association/);});

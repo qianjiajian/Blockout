@@ -1,0 +1,13 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';
+import {loadSpatialApi} from '../agent139-140/witness-domain.mjs';
+import {checkStationaryObligations} from '../root-native/stationary-obligations.mjs';
+import {loadPreviewCore,digest} from '../../../revised-preview-validation-v160.mjs';
+import {auditOpeningCoverage} from '../../../revised-opening-coverage.mjs';
+import {auditHiddenCoverage} from '../../../revised-hidden-coverage.mjs';
+import {auditGateSpanLimits} from '../../../revised-gate-span-limits.mjs';
+import {auditGeneratorQueueColors} from '../../../revised-generator-queue-colors.mjs';
+const input=process.argv[2],d=JSON.parse(fs.readFileSync(input)),api={...await loadSpatialApi(),...(await loadPreviewCore()).api};
+const level=structuredClone(d.level),b=id=>level.blocks.find(b=>b.id===`n139-opening-${id}`);b(0).shape=[[0,0],[1,0],[0,1],[1,1]];b(14).x=2;b(14).y=0;b(14).color='yellow';b(4).shape=[[0,0]];b(4).y=2;
+api.validateLevel(level);const checks={opening:auditOpeningCoverage(new api.PuzzleModel(level).snapshot()),hidden:auditHiddenCoverage(level),spans:auditGateSpanLimits(level),queue:auditGeneratorQueueColors(level),art:api.auditCandidateBlockArt(level)};
+const q=new Set(level.generators.flatMap(g=>g.queueBlockIds));const blocks=level.blocks.filter(b=>!q.has(b.id)),bad=[];for(let i=0;i<blocks.length;i++)for(let j=i+1;j<blocks.length;j++){const a=blocks[i],b=blocks[j];if(a.shutterId===b.shutterId&&a.color===b.color&&a.shape.some(([x,y])=>b.shape.some(([u,v])=>Math.abs(a.x+x-b.x-u)+Math.abs(a.y+y-b.y-v)===1)))bad.push([a.id,b.id]);}checks.adjacency={passed:!bad.length,bad};assert(Object.values(checks).every(x=>x.passed),JSON.stringify(checks));
+const proof=checkStationaryObligations(level,api,{floor:11,targetIds:[d.targetId]}),file=`deliverables/remake131-140-v146-20260924/agent131-134/bypass-square139-${Date.now()}.json`;fs.writeFileSync(file,JSON.stringify({level,targetId:d.targetId,checks,proof,input,levelSha256:digest(level),change:'Top-left6-cell union: axis purple H3→SQ2, blueS(0,1)→yellowS(2,0), greenV2(1,1)→greenS(1,2). All identities and mechanisms retained.',formalAdopted:false},null,2));console.log(JSON.stringify({file,obligations:proof.provedObligations}));

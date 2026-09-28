@@ -1,0 +1,6 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';
+import {loadApi} from '../../../native-block-repair-v143.mjs';import {verifyRulesLock} from '../../../verify-rules-lock.mjs';
+import {loadSpatialApi,searchSpatial} from '../../../../deliverables/remake101-110-v146-20260924/pipeline/spatial-star-domain.mjs';
+const root='deliverables/remake131-140-v146-20260924/agent139-140',lock=verifyRulesLock();assert(lock.ok);
+const input=JSON.parse(fs.readFileSync(`${root}/retry140-1790470473107.json`)),{api}=await loadApi(),spatial=await loadSpatialApi();
+for(const color of ['orange','pink','purple','red']){const d=structuredClone(input);d.level.blocks.find(b=>b.id==='n140-ordinary-3').color=color;const s=searchSpatial(d.level,spatial,{floor:21,maxMilliseconds:10000,maxStates:300000,diagnosticTrace:true,symmetry:true});const r=s.status==='witness'?api.replayRevisedRoute(d.level,s.drags):null;Object.assign(d,{activeRuleVersion:lock.activeVersion,seed:`tail140-${color}`,search:s,drags:s.drags??[],replay:r,status:r?.complete?'COMPLETE_ROUTE_PENDING_STATIC_REFRESH':'DRAFT_UNSOLVED'});delete d.audit;const file=`${root}/tail140-${color}-${Date.now()}.json`;fs.writeFileSync(file,JSON.stringify(d,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify({file,status:s.status,cost:s.cost,clears:s.maxClearsSeen,replay:r}));}

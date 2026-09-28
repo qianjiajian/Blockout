@@ -1,0 +1,12 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';
+import {loadApi,digest,geometry,writeNew,ruleGate} from '../../common.mjs';
+const OUT='deliverables/remake191-200-20260927/author197-199/adopt191196-audit';
+const walk=p=>fs.readdirSync(p,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(p+'/'+e.name):[p+'/'+e.name]).sort();
+const paths=[...walk('src'),...walk('tests/fixtures'),...walk('docs/rules').filter(p=>p!=='docs/rules/WORKSTATE.md'),'AGENTS.md'];
+const before=Object.fromEntries(paths.map(p=>[p,digest(fs.readFileSync(p))]));
+const manifest=JSON.parse(fs.readFileSync('docs/rules/manifest.json')),lock=ruleGate(),{api,inputs}=await loadApi();
+const levels=api.LEVELS.map(l=>({level:JSON.parse(JSON.stringify(l)),sha256:digest(l),geometry:geometry(l),starTargets:api.levelStarTargets(l)}));assert.equal(levels.length,200);
+for(const[p,h]of Object.entries(before))assert.equal(digest(fs.readFileSync(p)),h,'Capture drift: '+p);
+const file=OUT+'/before-'+Date.now()+'.json';
+writeNew(file,{status:'BEFORE_FORMAL_191_196',createdAt:new Date().toISOString(),scope:[191,196],activeVersion:lock.activeVersion,manifest,levels,campaignSha256:digest(api.LEVELS),hashes:before,srcTexts:Object.fromEntries(walk('src').map(p=>[p,fs.readFileSync(p,'utf8')])),fixtureText:fs.readFileSync('tests/fixtures/remake191to200-v108.json','utf8'),compiledInputs:Object.fromEntries(inputs.map(p=>[p,digest(fs.readFileSync(p))])),ruleLock:lock,playerSaveAccessed:false,productionWritten:false});
+console.log(JSON.stringify({file,sha256:digest(fs.readFileSync(file)),active:lock.activeVersion,srcFiles:walk('src').length,fixtureFiles:walk('tests/fixtures').length,campaignSha256:digest(api.LEVELS),ids:levels.filter(r=>[191,196].includes(r.level.id)).map(r=>({id:r.level.id,sha256:r.sha256}))}));

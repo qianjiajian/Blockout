@@ -53,25 +53,25 @@ const mechanicRoutes = await page.evaluate(async () => {
       model.commitAction();
       const after = model.snapshot();
       prefix.push(drag);
-      if (reached(before, after, drag)) return prefix;
+      const targetId = reached(before, after, drag);
+      if (targetId) return { prefix, targetId };
     }
     throw new Error(`Mechanic event was absent from Lv${levelId} route`);
   };
   return {
-    ice: routeUntil(7, (before, after) => (
-      before.gates.find((gate) => gate.id === "target-top")?.frozen > 0
-      && after.gates.find((gate) => gate.id === "target-top")?.frozen === 0
-    )),
-    layer: routeUntil(8, (before, after, drag) => (
-      drag.blockId === "red-target"
-      && (before.blocks.find((block) => block.id === drag.blockId)?.layers.length ?? 0)
-      > (after.blocks.find((block) => block.id === drag.blockId)?.layers.length ?? 0)
-      && after.blocks.some((block) => block.id === drag.blockId)
-    )),
-    shutter: routeUntil(35, (before, after) => (
-      before.shutters.find((shutter) => shutter.id === "shutter-a")?.count > 0
-      && after.shutters.find((shutter) => shutter.id === "shutter-a")?.count === 0
-    )),
+    ice: routeUntil(6, (before, after) => before.gates.find((gate) => (
+      gate.frozen > 0 && after.gates.find((candidate) => candidate.id === gate.id)?.frozen === 0
+    ))?.id),
+    layer: routeUntil(15, (before, after, drag) => {
+      const beforeBlock = before.blocks.find((block) => block.id === drag.blockId);
+      const afterBlock = after.blocks.find((block) => block.id === drag.blockId);
+      return beforeBlock && afterBlock && beforeBlock.layers.length > afterBlock.layers.length
+        ? drag.blockId
+        : undefined;
+    }),
+    shutter: routeUntil(35, (before, after) => before.shutters.find((shutter) => (
+      shutter.count > 0 && after.shutters.find((candidate) => candidate.id === shutter.id)?.count === 0
+    ))?.id),
   };
 });
 
@@ -134,7 +134,7 @@ const exitBlock = async (blockId, gateId, capture) => {
   await page.waitForTimeout(60);
   await page.mouse.up();
   if (capture) {
-    await page.waitForTimeout(255);
+    await page.waitForTimeout(485);
     await page.screenshot({ path: shot(capture) });
   }
 };
@@ -163,10 +163,10 @@ const replaySolverDrag = async (drag, capture) => {
   }
   await page.mouse.up();
   if (capture) {
-    await page.waitForTimeout(255);
+    await page.waitForTimeout(485);
     await page.screenshot({ path: shot(capture) });
   } else {
-    await page.waitForTimeout(drag.exitSide ? 700 : 180);
+    await page.waitForTimeout(drag.exitSide ? 1_250 : 180);
   }
 };
 
@@ -178,7 +178,7 @@ const replayMechanicPrefix = async (prefix, capture) => {
 
 await page.evaluate(() => {
   const game = window.__COLOR_ESCAPE__;
-  game.loadLevel(6, false);
+  game.loadLevel(10, false);
   game.beginSelectedChallenge();
 });
 await page.waitForTimeout(100);
@@ -187,54 +187,57 @@ await page.screenshot({ path: shot("round50-onboarding-ice-block.png") });
 await page.mouse.click(248, 755);
 await page.waitForTimeout(100);
 
-await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(7, true));
+await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(6, true));
 await page.waitForTimeout(100);
-await replayMechanicPrefix(mechanicRoutes.ice, "round50-mechanic-ice-unlock.png");
+await replayMechanicPrefix(mechanicRoutes.ice.prefix, "round50-mechanic-ice-unlock.png");
 let state = await debug();
-if (!state.mechanicPulses.some((pulse) => pulse.kind === "ice" && pulse.targetId === "target-top" && pulse.unlocked && pulse.phase === "visible")) {
+if (!state.mechanicPulses.some((pulse) => pulse.kind === "ice" && pulse.targetId === mechanicRoutes.ice.targetId && pulse.unlocked && pulse.phase === "visible")) {
   throw new Error(`Mechanic E2E: frozen gate unlock pulse was not exposed during its visible window: ${JSON.stringify({ blocks: state.puzzle.blocks, gates: state.puzzle.gates, pulses: state.mechanicPulses })}`);
 }
 
 await page.waitForTimeout(700);
-await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(8, true));
+await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(15, true));
 await page.waitForTimeout(100);
-const layeredBefore = (await debug()).puzzle.blocks.find((block) => block.id === "red-target");
-await replayMechanicPrefix(mechanicRoutes.layer, "round50-mechanic-layer-peel.png");
+const layeredBefore = (await debug()).puzzle.blocks.find((block) => block.id === mechanicRoutes.layer.targetId);
+await replayMechanicPrefix(mechanicRoutes.layer.prefix, "round50-mechanic-layer-peel.png");
 state = await debug();
-if (!state.mechanicPulses.some((pulse) => pulse.kind === "layer" && pulse.targetId === "red-target" && pulse.phase === "visible")) {
+if (!state.mechanicPulses.some((pulse) => pulse.kind === "layer" && pulse.targetId === mechanicRoutes.layer.targetId && pulse.phase === "visible")) {
   throw new Error("Mechanic E2E: layer peel pulse was not exposed during its visible window");
 }
-if (state.puzzle.blocks.find((block) => block.id === "red-target")?.color === layeredBefore?.color) {
+const layeredAfter = state.puzzle.blocks.find((block) => block.id === mechanicRoutes.layer.targetId);
+if (!layeredBefore || !layeredAfter
+  || layeredAfter.layers.length !== layeredBefore.layers.length - 1
+  || layeredAfter.layers[0] === layeredBefore.layers[0]) {
   throw new Error("Mechanic E2E: layer feedback did not correspond to the revealed inner color");
 }
 
 await page.waitForTimeout(850);
 await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(35, true));
 await page.waitForTimeout(100);
-await replayMechanicPrefix(mechanicRoutes.shutter, "round50-mechanic-shutter-open.png");
+await replayMechanicPrefix(mechanicRoutes.shutter.prefix, "round50-mechanic-shutter-open.png");
 state = await debug();
-if (!state.mechanicPulses.some((pulse) => pulse.kind === "shutter" && pulse.targetId === "shutter-a" && pulse.unlocked && pulse.phase === "visible")) {
+if (!state.mechanicPulses.some((pulse) => pulse.kind === "shutter" && pulse.targetId === mechanicRoutes.shutter.targetId && pulse.unlocked && pulse.phase === "visible")) {
   throw new Error("Mechanic E2E: shutter opening pulse was not exposed during its visible window");
 }
-if (state.puzzle.shutters.find((shutter) => shutter.id === "shutter-a")?.count !== 0) {
+if (state.puzzle.shutters.find((shutter) => shutter.id === mechanicRoutes.shutter.targetId)?.count !== 0) {
   throw new Error("Mechanic E2E: shutter opening feedback did not match the countdown state");
 }
 
 await page.waitForTimeout(850);
 await page.setViewportSize({ width: 320, height: 568 });
 
-await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(7, true));
+await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(6, true));
 await page.waitForTimeout(100);
-await replayMechanicPrefix(mechanicRoutes.ice, "round50-small-mechanic-ice-unlock-320x568.png");
+await replayMechanicPrefix(mechanicRoutes.ice.prefix, "round50-small-mechanic-ice-unlock-320x568.png");
 state = await debug();
 if (!state.mechanicPulses.some((pulse) => pulse.kind === "ice" && pulse.unlocked && pulse.phase === "visible")) {
   throw new Error("Mechanic E2E: small-screen ice unlock feedback missing");
 }
 
 await page.waitForTimeout(700);
-await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(8, true));
+await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(15, true));
 await page.waitForTimeout(100);
-await replayMechanicPrefix(mechanicRoutes.layer, "round50-small-mechanic-layer-peel-320x568.png");
+await replayMechanicPrefix(mechanicRoutes.layer.prefix, "round50-small-mechanic-layer-peel-320x568.png");
 state = await debug();
 if (!state.mechanicPulses.some((pulse) => pulse.kind === "layer" && pulse.phase === "visible")) {
   throw new Error("Mechanic E2E: small-screen layer feedback missing");
@@ -243,7 +246,7 @@ if (!state.mechanicPulses.some((pulse) => pulse.kind === "layer" && pulse.phase 
 await page.waitForTimeout(850);
 await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(35, true));
 await page.waitForTimeout(100);
-await replayMechanicPrefix(mechanicRoutes.shutter, "round50-small-mechanic-shutter-open-320x568.png");
+await replayMechanicPrefix(mechanicRoutes.shutter.prefix, "round50-small-mechanic-shutter-open-320x568.png");
 state = await debug();
 if (!state.mechanicPulses.some((pulse) => pulse.kind === "shutter" && pulse.unlocked && pulse.phase === "visible")) {
   throw new Error("Mechanic E2E: small-screen shutter feedback missing");

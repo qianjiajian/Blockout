@@ -44,6 +44,44 @@ describe("Block Out difficulty model", () => {
     expect(pressured.components.hiddenInformation).toBeGreaterThan(base.components.hiddenInformation);
     expect(pressured.components.exitCompetition).toBeGreaterThan(base.components.exitCompetition);
   });
+
+  it("counts each generator's spawn readiness separately from its queued pieces", () => {
+    const moveGenerator = scoreBlockOutLevel(fixture({
+      blocks: [
+        ...fixture().blocks,
+        { id: "queued-a", x: 0, y: 0, shape: rect(1, 1), color: "red" },
+        { id: "queued-b", x: 0, y: 0, shape: rect(1, 1), color: "blue" },
+      ],
+      generators: [{
+        id: "move-generator",
+        side: "left",
+        offset: 0,
+        spawn: [0, 0],
+        queueBlockIds: ["queued-a", "queued-b"],
+        trigger: "move",
+      }],
+    }));
+    const timedGenerator = scoreBlockOutLevel(fixture({
+      blocks: [
+        ...fixture().blocks,
+        { id: "queued-a", x: 0, y: 0, shape: rect(1, 1), color: "red" },
+        { id: "queued-b", x: 0, y: 0, shape: rect(1, 1), color: "blue" },
+      ],
+      generators: [{
+        id: "timed-generator",
+        side: "left",
+        offset: 0,
+        spawn: [0, 0],
+        queueBlockIds: ["queued-a", "queued-b"],
+        trigger: "time",
+        intervalSeconds: 2,
+      }],
+    }));
+
+    expect(moveGenerator.evidence.hiddenStateUnits).toBe(4);
+    expect(timedGenerator.evidence.hiddenStateUnits).toBe(5);
+    expect(timedGenerator.score).toBeGreaterThan(moveGenerator.score);
+  });
 });
 
 describe("PCG originality guard", () => {
@@ -65,8 +103,8 @@ describe("PCG originality guard", () => {
     expect(canonicalLevelLayoutSignature(mirrored)).toBe(canonicalLevelLayoutSignature(original));
   });
 
-  it("keeps all shipping Block Out levels structurally and semantically unique", () => {
-    const report = validateCampaignOriginality(LEVELS);
+  it("keeps the original Lv1-Lv100 video-parity season structurally and semantically unique", () => {
+    const report = validateCampaignOriginality(LEVELS.slice(0, 100));
     expect(report.levelCount).toBe(100);
     expect(report.duplicateLayoutGroups).toEqual([]);
     expect(report.duplicateNameGroups).toEqual([]);

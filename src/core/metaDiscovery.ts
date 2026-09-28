@@ -1,6 +1,17 @@
 export interface MetaDiscoveryState {
   collectionViewedThroughLevel: number;
+  /**
+   * Stable Collection item ids the player has explicitly opened. When this
+   * field is absent, the legacy level watermark remains the migration source.
+   */
+  collectionViewedItemIds?: readonly string[];
+  /** Retained only so schema-v1 saves normalize without replaying removed prompts. */
   dailyUnlockSeen: boolean;
+}
+
+export interface CollectionDiscoveryItem {
+  readonly id: string;
+  readonly unlockLevel: number;
 }
 
 export const DEFAULT_META_DISCOVERY: MetaDiscoveryState = {
@@ -28,6 +39,7 @@ export const sanitizeMetaDiscovery = (
   legacyCollectionLevel: number,
   legacyDailyUnlocked: boolean,
   maximumLevel: number,
+  knownCollectionItemIds?: readonly string[],
 ): MetaDiscoveryState => {
   if (!isRecord(value)) {
     return {
@@ -35,7 +47,7 @@ export const sanitizeMetaDiscovery = (
       dailyUnlockSeen: legacyDailyUnlocked,
     };
   }
-  return {
+  const normalized: MetaDiscoveryState = {
     collectionViewedThroughLevel: boundedLevel(
       value.collectionViewedThroughLevel,
       boundedLevel(legacyCollectionLevel, 1, maximumLevel),
@@ -44,6 +56,50 @@ export const sanitizeMetaDiscovery = (
     dailyUnlockSeen: typeof value.dailyUnlockSeen === "boolean"
       ? value.dailyUnlockSeen
       : legacyDailyUnlocked,
+  };
+  if (!Array.isArray(value.collectionViewedItemIds)) return normalized;
+
+  const knownIds = knownCollectionItemIds ? new Set(knownCollectionItemIds) : undefined;
+  const collectionViewedItemIds = [...new Set(value.collectionViewedItemIds.filter((id): id is string => (
+    typeof id === "string"
+      && id.length > 0
+      && id.length <= 64
+      && (!knownIds || knownIds.has(id))
+  )))].slice(0, 64);
+  return { ...normalized, collectionViewedItemIds };
+};
+
+/**
+ * Explicit item ids become authoritative as soon as the first Collection card
+ * is opened. Before that, legacy saves keep using their historical watermark.
+ */
+export const collectionItemHasBeenViewed = (
+  state: MetaDiscoveryState,
+  item: CollectionDiscoveryItem,
+): boolean => state.collectionViewedItemIds != null
+  ? state.collectionViewedItemIds.includes(item.id)
+  : item.unlockLevel <= state.collectionViewedThroughLevel;
+
+export const pendingCollectionItemIds = (
+  state: MetaDiscoveryState,
+  unlockedItems: readonly CollectionDiscoveryItem[],
+): string[] => unlockedItems
+  .filter((item) => !collectionItemHasBeenViewed(state, item))
+  .map((item) => item.id);
+
+export const acknowledgeCollectionItem = (
+  state: MetaDiscoveryState,
+  item: CollectionDiscoveryItem,
+  allItems: readonly CollectionDiscoveryItem[],
+): MetaDiscoveryState => {
+  if (collectionItemHasBeenViewed(state, item)) return state;
+  const viewedBeforeExplicitTracking = state.collectionViewedItemIds ?? allItems
+    .filter((candidate) => candidate.unlockLevel <= state.collectionViewedThroughLevel)
+    .map((candidate) => candidate.id);
+  return {
+    ...state,
+    collectionViewedThroughLevel: Math.max(state.collectionViewedThroughLevel, item.unlockLevel),
+    collectionViewedItemIds: [...new Set([...viewedBeforeExplicitTracking, item.id])].slice(0, 64),
   };
 };
 
@@ -62,11 +118,3 @@ export const acknowledgeCollectionUnlocks = (
   const pending = pendingCollectionUnlockLevel(state, unlockedLevels);
   return pending == null ? state : { ...state, collectionViewedThroughLevel: pending };
 };
-
-export const dailyUnlockPending = (state: MetaDiscoveryState, dailyUnlocked: boolean): boolean => (
-  dailyUnlocked && !state.dailyUnlockSeen
-);
-
-export const acknowledgeDailyUnlock = (state: MetaDiscoveryState): MetaDiscoveryState => (
-  state.dailyUnlockSeen ? state : { ...state, dailyUnlockSeen: true }
-);

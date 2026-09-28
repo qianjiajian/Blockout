@@ -1,0 +1,17 @@
+import fs from 'node:fs';
+import {api,shapes,tile,recolor,rng,rect,searchSpatial,project,digest,audit} from '../author164-167/common.mjs';
+import {ROOT,writeNew,ruleGate} from '../common.mjs';
+import {checkAxisPrefixFloor} from '../../campaign-v145/lv131-140/agent139-140/axis128-masked-prefix-floor.mjs';
+import {shortenRoute} from '../../remake21to30-route-shortcuts.mjs';
+ruleGate();const parentFile='deliverables/remake161-170-20260927/assist166/candidate-1790518578041.json',parent=JSON.parse(fs.readFileSync(parentFile)),OUT=ROOT+'/assist166',R=rng(Number(process.env.SEED??166105)),rows=[],began=Date.now();
+function prefixProject(l){const p=project(l),ids=new Set(p.shutters.filter(s=>s.skin==='lift').map(s=>s.id));p.blocks=p.blocks.filter(b=>!ids.has(b.shutterId));p.shutters=p.shutters.filter(s=>!ids.has(s.id));return p;}
+for(let attempt=0;Date.now()-began<Number(process.env.BUDGET??60000);attempt++){
+ const l=structuredClone(parent.level),seed=R.state();l.shutters.find(s=>s.id==='a166-lower-left').y=2;for(const b of l.blocks.filter(b=>b.shutterId==='a166-lower-left'))b.y-=5;
+ const specs=l.blocks.filter(b=>b.id.startsWith('a166-low')).sort((a,b)=>a.id.localeCompare(b.id));const ids=R.random()<.6?[7,2,3,4,8,1]:[7,2,3,9,8,1];for(let i=0;i<specs.length;i++)specs[i].shape=shapes[ids[i]];
+ const bs=tile(specs,rect(0,6,3,5),{seed:R.state(),maxNodes:10000,preferLarge:false});R.random();if(!bs||!recolor(bs,['blue','cyan','green'],{seed:R.state()}))continue;R.random();l.blocks=l.blocks.filter(b=>!b.id.startsWith('a166-low')).concat(bs);
+ const blue=l.gates.find(g=>g.color==='blue'),cyan=l.gates.find(g=>g.color==='cyan');blue.offset=5+Math.floor(R.random()*4);cyan.offset=Math.floor(R.random()*3);const row={attempt,seed,hash:digest(l)};
+ try{audit(l);const projected=prefixProject(l),proof=checkAxisPrefixFloor(projected,api,{goalClears:4,floor:5,maxMilliseconds:400,maxStates:35000});row.proof={status:proof.status,cost:proof.cost,states:proof.states};
+ if(proof.thresholdProven&&proof.states>1){const prefix=checkAxisPrefixFloor(projected,api,{goalClears:4,floor:8,maxMilliseconds:1000,maxStates:80000});row.prefixCost=prefix.cost;if(prefix.drags&&api.replayRevisedRoute(l,prefix.drags).valid){const result=searchSpatial(project(l),api,{initialDrags:prefix.drags,floor:11,maxMilliseconds:2000,maxStates:24000,maxTransitions:200000,normalize:true,orderSeed:attempt,diagnosticTrace:true});row.search=result.status;row.clears=result.maxClearsSeen;if(result.drags){const drags=shortenRoute(l,result.drags,api).drags,replay=api.replayRevisedRoute(l,drags);row.U=replay.nonClearingDrags;row.complete=replay.complete;const file=OUT+'/prefix-candidate-'+Date.now()+'.json';writeNew(file,{level:l,drags,replay,proof,prefix,result,parentFile,prefixProjection:projected,projectionReason:'All four lifts fully lie behind ordinary curtain 4 or 15 and cannot reveal before the fourth clear. Prefix stops exactly at four clears. Remove only lift cohorts which cannot be visible or act before this goal; no hidden ice or clear counted. Every inventory retained in full current-model witness.',iteration:{attempt,seed},formalAdopted:false});row.file=file;if(replay.complete&&replay.nonClearingDrags<=10){rows.push(row);console.log(JSON.stringify(row));break;}}}}
+ }catch(e){row.error=e.message;}rows.push(row);if(row.prefixCost||attempt%50===0)console.log(JSON.stringify(row));
+}
+writeNew(OUT+'/prefix-round-'+Date.now()+'.json',{elapsed:Date.now()-began,rows,finiteBudget:true});

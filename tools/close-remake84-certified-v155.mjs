@@ -1,0 +1,21 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {checkCandidate,loadApi,BASELINE,ruleGate,OUTPUT} from './remake84-certified-v155.mjs';
+import {digest} from './revised-preview-validation-v160.mjs';
+const [candidate,installedFile,...pointerFiles]=process.argv.slice(2);assert.equal(pointerFiles.length,2);
+const installed=JSON.parse(fs.readFileSync(installedFile)),data=JSON.parse(fs.readFileSync(candidate));
+assert.equal(installed.candidate,candidate);assert.equal(installed.status,'installed-awaiting-formal-pointer');
+const {api}=await loadApi(),check=await checkCandidate(data,JSON.parse(fs.readFileSync(BASELINE)),api);
+assert.deepEqual(api.LEVELS[83],data.level);
+const pointers=pointerFiles.map(file=>{
+ const p=JSON.parse(fs.readFileSync(file));assert.equal(p.status,'PASS');assert.equal(p.candidateOnly,false);assert.equal(p.formalDataValidated,true);assert(p.naturalClock&&!p.clockFrozen&&!p.playerSaveTouched);assert.deepEqual(p.drift,[]);assert.deepEqual(p.currentWorkspaceDrift,[]);
+ const row=p.rows.find(r=>r.id===84);assert.equal(row?.status,'PASS');assert.equal(row.candidateOverlay,false);assert.equal(row.formalObjectIdentity,true);assert.equal(row.levelSha256,digest(data.level));assert.equal(row.routeSha256,digest(data.drags));assert.equal(row.lowerBound,21);assert.equal(row.nonClearingDrags,28);assert.equal(row.final.moves,67);
+ for(const [f,h]of Object.entries(p.sourceBindings))assert.equal(digest(fs.readFileSync(f)),h,`Source drift ${f}`);
+ for(const [f,h]of Object.entries(p.bindings))assert.equal(digest(fs.readFileSync(f)),h,`Formal Pointer drift ${f}`);
+ return{file,sha256:digest(fs.readFileSync(file)),viewport:p.viewport,remainingSeconds:row.final.remainingSeconds,drags:row.final.moves,nonClearingDrags:row.nonClearingDrags,complete:true,formalDataValidated:true,naturalClock:true};
+});
+assert.deepEqual(pointers.map(p=>p.viewport.width).sort((a,b)=>a-b),[320,496]);
+const before=JSON.parse(fs.readFileSync(installed.beforeFile));assert.equal(digest(api.LEVELS.filter(l=>l.id!==84)),before.other199Sha256);assert.equal(digest(api.LEVELS.slice(0,30)),before.protected1to30Sha256);
+const fixture=JSON.parse(fs.readFileSync('tests/fixtures/remake81to90-v146.json'));assert.deepEqual(fixture.rows.map(r=>r.id),[81,82,83,84,85,86,87,89,90]);for(const r of fixture.rows)assert.deepEqual(api.LEVELS[r.id-1],r.level);
+const record={createdAt:new Date().toISOString(),activeRuleVersion:ruleGate().activeVersion,status:'FORMAL_ADOPTION_COMPLETE',candidate,installedFile,levelSha256:digest(data.level),routeSha256:digest(data.drags),lowerBound:21,upperBound:28,lowerBoundValidated:true,check,pointers,formalBatchIds:fixture.rows.map(r=>r.id),other199Preserved:true,protected1to30Preserved:true,testsRecordedSeparately:true,humanBlindTested:false,playerSaveTouched:false,released:false};
+const output=`${OUTPUT}/formal-adoption-${Date.now()}.json`;fs.writeFileSync(output,JSON.stringify(record,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify({output,status:record.status,lowerBound:21,upperBound:28,formalBatchIds:record.formalBatchIds}));

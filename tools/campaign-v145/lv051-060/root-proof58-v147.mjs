@@ -1,0 +1,14 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {build} from 'esbuild';
+import {loadApi} from '../../native-block-repair-v143.mjs';
+import {digest} from '../../revised-preview-validation-v160.mjs';
+import {verifyRulesLock} from '../../verify-rules-lock.mjs';
+import {checkImmediateGeneratorFloor,projectImmediateRoute} from './immediate-generator-floor56-v146.mjs';
+const lock=verifyRulesLock();assert(lock.ok);const file=process.argv[2],d=JSON.parse(fs.readFileSync(file));assert.equal(d.level.id,58);const {api,inputs}=await loadApi();
+const meta=await build({entryPoints:[import.meta.filename],bundle:true,write:false,metafile:true,platform:'node',format:'esm',packages:'external',logLevel:'silent'}),paths=[...new Set([...inputs,...Object.keys(meta.metafile.inputs),file,d.sourceReview,'docs/rules/manifest.json','docs/mechanism-rules-v1.47.0.md'])];
+const bindings=Object.fromEntries(paths.map(p=>[p,digest(fs.readFileSync(p))])),out=`deliverables/remake31-200-v145-20260924/batches/lv051-060/root58/proof-${Date.now()}.json`;fs.mkdirSync(out.slice(0,out.lastIndexOf('/')),{recursive:true});
+const replay=api.replayRevisedRoute(d.level,d.drags);assert(replay.valid&&replay.complete);const projection=projectImmediateRoute(d.level,d.drags,api),options={floor:11,maxStates:Number(process.env.MAX_STATES??1500000),maxMilliseconds:Number(process.env.PROOF_MS??120000)};
+const input={file,levelSha256:digest(d.level),routeSha256:digest(d.drags),options,bindings,ruleVersion:lock.activeVersion};fs.writeFileSync(out.replace('/proof-','/inputs-'),JSON.stringify(input,null,2)+'\n',{flag:'wx'});
+const proof=checkImmediateGeneratorFloor(d.level,api,options),shortcutReplay=proof.relaxedRoute?api.replayRevisedRoute(d.level,proof.relaxedRoute):null,drift=Object.entries(bindings).filter(([p,h])=>digest(fs.readFileSync(p))!==h);
+const result={...input,checkedAt:new Date().toISOString(),proof,replay,projection,shortcutReplay,drift,pointerValidated:false,formalAdopted:false};fs.writeFileSync(out,JSON.stringify(result,null,2)+'\n',{flag:'wx'});assert.equal(drift.length,0);console.log(JSON.stringify({out,status:proof.status,states:proof.discoveredStates,shortcut:shortcutReplay?.valid&&shortcutReplay.complete?shortcutReplay.nonClearingDrags:null}));

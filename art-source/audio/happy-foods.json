@@ -1,0 +1,37 @@
+{
+  "title": "Happy Foods (Happy Ukulele)",
+  "artist": "Infraction",
+  "game": "Block Out!",
+  "scene": "level challenge",
+  "source": "User-provided MP3",
+  "sourceFileName": "Upbeat Happy Cooking by Infraction _No Copyright Music_ _ Happy Foods.mp3",
+  "sourceUrl": "https://www.youtube.com/watch?v=ovoY5W8sIvU",
+  "catalogUrl": "https://inaudio.org/instrument/ukulele/",
+  "sourceSha256": "3FEE92644B02F0A4194E73524B7330E99B8C47F4F813129F15065B4CEA9ECC18",
+  "runtimeSha256": "55C1772969CB6B817969C1FB018077B2D27D75E2B5D2D7E8E3F2FE5DC0568246",
+  "decodedPcmSha256": "760529BF4B3ECC6E941FEDD706CABB624BF6377FD22E20A254B9D4C51868C58B",
+  "durationSeconds": 126.016,
+  "sampleRate": 48000,
+  "channels": 2,
+  "loop": {
+    "startSeconds": 0,
+    "endSeconds": 126.016,
+    "leadingQuietSeconds": 0.54,
+    "trailingQuietSeconds": 1.92
+  },
+  "optimization": {
+    "codec": "MPEG-1 Layer III",
+    "mode": "Original VBR frames, copied byte-for-byte",
+    "averageBitrateBps": 82315,
+    "originalBytes": 1297197,
+    "runtimeBytes": 1297152,
+    "reductionBytes": 45,
+    "reductionPercent": 0.00347,
+    "audioReencoded": false,
+    "removedData": "ID3v2 TSSE encoder tag only",
+    "integratedLufs": -15.89,
+    "truePeakDbtp": -3.06
+  },
+  "attribution": "Music from #InAudio: https://inaudio.org/\nTrack: Happy Foods (Happy Ukulele)\nArtist: Infraction",
+  "rightsNotice": "The supplied file contains no license metadata. InAudio lists games and applications among licensed uses, while the official track description states that commercial projects require an InAudio subscription. Obtain and retain the applicable project license before release."
+}

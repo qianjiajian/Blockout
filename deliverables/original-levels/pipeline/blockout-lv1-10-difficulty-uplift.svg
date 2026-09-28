@@ -26,163 +26,159 @@
     </style>
   </defs>
   <rect width="1600" height="900" fill="#F3F6FA"/>
-  <text x="105" y="55" class="title">Block Out Lv1–10 加难效果</text>
-  <text x="105" y="88" class="subtitle">固定基线标尺对比；拖动次数为可执行验证路线，并非严格最优解证明</text>
+  <text x="105" y="55" class="title">Block Out Lv1–10 竞品构成重制对比</text>
+  <text x="105" y="88" class="subtitle">固定基线标尺对比；调整后拖动次数为求解器证明的严格最优值</text>
 
   <g transform="translate(105,110)">
     <rect width="280" height="64" rx="13" fill="#EAF2FF"/>
     <text x="20" y="25" class="card-label">章节平均难度</text>
-    <text x="20" y="52" class="card-value" fill="#1769E0">44.22 → 57.88</text>
-    <text x="248" y="43" text-anchor="end" class="card-label" fill="#218653">+13.65</text>
+    <text x="20" y="52" class="card-value" fill="#1769E0">44.22 → 65.39</text>
+    <text x="248" y="43" text-anchor="end" class="card-label" fill="#218653">+21.16</text>
   </g>
   <g transform="translate(403,110)">
     <rect width="280" height="64" rx="13" fill="#EAF8F0"/>
     <text x="20" y="25" class="card-label">验证路线拖动合计</text>
-    <text x="20" y="52" class="card-value" fill="#218653">123 → 145</text>
-    <text x="248" y="43" text-anchor="end" class="card-label" fill="#218653">+17.9%</text>
+    <text x="20" y="52" class="card-value" fill="#218653">123 → 160</text>
+    <text x="248" y="43" text-anchor="end" class="card-label" fill="#218653">+30.1%</text>
   </g>
   <g transform="translate(701,110)">
     <rect width="280" height="64" rx="13" fill="#FFF7E8"/>
     <text x="20" y="25" class="card-label">必要换位合计</text>
-    <text x="20" y="52" class="card-value" fill="#C96800">46 → 49</text>
-    <text x="248" y="43" text-anchor="end" class="card-label" fill="#218653">+3</text>
+    <text x="20" y="52" class="card-value" fill="#C96800">46 → 5</text>
+    <text x="248" y="43" text-anchor="end" class="card-label" fill="#218653">-41</text>
   </g>
 
   <rect x="105" y="205" width="1430" height="310" rx="14" fill="#FFFFFF" filter="url(#shadow)"/>
-  <text x="123" y="233" class="panel-title">校准难度分（0–80 显示区间）</text>
+  <text x="123" y="233" class="panel-title">校准难度分（0–90 显示区间）</text>
   
   <line x1="105" y1="515.00" x2="1535" y2="515.00" class="grid"/>
   <text x="84" y="521.00" text-anchor="end" class="axis-label">0</text>
-  <line x1="105" y1="476.25" x2="1535" y2="476.25" class="grid"/>
-  <text x="84" y="482.25" text-anchor="end" class="axis-label">10</text>
-  <line x1="105" y1="437.50" x2="1535" y2="437.50" class="grid"/>
-  <text x="84" y="443.50" text-anchor="end" class="axis-label">20</text>
-  <line x1="105" y1="398.75" x2="1535" y2="398.75" class="grid"/>
-  <text x="84" y="404.75" text-anchor="end" class="axis-label">30</text>
-  <line x1="105" y1="360.00" x2="1535" y2="360.00" class="grid"/>
-  <text x="84" y="366.00" text-anchor="end" class="axis-label">40</text>
-  <line x1="105" y1="321.25" x2="1535" y2="321.25" class="grid"/>
-  <text x="84" y="327.25" text-anchor="end" class="axis-label">50</text>
-  <line x1="105" y1="282.50" x2="1535" y2="282.50" class="grid"/>
-  <text x="84" y="288.50" text-anchor="end" class="axis-label">60</text>
-  <line x1="105" y1="243.75" x2="1535" y2="243.75" class="grid"/>
-  <text x="84" y="249.75" text-anchor="end" class="axis-label">70</text>
+  <line x1="105" y1="480.56" x2="1535" y2="480.56" class="grid"/>
+  <text x="84" y="486.56" text-anchor="end" class="axis-label">10</text>
+  <line x1="105" y1="446.11" x2="1535" y2="446.11" class="grid"/>
+  <text x="84" y="452.11" text-anchor="end" class="axis-label">20</text>
+  <line x1="105" y1="411.67" x2="1535" y2="411.67" class="grid"/>
+  <text x="84" y="417.67" text-anchor="end" class="axis-label">30</text>
+  <line x1="105" y1="377.22" x2="1535" y2="377.22" class="grid"/>
+  <text x="84" y="383.22" text-anchor="end" class="axis-label">40</text>
+  <line x1="105" y1="342.78" x2="1535" y2="342.78" class="grid"/>
+  <text x="84" y="348.78" text-anchor="end" class="axis-label">50</text>
+  <line x1="105" y1="308.33" x2="1535" y2="308.33" class="grid"/>
+  <text x="84" y="314.33" text-anchor="end" class="axis-label">60</text>
+  <line x1="105" y1="273.89" x2="1535" y2="273.89" class="grid"/>
+  <text x="84" y="279.89" text-anchor="end" class="axis-label">70</text>
+  <line x1="105" y1="239.44" x2="1535" y2="239.44" class="grid"/>
+  <text x="84" y="245.44" text-anchor="end" class="axis-label">80</text>
   <line x1="105" y1="205.00" x2="1535" y2="205.00" class="grid"/>
-  <text x="84" y="211.00" text-anchor="end" class="axis-label">80</text>
-  <path d="M105.00,423.43 L263.89,328.15 L422.78,335.59 L581.67,335.94 L740.56,339.27 L899.44,335.28 L1058.33,331.17 L1217.22,337.64 L1376.11,331.32 L1535.00,338.49" class="before-line"/>
-  <path d="M105.00,423.43 L263.89,328.15 L422.78,335.59 L581.67,335.94 L740.56,339.27 L899.44,243.05 L1058.33,235.61 L1217.22,227.55 L1376.11,222.36 L1535.00,216.31" class="after-line"/>
+  <text x="84" y="211.00" text-anchor="end" class="axis-label">90</text>
+  <path d="M105.00,433.61 L263.89,348.91 L422.78,355.52 L581.67,355.83 L740.56,358.79 L899.44,355.25 L1058.33,351.60 L1217.22,357.35 L1376.11,351.73 L1535.00,358.11" class="before-line"/>
+  <path d="M105.00,393.45 L263.89,340.92 L422.78,318.32 L581.67,312.78 L740.56,306.65 L899.44,235.69 L1058.33,262.63 L1217.22,237.48 L1376.11,259.94 L1535.00,229.94" class="after-line"/>
   
-  <line x1="105.00" y1="423.43" x2="105.00" y2="423.43" class="uplift-line"/>
-  <circle cx="105.00" cy="423.43" r="5" class="before-point"/>
-  <circle cx="105.00" cy="423.43" r="6" class="after-point"/>
-  <text x="105.00" y="409.43" text-anchor="middle" class="delta">+0.00</text>
-  <line x1="263.89" y1="328.15" x2="263.89" y2="328.15" class="uplift-line"/>
-  <circle cx="263.89" cy="328.15" r="5" class="before-point"/>
-  <circle cx="263.89" cy="328.15" r="6" class="after-point"/>
-  <text x="263.89" y="314.15" text-anchor="middle" class="delta">+0.00</text>
-  <line x1="422.78" y1="335.59" x2="422.78" y2="335.59" class="uplift-line"/>
-  <circle cx="422.78" cy="335.59" r="5" class="before-point"/>
-  <circle cx="422.78" cy="335.59" r="6" class="after-point"/>
-  <text x="422.78" y="321.59" text-anchor="middle" class="delta">+0.00</text>
-  <line x1="581.67" y1="335.94" x2="581.67" y2="335.94" class="uplift-line"/>
-  <circle cx="581.67" cy="335.94" r="5" class="before-point"/>
-  <circle cx="581.67" cy="335.94" r="6" class="after-point"/>
-  <text x="581.67" y="321.94" text-anchor="middle" class="delta">+0.00</text>
-  <line x1="740.56" y1="339.27" x2="740.56" y2="339.27" class="uplift-line"/>
-  <circle cx="740.56" cy="339.27" r="5" class="before-point"/>
-  <circle cx="740.56" cy="339.27" r="6" class="after-point"/>
-  <text x="740.56" y="325.27" text-anchor="middle" class="delta">+0.00</text>
-  <line x1="899.44" y1="335.28" x2="899.44" y2="243.05" class="uplift-line"/>
-  <circle cx="899.44" cy="335.28" r="5" class="before-point"/>
-  <circle cx="899.44" cy="243.05" r="6" class="after-point"/>
-  <text x="899.44" y="229.05" text-anchor="middle" class="delta">+23.80</text>
-  <line x1="1058.33" y1="331.17" x2="1058.33" y2="235.61" class="uplift-line"/>
-  <circle cx="1058.33" cy="331.17" r="5" class="before-point"/>
-  <circle cx="1058.33" cy="235.61" r="6" class="after-point"/>
-  <text x="1058.33" y="221.61" text-anchor="middle" class="delta">+24.66</text>
-  <line x1="1217.22" y1="337.64" x2="1217.22" y2="227.55" class="uplift-line"/>
-  <circle cx="1217.22" cy="337.64" r="5" class="before-point"/>
-  <circle cx="1217.22" cy="227.55" r="6" class="after-point"/>
-  <text x="1217.22" y="213.55" text-anchor="middle" class="delta">+28.41</text>
-  <line x1="1376.11" y1="331.32" x2="1376.11" y2="222.36" class="uplift-line"/>
-  <circle cx="1376.11" cy="331.32" r="5" class="before-point"/>
-  <circle cx="1376.11" cy="222.36" r="6" class="after-point"/>
-  <text x="1376.11" y="208.36" text-anchor="middle" class="delta">+28.12</text>
-  <line x1="1535.00" y1="338.49" x2="1535.00" y2="216.31" class="uplift-line"/>
-  <circle cx="1535.00" cy="338.49" r="5" class="before-point"/>
-  <circle cx="1535.00" cy="216.31" r="6" class="after-point"/>
-  <text x="1535.00" y="202.31" text-anchor="middle" class="delta">+31.53</text>
+  <line x1="105.00" y1="433.61" x2="105.00" y2="393.45" class="uplift-line"/>
+  <circle cx="105.00" cy="433.61" r="5" class="before-point"/>
+  <circle cx="105.00" cy="393.45" r="6" class="after-point"/>
+  <text x="105.00" y="379.45" text-anchor="middle" class="delta">+11.66</text>
+  <line x1="263.89" y1="348.91" x2="263.89" y2="340.92" class="uplift-line"/>
+  <circle cx="263.89" cy="348.91" r="5" class="before-point"/>
+  <circle cx="263.89" cy="340.92" r="6" class="after-point"/>
+  <text x="263.89" y="326.92" text-anchor="middle" class="delta">+2.32</text>
+  <line x1="422.78" y1="355.52" x2="422.78" y2="318.32" class="uplift-line"/>
+  <circle cx="422.78" cy="355.52" r="5" class="before-point"/>
+  <circle cx="422.78" cy="318.32" r="6" class="after-point"/>
+  <text x="422.78" y="304.32" text-anchor="middle" class="delta">+10.80</text>
+  <line x1="581.67" y1="355.83" x2="581.67" y2="312.78" class="uplift-line"/>
+  <circle cx="581.67" cy="355.83" r="5" class="before-point"/>
+  <circle cx="581.67" cy="312.78" r="6" class="after-point"/>
+  <text x="581.67" y="298.78" text-anchor="middle" class="delta">+12.50</text>
+  <line x1="740.56" y1="358.79" x2="740.56" y2="306.65" class="uplift-line"/>
+  <circle cx="740.56" cy="358.79" r="5" class="before-point"/>
+  <circle cx="740.56" cy="306.65" r="6" class="after-point"/>
+  <text x="740.56" y="292.65" text-anchor="middle" class="delta">+15.14</text>
+  <line x1="899.44" y1="355.25" x2="899.44" y2="235.69" class="uplift-line"/>
+  <circle cx="899.44" cy="355.25" r="5" class="before-point"/>
+  <circle cx="899.44" cy="235.69" r="6" class="after-point"/>
+  <text x="899.44" y="221.69" text-anchor="middle" class="delta">+34.71</text>
+  <line x1="1058.33" y1="351.60" x2="1058.33" y2="262.63" class="uplift-line"/>
+  <circle cx="1058.33" cy="351.60" r="5" class="before-point"/>
+  <circle cx="1058.33" cy="262.63" r="6" class="after-point"/>
+  <text x="1058.33" y="248.63" text-anchor="middle" class="delta">+25.83</text>
+  <line x1="1217.22" y1="357.35" x2="1217.22" y2="237.48" class="uplift-line"/>
+  <circle cx="1217.22" cy="357.35" r="5" class="before-point"/>
+  <circle cx="1217.22" cy="237.48" r="6" class="after-point"/>
+  <text x="1217.22" y="223.48" text-anchor="middle" class="delta">+34.80</text>
+  <line x1="1376.11" y1="351.73" x2="1376.11" y2="259.94" class="uplift-line"/>
+  <circle cx="1376.11" cy="351.73" r="5" class="before-point"/>
+  <circle cx="1376.11" cy="259.94" r="6" class="after-point"/>
+  <text x="1376.11" y="245.94" text-anchor="middle" class="delta">+26.65</text>
+  <line x1="1535.00" y1="358.11" x2="1535.00" y2="229.94" class="uplift-line"/>
+  <circle cx="1535.00" cy="358.11" r="5" class="before-point"/>
+  <circle cx="1535.00" cy="229.94" r="6" class="after-point"/>
+  <text x="1535.00" y="215.94" text-anchor="middle" class="delta">+37.21</text>
   <g transform="translate(1190, 235)">
     <line x1="0" y1="0" x2="38" y2="0" class="before-line"/><text x="50" y="6" class="legend">调整前</text>
     <line x1="130" y1="0" x2="168" y2="0" class="after-line"/><text x="180" y="6" class="legend">调整后</text>
   </g>
 
   <rect x="105" y="635" width="1430" height="160" rx="14" fill="#FFFFFF" filter="url(#shadow)"/>
-  <text x="123" y="663" class="panel-title">验证路线拖动次数</text>
+  <text x="123" y="663" class="panel-title">最优路线拖动次数</text>
   
   <line x1="105" y1="795.00" x2="1535" y2="795.00" class="grid"/>
   <text x="84" y="801.00" text-anchor="end" class="axis-label">0</text>
-  <line x1="105" y1="768.33" x2="1535" y2="768.33" class="grid"/>
-  <text x="84" y="774.33" text-anchor="end" class="axis-label">5</text>
   <line x1="105" y1="741.67" x2="1535" y2="741.67" class="grid"/>
   <text x="84" y="747.67" text-anchor="end" class="axis-label">10</text>
-  <line x1="105" y1="715.00" x2="1535" y2="715.00" class="grid"/>
-  <text x="84" y="721.00" text-anchor="end" class="axis-label">15</text>
   <line x1="105" y1="688.33" x2="1535" y2="688.33" class="grid"/>
   <text x="84" y="694.33" text-anchor="end" class="axis-label">20</text>
-  <line x1="105" y1="661.67" x2="1535" y2="661.67" class="grid"/>
-  <text x="84" y="667.67" text-anchor="end" class="axis-label">25</text>
   <line x1="105" y1="635.00" x2="1535" y2="635.00" class="grid"/>
   <text x="84" y="641.00" text-anchor="end" class="axis-label">30</text>
   
     <rect x="83.00" y="784.33" width="18" height="10.67" rx="4" class="before-bar"/>
-    <rect x="109.00" y="784.33" width="18" height="10.67" rx="4" class="after-bar"/>
+    <rect x="109.00" y="779.00" width="18" height="16.00" rx="4" class="after-bar"/>
     <text x="92.00" y="776.33" text-anchor="middle" class="bar-label">2</text>
-    <text x="118.00" y="776.33" text-anchor="middle" class="bar-label strong">2</text>
+    <text x="118.00" y="771.00" text-anchor="middle" class="bar-label strong">3</text>
     <text x="105.00" y="832" text-anchor="middle" class="level-label">Lv1</text>
     <rect x="241.89" y="731.00" width="18" height="64.00" rx="4" class="before-bar"/>
-    <rect x="267.89" y="731.00" width="18" height="64.00" rx="4" class="after-bar"/>
+    <rect x="267.89" y="747.00" width="18" height="48.00" rx="4" class="after-bar"/>
     <text x="250.89" y="723.00" text-anchor="middle" class="bar-label">12</text>
-    <text x="276.89" y="723.00" text-anchor="middle" class="bar-label strong">12</text>
+    <text x="276.89" y="739.00" text-anchor="middle" class="bar-label strong">9</text>
     <text x="263.89" y="832" text-anchor="middle" class="level-label">Lv2</text>
     <rect x="400.78" y="725.67" width="18" height="69.33" rx="4" class="before-bar"/>
-    <rect x="426.78" y="725.67" width="18" height="69.33" rx="4" class="after-bar"/>
+    <rect x="426.78" y="741.67" width="18" height="53.33" rx="4" class="after-bar"/>
     <text x="409.78" y="717.67" text-anchor="middle" class="bar-label">13</text>
-    <text x="435.78" y="717.67" text-anchor="middle" class="bar-label strong">13</text>
+    <text x="435.78" y="733.67" text-anchor="middle" class="bar-label strong">10</text>
     <text x="422.78" y="832" text-anchor="middle" class="level-label">Lv3</text>
     <rect x="559.67" y="736.33" width="18" height="58.67" rx="4" class="before-bar"/>
-    <rect x="585.67" y="736.33" width="18" height="58.67" rx="4" class="after-bar"/>
+    <rect x="585.67" y="683.00" width="18" height="112.00" rx="4" class="after-bar"/>
     <text x="568.67" y="728.33" text-anchor="middle" class="bar-label">11</text>
-    <text x="594.67" y="728.33" text-anchor="middle" class="bar-label strong">11</text>
+    <text x="594.67" y="675.00" text-anchor="middle" class="bar-label strong">21</text>
     <text x="581.67" y="832" text-anchor="middle" class="level-label">Lv4</text>
     <rect x="718.56" y="736.33" width="18" height="58.67" rx="4" class="before-bar"/>
-    <rect x="744.56" y="736.33" width="18" height="58.67" rx="4" class="after-bar"/>
+    <rect x="744.56" y="688.33" width="18" height="106.67" rx="4" class="after-bar"/>
     <text x="727.56" y="728.33" text-anchor="middle" class="bar-label">11</text>
-    <text x="753.56" y="728.33" text-anchor="middle" class="bar-label strong">11</text>
+    <text x="753.56" y="680.33" text-anchor="middle" class="bar-label strong">20</text>
     <text x="740.56" y="832" text-anchor="middle" class="level-label">Lv5</text>
     <rect x="877.44" y="736.33" width="18" height="58.67" rx="4" class="before-bar"/>
-    <rect x="903.44" y="731.00" width="18" height="64.00" rx="4" class="after-bar"/>
+    <rect x="903.44" y="683.00" width="18" height="112.00" rx="4" class="after-bar"/>
     <text x="886.44" y="728.33" text-anchor="middle" class="bar-label">11</text>
-    <text x="912.44" y="723.00" text-anchor="middle" class="bar-label strong">12</text>
+    <text x="912.44" y="675.00" text-anchor="middle" class="bar-label strong">21</text>
     <text x="899.44" y="832" text-anchor="middle" class="level-label">Lv6</text>
     <rect x="1036.33" y="731.00" width="18" height="64.00" rx="4" class="before-bar"/>
-    <rect x="1062.33" y="715.00" width="18" height="80.00" rx="4" class="after-bar"/>
+    <rect x="1062.33" y="709.67" width="18" height="85.33" rx="4" class="after-bar"/>
     <text x="1045.33" y="723.00" text-anchor="middle" class="bar-label">12</text>
-    <text x="1071.33" y="707.00" text-anchor="middle" class="bar-label strong">15</text>
+    <text x="1071.33" y="701.67" text-anchor="middle" class="bar-label strong">16</text>
     <text x="1058.33" y="832" text-anchor="middle" class="level-label">Lv7</text>
     <rect x="1195.22" y="677.67" width="18" height="117.33" rx="4" class="before-bar"/>
-    <rect x="1221.22" y="656.33" width="18" height="138.67" rx="4" class="after-bar"/>
+    <rect x="1221.22" y="661.67" width="18" height="133.33" rx="4" class="after-bar"/>
     <text x="1204.22" y="669.67" text-anchor="middle" class="bar-label">22</text>
-    <text x="1230.22" y="648.33" text-anchor="middle" class="bar-label strong">26</text>
+    <text x="1230.22" y="653.67" text-anchor="middle" class="bar-label strong">25</text>
     <text x="1217.22" y="832" text-anchor="middle" class="level-label">Lv8</text>
     <rect x="1354.11" y="715.00" width="18" height="80.00" rx="4" class="before-bar"/>
-    <rect x="1380.11" y="667.00" width="18" height="128.00" rx="4" class="after-bar"/>
+    <rect x="1380.11" y="741.67" width="18" height="53.33" rx="4" class="after-bar"/>
     <text x="1363.11" y="707.00" text-anchor="middle" class="bar-label">15</text>
-    <text x="1389.11" y="659.00" text-anchor="middle" class="bar-label strong">24</text>
+    <text x="1389.11" y="733.67" text-anchor="middle" class="bar-label strong">10</text>
     <text x="1376.11" y="832" text-anchor="middle" class="level-label">Lv9</text>
     <rect x="1513.00" y="720.33" width="18" height="74.67" rx="4" class="before-bar"/>
-    <rect x="1539.00" y="693.67" width="18" height="101.33" rx="4" class="after-bar"/>
+    <rect x="1539.00" y="661.67" width="18" height="133.33" rx="4" class="after-bar"/>
     <text x="1522.00" y="712.33" text-anchor="middle" class="bar-label">14</text>
-    <text x="1548.00" y="685.67" text-anchor="middle" class="bar-label strong">19</text>
+    <text x="1548.00" y="653.67" text-anchor="middle" class="bar-label strong">25</text>
     <text x="1535.00" y="832" text-anchor="middle" class="level-label">Lv10</text>
 </svg>

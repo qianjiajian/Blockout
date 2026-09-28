@@ -3,28 +3,26 @@ import { fileURLToPath } from "node:url";
 import { resolve } from "node:path";
 import { chromium } from "playwright";
 
-const output = fileURLToPath(new URL("../playtest-results/", import.meta.url));
+const output = fileURLToPath(new URL(`../playtest-results/timeout-recovery-time-freeze-${new Date().toISOString().replaceAll(":", "-")}/`, import.meta.url));
 const shot = (name) => resolve(output, name);
 const playtestUrl = process.env.PLAYTEST_URL ?? "http://127.0.0.1:5173/";
 await mkdir(output, { recursive: true });
 
 const browser = await chromium.launch({ headless: true });
 const errors = [];
-const save = (currentLevel = 1, dailyReady = false) => ({
+const save = (currentLevel = 1) => ({
   schemaVersion: 1,
   currentLevel,
-  highestLevel: dailyReady ? 6 : Math.max(4, currentLevel),
+  highestLevel: Math.max(4, currentLevel),
   coins: 2000,
   sound: false,
   haptic: false,
   reducedMotion: true,
   featureSeen: ["basics", "ice-door", "ice-block", "layer", "shutter"],
   boosters: { time: 3, rocket: 3, pulse: 3 },
-  bestStars: dailyReady ? { "1": 3 } : {},
-  bestMoves: dailyReady ? { "1": 2 } : {},
-  rewardedLevels: dailyReady ? [1] : [],
-  dailyStreak: 0,
-  lastDailyCompletedDay: "",
+  bestStars: {},
+  bestMoves: {},
+  rewardedLevels: [],
 });
 
 const attachErrors = (page) => {
@@ -39,8 +37,102 @@ const openWithSave = async (page, value) => {
   await page.waitForTimeout(120);
 };
 
+const clickInteractionTarget = async (page, name) => {
+  const state = await page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
+  const hit = state.interactionTargets?.targets?.[name]?.hit;
+  const bounds = await page.locator("canvas").boundingBox();
+  if (!hit || !bounds) throw new Error(`Timeout E2E: missing interaction target ${name}`);
+  await page.mouse.click(
+    bounds.x + state.viewportTransform.offsetX + (hit.x + hit.width / 2) * state.viewportTransform.scale,
+    bounds.y + state.viewportTransform.offsetY + (hit.y + hit.height / 2) * state.viewportTransform.scale,
+  );
+};
+
+const pointerDownInteractionTarget = async (page, name) => {
+  const state = await page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
+  const hit = state.interactionTargets?.targets?.[name]?.hit;
+  const bounds = await page.locator("canvas").boundingBox();
+  if (!hit || !bounds) throw new Error(`Timeout E2E: missing interaction target ${name}`);
+  await page.mouse.move(
+    bounds.x + state.viewportTransform.offsetX + (hit.x + hit.width / 2) * state.viewportTransform.scale,
+    bounds.y + state.viewportTransform.offsetY + (hit.y + hit.height / 2) * state.viewportTransform.scale,
+  );
+  await page.mouse.down();
+};
+
+const installFailureRenderProbe = async (page) => {
+  await page.evaluate(() => {
+    const game = window.__COLOR_ESCAPE__;
+    const methods = ["drawHome", "drawHud", "drawBoard", "drawBoosters", "drawFailed"];
+    const originals = {};
+    const trace = [];
+    for (const method of methods) {
+      originals[method] = game[method];
+      game[method] = function (...args) {
+        trace.push({ method, screen: this.screen });
+        return originals[method].apply(this, args);
+      };
+    }
+    window.__TIMEOUT_FAILURE_RENDER_PROBE__ = {
+      trace,
+      restore: () => {
+        for (const method of methods) game[method] = originals[method];
+      },
+    };
+  });
+};
+
+const assertAndRestoreFailureRender = async (page, context) => {
+  const trace = await page.evaluate(() => {
+    const probe = window.__TIMEOUT_FAILURE_RENDER_PROBE__;
+    const result = [...(probe?.trace ?? [])];
+    probe?.restore();
+    delete window.__TIMEOUT_FAILURE_RENDER_PROBE__;
+    return result;
+  });
+  const failedMethods = new Set(trace.filter(({ screen }) => screen === "failed").map(({ method }) => method));
+  for (const method of ["drawHud", "drawBoard", "drawBoosters", "drawFailed"]) {
+    if (!failedMethods.has(method)) {
+      throw new Error(`Timeout E2E: ${context} failed frame did not render ${method} (${JSON.stringify(trace)})`);
+    }
+  }
+  if (failedMethods.has("drawHome")) {
+    throw new Error(`Timeout E2E: ${context} failed frame rendered the Home scene behind the modal`);
+  }
+};
+
+const puzzleFingerprint = (state) => JSON.stringify({
+  screen: state.screen,
+  remainingSeconds: state.puzzle.remainingSeconds,
+  moves: state.puzzle.moves,
+  blocks: state.puzzle.blocks.map(({ id, x, y, layers }) => ({ id, x, y, layers })),
+  boosters: state.economy.boosters,
+});
+
+const attemptFailedBoardDrag = async (page, mapper, failedState) => {
+  const block = failedState.puzzle.blocks[0];
+  if (!block) throw new Error("Timeout E2E: failed-state board has no block to probe");
+  const [anchorX, anchorY] = block.shape[0];
+  const start = mapper.point(
+    failedState.board.innerX + (block.x + anchorX + 0.5) * failedState.board.cell,
+    failedState.board.innerY + (block.y + anchorY + 0.5) * failedState.board.cell,
+  );
+  await page.mouse.move(start.x, start.y);
+  await page.mouse.down();
+  await page.mouse.move(start.x + failedState.board.cell * failedState.viewportTransform.scale, start.y, { steps: 4 });
+  await page.mouse.up();
+  await page.waitForTimeout(40);
+};
+
 const runFinalTimerTick = async (page) => {
-  await page.evaluate(() => { window.__COLOR_ESCAPE__.model.remainingSeconds = 0.001; });
+  await page.evaluate(() => {
+    const model = window.__COLOR_ESCAPE__.model;
+    // This is a deliberate timeout fixture, not natural-clock freeze evidence.
+    // Spend only an active freeze balance before forcing the final live tick.
+    const frozen = model.snapshot().timeFreezeSeconds;
+    if (frozen > 0) model.tick(frozen);
+    model.remainingSeconds = 0.001;
+  });
   await page.waitForTimeout(120);
 };
 
@@ -118,7 +210,7 @@ state = await normalState();
 if (!state.puzzle.started || state.puzzle.blocks.length !== 1) {
   throw new Error("Timeout E2E: real pointer setup did not start the clock with one block remaining");
 }
-await normalMap.click(standard, 132, 990);
+await clickInteractionTarget(standard, "booster.time");
 state = await normalState();
 if (state.economy.boosters.time !== 2 || state.activeRun?.boosterSpent.time !== 1) {
   throw new Error(`Timeout E2E: pre-timeout booster spend was not journaled (${JSON.stringify({
@@ -129,22 +221,39 @@ if (state.economy.boosters.time !== 2 || state.activeRun?.boosterSpent.time !== 
     feedback: state.boosterFeedback,
   })})`);
 }
+await installFailureRenderProbe(standard);
+await pointerDownInteractionTarget(standard, "pause");
+state = await normalState();
+if (state.buttonPress?.key !== "pause") {
+  throw new Error("Timeout E2E: pause pointer-down did not create the expected pending press");
+}
 await runFinalTimerTick(standard);
 state = await normalState();
 if (state.screen !== "failed" || state.puzzle.blocks.length !== 1 || state.puzzle.remainingSeconds !== 0) {
   throw new Error(`Timeout E2E: final timer tick did not reach the normal failure state (${state.screen})`);
 }
 if (state.selectedId || state.activePointer != null || state.boosterTarget || state.boosterFeedback || state.hudFeedback
+  || state.buttonPress
   || state.particles !== 0 || state.exitGhosts !== 0 || state.exitPulses.length !== 0
   || state.mechanicPulses.length !== 0 || state.boardShakeTime !== 0) {
   throw new Error("Timeout E2E: failure transition left stale input or effects behind");
 }
+await standard.mouse.up();
+await assertAndRestoreFailureRender(standard, "496x1078");
 if (state.failureActions?.primary !== "重新挑战" || state.failureActions?.secondary !== "返回主页") {
   throw new Error("Timeout E2E: failure actions are unclear");
 }
+const frozenFingerprint = puzzleFingerprint(state);
+await attemptFailedBoardDrag(standard, normalMap, state);
+await clickInteractionTarget(standard, "pause");
+await clickInteractionTarget(standard, "booster.time");
+state = await normalState();
+if (puzzleFingerprint(state) !== frozenFingerprint || state.selectedId || state.activePointer != null) {
+  throw new Error("Timeout E2E: failed-state gameplay surface accepted input behind the modal");
+}
 await standard.screenshot({ path: shot("round23-timeout-one-block-left.png") });
 
-await normalMap.click(standard, 248, 754);
+await clickInteractionTarget(standard, "failedReplay");
 state = await normalState();
 if (state.screen !== "playing" || state.puzzle.started || state.puzzle.moves !== 0 || state.puzzle.blocks.length !== initialBlockCount
   || state.economy.boosters.time !== 2 || state.activeRun?.boosterSpent.time !== 0) {
@@ -154,44 +263,12 @@ await performOpeningMove(standard, normalMap);
 await runFinalTimerTick(standard);
 state = await normalState();
 if (state.screen !== "failed") throw new Error("Timeout E2E: retry did not fail through the real timer");
-await normalMap.click(standard, 248, 833);
+await clickInteractionTarget(standard, "failedHome");
 state = await normalState();
 if (state.screen !== "home" || state.level.id !== 1 || state.activeRun || state.economy.boosters.time !== 2) {
   throw new Error("Timeout E2E: normal failure exit did not settle to its home state");
 }
 await standard.close();
-
-// Daily retry retains daily mode; exit restores the pre-daily ordinary level.
-const daily = await browser.newPage({ viewport: { width: 496, height: 1078 } });
-attachErrors(daily);
-const dailyState = () => daily.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
-await openWithSave(daily, save(3, true));
-await normalMap.click(daily, 248, 933);
-await daily.waitForTimeout(20);
-state = await dailyState();
-if (!state.daily.mode || state.level.id !== 1 || state.activeRun?.returnLevelId !== 3) {
-  throw new Error("Timeout E2E: daily setup did not preserve its ordinary origin");
-}
-await performUntilOneBlock(daily, normalMap);
-await runFinalTimerTick(daily);
-state = await dailyState();
-if (state.screen !== "failed" || !state.daily.mode || state.puzzle.blocks.length !== 1) {
-  throw new Error("Timeout E2E: daily timeout state is incorrect");
-}
-await daily.screenshot({ path: shot("round23-daily-timeout.png") });
-await normalMap.click(daily, 248, 754);
-state = await dailyState();
-if (state.screen !== "playing" || !state.daily.mode || state.level.id !== 1 || state.puzzle.started) {
-  throw new Error("Timeout E2E: daily retry lost mode or clean state");
-}
-await performOpeningMove(daily, normalMap);
-await runFinalTimerTick(daily);
-await normalMap.click(daily, 248, 833);
-state = await dailyState();
-if (state.screen !== "home" || state.daily.mode || state.level.id !== 3 || state.activeRun) {
-  throw new Error("Timeout E2E: daily failure exit did not restore its ordinary origin");
-}
-await daily.close();
 
 // Minimum viewport keeps progress and both recovery actions inside the modal.
 const small = await browser.newPage({ viewport: { width: 320, height: 568 } });
@@ -202,17 +279,19 @@ await small.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(1, true));
 await small.waitForTimeout(20);
 state = await small.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
 await performUntilOneBlock(small, compact);
+await installFailureRenderProbe(small);
 await runFinalTimerTick(small);
 state = await small.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
 if (state.screen !== "failed" || state.puzzle.blocks.length !== 1) {
   throw new Error("Timeout E2E: 320x568 failure state is incorrect");
 }
+await assertAndRestoreFailureRender(small, "320x568");
 await small.screenshot({ path: shot("round23-timeout-one-block-left-320x568.png") });
-await compact.click(small, 248, 833);
+await clickInteractionTarget(small, "failedHome");
 state = await small.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
 if (state.screen !== "home") throw new Error("Timeout E2E: 320x568 home action was not clickable");
 await small.close();
 
 await browser.close();
 if (errors.length) throw new Error(`Timeout browser errors:\n${errors.join("\n")}`);
-console.log("Real-input normal/daily timeout, contextual progress, retry settlement, origin restore, and 320x568 passed.");
+console.log("Real-input campaign timeout, contextual progress, retry settlement, home return, and 320x568 passed.");

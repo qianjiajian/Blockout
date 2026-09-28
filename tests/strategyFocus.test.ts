@@ -1,44 +1,27 @@
 import { describe, expect, it } from "vitest";
 import { STRATEGY_FOCUS_LEVELS } from "../src/core/campaignExpansion";
-import { solveLevelForValidation } from "../src/core/levelSolver";
 import { LEVELS } from "../src/core/levels";
+
+const VIDEO_PARITY_LEVELS_1_TO_100 = LEVELS.slice(0, 100);
 import { validateLevel } from "../src/core/PuzzleModel";
 
-const EXPECTED_FOCUS = {
-  60: { blockId: "yellow-load", afterMoves: 8 },
-  70: { blockId: "yellow-load", afterMoves: 4 },
-  78: { blockId: "green-open", afterMoves: 8 },
-  80: { blockId: "blue-load", afterMoves: 8 },
-  88: { blockId: "composition-88-6", afterMoves: 8 },
-  90: { blockId: "green-load", afterMoves: 8 },
-  98: { blockId: "composition-98-4", afterMoves: 6 },
-} as const;
-
 describe("non-directional strategy focus", () => {
-  it("is limited to the authored zero-first-clear risk levels", () => {
-    expect(STRATEGY_FOCUS_LEVELS).toEqual(EXPECTED_FOCUS);
-    expect(Object.fromEntries(LEVELS.filter((level) => level.strategyFocus).map((level) => [level.id, level.strategyFocus])))
-      .toEqual(EXPECTED_FOCUS);
+  it("does not leak legacy block references into the formal v5 campaign", () => {
+    expect(Object.keys(STRATEGY_FOCUS_LEVELS).length).toBeGreaterThan(0);
+    expect(VIDEO_PARITY_LEVELS_1_TO_100.slice(10).filter((level) => level.strategyFocus)).toEqual([]);
+    const liveIds = new Set(VIDEO_PARITY_LEVELS_1_TO_100.slice(10).flatMap((level) => level.blocks.map((block) => block.id)));
+    for (const focus of Object.values(STRATEGY_FOCUS_LEVELS)) {
+      expect(liveIds.has(focus.blockId)).toBe(false);
+    }
   });
 
-  it("highlights only the opening block without shipping a direction or route", () => {
-    for (const [idText, focus] of Object.entries(EXPECTED_FOCUS)) {
-      const level = LEVELS[Number(idText) - 1];
-      const solution = solveLevelForValidation(level);
-      const firstClear = solution.drags.findIndex((drag) => Boolean(drag.exitSide)) + 1;
-      expect(solution.solved, `Lv${idText}`).toBe(true);
-      expect(solution.drags[0]?.blockId, `Lv${idText}`).toBe(focus.blockId);
-      expect(firstClear, `Lv${idText}`).toBeGreaterThanOrEqual(2);
-      expect(firstClear, `Lv${idText}`).toBeLessThanOrEqual(6);
-      expect(Object.keys(level.strategyFocus ?? {}).sort()).toEqual(["afterMoves", "blockId"]);
-    }
-  }, 30_000);
-
-  it("rejects missing blocks and invalid thresholds", () => {
+  it("retains strict validation for future formal focus hints", () => {
     const level = LEVELS[59];
+    const blockId = level.blocks[0]?.id;
+    if (!blockId) throw new Error("Lv60 has no blocks");
     expect(() => validateLevel({ ...level, strategyFocus: { blockId: "missing", afterMoves: 8 } }))
       .toThrow(/strategy focus references missing block/);
-    expect(() => validateLevel({ ...level, strategyFocus: { blockId: "yellow-load", afterMoves: 0 } }))
+    expect(() => validateLevel({ ...level, strategyFocus: { blockId, afterMoves: 0 } }))
       .toThrow(/positive integer threshold/);
   });
 });

@@ -1,3 +1,5 @@
+import type { MusicTrack } from "../audio/ProceduralSoundscape";
+
 export interface Viewport {
   width: number;
   height: number;
@@ -19,7 +21,16 @@ export interface PointerHandlers {
   cancel(sample: PointerSample): void;
 }
 
-export type SoundKind = "select" | "move" | "blocked" | "exit" | "ice" | "win" | "button" | "fail";
+export type SoundKind = "blocked" | "exit" | "ice" | "thaw" | "win" | "button" | "putdown" | "fail"
+  | "reward" | "booster" | "unlock" | "time" | "rocket" | "pulse" | "mechanic" | "shell" | "shutter";
+
+export type MusicScene = "menu" | "gameplay" | "danger" | "victory" | "defeat" | "silent";
+export interface MusicTransport {
+  track?: MusicTrack;
+  positionSeconds: number;
+  durationSeconds: number;
+  playing: boolean;
+}
 
 export type StorageReadResult<T> =
   | { status: "ok"; value: T }
@@ -32,6 +43,7 @@ export interface GameHost {
   context: CanvasRenderingContext2D;
   viewport(): Viewport;
   prefersReducedMotion?(): boolean;
+  preferredLocales?(): readonly string[];
   onPointer(handlers: PointerHandlers): void;
   onHide(callback: () => void): void;
   onShow(callback: () => void): void;
@@ -41,9 +53,14 @@ export interface GameHost {
   scheduleTimeout(callback: () => void, delayMs: number): number;
   cancelTimeout(handle: number): void;
   createImage(src: string): Promise<HTMLImageElement>;
+  releaseImage?(image: HTMLImageElement): void;
   storageRead<T>(key: string): StorageReadResult<T>;
   storageGet<T>(key: string, fallback: T): T;
   storageSet<T>(key: string, value: T): boolean;
+  music(scene: MusicScene, enabled: boolean, selectedTrack?: MusicTrack): void;
+  musicTransport(): MusicTransport;
+  setMusicPaused(paused: boolean): void;
+  seekMusic(positionSeconds: number): void;
   sound(kind: SoundKind): void;
   vibrate(kind: "light" | "medium"): void;
 }

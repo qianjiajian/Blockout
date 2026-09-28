@@ -1,0 +1,17 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {loadApi} from '../native-block-repair-v143.mjs';
+import {verifyRulesLock} from '../verify-rules-lock.mjs';
+import {digest} from '../revised-preview-validation-v160.mjs';
+import {checkAutomaticGeneratorFloor,adaptation} from './validation-generator-domain.mjs';
+const file=process.argv[2],ms=Number(process.argv[3]??5000);assert(file);
+const lock=verifyRulesLock();assert(lock.ok);assert(['1.91.0','1.92.0','1.93.0','1.94.0','1.95.0'].includes(lock.activeVersion));
+const {api,inputs}=await loadApi(),data=JSON.parse(fs.readFileSync(file)),level=data.level;
+const paths=[...inputs,file,'tools/lv70-remake-20260927/root-floor.mjs','tools/lv70-remake-20260927/validation-generator-domain.mjs',...Object.keys(adaptation.originalSources),'docs/rules/manifest.json'];
+const bindings=Object.fromEntries(paths.map(p=>[p,digest(fs.readFileSync(p))]));
+const replay=api.replayRevisedRoute(level,data.drags);assert(replay.valid&&replay.complete);
+const floor=checkAutomaticGeneratorFloor(level,api,{floor:11,maxStates:500000,maxMilliseconds:ms});
+const drift=Object.entries(bindings).filter(([p,h])=>digest(fs.readFileSync(p))!==h);
+const report={createdAt:new Date().toISOString(),ruleVersion:lock.activeVersion,status:drift.length?'SOURCE_DRIFT':floor.thresholdProven?'FLOOR_PASS':'UNVERIFIED',file,levelSha256:digest(level),routeSha256:digest(data.drags),floor,replay,adaptation,bindings,drift,pointerValidated:false,mechanismDifficultyApproved:false};
+const output=`deliverables/lv70-remake-20260927/root-floor-${Date.now()}.json`;fs.writeFileSync(output,JSON.stringify(report,null,2),{flag:'wx'});
+console.log(JSON.stringify({output,status:report.status,U:replay.nonClearingDrags,floor}));

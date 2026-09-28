@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "kind": "visual-layout-user-approval",
+  "recordedOn": "2026-09-21",
+  "userResponse": "认可",
+  "scope": "Lv21–30满铺草案B的视觉布局认可；按计划先验证Lv21通关、必要腾挪，再真实试玩与时间标定。需要改布局时先报告并提交新图。",
+  "ruleVersion": "1.4.0",
+  "runtimeProfile": "revised-2026-09-21-v1.2",
+  "sourceReview": "deliverables/revised-opening-layouts-lv021-030-2026-09-21T15-22-04-725Z/review.json",
+  "sourceReviewSha256": "177d28c377ca2b8d68aba5c0ee5810063f6538d0112d37adb683f8764f834771",
+  "levelHashes": [
+    {
+      "levelId": 21,
+      "canonicalLevelSha256": "1dbe3da805d7e00d18f1b03e1a57b3f6cf2b6fee77423b6694a4a59567306920"
+    },
+    {
+      "levelId": 22,
+      "canonicalLevelSha256": "45ce413733cf9fd46fe09d4b4d1277d7be72fc0208b5a6b0bf950c181c1fb896"
+    },
+    {
+      "levelId": 23,
+      "canonicalLevelSha256": "7f00a92ea3534f44275451eba583704fdfc6f31bf8e76ccb32d8d465665c15ba"
+    },
+    {
+      "levelId": 24,
+      "canonicalLevelSha256": "7ee06298118eb0d97eaa9606475a53ad08d34bbb0e277690cb4023dad61ce0d6"
+    },
+    {
+      "levelId": 25,
+      "canonicalLevelSha256": "31b083a3bf5ff1498d40a7534054e1ce07eba164c7bad2b958960362b71ca097"
+    },
+    {
+      "levelId": 26,
+      "canonicalLevelSha256": "783e7d2ef858cc786a048253b8421ded88a4a040a9d06b0bd63513cbbc9e0d23"
+    },
+    {
+      "levelId": 27,
+      "canonicalLevelSha256": "9474e7e3f2b68531b38522c6b92c96d0810a3cc634419085ae6c75caaf1b0735"
+    },
+    {
+      "levelId": 28,
+      "canonicalLevelSha256": "765edb32485cd22b80276d6640e06bece8d750d137880665678f69059e5efd5f"
+    },
+    {
+      "levelId": 29,
+      "canonicalLevelSha256": "f9b2a8a4e8cab4f0a271038297f580a191229f60f3f1c8c7f4f458d75648fcb6"
+    },
+    {
+      "levelId": 30,
+      "canonicalLevelSha256": "b9f11eb3a9a68b8012046130e0ff96a360d4085b31e9bf412185ea879e9ea337"
+    }
+  ],
+  "layoutApproved": true,
+  "gameplayAccepted": false,
+  "releaseApproved": false
+}

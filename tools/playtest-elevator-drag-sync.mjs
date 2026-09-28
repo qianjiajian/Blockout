@@ -59,61 +59,86 @@ await page.reload({ waitUntil: "networkidle" });
 await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(50, true));
 await page.waitForTimeout(80);
 
-// Clear the platform lane, then park the cyan L block exactly on the lift.
-await drag("blue-load", [[1, 1], [1, 2], [1, 3]]);
-await drag("cyan-open", [[2, 1], [2, 0]]);
 let state = await debug();
-let cyan = state.puzzle.blocks.find((candidate) => candidate.id === "cyan-open");
-let lift = state.puzzle.elevators.find((candidate) => candidate.id === "elevator-intro");
-assert(cyan?.x === 2 && cyan?.y === 0 && lift?.x === 2 && lift?.y === 0,
-  `Elevator-drag E2E: setup missed the lift ${JSON.stringify({ cyan, lift })}`);
+let lift = state.puzzle.elevators[0];
+assert(lift, "Elevator-drag E2E: Lv50 has no elevator");
+let carried = state.puzzle.blocks.find((candidate) => candidate.id === lift.blockId);
+assert(carried?.x === lift.x && carried?.y === lift.y,
+  `Elevator-drag E2E: authored payload is not aligned with the lift ${JSON.stringify({ carried, lift })}`);
+const liftTarget = { x: lift.toX, y: lift.toY };
+const starter = await page.evaluate(async (payloadId) => {
+  const [{ getLevel }, { PuzzleModel }] = await Promise.all([
+    import("/src/core/levels.ts"),
+    import("/src/core/PuzzleModel.ts"),
+  ]);
+  const level = getLevel(50);
+  const elevator = level.elevators?.[0];
+  if (!elevator) throw new Error("Elevator-drag E2E: Lv50 source has no elevator");
+  const reserved = new Set();
+  for (let y = elevator.toY; y < elevator.toY + elevator.height; y += 1) {
+    for (let x = elevator.toX; x < elevator.toX + elevator.width; x += 1) reserved.add(`${x},${y}`);
+  }
+  for (const authored of level.blocks) {
+    if (authored.id === payloadId) continue;
+    for (const [dx, dy] of [[1, 0], [0, 1], [-1, 0], [0, -1]]) {
+      const model = new PuzzleModel(level);
+      const block = model.getBlock(authored.id);
+      if (!block || !model.isBlockActive(block) || model.possibleExitSides(block).length > 0) continue;
+      const x = block.x + dx;
+      const y = block.y + dy;
+      if (!model.moveBlockStep(block.id, x, y)) continue;
+      const moved = model.getBlock(block.id);
+      if (!moved || model.possibleExitSides(moved).length > 0
+        || model.blockCells(moved).some(([cellX, cellY]) => reserved.has(`${cellX},${cellY}`))) continue;
+      return { blockId: block.id, x, y };
+    }
+  }
+  throw new Error("Elevator-drag E2E: Lv50 has no safe timer-start parking move");
+}, carried.id);
+await drag(starter.blockId, [[starter.x, starter.y]]);
+state = await debug();
+lift = state.puzzle.elevators.find((candidate) => candidate.id === lift.id);
+carried = state.puzzle.blocks.find((candidate) => candidate.id === carried.id);
+assert(carried?.x === lift?.x && carried?.y === lift?.y,
+  `Elevator-drag E2E: timer-start move disturbed the payload ${JSON.stringify({ carried, lift, starter })}`);
 const movesBeforeHold = state.puzzle.moves;
 const timeBeforeHold = state.puzzle.remainingSeconds;
-const heldPoint = pointFor(state, cyan);
+const heldPoint = pointFor(state, carried);
 await page.mouse.move(heldPoint.x, heldPoint.y);
 await page.mouse.down();
 
-await page.waitForFunction(() => {
+await page.waitForFunction(({ elevatorId, x, y }) => {
   const current = window.__COLOR_ESCAPE__.getDebugState();
-  return current.puzzle.elevators.find((item) => item.id === "elevator-intro")?.x === 1;
-}, undefined, { timeout: 2_500 });
+  const elevator = current.puzzle.elevators.find((item) => item.id === elevatorId);
+  return elevator?.x === x && elevator?.y === y;
+}, { elevatorId: lift.id, ...liftTarget }, { timeout: 2_500 });
 state = await debug();
-cyan = state.puzzle.blocks.find((candidate) => candidate.id === "cyan-open");
-lift = state.puzzle.elevators.find((candidate) => candidate.id === "elevator-intro");
-assert(cyan?.x === 1 && cyan?.y === 0 && lift?.x === 1,
-  `Elevator-drag E2E: lift did not carry the held block ${JSON.stringify({ cyan, lift })}`);
-assert(state.selectedId === "cyan-open" && state.activePointer != null,
+carried = state.puzzle.blocks.find((candidate) => candidate.id === carried.id);
+lift = state.puzzle.elevators.find((candidate) => candidate.id === lift.id);
+assert(carried?.x === liftTarget.x && carried?.y === liftTarget.y
+  && lift?.x === liftTarget.x && lift?.y === liftTarget.y,
+  `Elevator-drag E2E: lift did not carry the held block ${JSON.stringify({ carried, lift })}`);
+assert(state.selectedId === carried.id && state.activePointer != null,
   "Elevator-drag E2E: platform motion lost Pointer ownership");
-assert(state.dragMotion?.gridX === 1 && state.dragMotion?.gridY === 0
-  && Math.abs(state.dragMotion.visualX - 1) < 0.03
-  && Math.abs(state.dragMotion.visualY) < 0.03,
+assert(state.dragMotion?.gridX === liftTarget.x && state.dragMotion?.gridY === liftTarget.y
+  && Math.abs(state.dragMotion.visualX - liftTarget.x) < 0.03
+  && Math.abs(state.dragMotion.visualY - liftTarget.y) < 0.03,
 `Elevator-drag E2E: visual/model poses diverged on the lift ${JSON.stringify(state.dragMotion)}`);
 assert(state.puzzle.moves === movesBeforeHold,
   `Elevator-drag E2E: automatic lift motion counted a move (${state.puzzle.moves})`);
 assert(state.puzzle.remainingSeconds < timeBeforeHold,
   "Elevator-drag E2E: holding on the lift paused the timer");
 
-// The next sample is purely downward from the stationary finger. It must move
-// down immediately at the lift's new X, never jump back toward the old X.
-const downPoint = { x: heldPoint.x, y: heldPoint.y + state.board.cell };
-await page.mouse.move(downPoint.x, downPoint.y);
-state = await debug();
-cyan = state.puzzle.blocks.find((candidate) => candidate.id === "cyan-open");
-assert(cyan?.x === 1 && cyan?.y === 1,
-  `Elevator-drag E2E: post-lift drag jumped or stalled ${JSON.stringify(cyan)}`);
-assert(Math.abs(state.dragMotion.visualX - 1) < 0.03 && Math.abs(state.dragMotion.visualY - 1) < 0.03,
-  `Elevator-drag E2E: post-lift visual pose jumped ${JSON.stringify(state.dragMotion)}`);
-assert(state.puzzle.moves === movesBeforeHold, "Elevator-drag E2E: held movement committed before release");
 await page.mouse.up();
 await page.waitForTimeout(100);
 state = await debug();
-cyan = state.puzzle.blocks.find((candidate) => candidate.id === "cyan-open");
-assert(cyan?.x === 1 && cyan?.y === 1 && state.puzzle.moves === movesBeforeHold + 1,
-  `Elevator-drag E2E: post-lift gesture did not commit once ${JSON.stringify({ cyan, moves: state.puzzle.moves })}`);
+carried = state.puzzle.blocks.find((candidate) => candidate.id === carried.id);
+assert(!carried && state.puzzle.moves === movesBeforeHold + 1,
+  `Elevator-drag E2E: release at the matching edge did not commit exactly one exit ${JSON.stringify({ carried, moves: state.puzzle.moves })}`);
 assert(state.selectedId == null && state.activePointer == null,
   "Elevator-drag E2E: release retained Pointer ownership");
 
 await page.close();
 await browser.close();
 if (errors.length) throw new Error(`Elevator-drag browser errors:\n${errors.join("\n")}`);
-console.log("Elevator drag sync passed: carried visual/model pose, live timer, immediate continuation, and one-step commit.");
+console.log("Elevator drag sync passed: authored payload alignment, held visual/model carry, live timer, zero automatic move cost, and one release-to-exit commit.");

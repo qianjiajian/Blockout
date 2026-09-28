@@ -18,6 +18,16 @@ const page = await context.newPage();
 page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
 page.on("pageerror", (error) => errors.push(error.message));
 const debug = () => page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
+const clickInteractionTarget = async (name, targetPage = page) => {
+  const state = await targetPage.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
+  const hit = state.interactionTargets?.targets?.[name]?.hit;
+  const canvas = await targetPage.locator("canvas").boundingBox();
+  if (!hit || !canvas) throw new Error(`Reduced-motion E2E: missing ${name} target or canvas bounds`);
+  await targetPage.mouse.click(
+    canvas.x + state.viewportTransform.offsetX + (hit.x + hit.width / 2) * state.viewportTransform.scale,
+    canvas.y + state.viewportTransform.offsetY + (hit.y + hit.height / 2) * state.viewportTransform.scale,
+  );
+};
 const waitForArtReady = (target = page) => target.waitForFunction(
   () => window.__COLOR_ESCAPE__?.getDebugState().art.ready,
   undefined,
@@ -73,11 +83,11 @@ if (!state.settings.reducedMotion || state.progression.highestLevel !== 10) {
 
 // The pause surface exposes the preference and a manual override survives reload.
 await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(1, true));
-await page.mouse.click(443, 140);
+await clickInteractionTarget("pause");
 state = await debug();
 if (state.screen !== "paused") throw new Error("Reduced-motion E2E: pause modal did not open");
 await page.screenshot({ path: shot("round20-reduced-motion-pause.png") });
-await page.mouse.click(248, 623);
+await clickInteractionTarget("pause.reducedMotion");
 state = await debug();
 if (state.settings.reducedMotion) throw new Error("Reduced-motion E2E: manual opt-out failed");
 await page.reload({ waitUntil: "networkidle" });
@@ -88,8 +98,8 @@ if (state.settings.reducedMotion) {
 }
 
 await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(1, true));
-await page.mouse.click(443, 140);
-await page.mouse.click(248, 623);
+await clickInteractionTarget("pause");
+await clickInteractionTarget("pause.reducedMotion");
 state = await debug();
 if (!state.settings.reducedMotion) throw new Error("Reduced-motion E2E: manual opt-in failed");
 await page.reload({ waitUntil: "networkidle" });
@@ -99,7 +109,7 @@ if (!state.settings.reducedMotion) throw new Error("Reduced-motion E2E: manual o
 
 // The same causal rocket feedback remains visible with substantially fewer particles.
 await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(1, true));
-await page.mouse.click(248, 990);
+await clickInteractionTarget("booster.rocket");
 state = await debug();
 await page.mouse.click(...Object.values(activeBlockPoint(state)));
 state = await debug();
@@ -113,10 +123,10 @@ await page.screenshot({ path: shot("round20-reduced-motion-rocket.png") });
 await page.reload({ waitUntil: "networkidle" });
 await waitForArtReady();
 await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(1, true));
-await page.mouse.click(443, 140);
-await page.mouse.click(248, 623);
-await page.mouse.click(248, 721);
-await page.mouse.click(248, 990);
+await clickInteractionTarget("pause");
+await clickInteractionTarget("pause.reducedMotion");
+await clickInteractionTarget("pauseResume");
+await clickInteractionTarget("booster.rocket");
 state = await debug();
 await page.mouse.click(...Object.values(activeBlockPoint(state)));
 state = await debug();
@@ -124,22 +134,35 @@ if (state.particles < 26) {
   throw new Error(`Reduced-motion E2E: full effect budget was not restored (${state.particles} particles)`);
 }
 
-// Reduced mode shortens the first-clear transition and automatically begins level 2.
+// Reduced mode keeps the required Lv1→2 direct transition, but compresses it
+// to the accessibility timing budget instead of opening a result modal.
 await page.reload({ waitUntil: "networkidle" });
 await waitForArtReady();
 await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(1, true));
-await page.mouse.click(443, 140);
-await page.mouse.click(248, 623);
-await page.mouse.click(248, 721);
-const performDrag = async (drag) => {
+await clickInteractionTarget("pause");
+await clickInteractionTarget("pause.reducedMotion");
+await clickInteractionTarget("pauseResume");
+  const performDrag = async (drag, settleDelay) => {
   const live = await debug();
   const block = live.puzzle.blocks.find((candidate) => candidate.id === drag.blockId);
   if (!block) throw new Error(`Reduced-motion E2E: missing route block ${drag.blockId}`);
-  const [anchorX, anchorY] = block.shape[0];
-  const point = (x, y) => ({
-    x: live.board.innerX + (x + anchorX + 0.5) * live.board.cell,
-    y: live.board.innerY + (y + anchorY + 0.5) * live.board.cell,
-  });
+  const directExit = drag.path.length === 0 && Boolean(drag.exitSide);
+  const [anchorX, anchorY] = directExit
+    ? [
+      block.shape.reduce((sum, [x]) => sum + x, 0) / block.shape.length,
+      block.shape.reduce((sum, [, y]) => sum + y, 0) / block.shape.length,
+    ]
+    : block.shape[0];
+  const canvas = await page.locator("canvas").boundingBox();
+  if (!canvas) throw new Error("Reduced-motion E2E: game canvas has no browser bounds");
+  const point = (x, y) => {
+    const logicalX = live.board.innerX + (x + anchorX + 0.5) * live.board.cell;
+    const logicalY = live.board.innerY + (y + anchorY + 0.5) * live.board.cell;
+    return {
+      x: canvas.x + live.viewportTransform.offsetX + logicalX * live.viewportTransform.scale,
+      y: canvas.y + live.viewportTransform.offsetY + logicalY * live.viewportTransform.scale,
+    };
+  };
   const start = point(block.x, block.y);
   await page.mouse.move(start.x, start.y);
   await page.mouse.down();
@@ -173,13 +196,30 @@ const performDrag = async (drag) => {
     }
   }
   await page.mouse.up();
-  await page.waitForTimeout(drag.exitSide ? 150 : 30);
+  await page.waitForTimeout(settleDelay ?? (drag.exitSide ? 150 : 30));
 };
-for (const drag of levelOneSolution.drags) await performDrag(drag);
-await page.waitForTimeout(520);
+for (const [index, drag] of levelOneSolution.drags.entries()) {
+  await performDrag(drag, index === levelOneSolution.drags.length - 1 ? 20 : undefined);
+}
+await page.waitForFunction(() => {
+  const state = window.__COLOR_ESCAPE__?.getDebugState();
+  return state?.screen === "playing" && state.completionFlow.directTransition?.fromLevel === 1
+    && state.settlement.status === "committed";
+}, undefined, { timeout: 10_000 });
 state = await debug();
-if (state.screen !== "playing" || state.level.id !== 2 || !state.settings.reducedMotion || state.puzzle.moves !== 0) {
-  throw new Error(`Reduced-motion E2E: quick transition did not settle to clean level 2 (${state.screen}, Lv${state.level.id})`);
+if (state.screen !== "playing" || state.level.id !== 1 || !state.settings.reducedMotion
+  || !state.completionFlow.directTransition.reducedMotion
+  || state.completionFlow.directTransition.toLevel !== 2 || state.art.win.ready) {
+  throw new Error(`Reduced-motion E2E: compressed direct transition is incorrect (${state.screen}, Lv${state.level.id})`);
+}
+await page.waitForFunction(() => {
+  const state = window.__COLOR_ESCAPE__?.getDebugState();
+  return state?.screen === "playing" && state.level.id === 2
+    && !state.completionFlow.directTransition;
+}, undefined, { timeout: 5_000 });
+state = await debug();
+if (!state.settings.reducedMotion || state.puzzle.moves !== 0 || state.activeRun?.levelId !== 2) {
+  throw new Error(`Reduced-motion E2E: direct transition did not start a clean level 2 run (${state.screen}, Lv${state.level.id})`);
 }
 
 await context.close();
@@ -194,17 +234,15 @@ await small.reload({ waitUntil: "networkidle" });
 await waitForArtReady(small);
 await small.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(1, true));
 await small.waitForTimeout(100);
-const scale = Math.min(320 / 496, 568 / 1078);
-const offsetX = (320 - 496 * scale) / 2;
-await small.mouse.click(offsetX + 443 * scale, 140 * scale);
+await clickInteractionTarget("pause", small);
 let smallState = await small.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
 if (smallState.screen !== "paused") throw new Error("Reduced-motion E2E: 320x568 pause modal did not open");
 await small.screenshot({ path: shot("round20-reduced-motion-pause-320x568.png") });
-await small.mouse.click(offsetX + 248 * scale, 623 * scale);
+await clickInteractionTarget("pause.reducedMotion", small);
 smallState = await small.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
 if (!smallState.settings.reducedMotion) throw new Error("Reduced-motion E2E: 320x568 toggle was not clickable");
 await small.close();
 
 await browser.close();
 if (errors.length) throw new Error(`Reduced-motion browser errors:\n${errors.join("\n")}`);
-console.log("System default, manual persistence, effect budgets, shorter celebration, and 320x568 reduced motion passed.");
+console.log("System default, manual persistence, effect budgets, compressed Lv1→2 transition, and 320x568 reduced motion passed.");

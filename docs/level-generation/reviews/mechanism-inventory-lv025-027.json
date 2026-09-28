@@ -1,0 +1,676 @@
+{
+  "schemaVersion": 1,
+  "scope": "source-mechanism-inventory-review",
+  "truth": {
+    "path": "deliverables/level-generation-blueprint/blockout-lv001-lv100-video-parity-truth-v6.json",
+    "sha256": "28040fe1779fee54d8c03a92949df26ff6517687b3f9c7cfdbb5353a2c6c41a9"
+  },
+  "direct": {
+    "path": ".codex-temp/video-audit-21-30-independent/audit-lv021-030.json",
+    "sha256": "a9701747b9c115ad8c85d4abf231540d9f1b182a08c82816319a996d3b3551d0"
+  },
+  "reviewedOn": "2026-09-21",
+  "rulesVersion": "1.2.1",
+  "runtimeProfile": "revised-2026-09-21-v1.2",
+  "method": "直接view_image检查已有原视频取帧，覆盖开局、每个隐藏批次首次全露出及后段腾空地面；按机制图形标记与逐阶段完整可见块集合给出存在/明确0，不以字段缺失推断0。1fps时间使用既有文件的秒标签；10fps时间沿用取帧审计记录。未生成或修改任何图像。此文件是来源清单，不是候选、运行时实现验证、下界证明或发布批准。",
+  "levels": [
+    {
+      "level": 25,
+      "evidence": [
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/audit-lv021-030.json",
+          "sha256": "a9701747b9c115ad8c85d4abf231540d9f1b182a08c82816319a996d3b3551d0",
+          "reason": "先前独立来源记录，作为数量与取帧索引交叉核对；未出现的字段不自动视为0。Lv26旧34总块/颈部1块已由更正取代。"
+        },
+        {
+          "path": "deliverables/level-generation-blueprint/blockout-lv001-lv100-video-parity-truth-v6.json",
+          "sha256": "28040fe1779fee54d8c03a92949df26ff6517687b3f9c7cfdbb5353a2c6c41a9",
+          "reason": "旧truth只作来源索引与已记数量交叉核对，不使用runtime推断不存在的机制。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0258.jpg",
+          "sha256": "977fcfc0e721963f33e476663cbce20b1917411417332d86d28dc32af88870f6",
+          "reason": "258s首个未动开局：全22块均已可见，顶部右V3绿壳粉芯、底部左V3红壳绿芯；8实体口中普通1、冰7，初值4/8/21/16/14/13/17。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0267.jpg",
+          "sha256": "8a77a8fa1b162b5c0a1aced421739cbd2cdb4356eb2d7be64ee2a0e479b5171c",
+          "reason": "267s顶部冰4已解冻成白色普通三角出口，块上没有冰/星/钥匙/箭头/炸弹标记；两只外壳仍明确。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0275.jpg",
+          "sha256": "cbfb2720b2a832dcbf7fa729e6ea7b7fae19c8477ddba0ef4582b51edea9d715",
+          "reason": "275s粉色顶部出口已解冻且显示普通三角；裸露中间地面是普通暗格。系统通知只遮住顶部HUD，不遮棋盘。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0290.jpg",
+          "sha256": "3a354de4678e1a24fc8d5499b025409f09f0fd89f1b28897474b9058ce0a1187",
+          "reason": "290s绿外壳已剥后离场，红外壳仍在；红出口解冻，没有翻转门结构或星标。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0295.jpg",
+          "sha256": "1c98f0220a3dc82fa03fe85c7b6fd8082759d46d403b24751d9879cd6e56e551",
+          "reason": "295s两外壳均已剥，绿内芯是普通V3；底部黑门为普通三角，剩余块无额外标记。通知仅遮HUD。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0298.jpg",
+          "sha256": "4911340b098f6c830c120e2859869564c5040a12bceb140cf50f5232ae016667",
+          "reason": "298s最后绿块离场，42格完整露出，无彩色地格、电梯、卷帘或隐藏区域；左上冰21解冻为绿三角门。"
+        }
+      ],
+      "board": {
+        "cols": 6,
+        "rows": 9,
+        "playableCellCount": 42,
+        "irregular": true,
+        "mask": [
+          "######",
+          "######",
+          "######",
+          "..##..",
+          "..##..",
+          "..##..",
+          "######",
+          "######",
+          "######"
+        ],
+        "reason": "258s与298s开局/清空棋盘一致，为上下6×3经2×3颈部连接的外形。"
+      },
+      "blocks": {
+        "openingCount": 22,
+        "fullCount": 22,
+        "openingShapeHistogram": {
+          "SINGLE": 6,
+          "V2": 12,
+          "V3": 4
+        },
+        "fullShapeHistogram": {
+          "SINGLE": 6,
+          "V2": 12,
+          "V3": 4
+        },
+        "irregularOpeningCount": 0,
+        "irregularFullCount": 0,
+        "reason": "258s全体已可见，6个单格、12个V2、4个V3均为完整矩形；两只壳与芯各算同一块；298s清空不触发新层。满铺复算6×1+12×2+4×3=42，与棋盘42格一致。"
+      },
+      "exits": {
+        "ordinary": {
+          "count": 1
+        },
+        "frozen": {
+          "count": 7,
+          "values": [
+            4,
+            8,
+            21,
+            16,
+            14,
+            13,
+            17
+          ]
+        },
+        "star": {
+          "count": 0,
+          "values": []
+        },
+        "starFrozen": {
+          "count": 0,
+          "values": []
+        },
+        "reason": "258s逐口可读初值；267/275/290/295/298s解冻后为三角门，无星标门或翻门机构。"
+      },
+      "mechanisms": {
+        "generators": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "258s全部外边界无机器机壳或库存标记；全22块开局可见，298s棋盘清空，无投放批次。",
+          "queueCount": 0
+        },
+        "axisBlocks": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "258s22个块面全部可见，仅两只彩色内芯外壳，其余均无轴向箭头；剥壳后也无箭头。"
+        },
+        "keyLocks": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "258s全22块无钥匙/锁标记，295s外壳内芯也无标记；不存在未检查的隐藏或队列。",
+          "key_count": 0,
+          "lock_count": 0,
+          "lock_requirements": []
+        },
+        "starBlocks": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "258s22个块与295s壳内芯均无星标；黑白块是普通底色，不能按颜色视为星块。"
+        },
+        "flipDoors": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "258s与解冻后的267/275/290/295/298s门为普通三角口，没有双半叶翻转结构；颜色耗尽时出口消隐不是翻转门。"
+        },
+        "coloredGrids": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "298s全部42格裸露，均为统一暗紫普通格，没有持续彩色格。"
+        },
+        "bombs": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "258s全部22块与295s剥壳后内芯无表盘/倒计时标记。"
+        },
+        "lifts": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "258s无双门电梯结构，298s清空整个棋盘仍无新层；所有块全开局可见。",
+          "hidden_batch_counts": []
+        },
+        "numericIce": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "258s全部22块无带数值冰壳，冰数字只附在边缘出口；黑白普通块不按颜色算冰。"
+        },
+        "shells": {
+          "status": "confirmed-present",
+          "count": 2,
+          "values": [
+            1,
+            1
+          ],
+          "opening_visible_count": 2,
+          "extra_layers": [
+            1,
+            1
+          ],
+          "items": [
+            {
+              "stage_id": "opening",
+              "shape": "V3",
+              "source_outer_color": "green",
+              "source_core_color": "magenta",
+              "extra_layers": 1
+            },
+            {
+              "stage_id": "opening",
+              "shape": "V3",
+              "source_outer_color": "red",
+              "source_core_color": "green",
+              "extra_layers": 1
+            }
+          ],
+          "reason": "258s顶部右V3和底部左V3清楚显示异色内芯；290/295s显示剥壳前后，只有各一层。"
+        },
+        "covers": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "258s全22块无卷帘遮挡/卷帘计数，298s整个棋盘露出；冰数字均为出口。",
+          "hidden_batch_counts": []
+        }
+      },
+      "unknownFields": [],
+      "observations": [
+        "本次补足11机制族的显式证据，不改变truth原有Lv25数量。",
+        "不把8个来源实体口/7个来源颜色解释成对候选额外重复颜色授权。"
+      ]
+    },
+    {
+      "level": 26,
+      "evidence": [
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/audit-lv021-030.json",
+          "sha256": "a9701747b9c115ad8c85d4abf231540d9f1b182a08c82816319a996d3b3551d0",
+          "reason": "先前独立来源记录，作为数量与取帧索引交叉核对；未出现的字段不自动视为0。Lv26旧34总块/颈部1块已由更正取代。"
+        },
+        {
+          "path": "deliverables/level-generation-blueprint/blockout-lv001-lv100-video-parity-truth-v6.json",
+          "sha256": "28040fe1779fee54d8c03a92949df26ff6517687b3f9c7cfdbb5353a2c6c41a9",
+          "reason": "旧truth只作来源索引与已记数量交叉核对，不使用runtime推断不存在的机制。"
+        },
+        {
+          "path": "playtest-results/experiments/video-parity-v6/source-audit/capacity-chain-reaudit/corrections.json",
+          "sha256": "3202a757493c8f0bcde1acb12ff730d02bc5e46c1b5f28f262d2f1006217e5ae",
+          "reason": "lv026-cover19-dual-v2-reveal纠正颈部2只V2，总数35；本次直接看f0028验证粉/黑同时揭开。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0306.jpg",
+          "sha256": "3a4fbce551fb2f09665c1b11e634f8988a2ba89c8f65dbb58e110cc4631515ae",
+          "reason": "306s未动开局：20块，卷帘19/22，3冰门5/9/14加8普通门；开局块无附加标记。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0329.jpg",
+          "sha256": "18a13f369cbf46fc6524a4e6ab1a5ae85febe61e81d9f6d55139349370a1af1a",
+          "reason": "329s顶部冰5与左冰9解冻为绿/黑普通三角门，无星标或翻门结构。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/10fps/lv26-reveals/f-0028.jpg",
+          "sha256": "b21ad5d1f1e35f2bf814155f0c40657fb66751e268062f40b7cefbed0ae22a02",
+          "reason": "既有审计336.2–336.9s窗口：颈部卷帘打开，粉色V2与黑色V2同时可见，各无冰、壳、星、箭头、钥匙、锁或炸弹标记。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0341.jpg",
+          "sha256": "e6efcccd7fd4c5bdb94552fc07441c943c7ca086569841f002c613ae64c13dad",
+          "reason": "341s下卷帘首次全露出：13块为SINGLE×1、H2×8、V2×2、L3×1、T4×1；全部块面可见且无附加标记。右上冰14也已解冻成白三角门。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0358.jpg",
+          "sha256": "cd04dea9f2ab19ca8f473003708a8a5ea6e273298bb95c51b100c3bb71fcd9fa",
+          "reason": "358s选中轮廓与移动后分离，可交叉确认H2和紫L3/红T4并非叠层壳或合并块。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0362.jpg",
+          "sha256": "fd813dd72e7e6af9f91708ca4d7d92a80b97ee3e7f915d7d302c68d0d01c1940",
+          "reason": "362s紫L3离场，红T4完整凸出轮廓可读，无额外机制标记。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0370.jpg",
+          "sha256": "bae0881361ba62bc0aa434223d27197fa659bea70fdb4ef7bb0974d3311ed9da",
+          "reason": "370s只剩一只黑V2，全部53格底面露出，为普通暗格，无电梯/地格或追加隐藏机制。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0372.jpg",
+          "sha256": "15fee1db1e6461a72d070217ba0efdf501c4b2edb870ac7862ce9e5d907600bc",
+          "reason": "372s通关遮罩；本局没有颈部和下卷帘之外的第三个出块批次。"
+        }
+      ],
+      "board": {
+        "cols": 7,
+        "rows": 11,
+        "playableCellCount": 53,
+        "irregular": true,
+        "mask": [
+          "#######",
+          "#######",
+          "#######",
+          "...#...",
+          "...#...",
+          "...#...",
+          "...#...",
+          "#######",
+          "#######",
+          "#######",
+          "#######"
+        ],
+        "reason": "306s与370s的完整轮廓一致，为上7×3、下7×4与1×4颈部。"
+      },
+      "blocks": {
+        "openingCount": 20,
+        "fullCount": 35,
+        "openingShapeHistogram": {
+          "SINGLE": 19,
+          "V2": 1
+        },
+        "fullShapeHistogram": {
+          "SINGLE": 20,
+          "H2": 8,
+          "V2": 5,
+          "L3": 1,
+          "T4": 1
+        },
+        "irregularOpeningCount": 0,
+        "irregularFullCount": 2,
+        "reason": "306s开局20，颈部2与下层13逐次全露出；341/358/362s确认异形仅紫L3、红T4。满铺复算20×1+8×2+5×2+3+4=53，与棋盘53格一致。下部左黑V2与白V2、紫L3与红T4分界可见，没有把同色相邻合并；颈部粉/黑两只V2各占2格。"
+      },
+      "exits": {
+        "ordinary": {
+          "count": 8
+        },
+        "frozen": {
+          "count": 3,
+          "values": [
+            5,
+            9,
+            14
+          ]
+        },
+        "star": {
+          "count": 0,
+          "values": []
+        },
+        "starFrozen": {
+          "count": 0,
+          "values": []
+        },
+        "reason": "306s来源事实是11实体出口：普通8、冰3。329/341s三冰解冻后无星标；不得改源为候选出口数。"
+      },
+      "mechanisms": {
+        "generators": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "306s全部边界只有出口、墙和两卷帘，未见机器外壳/队列库存；后续仅19/22卷帘两次揭开。",
+          "queueCount": 0
+        },
+        "axisBlocks": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "306s开局20块、f0028颈部2块、341s下层13块面均完整可见，无轴向箭头。"
+        },
+        "keyLocks": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "306s、f0028、341s覆盖全35块面，均无钥匙/锁图标与锁计数。",
+          "key_count": 0,
+          "lock_count": 0,
+          "lock_requirements": []
+        },
+        "starBlocks": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "306s、f0028、341s覆盖全35块，均无星标；粉/黑颈部V2是普通色块。"
+        },
+        "flipDoors": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "306s固定三角普通出口和冰出口，329/341s解冻后仍为三角口，无双半叶翻门结构；后段颜色用尽后的消隐不计翻转。"
+        },
+        "coloredGrids": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "370s上下区域及颈部全部裸露地面，均是普通暗格，无彩色地格。"
+        },
+        "bombs": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "306s、f0028、341s全35块没有表盘/倒计时标记，后段也未产生炸弹层。"
+        },
+        "lifts": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "306s两遮挡均为带数字卷帘；f0028、341s揭开后不含双门电梯，370s空区无后续层。",
+          "hidden_batch_counts": []
+        },
+        "numericIce": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "306s20块与f0028颈部2块、341s下层13块均无数字冰壳；5/9/14属于边缘冰门。"
+        },
+        "shells": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "306s、f0028、341s三批完整块面没有异色内芯/边框；358/362s异形块轮廓是L3/T4，不是壳。"
+        },
+        "covers": {
+          "status": "confirmed-present",
+          "count": 2,
+          "values": [
+            19,
+            22
+          ],
+          "hidden_batch_counts": [
+            2,
+            13
+          ],
+          "hidden_batch_histograms": [
+            {
+              "V2": 2
+            },
+            {
+              "SINGLE": 1,
+              "H2": 8,
+              "V2": 2,
+              "L3": 1,
+              "T4": 1
+            }
+          ],
+          "items": [
+            {
+              "value": 19,
+              "region": {
+                "x": 3,
+                "y": 3,
+                "width": 1,
+                "height": 4
+              },
+              "hiddenCount": 2,
+              "revealWindowSeconds": [
+                336.2,
+                336.9
+              ]
+            },
+            {
+              "value": 22,
+              "region": {
+                "x": 0,
+                "y": 7,
+                "width": 7,
+                "height": 4
+              },
+              "hiddenCount": 13,
+              "revealWindowSeconds": [
+                339.1,
+                341
+              ]
+            }
+          ],
+          "reason": "306s初值19/22；f0028直接显示颈部两只V2，341s下卷帘全露出13块。更正已记录，不沿用旧颈部1块/总34。"
+        }
+      },
+      "unknownFields": [],
+      "observations": [
+        "Lv26来源8普通+3冰5/9/14保持不变。v1.2批准候选重配1–5普通门属于设计特例，不能覆盖来源记录。",
+        "本次未新增来源更正；直接复核已有颈部2块/总35更正。"
+      ]
+    },
+    {
+      "level": 27,
+      "evidence": [
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/audit-lv021-030.json",
+          "sha256": "a9701747b9c115ad8c85d4abf231540d9f1b182a08c82816319a996d3b3551d0",
+          "reason": "先前独立来源记录，作为数量与取帧索引交叉核对；未出现的字段不自动视为0。Lv26旧34总块/颈部1块已由更正取代。"
+        },
+        {
+          "path": "deliverables/level-generation-blueprint/blockout-lv001-lv100-video-parity-truth-v6.json",
+          "sha256": "28040fe1779fee54d8c03a92949df26ff6517687b3f9c7cfdbb5353a2c6c41a9",
+          "reason": "旧truth只作来源索引与已记数量交叉核对，不使用runtime推断不存在的机制。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0379.jpg",
+          "sha256": "9c72ee9223845dfe7ac175b1531a4ffe83a0d276577d03d309cc2249bcef0888",
+          "reason": "379s未动开局：右侧9单格黑白块，左卷帘9；2普通门与3冰门13/13/10。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0385.jpg",
+          "sha256": "2a872200f7664f914bf62e1a5c5acaea2ef098aa311e8722f8fd9b5020f5f88a",
+          "reason": "385s卷帘打开进行中，下方绿/黄H3逐渐露出，冰门读4/4/1，证明隐藏块来自卷帘而非机器或电梯。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0386.jpg",
+          "sha256": "2cf92a544e846f3c630cad2e62d0e409bf8845b38bdb162ea0c8907ac030f990",
+          "reason": "386s全部9只H3首次全露出，按从上到下为绿、红、绿、黄、红、黑、红、绿、黄；每块均无额外标记。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0396.jpg",
+          "sha256": "c5306f7574e92cdd4e0bb000f02fe4538c61ea8fb795fd33e8f145bf021959c0",
+          "reason": "396s下冰10已解冻为红三角出口；H3普通横条移动后无壳或附加机制。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0406.jpg",
+          "sha256": "9214d1b80163655ae2437b5d981bda49187b90e88463b719f6bb0d82508f9fe6",
+          "reason": "406s上/中冰13均解冻为绿/黄三角门；裸露底面是普通暗格，剩余绿H3无标记。"
+        },
+        {
+          "path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0410.jpg",
+          "sha256": "abd794614263a51372c45706f3b50e8c039932e8d8574f8dd3d167b9780e8c62",
+          "reason": "410s已进入通关遮罩，没有卷帘批次之外的新层或队列投放。"
+        }
+      ],
+      "board": {
+        "cols": 6,
+        "rows": 9,
+        "playableCellCount": 36,
+        "irregular": true,
+        "mask": [
+          "###...",
+          "###...",
+          "###...",
+          "######",
+          "######",
+          "######",
+          "###...",
+          "###...",
+          "###..."
+        ],
+        "reason": "379/386/406s外形一致，左3×9与中部右3×3连接。"
+      },
+      "blocks": {
+        "openingCount": 9,
+        "fullCount": 18,
+        "openingShapeHistogram": {
+          "SINGLE": 9
+        },
+        "fullShapeHistogram": {
+          "SINGLE": 9,
+          "H3": 9
+        },
+        "irregularOpeningCount": 0,
+        "irregularFullCount": 0,
+        "reason": "379s9只SINGLE，386s9只H3均为完整矩形，410s通关无新增层。满铺复算9×1+9×3=36，与棋盘36格一致；隐藏区从上到下9行各一只3格横条，未合并相邻同色块。"
+      },
+      "exits": {
+        "ordinary": {
+          "count": 2
+        },
+        "frozen": {
+          "count": 3,
+          "values": [
+            13,
+            13,
+            10
+          ]
+        },
+        "star": {
+          "count": 0,
+          "values": []
+        },
+        "starFrozen": {
+          "count": 0,
+          "values": []
+        },
+        "reason": "379s白/黑两普通口与左侧三冰口；396/406s三冰解冻后显示红/绿/黄普通三角，无星标或翻门结构。"
+      },
+      "mechanisms": {
+        "generators": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "379s全边界无机器/库存标记，唯一新增9块来自已见卷帘；410s通关无队列。",
+          "queueCount": 0
+        },
+        "axisBlocks": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "379s9单格与386s9H3块面全部可读，无轴向箭头；H3自身形状不能解释为轴向约束。"
+        },
+        "keyLocks": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "379s9只开局块和386s9只隐藏块均无钥匙/锁标记。",
+          "key_count": 0,
+          "lock_count": 0,
+          "lock_requirements": []
+        },
+        "starBlocks": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "379s与386s全部18块面均无星标，黑白颜色不计星机制。"
+        },
+        "flipDoors": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "379s与396/406s解冻后全部出口为固定普通三角口，无双半叶翻转机构。"
+        },
+        "coloredGrids": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "379s右侧、396/406s左侧逐次腾空的地面均为普通暗格，整关36格无彩色地格。"
+        },
+        "bombs": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "379s全9开局块与386s全9隐藏块无表盘/倒计时标记。"
+        },
+        "lifts": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "唯一遮挡是卷帘9；386s整组H3露出后，396/406s地面不存在电梯双门，410s通关。",
+          "hidden_batch_counts": []
+        },
+        "numericIce": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "379s单格和386sH3均无数字冰块；13/13/10附着在边缘出口，不能算块冰。"
+        },
+        "shells": {
+          "status": "confirmed-absent",
+          "count": 0,
+          "values": [],
+          "reason": "379s9只单格与386s9只H3均纯色无异色芯/壳框；396/406s仍为普通横条。"
+        },
+        "covers": {
+          "status": "confirmed-present",
+          "count": 1,
+          "values": [
+            9
+          ],
+          "hidden_batch_counts": [
+            9
+          ],
+          "hidden_batch_histograms": [
+            {
+              "H3": 9
+            }
+          ],
+          "items": [
+            {
+              "value": 9,
+              "region": {
+                "x": 0,
+                "y": 0,
+                "width": 3,
+                "height": 9
+              },
+              "hiddenCount": 9,
+              "revealWindowSeconds": [
+                384.3,
+                386
+              ]
+            }
+          ],
+          "reason": "379s唯一卷帘初值9；385s打开、386s全9H3可见，无其他遮挡批次。"
+        }
+      },
+      "unknownFields": [],
+      "observations": [
+        "本次补足11机制族的显式证据，不改变truth原有Lv27数量。"
+      ]
+    }
+  ]
+}

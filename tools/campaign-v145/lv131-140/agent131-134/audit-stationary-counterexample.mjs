@@ -1,0 +1,13 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {loadSpatialApi} from '../../../../deliverables/remake101-110-v146-20260924/pipeline/spatial-star-domain.mjs';
+import {checkStationaryObligations} from '../root-native/stationary-obligations.mjs';
+import {digest} from '../../../revised-preview-validation-v160.mjs';
+const api=await loadSpatialApi();
+const level={id:139,name:'single-layer mismatch counterexample',difficulty:'normal',mechanismRules:'revised-2026-09-23-v1.4',width:3,height:3,timeSeconds:100,reward:0,gates:[{id:'p',side:'left',offset:0,size:2,color:'purple'},{id:'r',side:'bottom',offset:0,size:3,color:'red',frozen:1}],blocks:[{id:'target',x:1,y:1,shape:[[0,0],[1,0],[0,1],[1,1]],color:'purple'},{id:'blocker',x:0,y:0,shape:[[0,0]],color:'red',layers:['purple']}]};
+api.validateLevel(level);
+const proof=checkStationaryObligations(level,api,{floor:1});
+const drags=[{blockId:'blocker',path:[],exitSide:'left'},{blockId:'target',path:[[1,0],[0,0]],exitSide:'left'}],replay=api.replayRevisedRoute(level,drags);
+assert(proof.thresholdProven);assert(replay.valid&&replay.complete);assert.equal(replay.nonClearingDrags,0);
+const file=`deliverables/remake131-140-v146-20260924/agent131-134/stationary-counterexample-${Date.now()}.json`;
+fs.writeFileSync(file,JSON.stringify({level,levelSha256:digest(level),proof,drags,replay,tool:'tools/campaign-v145/lv131-140/root-native/stationary-obligations.mjs',toolSha256:digest(fs.readFileSync('tools/campaign-v145/lv131-140/root-native/stationary-obligations.mjs')),finding:'Proof uses block.color while PuzzleModel uses layers[0]. A singleton layer array is allowed by validateLevel. Thus a purported frozen-other-color blocker can clear for free through the ordinary target-color gate.'},null,2)+'\n');console.log(JSON.stringify({file,proof:proof.thresholdProven,claimedL:1,actualU:replay.nonClearingDrags,valid:replay.valid,complete:replay.complete}));

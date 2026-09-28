@@ -1,6 +1,110 @@
+import { applyRemake171to180 } from './remake171to180';
+import { applyRemake191to200 } from './remake191to200';
+import { applyRemake161to170 } from './remake161to170';
+import { applyRemake151to160 } from './remake151to160';
+import { applyRemake141to150 } from './remake141to150';
+import { applyRemake121to130 } from './remake121to130';
+import { applyRemake131to140 } from './remake131to140';
+import { applyRemake51to60 } from "./remake51to60";
+import { applyRemake101to110 } from './remake101to110';
+import { applyRemake111to120 } from './remake111to120';
+import { applyRemake81to90 } from './remake81to90';
+import { applyRemake91to100 } from './remake91to100';
+import { applyNativeRemake31to40 } from "./nativeRemake31to40";
+import { applyRemake41to50 } from "./remake41to50";
 import { rect, shape, type LevelSpec } from "./types";
-import { buildExtendedLevels } from "./campaignExpansion";
-import { CAMPAIGN_BLUEPRINT_LEVELS } from "./campaignBlueprints";
+import { ACTIVE_MECHANISM_PROFILE } from "./mechanismRules";
+import { applyLevel21Reposition } from "./level21Reposition";
+import { applyMechanismFocusRemake } from "./mechanismFocusRemake";
+import { applyMultiBlockRemake } from "./multiBlockRemake";
+import { applyRhythmRemake } from "./rhythmRemake";
+import { applyRhythmRemake31to40 } from "./rhythmRemake31to40";
+import { applyMechanismPracticeRemake } from "./mechanismPracticeRemake";
+import { applyLayoutOriginalityRemake } from "./layoutOriginalityRemake";
+import { applyNativeBlockRepair } from "./nativeBlockRepair";
+import { applyRemake181to190 } from "./remake181to190";
+import { applyRemake71to80 } from "./remake71to80";
+import { applyRemake61to70 } from "./remake61to70";
+import { campaignRepositionFloor, campaignTargetD1 } from "./campaignDifficultyTargets";
+import { normalizeRuntimeLevel } from "./runtimeLevelNormalization";
+import { VIDEO_PARITY_LEVELS } from "./videoParityLevels.generated";
+import { VIDEO_PARITY_LEVELS_101_TO_200 } from "./videoParityLevels101To200.generated";
+import { getVideoParityGeneratorRimGeometry } from "./videoParityGeneratorRimGeometry";
+import { repairLevelForSolvability } from "./solvabilityRepairOverrides";
+import { applySingleBlockAdjacencyRepair } from "./singleBlockAdjacencyOverrides";
+import { applyLevel19Regeneration } from "./level19Regeneration";
+import { applyLevel20Regeneration } from "./level20Regeneration";
+import { applyAllBlockAdjacencyRepair } from "./allBlockAdjacencyOverrides";
+import { applyLevel21ShutterRepair } from "./level21ShutterRepair";
+import { applyPost100ShutterCoverageRepair } from "./post100ShutterCoverageRepairs";
+import { applyShutterRegionRepair } from "./shutterRegionRepairs";
+import { applyMechanismParityRepair1To100 } from "./mechanismParityRepairs1To100";
+import { applyMechanismParityRepair101To200 } from "./mechanismParityRepairs101To200";
+import { applyMechanismParityShutterRegionRepair } from "./mechanismParityShutterRegions";
+import { applyAxisRectangularRepairs } from "./axisRectangularRepairs";
+import { applyLevel43Repair } from "./level43Repair";
+import { applyLevel63Repair } from "./level63Repair";
+import { applyLevel66Repair, applyLevel93Repair, applyLevel97Repair } from "./levels66_93_97Repair";
+import { applyLevel66LateLiftRepair } from "./level66LateLiftRepair";
+import { applyLevel9OriginalRemake } from "./level9OriginalRemake";
+import { applyLevel11OriginalRemake } from "./level11OriginalRemake";
+import { applyLevel12OriginalRemake } from "./level12OriginalRemake";
+import { applyLevel15OriginalRemake } from "./level15OriginalRemake";
+import { applyLevel16OriginalRemake } from "./level16OriginalRemake";
+import { applyLevel20OriginalRemake } from "./level20OriginalRemake";
+import { applyLevel70GeneratorRemake } from "./level70GeneratorRemake";
+import { applyLevel78LateLiftRepair } from "./level78LateLiftRepair";
+import { applyLevel72Repair } from "./level72Repair";
+import { applyMechanismAttributeRepair } from "./mechanismAttributeRepairs";
+import { applyPaletteAwareExitContracts } from "./paletteAwareExitContracts";
+import { applyOpeningVisibilityCohortRepair } from "./openingVisibilityCohortRepairs";
+import { applyFinalGeneratorContracts } from "./finalGeneratorContracts";
+import { applyOpeningBlockCountRepair } from "./openingBlockCountRepairs";
+import { applyAllBlockOpeningSolvabilityRepair } from "./allBlockOpeningSolvabilityRepairs";
+import { applyPlayerFacingShutterCountContract } from "./playerFacingShutterCountContracts";
+import { applyMechanismAttributeStructuralRepair } from "./mechanismAttributeStructuralRepairs";
+import { applyBoardTopologyRepair } from "./boardTopologyRepairs";
+import { applyShutterGeometryCoverageRepair } from "./shutterGeometryCoverageRepairs";
+import { applyCompetitorExactShutterGeometryRepairPost100 } from "./competitorExactShutterGeometryRepairsPost100";
+import { applyGeneratorSpawnAlignmentRepair } from "./generatorSpawnAlignmentRepairs";
+import { applyOpeningBlockCountExpansionRepair } from "./openingBlockCountExpansionRepairs";
+import { applyOpeningBlockCountSecondBatchRepair } from "./openingBlockCountSecondBatchRepairs";
+import { applyLevel41GeneratorOpeningBridgeRepair } from "./level41GeneratorOpeningBridgeRepair";
+import { applyGeneratorRouteSolvabilityRepair } from "./generatorRouteSolvabilityRepairs";
+import { applyGeneratorOpeningBridgeRepair } from "./generatorOpeningBridgeRepairs";
+import { applyCompetitorBoardOutlineRepair } from "./competitorBoardOutlineRepairs";
+import { applyCompetitorEarlyJointMaskRepair } from "./competitorEarlyJointMaskRepairs";
+import { applyCompetitorLevel33DiamondMaskRepair } from "./competitorLevel33DiamondMaskRepair";
+import { applyCompetitorLateBoardMaskRepair } from "./competitorLateBoardMaskRepairs";
+import { applyCompetitorShutterContractRepair } from "./competitorShutterContractRepairs";
+import { applyCompetitorHardBoardMaskRepair } from "./competitorHardBoardMaskRepairs";
+import { applyCompetitorExactShutterTruthRepair } from "./competitorExactShutterTruthRepairs";
+import { applyCompetitorCertifiedExactGeometryRepair } from "./competitorCertifiedExactGeometryRepairs";
+import { applyCompetitorLocalPortalRepair } from "./competitorLocalPortalRepairs";
+import { applyCompetitorDisconnectedBoardRepair } from "./competitorDisconnectedBoardRepairs";
+import { applyCompetitorLateMechanismRepair } from "./competitorLateMechanismRepairs";
+import { applyCompetitorLateExitContract1To100 } from "./competitorLateExitContracts1To100";
+import { applyCompetitorExitStructuralBatchA } from "./competitorExitStructuralBatchA";
+import { applyCompetitorShutterStructuralBatchA } from "./competitorShutterStructuralBatchA";
+import { applyOpeningCompositionBatchBRepair } from "./openingCompositionBatchBRepairs";
+import { applyCompetitorLevel75ShellRepair } from "./competitorLevel75ShellRepair";
+import { applyCompetitorShutterStructuralBatchB } from "./competitorShutterStructuralBatchB";
+import { applyOpeningCompositionBatchCRepair } from "./openingCompositionBatchCRepairs";
+import { applyCompetitorLateFlipDoorStructuralBatch } from "./competitorLateFlipDoorStructuralBatch";
+import { applyCompetitorNumericIceStructuralBatchA } from "./competitorNumericIceStructuralBatchA";
+import { applyCompetitorStarExitStructuralBatch } from "./competitorStarExitStructuralBatch";
+import { applyCompetitorEarlyExitStructuralBatchB } from "./competitorEarlyExitStructuralBatchB";
+import { applyCompetitorEarlyMidResidualBatchP } from "./competitorEarlyMidResidualBatchP";
+import { applyCompetitorMidExitStructuralBatchC } from "./competitorMidExitStructuralBatchC";
+import { applyCompetitorMidExitStructuralBatchD } from "./competitorMidExitStructuralBatchD";
+import { applyCompetitorLateExitStructuralBatchJ } from "./competitorLateExitStructuralBatchJ";
+import { applyCompetitorLateMechanismStructuralBatchL } from "./competitorLateMechanismStructuralBatchL";
+import { applyCompetitorLateStructuralBatchM } from "./competitorLateStructuralBatchM";
+import { applyFinalOutlineOnlyBoardRepair } from "./finalOutlineOnlyBoardRepairs";
+import { applyGeneratorFrozenCargoRepair } from "./generatorFrozenCargoRepairs";
+import { applyEarlyExitDifficultyRepair } from "./earlyExitDifficultyRepairs";
+import { applyRevisedReviewedLevel } from "./revisedReviewedLevels";
+import { applyRevisedContinuationLevel } from "./revisedContinuationLevels";
 
 export const BASE_LEVELS: LevelSpec[] = [
   {
@@ -722,7 +826,326 @@ export const BASE_LEVELS: LevelSpec[] = [
   },
 ];
 
-export const LEVELS: LevelSpec[] = buildExtendedLevels([...BASE_LEVELS, ...CAMPAIGN_BLUEPRINT_LEVELS]);
+/**
+ * The executable campaign is the single v8 competitor-video parity data set.
+ * BASE_LEVELS above remains only as a legacy prototype fixture for its
+ * separately authored solution test; it is not composed into production.
+ */
+// Runtime level ids now map directly to the same competitor level ids.  The
+// former Lv2/Lv5 swap made both levels fail their exact opening/full inventory
+// contracts even though each authored source was already correct.
+export const VIDEO_PARITY_CAMPAIGN_SOURCE_ORDER = Array.from(
+  { length: 100 },
+  (_, index) => index + 1,
+);
+
+const VIDEO_PARITY_CAMPAIGN_LEVELS_1_TO_100: LevelSpec[] = VIDEO_PARITY_CAMPAIGN_SOURCE_ORDER.map((sourceId, index) => {
+  const id = index + 1;
+  const source = VIDEO_PARITY_LEVELS[sourceId - 1];
+  if (!source) throw new Error(`Missing video-parity source Lv${sourceId}`);
+  const level = normalizeRuntimeLevel({
+    ...source,
+    id,
+    designTargets: {
+      formulaVersion: "blockout-d1",
+      calibratedDifficulty: campaignTargetD1(id),
+      minimumRepositionOverhead: campaignRepositionFloor(id),
+    },
+  });
+  return {
+    ...level,
+    generators: level.generators?.map((generator) => {
+      const geometry = getVideoParityGeneratorRimGeometry(level.id, generator.id);
+      if (!geometry) return generator;
+      return {
+        ...generator,
+        side: geometry.side,
+        offset: geometry.offset,
+        rimSpan: geometry.rimSpan,
+        rimMount: geometry.rimMount,
+        ...(geometry.anchor ? { rimAnchor: { ...geometry.anchor } } : {}),
+      };
+    }),
+  };
+});
+
+/**
+ * Lv101–200 is a deterministic structural projection of the supplied
+ * competitor videos. It intentionally carries no solver witness or inferred
+ * difficulty target; the generated audit records every geometry/design fill.
+ */
+export const LEVELS_BEFORE_SINGLE_BLOCK_ADJACENCY: LevelSpec[] = [
+  ...VIDEO_PARITY_CAMPAIGN_LEVELS_1_TO_100,
+  ...VIDEO_PARITY_LEVELS_101_TO_200.map(normalizeRuntimeLevel),
+].map(repairLevelForSolvability);
+
+export const LEVELS_BEFORE_SHUTTER_REGION_REPAIR: LevelSpec[] = LEVELS_BEFORE_SINGLE_BLOCK_ADJACENCY
+  .map(applySingleBlockAdjacencyRepair)
+  .map(applyLevel19Regeneration)
+  .map(applyLevel20Regeneration)
+  .map(applyAllBlockAdjacencyRepair)
+  .map(applyLevel21ShutterRepair)
+  .map(applyPost100ShutterCoverageRepair);
+
+export const LEVELS_BEFORE_MECHANISM_ATTRIBUTE_REPAIR: LevelSpec[] = LEVELS_BEFORE_SHUTTER_REGION_REPAIR
+  .map(applyShutterRegionRepair)
+  .map(applyMechanismParityRepair1To100)
+  .map(applyMechanismParityRepair101To200)
+  .map(applyMechanismParityShutterRegionRepair);
+
+export const LEVELS_BEFORE_PALETTE_AWARE_EXIT_CONTRACT: LevelSpec[] = LEVELS_BEFORE_MECHANISM_ATTRIBUTE_REPAIR
+  .map(applyMechanismAttributeRepair)
+  .map(applyOpeningVisibilityCohortRepair)
+  .map(applyFinalGeneratorContracts);
+
+export const LEVELS_BEFORE_ALL_BLOCK_OPENING_SOLVABILITY_REPAIR: LevelSpec[] = LEVELS_BEFORE_PALETTE_AWARE_EXIT_CONTRACT
+  .map(applyPaletteAwareExitContracts);
+
+export const LEVELS_BEFORE_OPENING_BLOCK_COUNT_REPAIR: LevelSpec[] = LEVELS_BEFORE_ALL_BLOCK_OPENING_SOLVABILITY_REPAIR
+  .map(applyAllBlockOpeningSolvabilityRepair);
+
+export const LEVELS_BEFORE_PLAYER_FACING_SHUTTER_COUNT_CONTRACT: LevelSpec[] = LEVELS_BEFORE_OPENING_BLOCK_COUNT_REPAIR
+  .map(applyOpeningBlockCountRepair);
+
+export const LEVELS_BEFORE_MECHANISM_ATTRIBUTE_STRUCTURAL_REPAIR: LevelSpec[] = LEVELS_BEFORE_PLAYER_FACING_SHUTTER_COUNT_CONTRACT
+  .map(applyPlayerFacingShutterCountContract);
+
+export const LEVELS_BEFORE_BOARD_TOPOLOGY_REPAIR: LevelSpec[] = LEVELS_BEFORE_MECHANISM_ATTRIBUTE_STRUCTURAL_REPAIR
+  .map(applyMechanismAttributeStructuralRepair);
+
+export const LEVELS_BEFORE_SHUTTER_GEOMETRY_COVERAGE_REPAIR: LevelSpec[] = LEVELS_BEFORE_BOARD_TOPOLOGY_REPAIR
+  .map(applyBoardTopologyRepair);
+
+export const LEVELS_BEFORE_COMPETITOR_EXACT_SHUTTER_GEOMETRY_POST100: LevelSpec[] = LEVELS_BEFORE_SHUTTER_GEOMETRY_COVERAGE_REPAIR
+  .map(applyShutterGeometryCoverageRepair);
+
+export const LEVELS_BEFORE_GENERATOR_ROUTE_SOLVABILITY_REPAIR: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_EXACT_SHUTTER_GEOMETRY_POST100
+  .map(applyCompetitorExactShutterGeometryRepairPost100);
+
+export const LEVELS_BEFORE_GENERATOR_SPAWN_ALIGNMENT_REPAIR: LevelSpec[] = LEVELS_BEFORE_GENERATOR_ROUTE_SOLVABILITY_REPAIR
+  .map(applyGeneratorRouteSolvabilityRepair);
+
+export const LEVELS_BEFORE_OPENING_BLOCK_COUNT_EXPANSION_REPAIR: LevelSpec[] = LEVELS_BEFORE_GENERATOR_SPAWN_ALIGNMENT_REPAIR
+  .map(applyGeneratorSpawnAlignmentRepair);
+
+export const LEVELS_BEFORE_OPENING_BLOCK_COUNT_SECOND_BATCH_REPAIR: LevelSpec[] = LEVELS_BEFORE_OPENING_BLOCK_COUNT_EXPANSION_REPAIR
+  .map(applyOpeningBlockCountExpansionRepair);
+
+export const LEVELS_BEFORE_LEVEL41_GENERATOR_OPENING_BRIDGE_REPAIR: LevelSpec[] = LEVELS_BEFORE_OPENING_BLOCK_COUNT_SECOND_BATCH_REPAIR
+  .map(applyOpeningBlockCountSecondBatchRepair);
+
+export const LEVELS_BEFORE_GENERATOR_OPENING_BRIDGE_REPAIR: LevelSpec[] = LEVELS_BEFORE_LEVEL41_GENERATOR_OPENING_BRIDGE_REPAIR
+  .map(applyLevel41GeneratorOpeningBridgeRepair);
+
+export const LEVELS_BEFORE_COMPETITOR_BOARD_OUTLINE_REPAIR: LevelSpec[] = LEVELS_BEFORE_GENERATOR_OPENING_BRIDGE_REPAIR
+  .map(applyGeneratorOpeningBridgeRepair);
+
+export const LEVELS_BEFORE_COMPETITOR_EARLY_JOINT_MASK_REPAIR: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_BOARD_OUTLINE_REPAIR
+  .map(applyCompetitorBoardOutlineRepair);
+
+export const LEVELS_BEFORE_COMPETITOR_LEVEL_33_DIAMOND_MASK_REPAIR: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_EARLY_JOINT_MASK_REPAIR
+  .map(applyCompetitorEarlyJointMaskRepair);
+
+export const LEVELS_BEFORE_COMPETITOR_LATE_BOARD_MASK_REPAIR: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_LEVEL_33_DIAMOND_MASK_REPAIR
+  .map(applyCompetitorLevel33DiamondMaskRepair);
+
+export const LEVELS_BEFORE_COMPETITOR_SHUTTER_CONTRACT_REPAIR: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_LATE_BOARD_MASK_REPAIR
+  .map(applyCompetitorLateBoardMaskRepair);
+
+export const LEVELS_BEFORE_COMPETITOR_HARD_BOARD_MASK_REPAIR: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_SHUTTER_CONTRACT_REPAIR
+  .map(applyCompetitorShutterContractRepair);
+
+export const LEVELS_BEFORE_COMPETITOR_EXACT_SHUTTER_TRUTH_REPAIR: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_HARD_BOARD_MASK_REPAIR
+  .map(applyCompetitorHardBoardMaskRepair);
+
+export const LEVELS_BEFORE_COMPETITOR_CERTIFIED_EXACT_GEOMETRY_REPAIR: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_EXACT_SHUTTER_TRUTH_REPAIR
+  .map(applyCompetitorExactShutterTruthRepair);
+
+export const LEVELS_BEFORE_COMPETITOR_LOCAL_PORTAL_REPAIR: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_CERTIFIED_EXACT_GEOMETRY_REPAIR
+  .map(applyCompetitorCertifiedExactGeometryRepair);
+
+export const LEVELS_BEFORE_COMPETITOR_DISCONNECTED_BOARD_REPAIR: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_LOCAL_PORTAL_REPAIR
+  .map(applyCompetitorLocalPortalRepair);
+
+export const LEVELS_BEFORE_COMPETITOR_LATE_MECHANISM_REPAIR: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_DISCONNECTED_BOARD_REPAIR
+  .map(applyCompetitorDisconnectedBoardRepair);
+
+export const LEVELS_BEFORE_COMPETITOR_LATE_EXIT_CONTRACTS_1_TO_100: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_LATE_MECHANISM_REPAIR
+  .map(applyCompetitorLateMechanismRepair);
+
+export const LEVELS_BEFORE_COMPETITOR_EXIT_STRUCTURAL_BATCH_A: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_LATE_EXIT_CONTRACTS_1_TO_100
+  .map(applyCompetitorLateExitContract1To100);
+
+export const LEVELS_BEFORE_COMPETITOR_SHUTTER_STRUCTURAL_BATCH_A: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_EXIT_STRUCTURAL_BATCH_A
+  .map(applyCompetitorExitStructuralBatchA);
+
+export const LEVELS_BEFORE_OPENING_COMPOSITION_BATCH_B_REPAIR: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_SHUTTER_STRUCTURAL_BATCH_A
+  .map(applyCompetitorShutterStructuralBatchA);
+
+export const LEVELS_BEFORE_COMPETITOR_LEVEL_75_SHELL_REPAIR: LevelSpec[] = LEVELS_BEFORE_OPENING_COMPOSITION_BATCH_B_REPAIR
+  .map(applyOpeningCompositionBatchBRepair);
+
+export const LEVELS_BEFORE_COMPETITOR_SHUTTER_STRUCTURAL_BATCH_B: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_LEVEL_75_SHELL_REPAIR
+  .map(applyCompetitorLevel75ShellRepair);
+
+export const LEVELS_BEFORE_OPENING_COMPOSITION_BATCH_C_REPAIR: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_SHUTTER_STRUCTURAL_BATCH_B
+  .map(applyCompetitorShutterStructuralBatchB);
+
+export const LEVELS_BEFORE_COMPETITOR_LATE_FLIP_DOOR_STRUCTURAL_BATCH: LevelSpec[] = LEVELS_BEFORE_OPENING_COMPOSITION_BATCH_C_REPAIR
+  .map(applyOpeningCompositionBatchCRepair);
+
+export const LEVELS_BEFORE_COMPETITOR_NUMERIC_ICE_STRUCTURAL_BATCH_A: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_LATE_FLIP_DOOR_STRUCTURAL_BATCH
+  .map(applyCompetitorLateFlipDoorStructuralBatch);
+
+export const LEVELS_BEFORE_COMPETITOR_STAR_EXIT_STRUCTURAL_BATCH: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_NUMERIC_ICE_STRUCTURAL_BATCH_A
+  .map(applyCompetitorNumericIceStructuralBatchA);
+
+export const LEVELS_BEFORE_COMPETITOR_EARLY_EXIT_STRUCTURAL_BATCH_B: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_STAR_EXIT_STRUCTURAL_BATCH
+  .map(applyCompetitorStarExitStructuralBatch);
+
+export const LEVELS_BEFORE_COMPETITOR_EARLY_MID_RESIDUAL_BATCH_P: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_EARLY_EXIT_STRUCTURAL_BATCH_B
+  .map(applyCompetitorEarlyExitStructuralBatchB);
+
+export const LEVELS_BEFORE_COMPETITOR_MID_EXIT_STRUCTURAL_BATCH_C: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_EARLY_MID_RESIDUAL_BATCH_P
+  .map(applyCompetitorEarlyMidResidualBatchP);
+
+export const LEVELS_BEFORE_COMPETITOR_MID_EXIT_STRUCTURAL_BATCH_D: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_MID_EXIT_STRUCTURAL_BATCH_C
+  .map(applyCompetitorMidExitStructuralBatchC);
+
+export const LEVELS_BEFORE_COMPETITOR_LATE_EXIT_STRUCTURAL_BATCH_J: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_MID_EXIT_STRUCTURAL_BATCH_D
+  .map(applyCompetitorMidExitStructuralBatchD);
+
+export const LEVELS_BEFORE_COMPETITOR_LATE_MECHANISM_STRUCTURAL_BATCH_L: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_LATE_EXIT_STRUCTURAL_BATCH_J
+  .map(applyCompetitorLateExitStructuralBatchJ);
+
+export const LEVELS_BEFORE_COMPETITOR_LATE_STRUCTURAL_BATCH_M: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_LATE_MECHANISM_STRUCTURAL_BATCH_L
+  .map(applyCompetitorLateMechanismStructuralBatchL);
+
+export const LEVELS_BEFORE_FINAL_OUTLINE_ONLY_BOARD_REPAIR: LevelSpec[] = LEVELS_BEFORE_COMPETITOR_LATE_STRUCTURAL_BATCH_M
+  .map(applyCompetitorLateStructuralBatchM);
+
+export const LEVELS_BEFORE_GENERATOR_FROZEN_CARGO_REPAIR: LevelSpec[] = LEVELS_BEFORE_FINAL_OUTLINE_ONLY_BOARD_REPAIR
+  .map(applyFinalOutlineOnlyBoardRepair);
+
+export const LEVELS_BEFORE_EARLY_EXIT_DIFFICULTY_REPAIR: LevelSpec[] = LEVELS_BEFORE_GENERATOR_FROZEN_CARGO_REPAIR
+  .map(applyGeneratorFrozenCargoRepair);
+
+export const LEVELS_BEFORE_LEVEL_ORDER_SWAP: LevelSpec[] = LEVELS_BEFORE_EARLY_EXIT_DIFFICULTY_REPAIR
+  .map(applyEarlyExitDifficultyRepair);
+
+// Apply player-facing order changes after all source-ID-specific repairs.
+// The puzzle, rewards, introductions and star targets travel together; save
+// progress and navigation remain attached to the destination level number.
+export const LEVELS_BEFORE_REVISED_REVIEWED_INTEGRATION: LevelSpec[] = LEVELS_BEFORE_LEVEL_ORDER_SWAP.map((level, _index, levels) => {
+  const sourceId = level.id === 2 ? 5 : level.id === 5 ? 2 : level.id;
+  if (sourceId === level.id) return level;
+  return { ...levels.find((source) => source.id === sourceId)!, id: level.id };
+});
+
+// User-authorized v1.10 integration must run after every legacy ID-specific
+// repair. Unreviewed levels and Lv1–20 retain the exact existing data.
+export const LEVELS_BEFORE_REVISED_CONTINUATION: LevelSpec[] = LEVELS_BEFORE_REVISED_REVIEWED_INTEGRATION.map(applyRevisedReviewedLevel);
+export const LEVELS_BEFORE_EXIT_ANIMATION_COMPLETION: LevelSpec[] = LEVELS_BEFORE_REVISED_CONTINUATION.map(applyRevisedContinuationLevel);
+// v1.13 changes only when flip-door events settle. Preserve every authored
+// layout, time, reward and star target, and keep Lv1–20 on their old profile.
+export const LEVELS_BEFORE_TIME_FREEZE: LevelSpec[] = LEVELS_BEFORE_EXIT_ANIMATION_COMPLETION.map((level) => (
+  level.id >= 21 && level.id <= 200
+    ? { ...level, mechanismRules: "revised-2026-09-23-v1.3" }
+    : level
+));
+// v1.14 replaces the time item with a ten-second clock/bomb freeze. Keep
+// authored puzzle data and legacy spatial rules intact during migration.
+export const LEVELS_BEFORE_LEVEL21_REPOSITION: LevelSpec[] = LEVELS_BEFORE_TIME_FREEZE.map((level) => (
+  level.id >= 21 && level.id <= 200
+    ? { ...level, mechanismRules: "revised-2026-09-23-v1.4" }
+    : level
+));
+
+// v1.15: the newly authorized Lv21 block-only redesign has its own bound and
+// full input-route evidence; preserve every earlier stage for old certificates.
+export const LEVELS_BEFORE_MECHANISM_FOCUS_REMAKE: LevelSpec[] = LEVELS_BEFORE_LEVEL21_REPOSITION.map(applyLevel21Reposition);
+
+// v1.20: the complete authorized 21–30 remake comes after every historical
+// repair; old layouts remain available for their independently pinned tests.
+export const LEVELS_BEFORE_MULTI_BLOCK_REMAKE: LevelSpec[] = LEVELS_BEFORE_MECHANISM_FOCUS_REMAKE.map(applyMechanismFocusRemake);
+
+// v1.21 replaces the single-cell-heavy draft with reviewed multi-cell spatial
+// decisions and unlocked mechanism combinations. Preserve historical stages.
+export const LEVELS_BEFORE_RHYTHM_REMAKE: LevelSpec[] = LEVELS_BEFORE_MULTI_BLOCK_REMAKE.map(applyMultiBlockRemake);
+
+// v1.25–v1.27: four-band cadence, fully filled hidden regions and independently
+// verified raised mechanism counts. All other 190 levels retain their identity.
+export const LEVELS_BEFORE_RHYTHM31_40_REMAKE: LevelSpec[] = LEVELS_BEFORE_RHYTHM_REMAKE.map(applyRhythmRemake);
+
+// v1.28 continues into31-40. Generator teaching35 shifts the old super slot
+// beyond this batch; retain the original physical boards and actual star goals.
+// Keep the completed historical campaign stage available to its own regression
+// fixtures when the separately verified v1.39 21–30 replacement is adopted.
+export const LEVELS_BEFORE_MECHANISM_PRACTICE_REMAKE: LevelSpec[] = LEVELS_BEFORE_RHYTHM31_40_REMAKE.map(applyRhythmRemake31to40);
+export const LEVELS_BEFORE_LAYOUT_ORIGINALITY_REMAKE: LevelSpec[] = LEVELS_BEFORE_MECHANISM_PRACTICE_REMAKE.map(applyMechanismPracticeRemake);
+// v1.40 changes only the four named layouts; retain the v1.39 stage for its witnesses.
+export const LEVELS_BEFORE_NATIVE_BLOCK_REPAIR: LevelSpec[] = LEVELS_BEFORE_LAYOUT_ORIGINALITY_REMAKE.map(applyLayoutOriginalityRemake);
+// v1.43 only replaces the twelve authorized native-art footprints; Lv5 stays legacy.
+export const LEVELS_BEFORE_181_190_REMAKE: LevelSpec[] = LEVELS_BEFORE_NATIVE_BLOCK_REPAIR.map(applyNativeBlockRepair);
+export const LEVELS_BEFORE_31_40_NATIVE_REMAKE: LevelSpec[] = LEVELS_BEFORE_181_190_REMAKE.map(applyRemake181to190);
+export const LEVELS_BEFORE_71_80_REMAKE: LevelSpec[] = LEVELS_BEFORE_31_40_NATIVE_REMAKE.map(applyNativeRemake31to40);
+export const LEVELS_BEFORE_61_70_REMAKE: LevelSpec[] = LEVELS_BEFORE_71_80_REMAKE.map(applyRemake71to80);
+// v1.45: independently validated 61–70; preserve preceding batches verbatim.
+export const LEVELS_BEFORE_41_50_REMAKE: LevelSpec[] = LEVELS_BEFORE_61_70_REMAKE.map(applyRemake61to70);
+export const LEVELS_BEFORE_51_60_REMAKE: LevelSpec[] = LEVELS_BEFORE_41_50_REMAKE.map(applyRemake41to50);
+export const LEVELS_BEFORE_91_100_REMAKE: LevelSpec[] = LEVELS_BEFORE_51_60_REMAKE.map(applyRemake51to60);
+export const LEVELS_BEFORE_81_90_REMAKE: LevelSpec[] = LEVELS_BEFORE_91_100_REMAKE.map(applyRemake91to100);
+export const LEVELS_BEFORE_111_120_REMAKE: LevelSpec[] = LEVELS_BEFORE_81_90_REMAKE.map(applyRemake81to90);
+export const LEVELS_BEFORE_101_110_REMAKE: LevelSpec[] = LEVELS_BEFORE_111_120_REMAKE.map(applyRemake111to120);
+export const LEVELS_BEFORE_AXIS_RECTANGULAR_REPAIR: LevelSpec[] = LEVELS_BEFORE_101_110_REMAKE.map(applyRemake101to110);
+// v1.60 repairs the ten axis-on-irregular blocks after every level-specific
+// remake, so the audit and the solver both consume the final production object.
+export const LEVELS_BEFORE_LEVEL43_REPAIR: LevelSpec[] = LEVELS_BEFORE_AXIS_RECTANGULAR_REPAIR.map(applyAxisRectangularRepairs);
+// v1.63: repair only the structurally deadlocked Lv43 opening chain.
+export const LEVELS_BEFORE_LEVEL63_REPAIR: LevelSpec[] = LEVELS_BEFORE_LEVEL43_REPAIR.map(applyLevel43Repair);
+// v1.64: regenerate Lv63 after the corrected green opening-exit contract.
+export const LEVELS_BEFORE_LEVEL66_93_97_REPAIR: LevelSpec[] = LEVELS_BEFORE_LEVEL63_REPAIR
+  .map(applyLevel63Repair)
+  .map(applyLevel66Repair)
+  .map(applyLevel93Repair)
+  .map(applyLevel97Repair);
+// v1.67: resolve the current Lv72 parking deadlock without changing its board contract.
+export const LEVELS_BEFORE_LEVEL72_REPAIR: LevelSpec[] = LEVELS_BEFORE_LEVEL66_93_97_REPAIR.map(applyLevel72Repair);
+// v1.72: validated 131–140 members are applied after historical repairs.
+export const LEVELS_BEFORE_131_140_REMAKE: LevelSpec[] = LEVELS_BEFORE_LEVEL72_REPAIR;
+export const LEVELS_BEFORE_121_130_REMAKE: LevelSpec[] = LEVELS_BEFORE_131_140_REMAKE.map(applyRemake131to140);
+export const LEVELS_BEFORE_141_150_REMAKE: LevelSpec[] = LEVELS_BEFORE_121_130_REMAKE.map(applyRemake121to130);
+export const LEVELS_BEFORE_LEVEL66_LATE_LIFT_REPAIR: LevelSpec[] = LEVELS_BEFORE_141_150_REMAKE.map(applyRemake141to150);
+// v1.76: the hidden lift layer supplies its own ice-thaw events, even when revealed last.
+export const LEVELS_BEFORE_LEVEL9_ORIGINAL_REMAKE: LevelSpec[] = LEVELS_BEFORE_LEVEL66_LATE_LIFT_REPAIR.map(applyLevel66LateLiftRepair);
+// v1.77: only Lv9 adopts the original outline and its verified 26-drag star target.
+export const LEVELS_BEFORE_LEVEL11_ORIGINAL_REMAKE: LevelSpec[] = LEVELS_BEFORE_LEVEL9_ORIGINAL_REMAKE.map(applyLevel9OriginalRemake);
+// v1.80: only Lv11 adopts the original outline and verified 12-setup-drag exception.
+export const LEVELS_BEFORE_LEVEL12_ORIGINAL_REMAKE: LevelSpec[] = LEVELS_BEFORE_LEVEL11_ORIGINAL_REMAKE.map(applyLevel11OriginalRemake);
+// v1.82: only Lv12 adopts the source-colored tower and verified 28-drag star target.
+export const LEVELS_BEFORE_LEVEL15_ORIGINAL_REMAKE: LevelSpec[] = LEVELS_BEFORE_LEVEL12_ORIGINAL_REMAKE.map(applyLevel12OriginalRemake);
+// v1.83: only Lv15 adopts the original hammer and simple single-shell teaching.
+export const LEVELS_BEFORE_LEVEL16_ORIGINAL_REMAKE: LevelSpec[] = LEVELS_BEFORE_LEVEL15_ORIGINAL_REMAKE.map(applyLevel15OriginalRemake);
+// v1.84: only Lv16 adopts its original outline, complete source inventory and normal band.
+export const LEVELS_BEFORE_LEVEL20_ORIGINAL_REMAKE: LevelSpec[] = LEVELS_BEFORE_LEVEL16_ORIGINAL_REMAKE.map(applyLevel16OriginalRemake);
+// v1.87: original Lv20 rectangle, unique colors and certified five repositions.
+export const LEVELS_BEFORE_FROZEN_FLIP: LevelSpec[] = LEVELS_BEFORE_LEVEL20_ORIGINAL_REMAKE.map(applyLevel20OriginalRemake);
+// v1.90: freeze pauses a flip door's phase. Only affected final levels adopt
+// the new profile; historical stages, layouts and all other levels stay intact.
+export const LEVELS_BEFORE_LEVEL70_GENERATOR_REMAKE: LevelSpec[] = LEVELS_BEFORE_FROZEN_FLIP.map((level) => (
+  level.flipDoors?.some((door) => (door.frozen ?? 0) > 0)
+    ? { ...level, mechanismRules: ACTIVE_MECHANISM_PROFILE }
+    : level
+));
+
+// v1.93: only Lv70 gains two midgame generators and the verified 51-drag star target.
+export const LEVELS_BEFORE_151_160_REMAKE: LevelSpec[] = LEVELS_BEFORE_LEVEL70_GENERATOR_REMAKE.map(applyLevel70GeneratorRemake);
+export const LEVELS_BEFORE_LEVEL78_LATE_LIFT_REPAIR: LevelSpec[] = LEVELS_BEFORE_151_160_REMAKE.map(applyRemake151to160);
+// v1.104: only Lv78's hidden cargo changes; retain the prior stage and evidence.
+export const LEVELS_BEFORE_161_170_REMAKE: LevelSpec[] = LEVELS_BEFORE_LEVEL78_LATE_LIFT_REPAIR.map(applyLevel78LateLiftRepair);
+export const LEVELS_BEFORE_191_200_REMAKE: LevelSpec[] = LEVELS_BEFORE_161_170_REMAKE.map(applyRemake161to170);
+export const LEVELS_BEFORE_171_180_REMAKE: LevelSpec[] = LEVELS_BEFORE_191_200_REMAKE.map(applyRemake191to200);
+export const LEVELS: LevelSpec[] = LEVELS_BEFORE_171_180_REMAKE.map(applyRemake171to180);
 
 export const getLevelStrict = (id: number): LevelSpec => {
   const normalized = Number(id);

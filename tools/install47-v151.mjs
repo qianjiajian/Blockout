@@ -1,0 +1,28 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import {loadApi} from './native-block-repair-v143.mjs';
+import {digest} from './revised-preview-validation-v160.mjs';
+import {auditCandidate} from './remake41to50-v146.mjs';
+
+const candidatePath='deliverables/remake41-47-v151-20260925/candidate47-competitor-regenerated-v151-l11-u15-pointer-pass.json';
+const candidate=JSON.parse(fs.readFileSync(candidatePath));
+const pointerPath=candidate.pointerEvidence.report;
+const pointer=JSON.parse(fs.readFileSync(pointerPath));
+assert.equal(candidate.level.id,47);assert.equal(pointer.status,'PASS');assert.equal(pointer.levelSha256,digest(candidate.level));assert.equal(pointer.routeSha256,digest(candidate.drags));assert(pointer.pointerReplayValidated===true);assert(pointer.rows?.[0]?.status==='PASS');
+const baseline=JSON.parse(fs.readFileSync('deliverables/remake41-50-v146-20260924/baseline.json'));
+const {api}=await loadApi();
+api.validateLevel(candidate.level);
+const audit=auditCandidate(candidate,baseline,api);assert(audit.passed);
+const replay=api.replayRevisedRoute(candidate.level,candidate.drags);assert(replay.valid&&replay.complete&&replay.nonClearingDrags===15);
+const modulePath='src/core/remake41to50.ts',fixturePath='tests/fixtures/native-remake41to50-v146.json';
+const before={module:fs.readFileSync(modulePath,'utf8'),fixture:fs.readFileSync(fixturePath,'utf8')};
+const fixture=JSON.parse(before.fixture);assert.equal(fixture.ruleVersion,'1.46.0');assert(!fixture.rows.some(r=>r.id===47));
+fixture.rows.push({id:47,level:candidate.level,drags:candidate.drags,lowerBound:11,upperBound:15,levelSha256:digest(candidate.level),manifestPath:'deliverables/remake41-47-v151-20260925/candidate47-competitor-regenerated-v151-l11-u15-pointer-pass.json',candidatePointer:pointerPath});
+fixture.rows.sort((a,b)=>a.id-b.id);
+const moduleSource=`// Fresh validation of the source-reviewed 41-50 batch. Unlisted levels stay unchanged.\nimport type {LevelSpec} from './types';\nexport const REMADE_41_50_IDS: readonly number[] = ${JSON.stringify(fixture.rows.map(r=>r.id))};\nconst reviewed: Record<number,LevelSpec> = ${JSON.stringify(Object.fromEntries(fixture.rows.map(r=>[r.id,r.level])),null,2)};\nexport const applyRemake41to50 = (level:LevelSpec):LevelSpec => reviewed[level.id] ?? level;\n`;
+assert.equal(fs.readFileSync(modulePath,'utf8'),before.module);assert.equal(fs.readFileSync(fixturePath,'utf8'),before.fixture);
+fs.writeFileSync(modulePath,moduleSource);fs.writeFileSync(fixturePath,JSON.stringify(fixture,null,2)+'\n');
+const out='deliverables/remake41-47-v151-20260925/formal-integration47-v151-'+Date.now()+'.json';
+fs.writeFileSync(out,JSON.stringify({status:'PREPARED',ruleVersion:'1.51.0',candidate:candidatePath,candidateSha256:digest(fs.readFileSync(candidatePath)),pointer:pointerPath,pointerSha256:digest(fs.readFileSync(pointerPath)),levelSha256:digest(candidate.level),routeSha256:digest(candidate.drags),previousModuleSha256:digest(before.module),previousFixtureSha256:digest(before.fixture),moduleSha256:digest(fs.readFileSync(modulePath)),fixtureSha256:digest(fs.readFileSync(fixturePath)),productionLevelWrite:true,formalProductionPointerValidated:false,releaseApproved:false,protectedGeometryAndEvaluation:true},null,2)+'\n');
+console.log(JSON.stringify({status:'PREPARED',out,ids:fixture.rows.map(r=>r.id),levelSha256:digest(candidate.level)}));

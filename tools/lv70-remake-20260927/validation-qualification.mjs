@@ -1,0 +1,16 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {spawnSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
+import {build} from 'esbuild';
+import {verifyRulesLock} from '../verify-rules-lock.mjs';
+import {adaptation} from './validation-generator-domain.mjs';
+const sha=b=>createHash('sha256').update(b).digest('hex'),lock=verifyRulesLock();assert(lock.ok);assert(['1.91.0','1.92.0','1.93.0','1.94.0','1.95.0'].includes(lock.activeVersion));
+const built=await build({stdin:{resolveDir:process.cwd(),contents:"export {LEVELS} from './src/core/levels.ts'; export {PuzzleModel,validateLevel} from './src/core/PuzzleModel.ts'; export {replayRevisedRoute} from './src/core/revisedLevelSearch.ts'; export {auditRevisedCandidate} from './src/core/revisedCandidateAudit.ts'; export {matchFormalBlockShape} from './src/game/formalBlockShapes.ts';"},bundle:true,write:false,platform:'node',format:'esm',metafile:true,logLevel:'silent'});
+const paths=[...Object.keys(built.metafile.inputs).filter(p=>p!=='<stdin>'),...Object.keys(adaptation.originalSources),'tools/remake131to140-model-api.mjs','tools/lv70-remake-20260927/validation-generator-domain.mjs','tools/lv70-remake-20260927/validation-generator-domain.test.mjs','tools/lv70-remake-20260927/validation-route.mjs','tools/lv70-remake-20260927/validation-symmetry-floor.mjs','tools/lv70-remake-20260927/validation-symmetry-floor.test.mjs','tools/lv70-remake-20260927/validation-qualification.mjs','docs/rules/manifest.json','docs/rules/mechanism-rules-v1.90.0.md','docs/rules/mechanism-rules-v1.91.0.md'];
+paths.push('docs/rules/mechanism-rules-v'+lock.activeVersion+'.md','tools/lv70-remake-20260927/validation-generator-ice.test.mjs');
+const bindings=Object.fromEntries([...new Set(paths)].map(p=>[p,sha(fs.readFileSync(p))]));
+const tests=spawnSync(process.execPath,['--test','tools/lv70-remake-20260927/validation-generator-domain.test.mjs','tools/lv70-remake-20260927/validation-symmetry-floor.test.mjs','tools/lv70-remake-20260927/validation-generator-ice.test.mjs'],{encoding:'utf8',timeout:60000,maxBuffer:4*1024*1024});
+const drift=Object.entries(bindings).filter(([p,h])=>sha(fs.readFileSync(p))!==h);
+const report={createdAt:new Date().toISOString(),status:tests.status===0&&!drift.length?'PASS':'FAIL',activeRule:lock.activeVersion,profile:'revised-2026-09-27-v1.5',scope:'Lv70, flip-free fixed-space 1-4 FIFO domain; actual candidate requires two generators',adaptation,bindings,sourceDrift:drift,tests:{exitCode:tests.status,stdout:tests.stdout,stderr:tests.stderr,error:tests.error?.message??null},candidateCertified:false,lowerBoundCertified:false,pointerValidated:false,playerSaveTouched:false,releaseApproved:false};
+const output=`deliverables/lv70-remake-20260927/validation-qualification-${Date.now()}.json`;fs.writeFileSync(output,JSON.stringify(report,null,2),{flag:'wx'});console.log(JSON.stringify({output,status:report.status,exitCode:tests.status,drift,testOutput:tests.stdout}));if(report.status!=='PASS')process.exitCode=1;

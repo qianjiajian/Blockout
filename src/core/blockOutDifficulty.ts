@@ -1,4 +1,5 @@
-import type { BlockColor, BlockSpec, GateSpec, LevelSpec, Point } from "./types";
+import { shutterHasPhysicalFootprint, type BlockColor, type BlockSpec, type GateSpec, type LevelSpec, type Point } from "./types";
+import { exitFrontierSpan } from "./blockExitFrontier";
 
 export interface BlockOutDifficultyComponents {
   /** Share of playable space unavailable as an opening buffer. */
@@ -80,13 +81,7 @@ const blockClearColors = (block: BlockSpec): BlockColor[] => block.layers?.lengt
   ? [...block.layers]
   : [block.color];
 
-const requiredSpan = (block: BlockSpec, gate: GateSpec): number => {
-  const xs = block.shape.map(([x]) => x);
-  const ys = block.shape.map(([, y]) => y);
-  return gate.side === "top" || gate.side === "bottom"
-    ? Math.max(...xs) - Math.min(...xs) + 1
-    : Math.max(...ys) - Math.min(...ys) + 1;
-};
+const requiredSpan = (block: BlockSpec, gate: GateSpec): number => exitFrontierSpan(block.shape, gate.side);
 
 const mechanismTags = (level: LevelSpec, playableCells: number): string[] => {
   const tags = new Set<string>();
@@ -94,7 +89,15 @@ const mechanismTags = (level: LevelSpec, playableCells: number): string[] => {
   if (level.gates.some((gate) => (gate.frozen ?? 0) > 0)) tags.add("frozen-gate");
   if (level.blocks.some((block) => (block.frozen ?? 0) > 0)) tags.add("frozen-block");
   if (level.blocks.some((block) => (block.layers?.length ?? 1) > 1)) tags.add("layered-block");
-  if ((level.shutters?.length ?? 0) > 0) tags.add("counter-cover");
+  if ((level.shutters ?? []).some((shutter) => shutter.skin === "lift")) tags.add("lift");
+  if ((level.shutters ?? []).some((shutter) => shutter.skin === "staged-frame")) tags.add("staged-frame");
+  if ((level.shutters ?? []).some((shutter) => (
+    shutter.skin !== "lift" && shutter.skin !== "staged-frame" && shutter.skin !== "staging"
+  ))) tags.add("counter-cover");
+  if ((level.generators ?? []).some((generator) => (generator.trigger ?? "move") === "move")) tags.add("side-generator");
+  if ((level.generators ?? []).some((generator) => generator.trigger === "time")) tags.add("timed-feeder");
+  if (level.blocks.some((block) => block.movementAxis)) tags.add("axis-block");
+  if (level.blocks.some((block) => block.keyId || block.lockedBy)) tags.add("key-lock");
   if ((level.elevators?.length ?? 0) > 0) tags.add("elevator");
   if ((level.conveyors?.length ?? 0) > 0) tags.add("conveyor");
   if (level.blocks.some((block) => block.star) || level.gates.some((gate) => gate.star)) tags.add("star-routing");
@@ -138,12 +141,13 @@ const exitCompetitionOf = (level: LevelSpec): number => {
 export const scoreBlockOutLevel = (level: LevelSpec): BlockOutDifficultyScore => {
   const playable = playableCellsOf(level);
   const unavailable = new Set<string>();
+  const queuedBlockIds = new Set((level.generators ?? []).flatMap((generator) => generator.queueBlockIds));
   for (const block of level.blocks) {
-    if (block.shutterId) continue;
+    if (block.shutterId || queuedBlockIds.has(block.id)) continue;
     for (const cell of physicalCells(block)) if (playable.has(cell)) unavailable.add(cell);
   }
   for (const shutter of level.shutters ?? []) {
-    if (shutter.count <= 0) continue;
+    if (!shutterHasPhysicalFootprint(shutter)) continue;
     for (let y = shutter.y; y < shutter.y + shutter.height; y += 1) {
       for (let x = shutter.x; x < shutter.x + shutter.width; x += 1) {
         const key = `${x},${y}`;
@@ -156,9 +160,22 @@ export const scoreBlockOutLevel = (level: LevelSpec): BlockOutDifficultyScore =>
   const bufferTightness = clamp01((unavailableRatio - 0.18) / 0.64);
   const hiddenStateUnits = level.gates.reduce((sum, gate) => sum + (gate.frozen ?? 0), 0)
     + level.blocks.reduce((sum, block) => (
-      sum + (block.frozen ?? 0) + Math.max(0, (block.layers?.length ?? 1) - 1) * 2 + (block.star ? 2 : 0)
+      sum + (block.frozen ?? 0)
+        + Math.max(0, (block.layers?.length ?? 1) - 1) * 2
+        + (block.star ? 2 : 0)
+        + (block.movementAxis ? 1 : 0)
+        + (block.keyId ? 1 : 0)
+        + (block.lockedBy ? Math.max(1, block.lockCount ?? 1) : 0)
     ), 0)
     + (level.shutters ?? []).reduce((sum, shutter) => sum + Math.max(1, shutter.count), 0)
+    + (level.generators ?? []).reduce((sum, generator) => (
+      // A queue is not just hidden inventory: every machine also carries an
+      // independent spawn-blocked/ready state. Timed feeders add one more
+      // clock phase on top of that. Counting those states keeps sparse
+      // generator introductions from being misclassified as trivial merely
+      // because most of their pieces are not visible at frame zero.
+      sum + generator.queueBlockIds.length + (generator.trigger === "time" ? 3 : 2)
+    ), 0)
     + (level.elevators?.length ?? 0) * 2
     + (level.conveyors?.length ?? 0) * 2;
   const hiddenInformation = clamp01(hiddenStateUnits / 24);

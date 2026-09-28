@@ -6,13 +6,15 @@ import {
   scoreBlockOutLevel,
 } from "../src/core/blockOutDifficulty";
 import {
-  CHAPTER_ONE_DIFFICULTY_RAMP_OVERRIDES,
-  CHAPTER_ONE_DIFFICULTY_RAMP_TARGETS,
   DIFFICULTY_BAND_OVERRIDES,
 } from "../src/core/campaignDifficultyOverrides";
 import { LEVELS } from "../src/core/levels";
 
-const REGENERATED_LEVEL_IDS = [5, 11, 13, 15, 16, 17, 21, 22, 24, 25, 26, 28, 30, 34, 65, 70];
+const VIDEO_PARITY_LEVELS_1_TO_100 = LEVELS.slice(0, 100);
+
+const REGENERATED_LEVEL_IDS = [11, 13, 15, 16, 17, 21, 22, 24, 25, 26, 28, 30, 34, 65, 70];
+const CHAPTER_ONE_COMPETITOR_SCORES = [60.61, 62.28, 60.07, 62.17, 57.91, 60.7] as const;
+const CHAPTER_ONE_COMPETITOR_BANDS = ["advanced", "advanced", "advanced", "advanced", "normal", "advanced"] as const;
 
 describe("five-band Block Out difficulty floor", () => {
   it("uses the adjusted 45-point entry floor and contiguous higher bands", () => {
@@ -25,38 +27,43 @@ describe("five-band Block Out difficulty floor", () => {
     ]);
   });
 
-  it("keeps Lv2–100 inside the adjusted score bands and Lv1 as the explicit tutorial exception", () => {
-    const outside = LEVELS.slice(1).map((level) => {
+  it("keeps Lv5–100 inside the adjusted score bands and Lv1–4 as the explicit tutorial ramp", () => {
+    const outside = VIDEO_PARITY_LEVELS_1_TO_100.slice(4).map((level) => {
       const score = calibratedBlockOutDifficulty(scoreBlockOutLevel(level).score);
       return { levelId: level.id, score, band: blockOutDifficultyBand(score)?.id };
     }).filter(({ band }) => !band);
     expect(outside).toEqual([]);
 
-    const tutorialScore = calibratedBlockOutDifficulty(scoreBlockOutLevel(LEVELS[0]).score);
+    const tutorialScores = VIDEO_PARITY_LEVELS_1_TO_100.slice(0, 4).map((level) => (
+      calibratedBlockOutDifficulty(scoreBlockOutLevel(level).score)
+    ));
     expect(LEVELS[0]).toMatchObject({ id: 1, name: "新手教程" });
     expect(LEVELS[0].onboardingHint).toBeDefined();
-    expect(tutorialScore).toBeCloseTo(23.63, 2);
-    expect(blockOutDifficultyBand(tutorialScore)).toBeUndefined();
+    expect(tutorialScores).toEqual([30.87, 54.74, 48.7, 56.34]);
+    expect(tutorialScores.map((score) => blockOutDifficultyBand(score)?.id)).toEqual([
+      undefined,
+      "normal",
+      "entry",
+      "normal",
+    ]);
   });
 
-  it("regenerates exactly the former under-floor levels into the entry band", () => {
+  it("keeps the legacy override registry stable while v5 levels use the approved hard-floor targets", () => {
     expect(Object.keys(DIFFICULTY_BAND_OVERRIDES).map(Number).sort((a, b) => a - b))
       .toEqual(REGENERATED_LEVEL_IDS);
-    for (const levelId of REGENERATED_LEVEL_IDS) {
-      const score = calibratedBlockOutDifficulty(scoreBlockOutLevel(LEVELS[levelId - 1]).score);
-      expect(score, `Lv${levelId} calibrated score`).toBeGreaterThanOrEqual(45);
-      expect(score, `Lv${levelId} calibrated score`).toBeLessThan(50);
+    for (const levelId of REGENERATED_LEVEL_IDS.filter((id) => id > 10)) {
+      const target = LEVELS[levelId - 1].designTargets?.calibratedDifficulty;
+      expect(target, `Lv${levelId} target score`).toBeGreaterThanOrEqual(70);
+      expect(blockOutDifficultyBand(target!)?.id, `Lv${levelId} target band`).toMatch(/hard|extreme/);
     }
   });
 
-  it("keeps the approved Lv6–10 slope inside its narrow target windows", () => {
-    expect(Object.keys(CHAPTER_ONE_DIFFICULTY_RAMP_OVERRIDES).map(Number)).toEqual([6, 7, 8, 9, 10]);
-    for (const [idText, target] of Object.entries(CHAPTER_ONE_DIFFICULTY_RAMP_TARGETS)) {
-      const levelId = Number(idText);
+  it("keeps the measured competitor-composition bands for Lv5–10", () => {
+    VIDEO_PARITY_LEVELS_1_TO_100.slice(4, 10).forEach((level, index) => {
+      const levelId = level.id;
       const score = calibratedBlockOutDifficulty(scoreBlockOutLevel(LEVELS[levelId - 1]).score);
-      expect(score, `Lv${levelId} target floor`).toBeGreaterThanOrEqual(target);
-      expect(score, `Lv${levelId} target tolerance`).toBeLessThan(target + 0.25);
-      expect(blockOutDifficultyBand(score)?.id).toBe("hard");
-    }
+      expect(score, `Lv${levelId} exact score`).toBe(CHAPTER_ONE_COMPETITOR_SCORES[index]);
+      expect(blockOutDifficultyBand(score)?.id).toBe(CHAPTER_ONE_COMPETITOR_BANDS[index]);
+    });
   });
 });

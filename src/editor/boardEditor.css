@@ -182,17 +182,22 @@ select { height: 38px; padding: 0 34px 0 10px; }
   filter: drop-shadow(0 6px 8px rgba(0, 0, 0, .38));
 }
 
-.cell-rim, .cell-corner { position: absolute; pointer-events: none; background-position: center; background-repeat: no-repeat; background-size: 100% 100%; }
-.cell-rim { z-index: 1; width: 110%; height: 46%; background-image: url("/assets/art/gameplay/board/board-rim-rail-v1.png"); }
-.cell-rim.top { left: -5%; top: -23%; }
-.cell-rim.right { left: 45%; top: 27%; transform: rotate(90deg); }
-.cell-rim.bottom { left: -5%; top: 77%; transform: rotate(180deg); }
-.cell-rim.left { left: -55%; top: 27%; transform: rotate(-90deg); }
-.cell-corner { z-index: 2; width: 58%; height: 58%; background-image: url("/assets/art/gameplay/board/board-rim-corner-v1.png"); }
-.cell-corner.top-left { left: -29%; top: -29%; }
-.cell-corner.top-right { right: -29%; top: -29%; transform: rotate(90deg); }
-.cell-corner.bottom-right { right: -29%; bottom: -29%; transform: rotate(180deg); }
-.cell-corner.bottom-left { left: -29%; bottom: -29%; transform: rotate(-90deg); }
+.cell-rim, .cell-corner, .cell-inner-corner { position: absolute; pointer-events: none; background-position: center; background-repeat: no-repeat; background-size: contain; }
+.cell-rim { z-index: 1; width: 100%; height: 61.0526%; background-image: url("/assets/art/gameplay/board/formal-border-v1/neutral-rail-1-cell.png"); transform-origin: center; }
+.cell-rim.top { left: 0; top: -61.0526%; transform: rotate(180deg); }
+.cell-rim.right { left: 80.5263%; top: 19.4737%; transform: rotate(-90deg); }
+.cell-rim.bottom { left: 0; top: 100%; }
+.cell-rim.left { left: -80.5263%; top: 19.4737%; transform: rotate(90deg); }
+.cell-corner { z-index: 2; width: 60%; height: 62.1053%; background-image: url("/assets/art/gameplay/board/formal-border-v1/neutral-corner-outer.png"); transform-origin: 100% 0; }
+.cell-corner.top-left { left: -60%; top: 0; transform: rotate(90deg); }
+.cell-corner.top-right { right: 0; top: 0; transform: rotate(180deg); }
+.cell-corner.bottom-right { right: 0; top: 100%; transform: rotate(-90deg); }
+.cell-corner.bottom-left { right: 100%; top: 100%; }
+.cell-inner-corner { z-index: 3; width: 63.1579%; height: 65.2632%; background-image: url("/assets/art/gameplay/board/formal-border-v1/neutral-corner-inner.png"); transform-origin: 0 100%; }
+.cell-inner-corner.missing-ne { left: 100%; bottom: 100%; }
+.cell-inner-corner.missing-se { left: 100%; bottom: 0; transform: rotate(90deg); }
+.cell-inner-corner.missing-sw { left: 0; bottom: 0; transform: rotate(180deg); }
+.cell-inner-corner.missing-nw { left: 0; bottom: 100%; transform: rotate(-90deg); }
 
 .board-cell.required::after {
   content: "";

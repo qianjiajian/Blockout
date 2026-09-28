@@ -1,6 +1,38 @@
 {
   "deviceOrientation": "portrait",
   "showStatusBar": false,
+  "subpackages": [
+    {
+      "name": "meta-ui",
+      "root": "meta-ui",
+      "independent": true
+    },
+    {
+      "name": "gameplay-art",
+      "root": "gameplay-art",
+      "independent": true
+    },
+    {
+      "name": "journey-themes",
+      "root": "journey-themes",
+      "independent": true
+    },
+    {
+      "name": "collection-art",
+      "root": "collection-art",
+      "independent": true
+    },
+    {
+      "name": "audio",
+      "root": "audio",
+      "independent": true
+    },
+    {
+      "name": "menu-music",
+      "root": "menu-music",
+      "independent": true
+    }
+  ],
   "networkTimeout": {
     "request": 10000,
     "connectSocket": 10000,
@@ -8,4 +40,3 @@
     "downloadFile": 10000
   }
 }
-

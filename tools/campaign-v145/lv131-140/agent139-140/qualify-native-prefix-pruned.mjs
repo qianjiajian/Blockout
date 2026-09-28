@@ -1,0 +1,20 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';import{loadApi}from '../../../native-block-repair-v143.mjs';import{compile,each,key,clearCount,normalize,checkAxisPrefixFloor}from './axis128-masked-prefix-floor.mjs';import{runNativePrefix,payload,SOURCE,WRAPPER,OUT,hash}from './native-prefix-pruned.mjs';
+process.on('uncaughtException',e=>{console.error(e.message);process.exit(1);});
+const{api}=await loadApi(),base={id:1,name:'native-prefix-qualification',difficulty:'normal',mechanismRules:'revised-2026-09-23-v1.4',width:3,height:3,timeSeconds:120,parMoves:20,reward:20,gates:[{id:'gate-r',color:'red',side:'left',offset:0,size:1},{id:'gate-b',color:'blue',side:'bottom',offset:0,size:1}],blocks:[{id:'a',shape:[[0,0],[1,0]],color:'red',x:0,y:1},{id:'b',shape:[[0,0],[0,1]],color:'blue',x:2,y:0},{id:'c',shape:[[0,0]],color:'blue',x:0,y:0},{id:'h',shape:[[0,0]],color:'blue',x:1,y:2,shutterId:'cover',frozen:2}],shutters:[{id:'cover',x:1,y:2,width:1,height:1,count:2}]};
+const big=structuredClone(base);big.width=9;big.height=13;big.playable=Array.from({length:9},(_,i)=>[i%3,10+Math.floor(i/3)]);big.gates[0].offset=10;for(const b of big.blocks)b.y+=10;big.shutters[0].y+=10;
+const axis=structuredClone(base);axis.blocks[0].movementAxis='horizontal';
+const shell=structuredClone(base);shell.blocks[2].layers=['red','blue'];shell.blocks[2].color='red';
+const equal=structuredClone(base);equal.blocks[0].shape=[[0,0]];equal.blocks[0].color='blue';equal.blocks[1].shape=[[0,0]];
+const wide=structuredClone(big);for(let i=0;i<61;i++){const x=i%9,y=Math.floor(i/9);wide.playable.push([x,y]);wide.blocks.push({id:'frozen-extra-'+i,shape:[[0,0]],color:'blue',x,y,frozen:100});}const rows=[],encode=s=>{const a=Buffer.alloc(s.length*2);s.forEach((v,i)=>a.writeUInt16LE(v,i*2));return a.toString('base64');};
+for(const[fixture,l]of [base,big,axis,shell,equal,wide].entries())for(const goal of [1,2]){
+ const c=compile(l,api,goal),states=[c.initial],seen=new Map([[key(c.initial),0]]);let edges=0;for(let i=0;i<states.length;i++){if(clearCount(c,states[i])>=goal)continue;each(c,states[i],(bi,v)=>{edges++;const s=states[i].slice();s[bi]=v;const k=key(s);if(!seen.has(k)){seen.set(k,states.length);states.push(s);}});assert(states.length<10000);}
+ const p=payload(l,api,{goalClears:goal}),canon=s=>{s=s.slice();for(const g of p.groups){const values=g.map(i=>s[i]).sort((a,b)=>a-b);g.forEach((bi,j)=>s[bi]=values[j]);}return s;};
+ const native=runNativePrefix(l,api,{goalClears:goal,successorsOnly:true,states:states.map(s=>[...s])});assert.equal(native.rows.length,states.length);
+ for(let i=0;i<states.length;i++){const s=states[i],r=native.rows[i],expected=new Set();assert.equal(r.state,encode(s));const normalized=normalize(c,s,goal).s;assert.equal(r.normalized,encode(normalized));assert.equal(r.canonical,encode(canon(normalized)));if(clearCount(c,s)<goal)each(c,s,(bi,v,cost)=>{const t=s.slice();t[bi]=v;expected.add(cost+':'+encode(canon(normalize(c,t,goal).s)));});assert.deepEqual(r.successors.sort(),[...expected].sort());}
+ for(const floor of [1,2,3,4]){const js=checkAxisPrefixFloor(l,api,{goalClears:goal,floor,maxStates:10000,maxMilliseconds:10000}),n=runNativePrefix(l,api,{goalClears:goal,floor,maxStates:10000,maxMilliseconds:10000});assert.equal(n.status,js.status);if(js.status==='relaxed-shortcut')assert.equal(n.relaxedNonClearingDrags,js.cost);else assert.equal(n.thresholdProven,js.thresholdProven);
+ rows.push({fixture,goal,states:states.length,edges,status:n.status,optimum:n.relaxedNonClearingDrags,allNormalizedCanonicalSuccessorsEqual:true,floor});}
+}
+const bindings=Object.fromEntries([SOURCE,WRAPPER,'tools/campaign-v145/lv131-140/agent139-140/axis128-graph.mjs','tools/campaign-v145/lv131-140/agent139-140/axis128-masked-prefix-floor.mjs','tools/campaign-v145/lv131-140/agent139-140/qualify-native-prefix-pruned.mjs'].map(f=>[f,hash(fs.readFileSync(f))])),file=OUT+'/qualification-native-prefix-pruned-'+Date.now()+'.json';fs.writeFileSync(file,JSON.stringify({passed:true,rows,bindings},null,2)+'\n',{flag:'wx'});console.log(JSON.stringify({file,passed:true,rows}));
+
+
+

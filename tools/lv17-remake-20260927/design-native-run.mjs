@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {checkNativeFloor,SOURCE,WRAPPER} from './design-native.mjs';
+import {digest} from '../revised-preview-validation-v160.mjs';
+import {verifyRulesLock} from '../verify-rules-lock.mjs';
+const lock=verifyRulesLock();assert(lock.ok);assert.equal(lock.activeVersion,'1.85.0');
+const source=process.argv[2],maxMilliseconds=Number(process.argv[3]??30000),maxStates=Number(process.argv[4]??3000000),data=JSON.parse(fs.readFileSync(source));
+const bindings=Object.fromEntries([source,SOURCE,WRAPPER,'tools/lv17-remake-20260927/design-native-run.mjs','tools/remake21to30-mask-floor.mjs','tools/remake21to30-symmetry-floor-v139.mjs','docs/rules/manifest.json','docs/rules/mechanism-rules-v1.85.0.md'].map(p=>[p,digest(fs.readFileSync(p))]));
+const floor=checkNativeFloor(data.level,{floor:11,maxMilliseconds,maxStates}),output=`deliverables/lv17-remake-20260927/design-native-floor-${Date.now()}.json`;
+const report={source,ruleVersion:lock.activeVersion,levelSha256:digest(data.level),routeUpperBound:data.replay?.nonClearingDrags??null,budgets:{maxMilliseconds,maxStates},floor,bindings,qualificationStatus:'PENDING_CURRENT_SPECIALIZED_CHECK',drift:Object.entries(bindings).filter(([p,h])=>digest(fs.readFileSync(p))!==h)};assert.deepEqual(report.drift,[]);
+fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify({output,...floor}));

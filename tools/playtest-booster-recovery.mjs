@@ -14,6 +14,16 @@ const errors = [];
 page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
 page.on("pageerror", (error) => errors.push(error.message));
 const debug = () => page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
+const clickTarget = async (name) => {
+  const state = await debug();
+  const hit = state.interactionTargets?.targets?.[name]?.hit;
+  const bounds = await page.locator("canvas").boundingBox();
+  if (!hit || !bounds) throw new Error(`Recovery E2E: missing interaction target ${name}`);
+  await page.mouse.click(
+    bounds.x + state.viewportTransform.offsetX + (hit.x + hit.width / 2) * state.viewportTransform.scale,
+    bounds.y + state.viewportTransform.offsetY + (hit.y + hit.height / 2) * state.viewportTransform.scale,
+  );
+};
 const freshSave = (currentLevel = 1, highestLevel = 10) => {
   const completed = Array.from({ length: Math.max(0, highestLevel - 1) }, (_, index) => index + 1);
   return {
@@ -24,6 +34,7 @@ const freshSave = (currentLevel = 1, highestLevel = 10) => {
     sound: false,
     haptic: false,
     featureSeen: ["basics", "ice-door", "ice-block", "layer", "shutter"],
+    boosterUnlockSeen: ["time", "rocket", "pulse"],
     boosters: { time: 3, rocket: 3, pulse: 3 },
     bestStars: Object.fromEntries(completed.map((level) => [String(level), 3])),
     bestMoves: Object.fromEntries(completed.map((level) => [String(level), 8])),
@@ -40,12 +51,16 @@ const writeSave = async (value) => {
 };
 
 await page.goto(playtestUrl, { waitUntil: "networkidle" });
-const pulseLevelId = await page.evaluate(async () => {
-  const { LEVELS } = await import("/src/core/levels.ts");
+const pulseFixture = await page.evaluate(async () => {
+  const [{ LEVELS }, { SUPPLY_ITEMS }] = await Promise.all([
+    import("/src/core/levels.ts"),
+    import("/src/core/supply.ts"),
+  ]);
   const level = LEVELS.find((candidate) => candidate.gates.some((gate) => (gate.frozen ?? 0) > 0));
   if (!level) throw new Error("Recovery E2E: no frozen-gate pulse fixture");
-  return level.id;
+  return { levelId: level.id, unlockLevel: SUPPLY_ITEMS.pulse.unlockLevel };
 });
+const pulseLevelId = pulseFixture.levelId;
 const levelOneSolution = await page.evaluate(async () => {
   const [{ getLevel }, { solveLevelForValidation }] = await Promise.all([
     import("/src/core/levels.ts"),
@@ -58,7 +73,7 @@ if (!levelOneSolution.solved) throw new Error("Recovery E2E: current level 1 has
 // An interrupted time-booster run refunds once and persists the recovered state.
 await writeSave(freshSave());
 await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(1, true));
-await page.mouse.click(132, 990);
+await clickTarget("booster.time");
 let state = await debug();
 if (state.economy.boosters.time !== 2 || state.activeRun?.boosterSpent.time !== 1) {
   throw new Error("Recovery E2E: time spend was not journaled");
@@ -79,7 +94,7 @@ if (state.economy.boosters.time !== 3 || state.activeRun) {
 // Rocket and pulse use the same transaction contract.
 await writeSave(freshSave());
 await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(1, true));
-await page.mouse.click(248, 990);
+await clickTarget("booster.rocket");
 state = await debug();
 const rocketTarget = state.puzzle.blocks.find((block) => block.frozen === 0 && !block.shutterId);
 if (!rocketTarget) throw new Error("Recovery E2E: level 1 has no active rocket target");
@@ -99,9 +114,9 @@ if (state.economy.boosters.rocket !== 3 || state.activeRun || state.level.id !==
   throw new Error("Recovery E2E: interrupted rocket spend was not recovered");
 }
 
-await writeSave(freshSave(pulseLevelId, Math.max(6, pulseLevelId)));
+await writeSave(freshSave(pulseLevelId, Math.max(pulseFixture.unlockLevel, pulseLevelId)));
 await page.evaluate((levelId) => window.__COLOR_ESCAPE__.loadLevel(levelId, true), pulseLevelId);
-await page.mouse.click(364, 990);
+await clickTarget("booster.pulse");
 state = await debug();
 if (state.economy.boosters.pulse !== 2 || state.activeRun?.boosterSpent.pulse !== 1) {
   throw new Error("Recovery E2E: pulse spend was not journaled");
@@ -112,28 +127,12 @@ if (state.economy.boosters.pulse !== 3 || state.activeRun || state.level.id !== 
   throw new Error("Recovery E2E: interrupted pulse spend was not recovered");
 }
 
-// Interrupted daily play must restore the pre-daily home level as well as inventory.
-await writeSave(freshSave(3));
-await page.mouse.click(248, 933);
-state = await debug();
-if (!state.daily.mode || state.activeRun?.returnLevelId !== 3 || !state.activeRun?.daily) {
-  throw new Error("Recovery E2E: daily return context was not journaled");
-}
-await page.mouse.click(132, 990);
-await page.reload({ waitUntil: "networkidle" });
-await page.waitForTimeout(120);
-state = await debug();
-if (state.screen !== "home" || state.level.id !== 3 || state.daily.mode || state.economy.boosters.time !== 3 || state.activeRun) {
-  throw new Error("Recovery E2E: interrupted daily run did not restore its origin and inventory");
-}
-await page.screenshot({ path: shot("round19-interrupted-daily-restored.png") });
-
 // Voluntary restart settles the spend: a later reload must not refund it.
 await writeSave(freshSave());
 await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(1, true));
-await page.mouse.click(132, 990);
-await page.mouse.click(443, 140);
-await page.mouse.click(176, 805);
+await clickTarget("booster.time");
+await clickTarget("pause");
+await clickTarget("pauseRestart");
 state = await debug();
 if (state.screen !== "playing" || state.economy.boosters.time !== 2 || state.activeRun?.boosterSpent.time !== 0) {
   throw new Error("Recovery E2E: voluntary restart did not settle the previous spend");
@@ -146,9 +145,9 @@ if (state.economy.boosters.time !== 2 || state.activeRun) {
 
 // Completing a run also settles the spend before rewards are persisted.
 await writeSave(freshSave());
-await page.mouse.click(248, 852);
-await page.mouse.click(132, 990);
-const performDrag = async (drag) => {
+await clickTarget("homePlay");
+await clickTarget("booster.time");
+const performDrag = async (drag, postDelay) => {
   const live = await debug();
   const block = live.puzzle.blocks.find((candidate) => candidate.id === drag.blockId);
   if (!block) throw new Error(`Recovery E2E: missing route block ${drag.blockId}`);
@@ -175,12 +174,18 @@ const performDrag = async (drag) => {
     }
   }
   await page.mouse.up();
-  await page.waitForTimeout(drag.exitSide ? 330 : 35);
+  await page.waitForTimeout(postDelay ?? (drag.exitSide ? 330 : 35));
 };
-for (const drag of levelOneSolution.drags) await performDrag(drag);
-await page.waitForTimeout(700);
+for (const drag of levelOneSolution.drags.slice(0, -1)) await performDrag(drag);
+await performDrag(levelOneSolution.drags.at(-1), 20);
+await page.waitForFunction(() => {
+  const transition = window.__COLOR_ESCAPE__?.getDebugState().completionFlow?.directTransition;
+  return transition?.fromLevel === 1 && transition?.toLevel === 2;
+}, undefined, { timeout: 3_000 });
 state = await debug();
-if (state.screen !== "celebrating" || state.economy.boosters.time !== 2 || state.activeRun) {
+if (state.screen !== "playing" || state.completionFlow?.directTransition?.fromLevel !== 1
+  || state.settlement.status !== "committed" || state.settlement.rewardPresented
+  || state.economy.boosters.time !== 2 || state.activeRun) {
   throw new Error("Recovery E2E: completed run did not settle its booster spend");
 }
 await page.reload({ waitUntil: "networkidle" });
@@ -192,4 +197,4 @@ if (state.economy.boosters.time !== 2 || state.activeRun) {
 await page.close();
 await browser.close();
 if (errors.length) throw new Error(`Recovery browser errors:\n${errors.join("\n")}`);
-console.log("Interrupted booster refunds, daily-origin recovery, voluntary settlement, completion, and reload idempotency passed.");
+console.log("Interrupted booster refunds, voluntary settlement, completion, and reload idempotency passed.");

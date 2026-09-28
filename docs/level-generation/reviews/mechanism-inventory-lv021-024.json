@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "scope": "source-mechanism-inventory-review",
+  "reviewedOn": "2026-09-21",
+  "ruleVersion": "1.2.1",
+  "runtimeProfile": "revised-2026-09-21-v1.2",
+  "truth": {
+    "path": "deliverables/level-generation-blueprint/blockout-lv001-lv100-video-parity-truth-v6.json",
+    "sha256": "28040fe1779fee54d8c03a92949df26ff6517687b3f9c7cfdbb5353a2c6c41a9"
+  },
+  "direct": {
+    "path": ".codex-temp/video-audit-21-30-independent/audit-lv021-030.json",
+    "sha256": "a9701747b9c115ad8c85d4abf231540d9f1b182a08c82816319a996d3b3551d0"
+  },
+  "method": "Independently viewed original extracted opening, every cover cohort, all numeric-ice thaw states, shell interiors and late/empty-board frames. Zero values below are explicit visual inventory findings, not defaults from missing JSON keys. Approximate video times follow the existing frame ledger; the file path and hash identify exact reviewed pixels. This is source evidence, not a candidate or gameplay certificate.",
+  "levels": [
+    {
+      "level": 21,
+      "evidence": [
+        {"path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0008.jpg", "sha256": "289bca8e27f62b5655ea9791298d95d5f9b3d223081f0a24c154c9765f53a851", "reason": "Opening about 8s: 14 plain H2 carriers; covers 10/17/19; three ice exits 2/6/13 and two ordinary exits; entire perimeter visible."},
+        {"path": ".codex-temp/video-audit-21-30-independent/10fps/lv21-r10/f-0012.jpg", "sha256": "bffa345272823ca45d4a41aa84f46db857e722577dbba806694f560165bf7ee1", "reason": "First cover revealed about 35.2s: four V2, comprising plain magenta, red/yellow shell, ice6, blue/magenta shell; unobscured carrier surfaces and surrounding floor."},
+        {"path": ".codex-temp/video-audit-21-30-independent/10fps/lv21-r17/f-0012.jpg", "sha256": "cdb5ddb2be502959e5393ec8107c5c24e11a2b0b1998302c3ceff0a1cd11b2a2", "reason": "About 50s: former ice6 V2 is now an ordinary red V2 with no residual shell, star, arrow, key, lock or bomb."},
+        {"path": ".codex-temp/video-audit-21-30-independent/10fps/lv21-r17/f-0026.jpg", "sha256": "8b1e897fe271020460209aebf0a0a1a9326c56902fb177114ef0b879b0aeb7f7", "reason": "Second cover revealed about 51.5s: ice2 SQ2, plain red SQ2, plain yellow H2 and green/blue shell H2."},
+        {"path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0058.jpg", "sha256": "007493fa006445d1e2d2cce3af2437c2cc6e9c9ec74a06bfff37fc3b88117210", "reason": "About 58s: second-cohort SQ2 still has numeric ice1 immediately before the disputed thaw."},
+        {"path": ".codex-temp/video-audit-21-30-independent/10fps/lv21-r19/f-0023.jpg", "sha256": "d68aac979c96797893a4926dea910247f8d588678b134711678f0adfaab6b79f", "reason": "About 59.2s: third cover exposes two ordinary V3; the same formerly iced SQ2 now clearly has magenta outer shell and yellow core. Decisive omitted fourth-shell evidence."},
+        {"path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0060.jpg", "sha256": "6a8f6e7d64084d5ee8a2b4102e655588f181b49a18990676b7cadc0fc078fbb5", "reason": "About 60s: magenta SQ2 exterior exits left and yellow SQ2 remains, independently confirming a shell rather than an ice particle or color misread."},
+        {"path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0068.jpg", "sha256": "ead77af162e1e36825c0a1d0e7f15aeb271ce36540d384d43fc5961eace8d3bb", "reason": "About 68s: final ordinary green exit clear, fully exposed rectangular dark floor; no colored floor patches, lift regions, machines or additional hidden refill."}
+      ],
+      "mechanisms": {
+        "generators": {"count": 0, "reason": "Opening and all three cohort/late frames expose the full perimeter with only exits; all additional carriers come from the three visible countdown covers."},
+        "axisBlocks": {"count": 0, "reason": "All 24 carriers observed at opening, reveal or thaw have plain stud surfaces or shell interiors; no printed axis arrows."},
+        "keyLocks": {"count": 0, "key_count": 0, "lock_count": 0, "reason": "No key or lock badge on any opening/revealed/thawed carrier; displayed numbers belong to the three covers, three frozen exits and two ice carriers."},
+        "starBlocks": {"count": 0, "reason": "No star on any opening/revealed/thawed block; no star-marked exit."},
+        "flipDoors": {"count": 0, "reason": "All five exit structures are ordinary arrow mouths or thawing numbered ice mouths; none has flip leaves or alternating open/closed mechanism markings in the compared clear states."},
+        "coloredGrids": {"count": 0, "reason": "The floor exposed through the three reveal phases and final clear is consistently dark purple grid; no persistent colored floor patch."},
+        "bombs": {"count": 0, "reason": "No timer dial or attached bomb on any opening/reveal/thaw carrier, including both previously ice-obscured carriers."},
+        "lifts": {"count": 0, "reason": "Three numbered roll-up covers account for all hidden groups; no double-leaf lift or floor refill region appears when the board clears."},
+        "numericIce": {
+          "count": 2, "values": [6, 2], "opening_visible_count": 0, "post_melt_shell": 1, "stage_scope": "hidden_only", "item_pairing_status": "source_frame_exact",
+          "shape_histogram": {"V2": 1, "SQ2": 1},
+          "items": [
+            {"value": 6, "shape": "V2", "stage_id": "cover-1", "source_core_color": "red", "post_melt_shell": false},
+            {"value": 2, "shape": "SQ2", "stage_id": "cover-2", "source_outer_color": "magenta", "source_core_color": "yellow", "post_melt_shell": true}
+          ],
+          "reason": "Ice6 and ice2 are directly readable at their respective reveal; thaw evidence proves one plain V2 and one shell-bearing SQ2."
+        },
+        "shells": {
+          "count": 4, "opening_visible_count": 0, "extra_layers": [1, 1, 1, 1],
+          "shape_histogram": {"V2": 2, "H2": 1, "SQ2": 1},
+          "items": [
+            {"shape": "V2", "stage_id": "cover-1", "extra_layers": 1, "requires_numeric_ice": false, "source_outer_color": "red", "source_core_color": "yellow"},
+            {"shape": "V2", "stage_id": "cover-1", "extra_layers": 1, "requires_numeric_ice": false, "source_outer_color": "blue", "source_core_color": "magenta"},
+            {"shape": "H2", "stage_id": "cover-2", "extra_layers": 1, "requires_numeric_ice": false, "source_outer_color": "green", "source_core_color": "blue"},
+            {"shape": "SQ2", "stage_id": "cover-2", "extra_layers": 1, "requires_numeric_ice": true, "source_outer_color": "magenta", "source_core_color": "yellow"}
+          ],
+          "reason": "Two shells in cover10, one directly visible shell in cover17, and the fourth shell beneath cover17's ice2 SQ2 are independently visible."
+        },
+        "covers": {"count": 3, "values": [10, 17, 19], "hidden_batch_counts": [4, 4, 2], "hidden_batch_histograms": [{"V2": 4}, {"H2": 2, "SQ2": 2}, {"V3": 2}], "reason": "All three opening counters and all three complete reveal cohorts directly reviewed."}
+      },
+      "exits": {"ordinary_count": 2, "frozen_count": 3, "frozen_values": [2, 6, 13], "star_count": 0, "star_frozen_count": 0, "reason": "Opening full perimeter and later thawed mouths reviewed; five physical arrow exits total."},
+      "composition": {"opening_piece_count": 14, "full_piece_count": 24, "opening_irregular_piece_count": 0, "full_irregular_piece_count": 0, "full_shape_histogram": {"H2": 16, "V2": 4, "SQ2": 2, "V3": 2}},
+      "boardReference": {"cols": 6, "rows": 9, "playable_cell_count": 54, "source_playable_mask": ["######", "######", "######", "######", "######", "######", "######", "######", "######"], "irregular": false},
+      "sourceCorrections": {"id": "lv021-thawed-sq2-shell", "before": {"shell_count": 3, "post_melt_shell": 0}, "after": {"shell_count": 4, "post_melt_shell": 1}, "reason": "旧清单漏掉冰2 SQ2解冻后的品红外壳/黄色内芯，外壳数量3→4，解冻后带壳冰块0→1。仅修订附加机制数量，独立色块开局14/全关24不变。"},
+      "observations": ["The existing truth is preserved. New source correction must be applied as an independent overlay before candidate generation.", "Numbers on ice mouths and covers are not bombs or lock counts; source arrow mouths do not imply axis-restricted blocks."],
+      "unknownFields": []
+    },
+    {
+      "level": 22,
+      "evidence": [
+        {"path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0076.jpg", "sha256": "4e0fdbced5ee11b2b082acbede5a96c0eded70e28d9d83c6c3f0b00cb9e92ef5", "reason": "Opening about 76s: sixteen plain black/white SINGLE plus red H2, cover17, three ordinary exits and ice exits17/19/19."},
+        {"path": ".codex-temp/video-audit-21-30-independent/10fps/lv22-r17/f-0035.jpg", "sha256": "3f4796c8b0fe60e0ea4df31e52897a2e8d0e0f3f47ece74a618b695675b9bdff", "reason": "About 92.4s: entire hidden cohort of twelve carriers; four V3 ice5, six plain SQ2 and two plain H3."},
+        {"path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0105.jpg", "sha256": "99fb441ed041df1b30939d0c8259e95ed2300a2fd786586b494271a2045f63fc", "reason": "About 105s: all four former ice5 V3 thaw simultaneously to two plain black and two plain white carriers, no shells or other markers."},
+        {"path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0111.jpg", "sha256": "1e2bfeda0dded65ac292b2020d0fca1a0a72752aad0aef73c357dd80ca749079", "reason": "About 111s: final carrier exits; completely exposed rectangular ordinary dark floor, no hidden refill or floor mechanism."}
+      ],
+      "mechanisms": {
+        "generators": {"count": 0, "reason": "Entire opening/reveal/end perimeter contains only six exits; the sole extra cohort is visibly released by cover17."},
+        "axisBlocks": {"count": 0, "reason": "Opening, complete hidden cohort and all four thawed V3 have no printed directional block arrows."},
+        "keyLocks": {"count": 0, "key_count": 0, "lock_count": 0, "reason": "No key or lock symbols on any of the 29 carriers, including ice-obscured carriers after thaw."},
+        "starBlocks": {"count": 0, "reason": "Black and white studded carriers are ordinary colors; no star badges on any carrier or exit."},
+        "flipDoors": {"count": 0, "reason": "Six mouths show ordinary arrow exits or numbered ice that thaws; no flip-leaf structure or alternating closure."},
+        "coloredGrids": {"count": 0, "reason": "Opening black/white squares are separately bounded movable blocks; empty final board is uniformly dark floor with no colored tiles."},
+        "bombs": {"count": 0, "reason": "No attached clock/bomb badge in opening, full reveal or four-carrier thaw states."},
+        "lifts": {"count": 0, "reason": "Only one numbered roll-up cover; after its one cohort leaves, the complete floor has no lift or next-layer refill."},
+        "numericIce": {"count": 4, "values": [5, 5, 5, 5], "opening_visible_count": 0, "post_melt_shell": 0, "shape_histogram": {"V3": 4}, "reason": "Four ice5 V3 simultaneously visible at reveal; thawed carriers are two plain black and two plain white V3."},
+        "shells": {"count": 0, "opening_visible_count": 0, "extra_layers": [], "reason": "All opening and revealed ordinary carriers have solid stud surfaces; all four ice-obscured carriers thaw without nested shells."},
+        "covers": {"count": 1, "values": [17], "hidden_batch_counts": [12], "hidden_batch_histograms": [{"H3": 2, "SQ2": 6, "V3": 4}], "reason": "One opening cover17 and its entire twelve-piece reveal directly reviewed."}
+      },
+      "exits": {"ordinary_count": 3, "frozen_count": 3, "frozen_values": [17, 19, 19], "star_count": 0, "star_frozen_count": 0, "reason": "Three nonfrozen arrow mouths and three numbered frozen mouths visible at opening."},
+      "composition": {"opening_piece_count": 17, "full_piece_count": 29, "opening_irregular_piece_count": 0, "full_irregular_piece_count": 0, "full_shape_histogram": {"SINGLE": 16, "H2": 1, "H3": 2, "SQ2": 6, "V3": 4}},
+      "boardReference": {"cols": 6, "rows": 10, "playable_cell_count": 60, "source_playable_mask": ["######", "######", "######", "######", "######", "######", "######", "######", "######", "######"], "irregular": false},
+      "observations": ["No positive mechanism count differs from existing truth; explicit zeros are independently assessed from staged visual evidence."],
+      "unknownFields": []
+    },
+    {
+      "level": 23,
+      "evidence": [
+        {"path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0119.jpg", "sha256": "adb9d415869cc18b59ac37d5dd8f8d907136fbba5f53cf5cb546fb17164b0592", "reason": "Opening about 119s: thirteen carriers including two L3 shells; covers12/9, ice exits3/5; raised fixed wall at grid(2,2),(3,2)."},
+        {"path": ".codex-temp/video-audit-21-30-independent/10fps/lv23-r9/f-0041.jpg", "sha256": "6e6b93c6c2bbc1d0085e4fc246ed796a7c56ce08b74ab2857e20b7eddf0fb62c", "reason": "Cover9 reveal about 138s: plain green H3 and three V2, two with blue/yellow and red/yellow shells; three V2 are two cells high, not V3."},
+        {"path": ".codex-temp/video-audit-21-30-independent/10fps/lv23-r12/f-0033.jpg", "sha256": "6717c481da1d157ac1fb7be1176ffd5e52d189622915be9636059dd12ff87ac7", "reason": "Cover12 reveal about 153.2s: plain blue H2, green L3 and yellow L4; no ice or marker badges."},
+        {"path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0158.jpg", "sha256": "7f62b7d5d068292a79d9492fa1c003c9350303c225bc9247627a0fa4b271ccc6", "reason": "About 158s: selected white outline isolates the L4; surrounding floor has cleared while the two-cell wall stays fixed."},
+        {"path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0168.jpg", "sha256": "6e1f85ffacd18de19fd7c31e2e5a1b31bf07535fe3adf62b1eb450c22bf0709e", "reason": "About 168s: all blocks cleared; only ordinary floor and the fixed purple two-cell wall remain, no floor mechanism/refill."}
+      ],
+      "mechanisms": {
+        "generators": {"count": 0, "reason": "All five perimeter openings are exits; both new cohorts arise from the two numbered roll-up covers, without a machine."},
+        "axisBlocks": {"count": 0, "reason": "All opening L/rectangular blocks and both complete hidden cohorts have no axis arrow marking."},
+        "keyLocks": {"count": 0, "key_count": 0, "lock_count": 0, "reason": "All carrier surfaces and four shell interiors show no keys, lock badges or lock counters."},
+        "starBlocks": {"count": 0, "reason": "No stars on twenty carriers or on any exit mouth in opening/reveal/late frames."},
+        "flipDoors": {"count": 0, "reason": "Three ordinary arrow mouths and two frozen mouths thaw without any flip-leaf structure or alternating closure."},
+        "coloredGrids": {"count": 0, "reason": "Final exposed floor is plain dark grid; the raised purple strip remains a fixed wall, not a color-matching floor tile."},
+        "bombs": {"count": 0, "reason": "No attached clock/bomb dial among opening or revealed carriers or their shell interiors."},
+        "lifts": {"count": 0, "reason": "Both hidden areas visibly open as numbered roll-up covers; final empty-board frame has no next-layer refill or lift structure."},
+        "numericIce": {"count": 0, "values": [], "reason": "All twenty carriers are visible across opening and two complete reveals, without numbered ice; opening 3/5 belong to exit mouths."},
+        "shells": {"count": 4, "opening_visible_count": 2, "extra_layers": [1, 1, 1, 1], "shape_histogram": {"L3": 2, "V2": 2}, "reason": "Opening blue/red and purple/yellow L3 plus cover9 blue/yellow and red/yellow V2; no shells in cover12 cohort."},
+        "covers": {"count": 2, "values": [9, 12], "hidden_batch_counts": [4, 3], "hidden_batch_histograms": [{"H3": 1, "V2": 3}, {"H2": 1, "L3": 1, "L4": 1}], "reason": "Both opening counts and complete reveal groups directly reviewed; lower-right cohort contains V2, agreeing with corrected truth rather than older independent-ledger V3."}
+      },
+      "exits": {"ordinary_count": 3, "frozen_count": 2, "frozen_values": [3, 5], "star_count": 0, "star_frozen_count": 0, "reason": "Opening entire perimeter has top blue, lower red/yellow and two left frozen exits."},
+      "composition": {"opening_piece_count": 13, "full_piece_count": 20, "opening_irregular_piece_count": 2, "full_irregular_piece_count": 4, "full_shape_histogram": {"H2": 9, "V2": 6, "H3": 1, "L3": 3, "L4": 1}},
+      "boardReference": {"cols": 6, "rows": 8, "playable_cell_count": 46, "source_playable_mask": ["######", "######", "##..##", "######", "######", "######", "######", "######"], "irregular": true, "outer_outline": "rectangle", "internal_wall_cells": [[2, 2], [3, 2]], "candidate_note": "Source-only internal wall reference; revised-rule candidates must still have no internal wall."},
+      "observations": ["Existing docs/level-generation/source-review-lv021-030.json wall correction is independently corroborated by opening/reveal/final pixels.", "The older independent ledger incorrectly calls three hidden vertical dominoes V3; current truth V2 is correct and independently visible."],
+      "unknownFields": []
+    },
+    {
+      "level": 24,
+      "evidence": [
+        {"path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0176.jpg", "sha256": "da7eccf84fa05c7f07787c5be940b19c1436d2ed3de42b39270dd37640aae994", "reason": "Opening about 176s: twelve separately bounded black/white/red SINGLE, two covers12, ordinary red exit, frozen exits6/4/15/18/18; board has two vertical wall strips."},
+        {"path": ".codex-temp/video-audit-21-30-independent/10fps/lv24-reveals/f-0098.jpg", "sha256": "d21c24313c95b3df7c1e278889423459a167c86857b9fe8ad7f37ebf4501a643", "reason": "About 221.7s: both covers fully revealed. Upper cohort five carriers, lower nine; four numeric ice6 carriers are two V2, one V3, one SINGLE."},
+        {"path": ".codex-temp/video-audit-21-30-independent/sourcefps/lv24-thaw/f-0001.jpg", "sha256": "9da2b4d77e0b42a0ecaba53cfcc97c08f7e0e8a3130c07753c7f69a3d2014057", "reason": "About 233s: four ice6 carriers have thawed; green/red V2, red/green V2 and blue/red V3 shells simultaneously visible, fourth carrier plain yellow SINGLE."},
+        {"path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0240.jpg", "sha256": "590648e1a014dba4eb178899164c07477e11c0aecccd77f800c41d8d56c0214c", "reason": "About 240s: post-shell stage exposes unmarked plain carriers and cleared floor; ordinary arrow exits, no other attached mechanics."},
+        {"path": ".codex-temp/video-audit-21-30-independent/frames-1fps/sec-0246.jpg", "sha256": "3e632885afbaeb6b15a356134a10734e92eada43f84f23a9461cbcbcf50faa31", "reason": "About 246s: complete empty board with dark floor and fixed vertical strips; no colored grids or hidden lift refill."}
+      ],
+      "mechanisms": {
+        "generators": {"count": 0, "reason": "The full perimeter shows only six exits. Two visibly numbered covers supply all fourteen hidden carriers; no edge machine."},
+        "axisBlocks": {"count": 0, "reason": "Opening, complete reveal, all four thawed carriers and post-shell interiors have no printed axis arrows."},
+        "keyLocks": {"count": 0, "key_count": 0, "lock_count": 0, "reason": "No key or lock badges in all opening/reveal/thaw/post-shell states; countdown numerals are directly attributable to ice and covers."},
+        "starBlocks": {"count": 0, "reason": "No star on any of the 26 carriers or any exit; black/white opening singles are ordinary colored blocks."},
+        "flipDoors": {"count": 0, "reason": "All six exits are normal arrow mouths or thawing ice mouths; no alternating flip panels or closure markings."},
+        "coloredGrids": {"count": 0, "reason": "Opening black/white squares move and disappear; final floor is entirely dark, with raised wall strips and no colored floor patches."},
+        "bombs": {"count": 0, "reason": "No attached timer dial or bomb in all 26-carrier and four-thaw-carrier views, including the three shell interiors."},
+        "lifts": {"count": 0, "reason": "Two count12 roll-up covers open once together; no double-leaf lift or additional refill occurs on the clear board."},
+        "numericIce": {"count": 4, "values": [6, 6, 6, 6], "opening_visible_count": 0, "post_melt_shell": 3, "shape_histogram": {"V2": 2, "V3": 1, "SINGLE": 1}, "reason": "All four initial values6 and exact carrier forms are visible at reveal; source-fps thaw shows three shells and one plain yellow SINGLE."},
+        "shells": {"count": 3, "opening_visible_count": 0, "extra_layers": [1, 1, 1], "shape_histogram": {"V2": 2, "V3": 1}, "reason": "All three simultaneously visible after thaw: green/red V2, red/green V2 and blue/red V3; fourth ice carrier has no shell."},
+        "covers": {"count": 2, "values": [12, 12], "hidden_batch_counts": [5, 9], "hidden_batch_histograms": [{"V2": 3, "SINGLE": 2}, {"V2": 1, "V3": 1, "SINGLE": 7}], "reason": "Two spatially distinct count12 covers; entire upper five-carrier and lower nine-carrier cohorts visible simultaneously."}
+      },
+      "exits": {"ordinary_count": 1, "frozen_count": 5, "frozen_values": [6, 4, 15, 18, 18], "star_count": 0, "star_frozen_count": 0, "reason": "Opening six physical mouths directly reviewed; top red is ordinary and other five are numerically frozen."},
+      "composition": {"opening_piece_count": 12, "full_piece_count": 26, "opening_irregular_piece_count": 0, "full_irregular_piece_count": 0, "full_shape_histogram": {"SINGLE": 21, "V2": 4, "V3": 1}},
+      "boardReference": {"cols": 5, "rows": 9, "playable_cell_count": 37, "source_playable_mask": ["###.#", "###.#", "###.#", "###.#", "#####", "###.#", "###.#", "###.#", "###.#"], "irregular": true},
+      "observations": ["All three shells are attached to carriers initially hidden by the two covers and then obscured by numeric ice6; they are not three additional independent blocks.", "Full palette includes ordinary black and white; ice glass is not a color class or a star marker."],
+      "unknownFields": []
+    }
+  ]
+}

@@ -1,0 +1,882 @@
+{
+  "ruleVersion": "1.77.0",
+  "level": {
+    "id": 9,
+    "name": "双折方阵",
+    "difficulty": "hard",
+    "timeSeconds": 105,
+    "reward": 60,
+    "width": 8,
+    "height": 6,
+    "playable": [
+      [
+        2,
+        0
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        5,
+        0
+      ],
+      [
+        4,
+        1
+      ],
+      [
+        5,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        5,
+        2
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        6,
+        2
+      ],
+      [
+        7,
+        2
+      ],
+      [
+        6,
+        3
+      ],
+      [
+        7,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        3,
+        5
+      ],
+      [
+        4,
+        4
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        6,
+        4
+      ],
+      [
+        7,
+        4
+      ],
+      [
+        6,
+        5
+      ],
+      [
+        7,
+        5
+      ]
+    ],
+    "gates": [
+      {
+        "side": "right",
+        "offset": 2,
+        "size": 2,
+        "id": "lv9-yellow",
+        "color": "yellow"
+      },
+      {
+        "side": "left",
+        "offset": 4,
+        "size": 2,
+        "id": "lv9-pink",
+        "color": "pink",
+        "frozen": 2
+      },
+      {
+        "side": "bottom",
+        "offset": 1,
+        "size": 2,
+        "id": "lv9-green",
+        "color": "green",
+        "frozen": 4
+      },
+      {
+        "side": "bottom",
+        "offset": 4,
+        "size": 2,
+        "id": "lv9-red",
+        "color": "red",
+        "frozen": 6
+      },
+      {
+        "side": "top",
+        "offset": 3,
+        "size": 2,
+        "id": "lv9-blue",
+        "color": "blue",
+        "frozen": 8
+      }
+    ],
+    "blocks": [
+      {
+        "id": "lv9-original-0",
+        "x": 2,
+        "y": 0,
+        "color": "pink",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ]
+      },
+      {
+        "id": "lv9-original-1",
+        "x": 4,
+        "y": 0,
+        "color": "green",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ]
+      },
+      {
+        "id": "lv9-original-2",
+        "x": 0,
+        "y": 2,
+        "color": "pink",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ]
+      },
+      {
+        "id": "lv9-original-3",
+        "x": 2,
+        "y": 2,
+        "color": "blue",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ]
+      },
+      {
+        "id": "lv9-original-4",
+        "x": 4,
+        "y": 2,
+        "color": "red",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ]
+      },
+      {
+        "id": "lv9-original-5",
+        "x": 6,
+        "y": 2,
+        "color": "yellow",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ]
+      },
+      {
+        "id": "lv9-original-6",
+        "x": 0,
+        "y": 4,
+        "color": "yellow",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ]
+      },
+      {
+        "id": "lv9-original-7",
+        "x": 2,
+        "y": 4,
+        "color": "red",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ]
+      },
+      {
+        "id": "lv9-original-8",
+        "x": 4,
+        "y": 4,
+        "color": "blue",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ]
+      },
+      {
+        "id": "lv9-original-9",
+        "x": 6,
+        "y": 4,
+        "color": "green",
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ]
+      }
+    ],
+    "parMoves": 20,
+    "blocked": [],
+    "seams": [],
+    "mechanismRules": "revised-2026-09-23-v1.4",
+    "preservedMoveTarget": 26
+  },
+  "drags": [
+    {
+      "blockId": "lv9-original-5",
+      "path": [],
+      "exitSide": "right"
+    },
+    {
+      "blockId": "lv9-original-4",
+      "path": [
+        [
+          5,
+          2
+        ],
+        [
+          6,
+          2
+        ]
+      ]
+    },
+    {
+      "blockId": "lv9-original-3",
+      "path": [
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ]
+      ]
+    },
+    {
+      "blockId": "lv9-original-7",
+      "path": [
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          2
+        ]
+      ]
+    },
+    {
+      "blockId": "lv9-original-6",
+      "path": [
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ]
+      ]
+    },
+    {
+      "blockId": "lv9-original-2",
+      "path": [
+        [
+          0,
+          3
+        ],
+        [
+          0,
+          4
+        ]
+      ]
+    },
+    {
+      "blockId": "lv9-original-7",
+      "path": [
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          2
+        ]
+      ]
+    },
+    {
+      "blockId": "lv9-original-3",
+      "path": [
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ]
+      ]
+    },
+    {
+      "blockId": "lv9-original-8",
+      "path": [
+        [
+          4,
+          3
+        ],
+        [
+          4,
+          2
+        ]
+      ]
+    },
+    {
+      "blockId": "lv9-original-6",
+      "path": [
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ]
+      ]
+    },
+    {
+      "blockId": "lv9-original-3",
+      "path": [
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ]
+      ]
+    },
+    {
+      "blockId": "lv9-original-8",
+      "path": [
+        [
+          3,
+          2
+        ],
+        [
+          2,
+          2
+        ]
+      ]
+    },
+    {
+      "blockId": "lv9-original-6",
+      "path": [
+        [
+          4,
+          3
+        ],
+        [
+          4,
+          2
+        ]
+      ]
+    },
+    {
+      "blockId": "lv9-original-9",
+      "path": [
+        [
+          5,
+          4
+        ],
+        [
+          4,
+          4
+        ]
+      ]
+    },
+    {
+      "blockId": "lv9-original-4",
+      "path": [
+        [
+          6,
+          3
+        ],
+        [
+          6,
+          4
+        ]
+      ]
+    },
+    {
+      "blockId": "lv9-original-6",
+      "path": [
+        [
+          5,
+          2
+        ],
+        [
+          6,
+          2
+        ]
+      ],
+      "exitSide": "right"
+    },
+    {
+      "blockId": "lv9-original-2",
+      "path": [],
+      "exitSide": "left"
+    },
+    {
+      "blockId": "lv9-original-8",
+      "path": [
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          6,
+          2
+        ]
+      ]
+    },
+    {
+      "blockId": "lv9-original-3",
+      "path": [
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ]
+      ]
+    },
+    {
+      "blockId": "lv9-original-0",
+      "path": [
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          0,
+          4
+        ]
+      ],
+      "exitSide": "left"
+    },
+    {
+      "blockId": "lv9-original-1",
+      "path": [
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ]
+      ],
+      "exitSide": "bottom"
+    },
+    {
+      "blockId": "lv9-original-9",
+      "path": [
+        [
+          3,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          1,
+          4
+        ]
+      ],
+      "exitSide": "bottom"
+    },
+    {
+      "blockId": "lv9-original-4",
+      "path": [
+        [
+          5,
+          4
+        ],
+        [
+          4,
+          4
+        ]
+      ],
+      "exitSide": "bottom"
+    },
+    {
+      "blockId": "lv9-original-7",
+      "path": [
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ]
+      ],
+      "exitSide": "bottom"
+    },
+    {
+      "blockId": "lv9-original-3",
+      "path": [
+        [
+          4,
+          1
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          3,
+          0
+        ]
+      ],
+      "exitSide": "top"
+    },
+    {
+      "blockId": "lv9-original-8",
+      "path": [
+        [
+          5,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          3,
+          0
+        ]
+      ],
+      "exitSide": "top"
+    }
+  ]
+}

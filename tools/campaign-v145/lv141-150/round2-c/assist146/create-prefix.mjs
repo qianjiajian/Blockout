@@ -1,0 +1,9 @@
+import fs from 'node:fs';
+const dir='tools/campaign-v145/lv141-150/round2-c/assist146';
+let source=fs.readFileSync('tools/campaign-v145/lv141-150/round2-c/native96.cs','utf8');
+source=source.replace('floor,maxStates,maxMilliseconds;', 'floor,maxStates,maxMilliseconds,goalClear;').replace('total=bodies.Sum(b=>b.layers);','total=p.goalClear>0?p.goalClear:bodies.Sum(b=>b.layers);if(total>bodies.Sum(b=>b.layers))throw new Exception("goal");').replaceAll('Clears(normalized)!=total','Clears(normalized)<total').replaceAll('clears==total','clears>=total').replace('native-mask96-axis-countdown-optional-exit-identity-quotient-v173','native-mask96-star-clear-prefix-optional-exit-v173');
+fs.writeFileSync(dir+'/native-prefix.cs',source);
+let wrapper=fs.readFileSync(dir+'/native-stars.mjs','utf8');wrapper=wrapper.replace("round2-c/native96.cs","round2-c/assist146/native-prefix.cs").replaceAll("assist146/native-stars.mjs","assist146/native-prefix.mjs").replace("assist146/native'","assist146/native-prefix'").replace('floor:o.floor??21,','goalClear:o.goalClear??11,floor:o.floor??21,').replace('checkNativeStars','checkNativePrefix').replace('native96-static-countdown-star-portal-disjunction-v173','native96-static-countdown-star-prefix-v173');
+fs.writeFileSync(dir+'/native-prefix.mjs',wrapper);
+let q=fs.readFileSync(dir+'/qualify.mjs','utf8');q=q.replaceAll('checkNativeStars','checkNativePrefix').replace("'./native-stars.mjs'","'./native-prefix.mjs'").replace('const c=compile(l,api),states=', 'const c=compile(l,api),goalClear=fixture===2?2:1,states=').replace('cleared(c,s)===c.totalClears','cleared(c,s)>=goalClear').replace('successorsOnly:true,states,','successorsOnly:true,states,goalClear,').replace('{floor,maxStates:50000','{floor,goalClear,maxStates:50000').replace('{floor:4,maxStates:1','{floor:4,goalClear:2,maxStates:1');
+fs.writeFileSync(dir+'/qualify-prefix.mjs',q);

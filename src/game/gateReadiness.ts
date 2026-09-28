@@ -1,5 +1,6 @@
-import type { BlockState, GateState, ShutterState } from "../core/types";
+import type { BlockState, GateState, PuzzleSnapshot, ShutterState } from "../core/types";
 import { gateIsAvailableTarget } from "./gateFocus";
+import { isMechanismRegionRevealed } from "./revisedMechanismPresentation";
 
 export type GateReadiness = "actionable" | "latent" | "frozen";
 
@@ -21,19 +22,21 @@ export const gateReadiness = (
   gate: GateState,
   blocks: readonly BlockState[],
   shutters: readonly ShutterState[],
+  profile: Pick<PuzzleSnapshot, "mechanismRules"> = {},
 ): GateReadiness => readinessWithClosedShutters(
   gate,
   blocks,
-  new Set(shutters.filter((shutter) => shutter.count > 0).map((shutter) => shutter.id)),
+  new Set(shutters.filter((shutter) => !isMechanismRegionRevealed(profile, shutter)).map((shutter) => shutter.id)),
 );
 
 export const gateReadinessMap = (
   gates: readonly GateState[],
   blocks: readonly BlockState[],
   shutters: readonly ShutterState[],
+  profile: Pick<PuzzleSnapshot, "mechanismRules"> = {},
 ): ReadonlyMap<string, GateReadiness> => {
   const closedShutters = new Set(
-    shutters.filter((shutter) => shutter.count > 0).map((shutter) => shutter.id),
+    shutters.filter((shutter) => !isMechanismRegionRevealed(profile, shutter)).map((shutter) => shutter.id),
   );
   return new Map(gates.map((gate) => [
     gate.id,

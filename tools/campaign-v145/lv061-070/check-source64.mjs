@@ -1,0 +1,43 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {loadApi,OUTPUT,writeNew,ruleGate} from './remake61to70-v146.mjs';
+import {digest} from '../../revised-preview-validation-v160.mjs';
+import {verifyLocalMechanismChoices} from '../../remake21to30-v139.mjs';
+import {archiveReviewInputs} from './review-input-archive.mjs';
+const sourceFile=`${OUTPUT}/author61-64/source-inventory64-exact-1790254017416.json`,raw=JSON.parse(fs.readFileSync(sourceFile)),source=raw.source;
+const rect=(w,h)=>Array.from({length:w*h},(_,i)=>[i%w,Math.floor(i/w)]),shapes={SINGLE:rect(1,1),H2:rect(2,1),V2:rect(1,2),H3:rect(3,1),V3:rect(1,3),SQ2:rect(2,2),SQ3:rect(3,3)},norm=s=>s.map(p=>[...p]).sort((a,b)=>a[1]-b[1]||a[0]-b[0]);
+const replacements={'opening-11':shapes.H3,'cover-5-3':shapes.V2,'cover-8-2':shapes.H3,'cover-8-3':[[0,0],[1,0],[2,0],[0,1]],'cover-8-4':shapes.SQ2,'cover-13-1':[[0,0],[0,1],[1,1]],'cover-13-2':shapes.SQ2,'cover-13-3':shapes.SQ2,'cover-13-4':[[0,0],[1,0],[2,0],[0,1]]};
+export function checkSource64(level,api){
+ assert.equal(level.id,64);const evidenceFile=raw.footprintEvidence.file,evidence=JSON.parse(fs.readFileSync(evidenceFile));assert.equal(digest(fs.readFileSync(evidenceFile)),raw.footprintEvidence.sha256);
+ const frameBindings={...evidence.frameBindings};for(const [p,h]of Object.entries(frameBindings))assert.equal(digest(fs.readFileSync(p)),h);
+ const rows=[],remaining=new Map(level.blocks.map(b=>[b.id,b])),assets={};
+ for(const stage of source.stages)for(const s of stage.items){const blockId='v146-64-'+s.sourceId,b=remaining.get(blockId);assert(b);const original=s.sourceCells??shapes[s.kind];assert(original);const target=replacements[s.sourceId]??original;assert.deepEqual(norm(b.shape),norm(target),blockId+' exact footprint');
+  for(const k of ['color','frozen','layers','movementAxis'])assert.deepEqual(b[k],s[k],blockId+' '+k);for(const k of ['keyId','lockedBy','lockCount','star','timedBombSeconds','rotationBadge'])assert(b[k]===undefined||b[k]===false);
+  const shutterId=stage.id==='opening'?undefined:'v146-64-'+stage.id;assert.equal(b.shutterId,shutterId);remaining.delete(blockId);const bodyIds=[blockId],split=s.sourceId==='cover-5-3';
+  if(split){const extra=remaining.get('v146-64-added-cover5-1');assert(extra);assert.deepEqual(extra.shape,shapes.SINGLE);assert.equal(extra.color,'purple');assert.equal(extra.shutterId,shutterId);assert(!extra.frozen&&!extra.layers&&!extra.movementAxis);remaining.delete(extra.id);bodyIds.push(extra.id);assert.deepEqual(norm(original),[[0,0],[1,0],[1,1]]);assert.deepEqual(norm([[0,0],...[0,1].map(y=>[1,y])]),norm(original));assert.equal(api.matchFormalBlockShape(original,'native-only'),undefined);}
+  rows.push({sourceId:s.sourceId,sourceStage:stage.id,sourceShape:original,sourceColor:s.color,sourceIce:s.frozen??0,sourceLayers:s.layers??[s.color],blockId,candidateBlockIds:bodyIds,candidateShapes:bodyIds.map(id=>level.blocks.find(b=>b.id===id).shape),sameFootprint:!split&&JSON.stringify(norm(original))===JSON.stringify(norm(b.shape)),sourceNativeMatch:api.matchFormalBlockShape(original,'native-only')??null,split,sourceBodyArea:original.length,candidateBodyArea:bodyIds.reduce((n,id)=>n+level.blocks.find(b=>b.id===id).shape.length,0)});
+ }
+ assert.equal(rows.length,26);assert.equal(level.blocks.length,29);const padding=[...remaining.values()];assert.deepEqual(padding.map(b=>b.id).sort(),['v146-64-added-cover8-1','v146-64-added-cover8-2']);assert(padding.every(b=>b.color==='yellow'&&b.shutterId==='v146-64-cover-8'&&b.shape.length===1&&!b.layers&&!b.frozen&&!b.movementAxis));
+ for(const b of level.blocks){const art=api.auditCandidateBlockArt({id:64,blocks:[b]});assert(art.passed);assert.equal(api.matchFormalBlockShape(b.shape,'native-only').quarterTurns,0);for(const a of art.requirements){const p='public/'+a.path.replace(/^\//,'');assets[p]=digest(fs.readFileSync(p));}}
+ assert.equal(rows.reduce((n,r)=>n+r.sourceBodyArea,0),70);assert.equal(level.blocks.reduce((n,b)=>n+b.shape.length,0),66);assert.equal(rows.filter(r=>r.split).length,1);assert.equal(rows.filter(r=>r.sourceBodyArea!==r.candidateBodyArea).length,1);
+ assert.deepEqual(Object.fromEntries(level.gates.map(g=>[g.color,g.frozen??0])),{red:0,purple:3,green:6,yellow:8,orange:16,blue:17,cyan:22});assert.equal(level.gates.length,7);assert(level.gates.every(g=>!g.star));assert(!level.generators?.length);
+ assert.deepEqual(Object.fromEntries(level.shutters.map(s=>[s.id,[s.width,s.height,s.count,s.skin??'shutter']])),{'v146-64-cover-8':[5,4,8,'shutter'],'v146-64-cover-13':[3,6,13,'shutter'],'v146-64-cover-5':[4,3,5,'shutter']});
+ return{status:'PASS',levelId:64,levelSha256:digest(level),sourceFile,sourceFileSha256:digest(fs.readFileSync(sourceFile)),sourceFootprintEvidence:evidenceFile,sourceFootprintEvidenceSha256:raw.footprintEvidence.sha256,frameBindings,rows,assets,sourceBodies:26,sourceDerivedBodies:27,paddingBodies:2,paddingCells:2,changedFootprints:rows.filter(r=>!r.sameFootprint).length,unknown:[],notExactCopy:true,necessityScope:'Unsupported source footprints require native adaptation. Purple L3 uses a minimum two-piece exact-footprint same-color decomposition, then authorized original placement; alternative same-area H3 substitutions exist and are not declared impossible. The separate area reduction and padding preserve all known carriers and counters.'};
+}
+function checkMechanisms(data,api){
+ const local=verifyLocalMechanismChoices(data,api);assert.deepEqual(local.filter(r=>r.kind==='curtain').map(r=>r.id).sort(),data.level.shutters.map(s=>s.id).sort());
+ const m=new api.PuzzleModel(data.level),reveals=[],iceId='v146-64-cover-13-1';let iceCase=null,peels=0;
+ const apply=(model,d)=>{model.beginAction();for(const p of d.path)assert(model.moveBlockStep(d.blockId,...p));if(d.exitSide)assert(model.tryExit(d.blockId,d.exitSide).ok);assert(model.commitAction());};
+ for(const [i,d]of data.drags.entries()){
+  const before=m.snapshot(),ice=before.blocks.find(b=>b.id===iceId),cover=before.shutters.find(s=>s.id===ice?.shutterId);
+  if(!iceCase&&ice?.frozen>0&&cover?.revealed){const relaxed=structuredClone(data.level);delete relaxed.blocks.find(b=>b.id===iceId).frozen;const probe=new api.PuzzleModel(relaxed);for(const prev of data.drags.slice(0,i))apply(probe,prev);for(const [dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){const trial=probe.clone();trial.beginAction();if(trial.moveBlockStep(iceId,ice.x+dx,ice.y+dy)){const blocked=m.clone();blocked.beginAction();assert.equal(blocked.moveBlockStep(iceId,ice.x+dx,ice.y+dy),false);iceCase={beforeDrag:i+1,remainingIce:ice.frozen,relaxedMove:{blockId:iceId,path:[[ice.x+dx,ice.y+dy]]},onlyIceConstraintRemoved:true};break;}}}
+  apply(m,d);const after=m.snapshot();for(const s of after.shutters.filter(s=>s.revealed&&!before.shutters.find(q=>q.id===s.id).revealed)){const b=after.blocks.find(b=>b.id===iceId);if(s.id==='v146-64-cover-13')assert.equal(b.frozen,3);reveals.push({id:s.id,afterDrag:i+1,clears:after.cleared,iceAtReveal:s.id==='v146-64-cover-13'?3:null});}const old=before.blocks.find(b=>b.id===d.blockId),now=after.blocks.find(b=>b.id===d.blockId);if(old&&now&&old.layers.length>now.layers.length)peels++;
+ }
+ assert.equal(reveals.length,3);assert(iceCase);assert.equal(peels,3);const replay=api.replayRevisedRoute(data.level,data.drags);assert(replay.valid&&replay.complete);return{status:'PASS',localCurtainCases:local,reveals,iceCase,shellPeels:peels,completeRoute:true};
+}
+if(process.argv[1]?.endsWith('check-source64.mjs')){
+ const lock=ruleGate(),candidate=process.argv[2],data=JSON.parse(fs.readFileSync(candidate)),evidence=JSON.parse(fs.readFileSync(raw.footprintEvidence.file)),discovery=await loadApi();
+ const archive=archiveReviewInputs(`${OUTPUT}/checks/source64-inputs-${Date.now()}`,[...discovery.inputs,candidate,sourceFile,raw.footprintEvidence.file,...Object.keys(evidence.frameBindings),'tools/campaign-v145/lv061-070/check-source64.mjs','docs/rules/manifest.json',`docs/mechanism-rules-v${lock.activeVersion}.md`]);
+ const {api}=await loadApi();archive.assertUnchanged();const source=checkSource64(data.level,api),mechanism=checkMechanisms(data,api);archive.assertUnchanged();const stamp=Date.now(),out=`${OUTPUT}/checks/root-source64-${stamp}.json`,f=`${OUTPUT}/checks/footprint-binding64-${stamp}.json`;
+ writeNew(out,{status:'PASS',candidate,levelSha256:digest(data.level),source,mechanism,inputArchive:archive.serializable()});writeNew(f,{...source,candidate,inputArchive:archive.serializable()});console.log(JSON.stringify({out,footprintOut:f,status:'PASS',changedFootprints:source.changedFootprints,iceCase:mechanism.iceCase}));
+}

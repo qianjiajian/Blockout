@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+import {digest} from '../revised-preview-validation-v160.mjs';
+const source='deliverables/lv9-remake-20260927/design-search-1790487669254/route-7.json';
+const before=JSON.parse(fs.readFileSync(source)),baseline=JSON.parse(fs.readFileSync('deliverables/lv9-remake-20260927/baseline.json'));
+const map={yellow:'yellow',green:'pink',blue:'green',pink:'red',red:'blue'};
+const level={...baseline.level,...structuredClone(before.level),name:baseline.level.name,parMoves:baseline.level.parMoves,preservedMoveTarget:26};
+delete level.designTargets;
+level.blocks.forEach(b=>{b.color=map[b.color];if(b.layers)b.layers=b.layers.map(c=>map[c]);});
+level.gates.forEach(g=>{g.color=map[g.color];g.id='lv9-'+g.color;});
+const target='deliverables/lv9-remake-20260927/design-final-'+Date.now()+'.json';
+const artifact={level,drags:before.result.relaxedRoute,result:{relaxedRoute:before.result.relaxedRoute},sourceCorrection:{reason:'Video after ice melting reveals true gate colors; initial block neighboring the ice is not gate color.',sourceLevelSha256:digest(before.level),colorBijection:map,preserved:{timeSeconds:105,timeStarTarget:75,reward:60,name:baseline.level.name,inventory:'10 SQ2 bodies; yellow/pink/green/red/blue two each'},candidateLevelSha256:digest(level),freshProofRequired:true}};
+fs.writeFileSync(target,JSON.stringify(artifact,null,2));console.log(target);

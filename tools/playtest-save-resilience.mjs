@@ -112,18 +112,19 @@ await seedRaw(interrupted, JSON.stringify({
   lastSeenUpdate: "2026-09-05-r95",
   activeRun: {
     levelId: 999,
-    returnLevelId: -99,
-    daily: "yes",
+    returnLevelId: 4,
+    daily: true,
+    dailyDayKey: "2026-09-04",
     boosterSpent: { time: 99, rocket: 99, pulse: 99 },
   },
 }));
 state = await debug(interrupted);
 stored = await persisted(interrupted);
-if (state.screen !== "home" || state.level.id !== 1 || state.activeRun
+if (state.screen !== "home" || state.level.id !== 4 || state.activeRun
   || JSON.stringify(state.economy.boosters) !== JSON.stringify({ time: 9, rocket: 9, pulse: 9 })
   || JSON.stringify(state.discovery.state) !== JSON.stringify({ collectionViewedThroughLevel: 6, dailyUnlockSeen: true })
   || "activeRun" in stored) {
-  throw new Error("Save resilience E2E: corrupted interrupted-run refund escaped stock-safe recovery");
+  throw new Error("Save resilience E2E: legacy Daily interrupted-run refund escaped stock-safe recovery");
 }
 await interrupted.close();
 
@@ -218,7 +219,7 @@ stored = await persisted(transient);
 if (state.screen !== "home" || state.level.id !== 47 || state.progression.highestLevel !== 80
   || state.economy.coins !== 5000 || JSON.stringify(state.economy.boosters) !== JSON.stringify(durableSave.boosters)
   || JSON.stringify(state.economy.rewardedLevels) !== JSON.stringify(durableSave.rewardedLevels)
-  || state.daily.streak !== 12 || stored.currentLevel !== 47 || stored.highestLevel !== 80
+  || stored.currentLevel !== 47 || stored.highestLevel !== 80
   || JSON.stringify(state.discovery.state) !== JSON.stringify({ collectionViewedThroughLevel: 51, dailyUnlockSeen: true })
   || stored.lastDailyCompletedDay !== "2026-09-04") {
   throw new Error("Save resilience E2E: retry did not restore the complete durable baseline");

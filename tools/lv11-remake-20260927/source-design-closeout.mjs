@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+import {loadPreviewCore,digest} from '../revised-preview-validation-v160.mjs';
+import {verifyRulesLock} from '../verify-rules-lock.mjs';
+import assert from 'node:assert/strict';
+const root='deliverables/lv11-remake-20260927',file=root+'/source-design-witness-1790489947974/route-8.json';
+const raw=JSON.parse(fs.readFileSync(file)),{api,inputs}=await loadPreviewCore(),lock=verifyRulesLock();assert(lock.ok);assert.equal(lock.activeVersion,'1.79.0');
+const replay=api.replayRevisedRoute(raw.level,raw.drags);assert(replay.valid&&replay.complete,JSON.stringify(replay));
+const exactFile=root+'/source-design-route15-exact-1790490039658/report.json',exact=JSON.parse(fs.readFileSync(exactFile));assert.equal(digest(exact.level),digest(raw.level));
+const report={generatedAt:new Date().toISOString(),status:'STOPPED_WITH_NO_DIFFICULTY_QUALIFIED_CANDIDATE',sourceAudit:root+'/source-audit-1790488846240.json',sourceLedger:root+'/source-ledger.json',ruleVersion:lock.activeVersion,ruleLockPass:true,routeFile:file,originCandidate:raw.source,levelSha256:digest(raw.level),routeSha256:digest(raw.drags),totalDrags:raw.drags.length,replay,multiCellNonClearingDrags:raw.multi,singleCellNonClearingDrags:raw.single,staticGraphExactScreen:{file:exactFile,cost:exact.native.relaxedNonClearingDrags,states:exact.native.discoveredStates,milliseconds:exact.native.milliseconds,screeningOnly:true,notActualOptimalityCertificate:true},requiredBand:[16,20],lowerBound16Certified:false,difficultyPassed:false,multiCellDominancePassed:false,pointerValidated:false,formalWritten:false,scoringChangeAuthorized:false,productionOrRulesModified:false,newSearchStopped:true,bindings:Object.fromEntries([...inputs,file,exactFile,root+'/source-ledger.json',root+'/source-audit-1790488846240.json','tools/lv11-remake-20260927/source-design-closeout.mjs'].map(p=>[p,digest(fs.readFileSync(p))]))};
+const out=root+'/source-design-closeout-'+Date.now()+'.json';fs.writeFileSync(out,JSON.stringify(report,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify({out,replay:report.replay,cost:report.staticGraphExactScreen.cost}));

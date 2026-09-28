@@ -140,6 +140,16 @@ const logicalPoint = (state, x, y) => ({
   x: state.viewportTransform.offsetX + x * state.viewportTransform.scale,
   y: state.viewportTransform.offsetY + y * state.viewportTransform.scale,
 });
+const clickInteractionTarget = async (page, name) => {
+  const state = await debug(page);
+  const hit = state.interactionTargets?.targets?.[name]?.hit;
+  const bounds = await page.locator("canvas").boundingBox();
+  if (!hit || !bounds) throw new Error(`Unlock toast E2E: missing interaction target ${name}`);
+  await page.mouse.click(
+    bounds.x + state.viewportTransform.offsetX + (hit.x + hit.width / 2) * state.viewportTransform.scale,
+    bounds.y + state.viewportTransform.offsetY + (hit.y + hit.height / 2) * state.viewportTransform.scale,
+  );
+};
 
 const legacy = await browser.newPage({ viewport: { width: 496, height: 1078 } });
 attachErrors(legacy, errors);
@@ -165,26 +175,46 @@ await standard.screenshot({ path: resolve(output, "01-lv4-time-standard-720x1584
 await standard.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(4, true));
 await standard.waitForTimeout(80);
 state = await debug(standard);
-const block = state.puzzle.blocks[0];
+const block = state.puzzle.blocks.find((candidate) => (
+  (candidate.frozen ?? 0) === 0
+  && !candidate.shutterId
+  && candidate.shape.every(([dx, dy]) => {
+    const x = candidate.x + dx;
+    const y = candidate.y + dy;
+    return x > 0 && y > 0 && x < state.puzzle.width - 1 && y < state.puzzle.height - 1;
+  })
+));
+if (!block) throw new Error("Unlock toast E2E: Lv4 has no interior gameplay pointer fixture");
 const [cellX, cellY] = block.shape[0];
 const transform = state.viewportTransform;
+const canvas = await standard.locator("canvas").boundingBox();
+if (!canvas) throw new Error("Unlock toast E2E: canvas bounds are unavailable");
 const pointer = {
-  x: transform.offsetX + (state.board.innerX + (block.x + cellX + 0.5) * state.board.cell) * transform.scale,
-  y: transform.offsetY + (state.board.innerY + (block.y + cellY + 0.5) * state.board.cell) * transform.scale,
+  x: canvas.x + transform.offsetX + (state.board.innerX + (block.x + cellX + 0.5) * state.board.cell) * transform.scale,
+  y: canvas.y + transform.offsetY + (state.board.innerY + (block.y + cellY + 0.5) * state.board.cell) * transform.scale,
 };
 await standard.mouse.move(pointer.x, pointer.y);
 await standard.mouse.down();
 state = await debug(standard);
 if (state.activePointer == null || state.boosterUnlock.pending?.kind !== "time") {
-  throw new Error("Unlock toast E2E: visible prompt blocked a gameplay pointer-down");
+  throw new Error(`Unlock toast E2E: visible prompt blocked a gameplay pointer-down (${JSON.stringify({
+    activePointer: state.activePointer,
+    selectedId: state.selectedId,
+    pointer,
+    canvas,
+    transform,
+    block,
+    screen: state.screen,
+    pending: state.boosterUnlock.pending,
+  })})`);
 }
 await standard.mouse.up();
 
 state = await debug(standard);
 const toastRect = state.boosterUnlock.pending.rect;
 const toastPoint = {
-  x: transform.offsetX + (toastRect.x + toastRect.width / 2) * transform.scale,
-  y: transform.offsetY + (toastRect.y + toastRect.height / 2) * transform.scale,
+  x: canvas.x + transform.offsetX + (toastRect.x + toastRect.width / 2) * transform.scale,
+  y: canvas.y + transform.offsetY + (toastRect.y + toastRect.height / 2) * transform.scale,
 };
 await standard.mouse.click(toastPoint.x, toastPoint.y);
 state = await debug(standard);
@@ -216,25 +246,25 @@ await reduced.close();
 
 const feature = await browser.newPage({ viewport: { width: 496, height: 1078 } });
 attachErrors(feature, errors);
-await seed(feature, makeSave({ currentLevel: 6, highestLevel: 6, boosterUnlockSeen: ["time"] }));
+await seed(feature, makeSave({ currentLevel: 9, highestLevel: 9, boosterUnlockSeen: ["time", "rocket"] }));
 await feature.evaluate(() => {
   const game = window.__COLOR_ESCAPE__;
-  game.save.highestLevel = 7;
-  game.loadLevel(7, false);
+  game.save.highestLevel = 10;
+  game.loadLevel(10, false);
   game.beginSelectedChallenge();
 });
 await feature.waitForTimeout(80);
 state = await debug(feature);
 if (state.screen !== "feature" || state.boosterUnlock.pending) {
-  throw new Error("Unlock toast E2E: Lv7 rocket prompt covered the ice-door introduction");
+  throw new Error("Unlock toast E2E: Lv10 pulse prompt covered the ice-block introduction");
 }
-await feature.mouse.click(248, 755);
+await clickInteractionTarget(feature, "featurePrimary");
 await feature.waitForTimeout(80);
 state = await debug(feature);
-if (state.screen !== "playing" || state.boosterUnlock.pending?.kind !== "rocket" || !state.boosterUnlock.pending.visible) {
-  throw new Error("Unlock toast E2E: pending rocket prompt did not wait for the Lv7 ice-door introduction");
+if (state.screen !== "playing" || state.boosterUnlock.pending?.kind !== "pulse" || !state.boosterUnlock.pending.visible) {
+  throw new Error("Unlock toast E2E: pending pulse prompt did not wait for the Lv10 ice-block introduction");
 }
-await feature.screenshot({ path: resolve(output, "03-lv7-rocket-after-feature.png") });
+await feature.screenshot({ path: resolve(output, "03-lv10-pulse-after-feature.png") });
 await feature.close();
 
 const tutorial = await browser.newPage({ viewport: { width: 496, height: 1078 } });
@@ -244,17 +274,15 @@ await tutorial.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(1, true));
 await tutorial.waitForTimeout(80);
 state = await debug(tutorial);
 if (!state.onboarding.guide || state.boosterUnlock.pending?.visible) {
-  throw new Error("Unlock toast E2E: pending prompt competed with the first-drag tutorial");
+  throw new Error("Unlock toast E2E: pending prompt competed with the direct-exit tutorial");
 }
 const guide = state.onboarding.guide;
 await tutorial.mouse.move(guide.start.x, guide.start.y);
-await tutorial.mouse.down();
-await tutorial.mouse.move(guide.points[1].x, guide.points[1].y, { steps: 6 });
-await tutorial.mouse.up();
+await tutorial.mouse.click(guide.start.x, guide.start.y);
 await tutorial.waitForTimeout(30);
 state = await debug(tutorial);
 if (!state.onboarding.basicsSeen || state.boosterUnlock.pending?.kind !== "time" || !state.boosterUnlock.pending.visible) {
-  throw new Error("Unlock toast E2E: prompt did not resume after the first-drag lesson");
+  throw new Error("Unlock toast E2E: prompt did not resume after the direct-exit lesson");
 }
 await tutorial.close();
 
@@ -403,22 +431,22 @@ await updateFault.close();
 const featureFault = await browser.newPage({ viewport: { width: 496, height: 1078 } });
 attachErrors(featureFault, errors);
 await seed(featureFault, makeSave({
-  currentLevel: 6,
-  highestLevel: 6,
+  currentLevel: 10,
+  highestLevel: 10,
   featureSeen: ["basics"],
   boosterUnlockSeen: ["time", "rocket", "pulse"],
 }));
 await featureFault.evaluate(() => {
   const game = window.__COLOR_ESCAPE__;
-  game.loadLevel(6, false);
+  game.loadLevel(10, false);
   game.beginSelectedChallenge();
 });
 await featureFault.waitForTimeout(60);
 if ((await debug(featureFault)).screen !== "feature") {
-  throw new Error("Acknowledgement resilience: feature unresolved scenario did not open the Lv6 intro");
+  throw new Error("Acknowledgement resilience: feature unresolved scenario did not open the Lv10 intro");
 }
 await installStorageFaultPlan(featureFault, "unresolved");
-await featureFault.mouse.click(248, 755);
+await clickInteractionTarget(featureFault, "featurePrimary");
 await featureFault.waitForTimeout(40);
 let featureState = await debug(featureFault);
 const featureRuntimeSeen = await featureFault.evaluate(() => [...window.__COLOR_ESCAPE__.save.featureSeen]);
@@ -434,7 +462,7 @@ await featureFault.reload({ waitUntil: "networkidle" });
 await featureFault.waitForTimeout(280);
 await featureFault.evaluate(() => {
   const game = window.__COLOR_ESCAPE__;
-    game.loadLevel(6, false);
+  game.loadLevel(10, false);
   game.beginSelectedChallenge();
 });
 await featureFault.waitForTimeout(60);
@@ -457,18 +485,18 @@ await featureFault.close();
 const saturatedFeature = await browser.newPage({ viewport: { width: 496, height: 1078 } });
 attachErrors(saturatedFeature, errors);
 await seed(saturatedFeature, makeSave({
-  currentLevel: 6,
-  highestLevel: 6,
+  currentLevel: 10,
+  highestLevel: 10,
   featureSeen: Array.from({ length: 64 }, (_, index) => `legacy-token-${index}`),
   boosterUnlockSeen: ["time", "rocket", "pulse"],
 }));
 await saturatedFeature.evaluate(() => {
   const game = window.__COLOR_ESCAPE__;
-  game.loadLevel(6, false);
+  game.loadLevel(10, false);
   game.beginSelectedChallenge();
 });
 await saturatedFeature.waitForTimeout(60);
-await saturatedFeature.mouse.click(248, 755);
+await clickInteractionTarget(saturatedFeature, "featurePrimary");
 await saturatedFeature.waitForTimeout(40);
 let saturatedState = await debug(saturatedFeature);
 let saturatedFeatureSeen = await saturatedFeature.evaluate(() => [...window.__COLOR_ESCAPE__.save.featureSeen]);
@@ -480,7 +508,7 @@ await saturatedFeature.reload({ waitUntil: "networkidle" });
 await saturatedFeature.waitForTimeout(280);
 await saturatedFeature.evaluate(() => {
   const game = window.__COLOR_ESCAPE__;
-  game.loadLevel(6, false);
+  game.loadLevel(10, false);
   game.beginSelectedChallenge();
 });
 await saturatedFeature.waitForTimeout(60);
@@ -517,20 +545,23 @@ const basicsGuide = basicsState.onboarding.guide;
 if (!basicsGuide?.points?.[1]) {
   throw new Error("Acknowledgement resilience: basics write-then-unresolved scenario has no opening guide step");
 }
+const basicsBlockCount = basicsState.puzzle.blocks.length;
 await installStorageFaultPlan(basicsFault, "write-then-unresolved");
 await basicsFault.mouse.move(basicsGuide.start.x, basicsGuide.start.y);
 await basicsFault.mouse.down();
-await basicsFault.mouse.move(basicsGuide.points[1].x, basicsGuide.points[1].y, { steps: 6 });
 await basicsFault.waitForTimeout(50);
 basicsState = await debug(basicsFault);
 const basicsProbe = await storageFaultProbe(basicsFault);
 const basicsStored = await readStoredSaveBypassingFault(basicsFault);
 if (!basicsState.onboarding.basicsSeen || basicsState.onboarding.guide || !basicsState.puzzle.started
-  || basicsState.activePointer == null || !basicsStored.featureSeen.includes("basics")
+  || basicsState.activePointer != null || basicsState.selectedId != null
+  || basicsState.puzzle.moves !== 1 || basicsState.puzzle.blocks.length !== basicsBlockCount - 1
+  || basicsState.puzzle.blocks.some((block) => block.id === basicsGuide.blockId)
+  || !basicsStored.featureSeen.includes("basics")
   || basicsProbe.writes.length !== 2
   || JSON.stringify(basicsProbe.writes[0].payload) !== JSON.stringify(basicsProbe.writes[1].payload)
   || JSON.stringify(basicsProbe.reads.map((read) => read.blocked)) !== JSON.stringify([true, true])) {
-  throw new Error("Acknowledgement resilience: write-then-unresolved basics acknowledgement broke the live drag");
+  throw new Error("Acknowledgement resilience: write-then-unresolved basics acknowledgement broke the direct exit");
 }
 await basicsFault.mouse.up();
 await basicsFault.reload({ waitUntil: "networkidle" });
@@ -542,7 +573,7 @@ if (!basicsState.onboarding.basicsSeen || basicsState.onboarding.guide) {
   throw new Error("Acknowledgement resilience: landed basics acknowledgement replayed after reload");
 }
 resilienceResults.push({
-  case: "basic-drag-tutorial",
+  case: "basic-direct-exit-tutorial",
   mode: "write-then-unresolved",
   writes: basicsProbe.writes.length,
   readPattern: basicsProbe.reads.map((read) => read.blocked),
@@ -550,7 +581,7 @@ resilienceResults.push({
   durableAcknowledged: true,
   pendingAfterReload: false,
   retryPayloadIdentical: true,
-  livePointerPreserved: true,
+  directExitResolved: true,
 });
 await basicsFault.close();
 

@@ -1,0 +1,1177 @@
+{
+  "schemaVersion": 1,
+  "activeVersion": "1.114.0",
+  "hashAlgorithm": "sha256-utf8-lf",
+  "versions": [
+    {
+      "version": "1.0.0",
+      "ruleId": "blockout-rules-v1.0.0",
+      "runtimeProfile": "revised-2026-09-21",
+      "document": "docs/mechanism-rules-2026-09-21.md",
+      "sha256": "d0f3d4ba7e2bcda5387120c306bdf9a1a656dcfa6312b15b4894fbf7aa84fd74",
+      "status": "frozen",
+      "frozenOn": "2026-09-21",
+      "confirmation": "用户要求：新规则版本形成固定不变文档，新任务、新对话及上下文压缩后继续执行。正文单列的未定边界不视为已确认。"
+    },
+    {
+      "version": "1.1.0",
+      "ruleId": "blockout-rules-v1.1.0",
+      "runtimeProfile": "revised-2026-09-21-v1.1",
+      "document": "docs/mechanism-rules-v1.1.0.md",
+      "sha256": "67ca0d4ec96d18f578e363344037e41253466add10c820bd1cfe431d79f09a6d",
+      "status": "frozen",
+      "frozenOn": "2026-09-21",
+      "confirmation": "用户逐项确认：开局按首个可操作稳定画面；必要腾挪按无道具通关中非消除且非剥层的有效拖动最小次数；已可操作炸弹随关卡统一时钟立即开始，不等首次拖动。"
+    },
+    {
+      "version": "1.2.0",
+      "ruleId": "blockout-rules-v1.2.0",
+      "runtimeProfile": "revised-2026-09-21-v1.2",
+      "document": "docs/mechanism-rules-v1.2.0.md",
+      "sha256": "159fa3c15fc8b5a63d2d80292f97d89be4b66bf2973984b95826fcdc1e7609f6",
+      "status": "frozen",
+      "frozenOn": "2026-09-21",
+      "confirmation": "用户确认：有对应星块时仅允许一扇普通门与一扇同色星门；第26关不采用11个实体口，保留3个冰门及5/9/14初值，允许重配普通出口数量。"
+    },
+    {
+      "version": "1.2.1",
+      "ruleId": "blockout-rules-v1.2.1",
+      "runtimeProfile": "revised-2026-09-21-v1.2",
+      "document": "docs/mechanism-rules-v1.2.1.md",
+      "sha256": "f68aafcac7d5b1f60eb7e8c2f7e98658695bab3fcd60f5c306fe65fc57ce8e42",
+      "status": "frozen",
+      "frozenOn": "2026-09-21",
+      "confirmation": "文字补丁：将v1.2.0范围段残留的v1.1 profile示例纠正为已批准的v1.2；玩法及用户授权未变，旧版本正文和条目保留。"
+    },
+    {
+      "version": "1.3.0",
+      "ruleId": "blockout-rules-v1.3.0",
+      "runtimeProfile": "revised-2026-09-21-v1.2",
+      "document": "docs/mechanism-rules-v1.3.0.md",
+      "sha256": "fe87c90dd8e882614bdb3e4f61c81622925fe63079fe3041e7081f46d09db8fb",
+      "status": "frozen",
+      "frozenOn": "2026-09-21",
+      "confirmation": "用户补充新机制首次引入关卡与竞品一致，并明确同关允许放在开局；不要求照搬关内显露时序，数量、空间和运行机制规则不变。本次为生成验收合同修订，runtime仍v1.2；旧版本正文及条目保留。"
+    },
+    {
+      "version": "1.4.0",
+      "ruleId": "blockout-rules-v1.4.0",
+      "runtimeProfile": "revised-2026-09-21-v1.2",
+      "document": "docs/mechanism-rules-v1.4.0.md",
+      "sha256": "fbd5c5faede66d7f6055b50ac736d40895cc600583732550d3ca06240d0ea96b",
+      "status": "frozen",
+      "frozenOn": "2026-09-21",
+      "confirmation": "用户要求每关开局铺满，并明确确认所有可玩格由可见色块或真实卷帘区域覆盖、卷帘算覆盖、不额外增加色块。运行机制不变；先改21–30布局图，不直接替换正式地图。"
+    },
+    {
+      "version": "1.5.0",
+      "ruleId": "blockout-rules-v1.5.0",
+      "runtimeProfile": "revised-2026-09-21-v1.2",
+      "document": "docs/mechanism-rules-v1.5.0.md",
+      "sha256": "4eba1f48e9431efcaf2136b218456371c0ad80bab9d836c5d1a54bf44ab68e4d",
+      "status": "frozen",
+      "frozenOn": "2026-09-22",
+      "confirmation": "用户改变策略：先生成Lv21–200可预览图，保证不是死局，先不考虑必挪次数。本轮预览须完整可解见证及独立回放，暂停必要腾挪门槛/下界认证；其他已确认规则和正式替换边界不自行放宽。"
+    },
+    {
+      "version": "1.6.0",
+      "ruleId": "blockout-rules-v1.6.0",
+      "runtimeProfile": "revised-2026-09-21-v1.2",
+      "document": "docs/mechanism-rules-v1.6.0.md",
+      "sha256": "6d5d63d070d0c622b5023f0ab04e820f2eb994c4b0c64e6aaa7005af3366faec",
+      "status": "frozen",
+      "frozenOn": "2026-09-22",
+      "confirmation": "用户允许冲突或资料不全关在预览阶段可解优先、原创重配并逐关标注竞品差异。保留其他空间/机制硬规则，源事实与设计分离，不替换正式地图。"
+    },
+    {
+      "version": "1.7.0",
+      "ruleId": "blockout-rules-v1.7.0",
+      "runtimeProfile": "revised-2026-09-21-v1.2",
+      "document": "docs/mechanism-rules-v1.7.0.md",
+      "sha256": "1b41113a72b06b965f66c8be2185f7ddeb94928590c8704d9f31ca2dc8f75bd4",
+      "status": "frozen",
+      "frozenOn": "2026-09-22",
+      "confirmation": "用户要求逐关机制种类及数量严格一致，并确认按竞品分类：异形保留当前原创轮廓、正常改同尺寸矩形；保留Lv26三个冰门5/9/14及普通门重配特例。仍仅可解预览，不考核必挪，runtime不变。"
+    },
+    {
+      "version": "1.8.0",
+      "ruleId": "blockout-rules-v1.8.0",
+      "runtimeProfile": "revised-2026-09-21-v1.2",
+      "document": "docs/mechanism-rules-v1.8.0.md",
+      "sha256": "ae0995017501319acffbbc652f7d169d8bba2aedfc596af2a4bf74c50f9c1f44",
+      "status": "frozen",
+      "frozenOn": "2026-09-22",
+      "confirmation": "用户要求实际出口通常最多3格；明确例外按同色块通过该出口的完整横截面宽度而非总占格数判断，仅扩大到所需宽度。重排后重新验证空间与整关可解；其他机制数量、轮廓、唯一颜色和Lv26例外不变。"
+    },
+    {
+      "version": "1.9.0",
+      "ruleId": "blockout-rules-v1.9.0",
+      "runtimeProfile": "revised-2026-09-21-v1.2",
+      "document": "docs/mechanism-rules-v1.9.0.md",
+      "sha256": "462beca9aa36563e85bb4c7919564dee001a3060ca12e8b7975ffb84b49830e7",
+      "status": "frozen",
+      "frozenOn": "2026-09-22",
+      "confirmation": "用户要求完成21–200且保持每色唯一，并明确只重配普通出口，冰门数量和初值不变。允许容量冲突关减少普通口并逐关记录；冰/星/翻门及其他机制/关键值不减，其他硬规则和预览边界保持。"
+    },
+    {
+      "version": "1.10.0",
+      "ruleId": "blockout-rules-v1.10.0",
+      "runtimeProfile": "revised-2026-09-21-v1.2",
+      "document": "docs/mechanism-rules-v1.10.0.md",
+      "sha256": "3cb428aa376d7cb469e9d0036b4d3e0a6dec52550801928e1fac453f13d42244",
+      "status": "frozen",
+      "frozenOn": "2026-09-22",
+      "confirmation": "用户明确要求直接修改正式21–200关，随后确认先保可解、暂不考核必要腾挪，时间和三星保留原正式值待重新标定，不直接使用预览300秒。允许逐批接入已完整核对候选，其他硬规则不变；冲突/未核定关不冒充完成，Lv1–20与存档不改。"
+    },
+    {
+      "version": "1.11.0",
+      "ruleId": "blockout-rules-v1.11.0",
+      "runtimeProfile": "revised-2026-09-21-v1.2",
+      "document": "docs/mechanism-rules-v1.11.0.md",
+      "sha256": "8b6d21296e9fa7158537c0b6b99b6c696160c2a29d60427c255a64a98afd9540",
+      "status": "frozen",
+      "frozenOn": "2026-09-23",
+      "confirmation": "用户在33关冲突说明后明确要求：出现规则冲突时，以我们的规则为主。允许对确证冲突的竞品对齐项最小必要重配，包括超比例M11、超8色容量的冰/特殊出口、彩格与外壳并存；本游戏硬规则保留，来源与设计差异分列，未知仍待核实。延续21–200分批正式接入、先可解与旧时间三星；runtime不变，旧文档/条目/证据不改。"
+    },
+    {
+      "version": "1.12.0",
+      "ruleId": "blockout-rules-v1.12.0",
+      "runtimeProfile": "revised-2026-09-21-v1.2",
+      "document": "docs/mechanism-rules-v1.12.0.md",
+      "sha256": "58b0dd4766211f087e6edf2ddeae5a1c1c6cbedb855fcdd986a22121e08d23c7",
+      "status": "frozen",
+      "frozenOn": "2026-09-23",
+      "confirmation": "用户明确：继续生成剩余30关，全部重做，不考虑旧数据。仅清单30关独立原创，不受旧地图/固定mask/旧块数及旧来源精确对齐前置限制；本游戏8色唯一、满铺、对称无内墙、30%比例、15项机制、完整可解与真实时间硬规则保留。其他170关不动；保留原时间/实际三星/奖励待标定，不自动发布或删除旧证据，runtime仍v1.2。"
+    },
+    {
+      "version": "1.13.0",
+      "ruleId": "blockout-rules-v1.13.0",
+      "runtimeProfile": "revised-2026-09-23-v1.3",
+      "document": "docs/mechanism-rules-v1.13.0.md",
+      "sha256": "2077d5e69bbe9c1cfcd67dae4390621dfd2cce6b02127c6b33a42fedddb73e74",
+      "status": "frozen",
+      "frozenOn": "2026-09-23",
+      "confirmation": "用户明确：翻转门改为等离场动画结束后翻转。仅M05生效时点改变：每次本体移除/成功剥壳仍全门各一次，包括使用门，其他计数/钥匙/拆弹保持原时点；GUI对应主体/剥壳或火箭消失动画结束才改实际open并开始翻转表现，多次独立、暂停后台不偷跑、失效回调无效。headless无动画即时完成，21–200升级runtime v1.3，1–20及全部地图数值/存档保持；旧14正文/条目/证据保留，不冒称新动画或Pointer验收。"
+    },
+    {
+      "version": "1.14.0",
+      "ruleId": "blockout-rules-v1.14.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.14.0.md",
+      "sha256": "842f50fd60784c2a4bcb75b3ba0190f70ade65fbd00329f188f41bab5ea7f31c",
+      "status": "frozen",
+      "frozenOn": "2026-09-23",
+      "confirmation": "用户要求时间道具改为暂停关卡总时间和炸弹，并明确每次10秒。统一替换time道具效果，保留库存键、180金币、上限9及Lv4解锁；正常移动与机关推进、有效tick消耗冻结、暂停后台不消耗、不叠加和历史/取消安全均作为实现约定单列，不冒称用户另行逐项确认。21–200仅迁移runtime v1.4，1–20保留legacy空间与开钟规则；所有地图数值、奖励、时限、实际三星门槛和存档保持。承继v1.13翻门时序，旧15正文/条目/证据不改，不自动发布。"
+    },
+    {
+      "version": "1.14.1",
+      "ruleId": "blockout-rules-v1.14.1",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.14.1.md",
+      "sha256": "5f6e4c0ef258bc105a907cc9bbabe47435d51e3fdbce07de1a83e6299fac3a9c",
+      "status": "frozen",
+      "frozenOn": "2026-09-23",
+      "confirmation": "v1.14.0登记后的文字澄清：成功使用冻结通过现有start()启动尚未开始的本局并消耗冻结10秒，是legacy普通开钟约定的道具路径特例；runElapsedSeconds保持只累计主钟实际扣时，冻结期间不增加，星级门槛不变。用户授权仍为暂停总时间/炸弹每次10秒，不声称新增用户授权或新玩法；runtime仍v1.4。旧16份正文/条目含v1.14.0原hash保留。"
+    },
+    {
+      "version": "1.15.0",
+      "ruleId": "blockout-rules-v1.15.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.15.0.md",
+      "sha256": "943bbb99470af5c84a64d0faa4d447b51a5bb0c0eff5ee8c663d0e8b643da319",
+      "status": "frozen",
+      "frozenOn": "2026-09-23",
+      "confirmation": "用户明确第21关只改色块，必挪15次以上均可；仅增加单关布局授权与至少15下界验收，runtime仍v1.4。保留棋盘/出口/卷帘/时间/奖励/实际三星/存档及其他199关，保持既有块数和机制的最小实施范围单列为执行约定。必须完整可解并独立回放、证明排除0–14次，未知/死局不算达标；旧33拖三星与至少43拖冲突如实报告不暗改。旧17正文/条目/证据保留，达标后才正式接入，不自动发布。"
+    },
+    {
+      "version": "1.16.0",
+      "ruleId": "blockout-rules-v1.16.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.16.0.md",
+      "sha256": "2e9fa965d551604435f6f9ce26536a16f059b456be870af803f18eea6d1d1147",
+      "status": "frozen",
+      "frozenOn": "2026-09-23",
+      "confirmation": "用户要求体力规则和竞品一致。按原生已确证普通规则迁移：初始/恢复上限5、每30分钟1、首次有效操作扣1、通关当刻无无限返1、失败退出不返不重扣、奖励可溢出、无限真实截止叠加且普通恢复继续、360金币补满。扣返事务/旧中断局兼容为实现约定；BP8/广告+1因宿主无真实接口未接入，在线恢复疑似缺陷未动态复现不冒充规则。棋盘runtime仍v1.4，计时开钟/地图/200关profile不变；继承v1.15的Lv21单关任务，旧18正文/条目保留，不自动发布。"
+    },
+    {
+      "version": "1.17.0",
+      "ruleId": "blockout-rules-v1.17.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.17.0.md",
+      "sha256": "6aee055f2011e64b56fffceb55cd34245823a621f03cbbf9534040ea3a3d3631",
+      "status": "frozen",
+      "frozenOn": "2026-09-23",
+      "confirmation": "用户仅采纳：除基础移动和出口外，每关突出一个主机制，辅助机制少而明确。新增定性设计原则，按核心决策/教学目标区分主辅，不设辅助数量上限；审核口径与基础教学边界另列。未采纳六阶段固定周期、首教降难、关号/时间/三星调整；不自动删机制或重做地图。runtime仍v1.4，200关/存档/运行机制不变；完整承继v1.16，旧19正文/条目保留，不自动发布。"
+    },
+    {
+      "version": "1.18.0",
+      "ruleId": "blockout-rules-v1.18.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.18.0.md",
+      "sha256": "3b0aa00c0d5ff8b1fd5bfe186706176d98a12326d388042ca063e57195f998ee",
+      "status": "frozen",
+      "frozenOn": "2026-09-23",
+      "confirmation": "用户采纳机制难度与合理性评审，并要求配合重做21–30。明确主机制效果、顺序/预判/空间/错误代价、可比隔离诊断、完整可解与真实输入/玩家盲测分开及逐关评审卡；不以必挪单独判难，不新增量化阈值或伪造试玩。21–30先协作定草案，具体可改几何/机关范围及Lv21原至少15是否保留待确认，不直接批量覆盖。其他190关、运行机制、时间/三星/奖励/存档不改，runtime仍v1.4；完整承继v1.17，旧20正文/条目保留，不自动发布。"
+    },
+    {
+      "version": "1.19.0",
+      "ruleId": "blockout-rules-v1.19.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.19.0.md",
+      "sha256": "8e5bd5f70168b8eaf5092160eca2b32b9433e386dd2bb7cb69429d4d2c79dce6",
+      "status": "frozen",
+      "frozenOn": "2026-09-23",
+      "confirmation": "用户明确21–30保留棋盘结构，出口/色块/机制重新设计；Lv21不保留独立至少15，按此前难度。保留最终实际宽高/可玩格/阻挡/分隔，允许已解锁出口/块/机关配置重配，取代本批旧来源数量及Lv26冰门初值锁定；硬规则不放宽。按旧分档普普难普难普普难普超及10/15/20下限执行本批，不能以路线代替下界或数量代替机制评审。其它190关、原时间/三星/奖励/存档不改；先设计草案后验证，不批量覆盖/发布。runtime仍v1.4，完整承继v1.18，旧21正文/条目保留。"
+    },
+    {
+      "version": "1.20.0",
+      "ruleId": "blockout-rules-v1.20.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.20.0.md",
+      "sha256": "e3ac055770c91cf70fb66e72f8e993f6e89e2b4729ab1e0598682314132e6c49",
+      "status": "frozen",
+      "frozenOn": "2026-09-23",
+      "confirmation": "用户追加一次性设计21–30并直接生成正式关卡，不再找确认。允许自主整批设计/验证后正式接入，取代逐关等待草案/接入确认流程；棋盘结构保留、出口块机制重设计、10/15/20下界和主辅/公平评审及全部硬规则保持。最终LEVELS重验，不伪造下界/盲测；其它190关、原时间三星奖励、逻辑/UI/存档不改，不自动上传发布。runtime仍v1.4，完整承继v1.19，旧22正文/条目保留。"
+    },
+    {
+      "version": "1.21.0",
+      "ruleId": "blockout-rules-v1.21.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.21.0.md",
+      "sha256": "53d1a7e8642f5a729c61fc9c49c76c9b91855d1adad6f1ce9c7dec7bc6e1dbb0",
+      "status": "frozen",
+      "frozenOn": "2026-09-23",
+      "confirmation": "用户追加关卡优先已解锁高级机制，指出22棋盘没机制，并明确允许多种机制叠加。许可多机制共同构成核心决策，第22关补入真正影响解法的棋盘内机制；不强迫每关组合，不提前解锁或放宽组合兼容/空间规则。21–30仍保结构/原10、15、20下界/时间三星奖励，继续自主设计验证后正式接入；其他190关及运行机制存档不改，不自动发布。旧23份正文和条目保留，runtime仍v1.4。"
+    },
+    {
+      "version": "1.22.0",
+      "ruleId": "blockout-rules-v1.22.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.22.0.md",
+      "sha256": "c92ee286b6c7fdc94c1c542ffa72862eb0e8033d0a95f543b2b35bc94775cab3",
+      "status": "frozen",
+      "frozenOn": "2026-09-23",
+      "confirmation": "用户明确卷帘、升降台等被隐藏区域必须摆满色块，取代隐藏区域无需自身填满的旧豁免。按每区域每批次真实足迹逐格满铺，不合层凑数；生成器队列和同体外壳不冒充空间隐藏层。运行时仍v1.4，旧24正文/条目/证据保留；先登记与审计，不自动覆盖200关，21–30既有设计授权与重新验收保持，不改时间三星奖励存档，不发布。"
+    },
+    {
+      "version": "1.23.0",
+      "ruleId": "blockout-rules-v1.23.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.23.0.md",
+      "sha256": "2c32ee9e1e160b0e14c5499312b2f27fdfc2634594949ab6826640b0ea423d58",
+      "status": "frozen",
+      "frozenOn": "2026-09-23",
+      "confirmation": "用户要求增加简单档并重新规划每档必挪范围。确认四档设计分类；本轮提出0–9/10–14/15–19/20–25为待采纳规划，不冒充已确认新上下限。必挪定义及隐藏满铺等规则不变，范围认证需下界与完整路线同时落档。先规划，不改地图/正式标签/代码UI/时间三星奖励存档，不构建发布；旧25正文和条目保留，runtime仍v1.4。"
+    },
+    {
+      "version": "1.24.0",
+      "ruleId": "blockout-rules-v1.24.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.24.0.md",
+      "sha256": "951bc97050195a7e9c2accac556799cd813ec079480bc1c2583d9541da230893",
+      "status": "frozen",
+      "frozenOn": "2026-09-23",
+      "confirmation": "用户明确简单改为5–9次，替代简单0–9建议。按真实最少必要腾挪验收，下界≥5且完整路线≤9；其他三档规划数字及采纳状态不变，不默增0–4教学豁免。只登记规划，不改地图/正式标签/easy代码UI/时间三星奖励存档，不发布。runtime仍v1.4，旧26正文与条目保留。"
+    },
+    {
+      "version": "1.25.0",
+      "ruleId": "blockout-rules-v1.25.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.25.0.md",
+      "sha256": "7a80d4bc7febc0d81dfc546ae6b211affb9c39827d6a6d4c11ec6312b09b7bc9",
+      "status": "frozen",
+      "frozenOn": "2026-09-23",
+      "confirmation": "用户采纳四档节奏并要求重新生成正式21–30。范围5–9/10–14/15–19/20–25，关序简普普难简普难简普超；教学优先，旧关序和仅下限要求被取代。授权必要easy类型标签接线、保几何重设计并独立上下界/完整回放后自主正式接入；隐藏逐层满铺和高级机制多格决策保持。其他190关、原时间/实际三星/奖励/存档/运行机制不改，不上传发布；旧27正文条目保留，runtime仍v1.4。"
+    },
+    {
+      "version": "1.26.0",
+      "ruleId": "blockout-rules-v1.26.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.26.0.md",
+      "sha256": "ec430a467bf10faef6eb46771063dec7244fb74c5868b0ecbffa13ef46030b9d",
+      "status": "frozen",
+      "frozenOn": "2026-09-23",
+      "confirmation": "用户追加遇到新机制解锁难度顺延，替代教学占位可取消峰值。教学/必要巩固优先后继续未完成原节奏，解锁关号不移动，避免堆高压；21–30无新解锁仍按v1.25目标正式重生成。其他190关/总200/原时间三星奖励/存档和硬规则不改，v1.25基线保留，新验收绑定v1.26，runtime仍v1.4，旧28正文条目不改，不发布。"
+    },
+    {
+      "version": "1.27.0",
+      "ruleId": "blockout-rules-v1.27.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.27.0.md",
+      "sha256": "bd6bfaf3d951f34e77a7ec9289bf4d7e506161f0fe633ab0a24658b855db8aa2",
+      "status": "frozen",
+      "frozenOn": "2026-09-23",
+      "confirmation": "用户要求提高偏小机制出现计数，可参考竞品对应关卡。当前21–30复查卷帘/数字冰/冰门初值，来源与设计分列；不是强制恢复全部机制数量或固定倍率，按原创清除负荷适配并完整触发、可解和上下界重验。新节奏/解锁顺延及全部硬规则保持，其他190关、棋盘结构/原时间三星奖励/存档/运行机制不改；旧29正文条目保留，runtime仍v1.4，不发布。"
+    },
+    {
+      "version": "1.28.0",
+      "ruleId": "blockout-rules-v1.28.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.28.0.md",
+      "sha256": "2df9e82b85fe7a92a40a85371ea0edb5ad21808302f0c84cb93a30823a0ac54e",
+      "status": "frozen",
+      "frozenOn": "2026-09-24",
+      "confirmation": "用户明确继续生成31–40关。延续保棋盘结构、四档上下界、计数参考、多格决策及隐藏满铺，自主验证后正式接入；其他190含21–30及原时间/实际三星/奖励/存档保持。35生成器首教插入，36承接原简单位巩固，31–40落实简普普难简简普难简普，原40超难顺延41待后批。生成器队列固定/禁冰/真实落点，下界新增须经安全放宽论证，不改运行机制或发旧证书；旧30正文条目保留，runtime仍v1.4，不发布。"
+    },
+    {
+      "version": "1.29.0",
+      "ruleId": "blockout-rules-v1.29.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.29.0.md",
+      "sha256": "12ba45e0d87f2e2a204cff3331889c8c2a568206e15abe89f057cf485692b471",
+      "status": "frozen",
+      "frozenOn": "2026-09-24",
+      "confirmation": "用户新增生成器下一块颜色不能与上一块相同。按每台固定队列相邻出块外层色校验，首件无前件、不同机器独立；红蓝红允许，外壳比较初始外色。不随机改色/跳货/重排或等前块消除，本轮登记并独立静态检查现200关，旧违规列待适配、不以加载时报错替代修图。未来具体改队列须重新可解/适用难度/输入验证，原图数值存档和旧31正文条目不改，runtime仍v1.4，不发布。"
+    },
+    {
+      "version": "1.30.0",
+      "ruleId": "blockout-rules-v1.30.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.30.0.md",
+      "sha256": "a3262c1bc84fb71ac7f7c155ed5d51cf293d97452e9751331a292e1f5876a28c",
+      "status": "frozen",
+      "frozenOn": "2026-09-24",
+      "confirmation": "用户明确同类新机制可以根据难度多放几个；不默认单实例，区分实例数与计数/库存，不设未经批准的固定配额。保留四档、空间/解锁/颜色与验证要求；本轮登记设计要求，不自动重做已完成关卡或发布。"
+    },
+    {
+      "version": "1.31.0",
+      "ruleId": "blockout-rules-v1.31.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.31.0.md",
+      "sha256": "4819107b714947760418e0f7eed56073a825400ecff92f56037bd4150a9e97dd",
+      "status": "frozen",
+      "frozenOn": "2026-09-24",
+      "confirmation": "用户要求简单采用少量色块、大量新机制，并最终限定为新机制解锁首关及随后几个简单关，覆盖巩固/低压练习，不只首关、不扩为全季简单。未指定固定关数或块/机关配额，5–9必挪、完整可解及原硬规则保持；本轮登记设计要求，现图不自动重做。"
+    },
+    {
+      "version": "1.32.0",
+      "ruleId": "blockout-rules-v1.32.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.32.0.md",
+      "sha256": "b312452f11b2c10c7ff2892aebfb3ef35a452a149ba133707e7f40b3dcf0336d",
+      "status": "frozen",
+      "frozenOn": "2026-09-24",
+      "confirmation": "用户明确四档必挪调整为简单3–5、普通6–10、困难11–15、超难16–25，均含端点；统一用于后续设计/验收，定义与有效上下界不变。新机制解锁及随后几个简单关少块多新机制保持，必挪改3–5。本轮不自动重做/重标现图，不改时间三星奖励或旧冻结证据。"
+    },
+    {
+      "version": "1.33.0",
+      "ruleId": "blockout-rules-v1.33.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.33.0.md",
+      "sha256": "fbd3fca53eb0740190fc54efd193da01dc7f4866c011c5f8ca7e0eb88633a38b",
+      "status": "frozen",
+      "frozenOn": "2026-09-24",
+      "confirmation": "用户明确重新生成21–30正式关卡；按最新3–5/6–10/11–15/16–25及已采纳节奏，保当前棋盘结构/原时限实际三星奖励/其他190。21/25/28作为卷帘简单巩固落实少全关块多真实卷帘，属于本批设计安排非用户数量配额。新布局完整可解/有效上下界/正式输入，验证后自主接入，不发布。"
+    },
+    {
+      "version": "1.34.0",
+      "ruleId": "blockout-rules-v1.34.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.34.0.md",
+      "sha256": "5de0a09af088536161932c6d5d0e8b00a50543d55fdfac8429321d091c60aba4",
+      "status": "frozen",
+      "frozenOn": "2026-09-24",
+      "confirmation": "用户修订：少量色块、大量该新机制改为解锁后的前两个普通关通用，取消简单通用；首次教学/解锁关号/原节奏与3–5/6–10/11–15/16–25保持。当前21–30重做继续，22/23落实多帘少块，21/25/28不强制；保棋盘/时间实际三星奖励/其它190，完整新验证后正式接入，不发布。旧36正文与条目保持，runtime仍v1.4。"
+    },
+    {
+      "version": "1.35.0",
+      "ruleId": "blockout-rules-v1.35.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.35.0.md",
+      "sha256": "1d1c969dc2fe88c6fafe0b7920519cf5973a4e2ca27e3071848c504cae19e2af",
+      "status": "frozen",
+      "frozenOn": "2026-09-24",
+      "confirmation": "用户指出难度越高新机制数量越多而30缺失；落实同阶段普通→困难→超难真实新机制实例递进，不以旧机制或高计数代替。首两普通少块多新机制/取消简单通用保持。本批卷帘2–3/4/5为实施计划非永久配额，24/27/30重设、28协调为单帘；fresh完整验证后自主正式21–30接入，保结构/时间实际三星奖励/其余190，不发布。旧37版本保留，runtime仍v1.4。"
+    },
+    {
+      "version": "1.36.0",
+      "ruleId": "blockout-rules-v1.36.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.36.0.md",
+      "sha256": "e82105877b7a8ddd8f00e79d3a215c62e228d91906719f111c54ae1d3792f318",
+      "status": "frozen",
+      "frozenOn": "2026-09-24",
+      "confirmation": "用户收敛：超难关新机制2–4个，取消5个方案。30先按3真实卷帘设计是本批选择非永久固定，普通困难协调而非将上一版具体4/5配额当用户硬规定；数量与实际配合并重，不省掉高难新机制。首两普通少块多机制/取消简单通用与原四档保持，21–30新验收后接入，保结构/评价/其它190/存档，不发布。旧38版本保持，runtime仍v1.4。"
+    },
+    {
+      "version": "1.37.0",
+      "ruleId": "blockout-rules-v1.37.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.37.0.md",
+      "sha256": "9e4c7764d5782aa35d2701d5bbddc4af60957398d21de6d4326cd0ac9e7e13b0",
+      "status": "frozen",
+      "frozenOn": "2026-09-24",
+      "confirmation": "用户要求每关机制种类参考竞品，在该基底上新机制解锁后增加实例。按对应关源种类保留，不用卷帘替代原组合，含composition的异形块；不恢复全部源数量/计数硬复制。撤销整批固定帘配额，25不强加帘，30保冰门/帘/异形且不加源外壳，选3帘及超难2–4保持。首两普通巩固/取消简单通用、四档及其它硬规则保留；21–30新验收后自主接入，保结构/评价/其它190/存档，不发布。旧39版本不改，runtime仍v1.4。"
+    },
+    {
+      "version": "1.38.0",
+      "ruleId": "blockout-rules-v1.38.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.38.0.md",
+      "sha256": "1111a3eb79a471341d1e44424d4183d8247eb0fbc368c8946520f54f3b52ee80",
+      "status": "frozen",
+      "frozenOn": "2026-09-24",
+      "confirmation": "用户调整策略：以竞品对应关开局为准，色块种类/形状/机制数量和计数一致；未知隐藏部分以真实合法色块逐区域逐层填满，已知事实保留，来源与自填分列。取代仅种类参考后加机制和原数量配额，四档改简单5–10/普通11–15/困难16–20/超难21–30，仍须有效上下界及完整验证。21–30既有正式重做授权继续，结构/其它190/原评价/运行逻辑/存档保持，不发布；旧40正文与条目保留，不冒称现图已适配。"
+    },
+    {
+      "version": "1.39.0",
+      "ruleId": "blockout-rules-v1.39.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.39.0.md",
+      "sha256": "a1bfa99c3825057896f59d7843d6d207b410c5cc5d2eba0f58d02e8e23ce7d8f",
+      "status": "frozen",
+      "frozenOn": "2026-09-24",
+      "confirmation": "用户在竞品开局占格与保留棋盘/满铺冲突问题中明确选择：保留棋盘结构，允许调整色块配置来铺满。以源开局为基准，仅作结构适配所需块数/合法形状/位置调整并分列差异，不暗增机关或改计数；未知隐藏补满、已知机制保留，四档仍5–10/11–15/16–20/21–30。21–30自主重做及fresh完整验证继续，其它190/原评价/逻辑/存档保持，不发布；旧41文档和条目保留。"
+    },
+    {
+      "version": "1.40.0",
+      "ruleId": "blockout-rules-v1.40.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.40.0.md",
+      "sha256": "5c3cdfceffa27fd1ce59dd98eb077b9fac831263c19af654640231a1143e836b",
+      "status": "frozen",
+      "frozenOn": "2026-09-24",
+      "confirmation": "用户要求色块布局不要与竞品一模一样、尽量左右或上下对齐，指出21/22/23/28太像。本版要求原创空间分区/邻接通路，非仅换色镜像旋转；对齐是规整边界而非同色严格对称。仅重排四关，保原棋盘/机制实例初值/已知属性批次与优先保块形统计，保原5–10/11–15档位/时间三星奖励/其它196/存档。fresh完整上下界、机制与正式输入验证后自主接入；42旧正文/条目保留，runtime不变，不发布。"
+    },
+    {
+      "version": "1.41.0",
+      "ruleId": "blockout-rules-v1.41.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.41.0.md",
+      "sha256": "e883210ff68f67c8c089115f67b42cec23cb8b30235ee2c2ff383ff0bdf1d1d6",
+      "status": "frozen",
+      "frozenOn": "2026-09-24",
+      "confirmation": "用户继续生成31–40正式数据；继承竞品开局基底/保结构必要适配/原创对齐/最新5–10、11–15、16–20、21–30，保持简普普难简简普难简普节奏及35生成器首教。完整队列异色/隐藏满铺/fresh上下界及模型和正式输入验收后自主接入，其它190、原评价、运行机制、资源及存档保持，不发布；旧43版本不改。"
+    },
+    {
+      "version": "1.42.0",
+      "ruleId": "blockout-rules-v1.42.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.42.0.md",
+      "sha256": "e40da7e175a93beac6363b5dc4aeb7e406deb31d0b007e6c4615f25ed1a0993e",
+      "status": "frozen",
+      "frozenOn": "2026-09-24",
+      "confirmation": "用户明确仅禁止贴图旋转匹配开局形状，后授权将1–30中检出的15块用其它原朝向色块填补并满足必挪。仅5/23/26/28/29/30目标块原足迹区域局部替换，其它块/门/帘/几何/计数/评价/194关/存档保持，不用渲染拼接，不发布。23/26/29普通11–15、28简单5–10、30超难21–30重新上下界与整路线/输入验证；5保legacy原教学目标，是否升新版普通另待用户选择。未适配31–200不假称无旋转或删渲染致缺图。31–40暂缓，旧44版本及证据保留。"
+    },
+    {
+      "version": "1.43.0",
+      "ruleId": "blockout-rules-v1.43.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.43.0.md",
+      "sha256": "1ae24a49eb4a15edce3f85c75c5da81698aab238d1f0533f0efa563c6a7abd8a",
+      "status": "frozen",
+      "frozenOn": "2026-09-24",
+      "confirmation": "用户明确不改第5关。当前仅23/26/28/29/30五关12块原向替换，原区域/其余块/门/机制初值/棋盘/评价/其它195完整数据保持；第5绘制和3块原旋转亦保留。23/26/29普通11–15、28简单5–10、30超难21–30fresh完整验证，改后1–30复查明确第5例外，不使未适配旧关缺图。31–40暂缓，不发布，旧45版本保留。"
+    },
+    {
+      "version": "1.44.0",
+      "ruleId": "blockout-rules-v1.44.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.44.0.md",
+      "sha256": "2afa306a3d928ea0d596c678c753620f6df7c010313f80e79525471a4f1b34cf",
+      "status": "frozen",
+      "frozenOn": "2026-09-24",
+      "confirmation": "用户明确首次通关20金币，重复通关不给金币。全部正式关卡基础通关奖励统一20/0，使用既有首通记录和幂等保存事务，旧余额进度不追溯、不清档；其它独立奖励及地图玩法保持，历史reward元数据与46版本不改，不上传发布。"
+    },
+    {
+      "version": "1.45.0",
+      "ruleId": "blockout-rules-v1.45.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.45.0.md",
+      "sha256": "e20f5b429e18740710b2d13295d9662912c8c46dfcea08fbc68bf63b2da8886b",
+      "status": "frozen",
+      "frozenOn": "2026-09-24",
+      "confirmation": "用户继续生成31–200正式关卡，恢复暂停制作并扩展到170关。继承竞品开局基底/保结构必要适配/原创对齐/全新图原向整图、四档5–10/11–15/16–20/21–30与解锁顺延，fresh完整上下界/模型/正式输入验收后自主分批接入。1–30含第5完整保持，原评价、首通20重复0、runtime及存档不改，不上传发布，旧47版本保留。"
+    },
+    {
+      "version": "1.46.0",
+      "ruleId": "blockout-rules-v1.46.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.46.0.md",
+      "sha256": "3274b09f9fef71ad381b49263046481dccece5d38f24b03a90b064dc7f6e177d",
+      "status": "frozen",
+      "frozenOn": "2026-09-24",
+      "confirmation": "用户明确取消补满弹窗取消按钮、单绿按钮居中、满体力以已满替换按钮；动态补满每点100金币，先结自然恢复按缺点收费，满/超额0。未知重试固定报价不重扣，旧存档及其它体力/奖励规则保持；承继v1.45的31–200授权，不发布，旧48版本保留。"
+    },
+    {
+      "version": "1.47.0",
+      "ruleId": "blockout-rules-v1.47.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.47.0.md",
+      "sha256": "b1a51c879f6ddc13618f90d3260c28851938fd14426f409c39ac8dd4677a760b",
+      "status": "frozen",
+      "frozenOn": "2026-09-24",
+      "confirmation": "仅190获准独立原创，保基线棋盘/名字/时限/实际三星/历史reward及普通11–15；原向整图/空间/解锁/完整新验证后自主接入。181–189及31–200其它规则、动态体力每点100与首通20重复0保持，不发布，旧49版本保留。"
+    },
+    {
+      "version": "1.48.0",
+      "ruleId": "blockout-rules-v1.48.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.48.0.md",
+      "sha256": "e5057c61d52239191f456ad73ceffa093954892eea2ac14ae873f05acb192298",
+      "status": "frozen",
+      "frozenOn": "2026-09-25",
+      "confirmation": "用户明确要求第74关按17次必要腾挪验收；仅该关下界例外，v1.47及其它关卡规则保持。"
+    },
+    {
+      "version": "1.49.0",
+      "ruleId": "blockout-rules-v1.49.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.49.0.md",
+      "sha256": "dc8486415846ff7d3c4874d27b515cdc17d99b86e4e4a8d479b9c7e29c990482",
+      "status": "frozen",
+      "frozenOn": "2026-09-25",
+      "confirmation": "用户明确第88关允许15次、第90关允许10次必要腾挪验收；仅两关下界例外，v1.48及其它规则保持。"
+    },
+    {
+      "version": "1.50.0",
+      "ruleId": "blockout-rules-v1.50.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.50.0.md",
+      "sha256": "2e08c35447feb71e4e4610bc1e34a0e0177392edd06c5bc2532bdac61215d5ea",
+      "status": "frozen",
+      "frozenOn": "2026-09-25",
+      "confirmation": "用户明确要求第98关允许15次必要腾挪验收；仅第98关下界例外，v1.49及其它规则保持。"
+    },
+    {
+      "version": "1.51.0",
+      "ruleId": "blockout-rules-v1.51.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.51.0.md",
+      "sha256": "e8f44ba8a7fc7407fd590183eeb26c75f82ad4678a70a03d79388615489df9c5",
+      "status": "frozen",
+      "frozenOn": "2026-09-25",
+      "confirmation": "用户明确要求第98关允许15次必要腾挪验收；仅第98关下界例外，v1.50及其它规则保持。"
+    },
+    {
+      "version": "1.52.0",
+      "ruleId": "blockout-rules-v1.52.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.52.0.md",
+      "sha256": "526c46bedc1f8e575edf21381b79fb16462a9e93059035baa02b869401c6a220",
+      "status": "frozen",
+      "frozenOn": "2026-09-25",
+      "confirmation": "用户明确放弃第84、88、90关原候选数据，按竞品基底重新生成；仅新增三关重生成授权，旧候选与证据保留。"
+    },
+    {
+      "version": "1.53.0",
+      "ruleId": "blockout-rules-v1.53.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.53.0.md",
+      "sha256": "2d5a73adbbdb51624e61c6392bc0ce7f28b644941fb73673886efd30061103c4",
+      "status": "frozen",
+      "frozenOn": "2026-09-25",
+      "confirmation": "用户在知悉59下界尚未证明后明确要求将59也写入正式数据；仅增加该关本次直接接入授权，下界仍UNKNOWN，不冒称难度认证，其它关和旧证据保持。"
+    },
+    {
+      "version": "1.54.0",
+      "ruleId": "blockout-rules-v1.54.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.54.0.md",
+      "sha256": "f5201b17448fc50d699c35a011b821c4505b88645b40a39dd9c7cb256018c219",
+      "status": "frozen",
+      "frozenOn": "2026-09-25",
+      "confirmation": "用户明确101关允许10次腾挪；仅101下界改为L10、U≤15，仍须fresh排除0–9及其余完整验收，不将路线或UNKNOWN作为下界PASS。"
+    },
+    {
+      "version": "1.55.0",
+      "ruleId": "blockout-rules-v1.55.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.55.0.md",
+      "sha256": "a7138c52ff9d2d84b745448b5944fe755e74902fe2db44b5a25114f77ee65b66",
+      "status": "frozen",
+      "frozenOn": "2026-09-25",
+      "confirmation": "用户明确90不用再找下界并确定采用当前新候选；仅该关本次按U15路线直接接入，下界未认证如实保留，其他完整验收和84/88重生成保持。"
+    },
+    {
+      "version": "1.56.0",
+      "ruleId": "blockout-rules-v1.56.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.56.0.md",
+      "sha256": "6eb5f144d8953c3c34e946506771b1fdd07437060e9e1884fc40e0c9132aac66",
+      "status": "frozen",
+      "frozenOn": "2026-09-25",
+      "confirmation": "用户明确102和109可以作正式关卡并补齐101–110；仅两关当前地图按U15/U13直接采用，原L16未达标如实保留，其他完整验收及旧证据保持。"
+    },
+    {
+      "version": "1.57.0",
+      "ruleId": "blockout-rules-v1.57.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/mechanism-rules-v1.57.0.md",
+      "sha256": "4409e5edbabd9a2d1e5c8ee08bcb82268a6d1e0f38f2481da881e180ee15c8ff",
+      "status": "frozen",
+      "frozenOn": "2026-09-25",
+      "confirmation": "用户已知88下界未认证仍要求81–90写入正式关卡；仅88当前U17新图直接采用，原L15 UNKNOWN如实保留，补齐十关并完成最终正式双屏输入验证。"
+    },
+    {
+      "version": "1.58.0",
+      "ruleId": "blockout-rules-v1.58.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.58.0.md",
+      "sha256": "29ce1115314d1e650c777a924c4871459e363afdf2a42c8ab5936eb438f7549e",
+      "status": "frozen",
+      "frozenOn": "2026-09-26",
+      "confirmation": "用户明确使用第41关推荐的一卷帘候选：保留中央cover8、移除顶部cover14；第41关标记普通，U15，L≥11未认证，记录USER_DIRECT_WRITE_LOWER_BOUND_UNVERIFIED。其它规则与关卡保持承继。"
+    },
+    {
+      "version": "1.59.0",
+      "ruleId": "blockout-rules-v1.59.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.59.0.md",
+      "sha256": "ea5780eb30a4a9cbed4a9ae673f131a5e9b5f56b6222a9900189bc5efdd4e545",
+      "status": "frozen",
+      "frozenOn": "2026-09-26",
+      "confirmation": "用户明确轴向色块不允许出现在异形色块上，并要求检查所有关卡；新增完整矩形轮廓约束，先审计并记录违规，不自动删除轴向机制或改图。其它规则承继v1.58。"
+    },
+    {
+      "version": "1.60.0",
+      "ruleId": "blockout-rules-v1.60.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.60.0.md",
+      "sha256": "82fa96807bcec60c9519e80d43ff3220788a2dd31bd0742f2d0a03a53bb741ee",
+      "status": "frozen",
+      "frozenOn": "2026-09-26",
+      "confirmation": "用户明确修改轴向异形违规色块并重新求解；按最小局部方案修复54、56、63、89、101、118、135、172、194，保留其它地图与规则并以最终LEVELS重新验证。"
+    },
+    {
+      "version": "1.61.0",
+      "ruleId": "blockout-rules-v1.61.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.61.0.md",
+      "sha256": "eb972ef6c2a45e50ec2d947f5e7d91d2d70846180c6ba90a9b979bbc64c0d122",
+      "status": "frozen",
+      "frozenOn": "2026-09-26",
+      "confirmation": "用户明确63、101改变色块并重新求解；仅两关按v1.60矩形轴向约束重新排布色块，静态满铺通过，求解未完成时如实保留UNKNOWN，不影响其它关卡。"
+    },
+    {
+      "version": "1.62.0",
+      "ruleId": "blockout-rules-v1.62.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.62.0.md",
+      "sha256": "6360e4fa55b6bd654e2f4ef94743a5371ac6832e4becf5b8e3e7021062f251e6",
+      "status": "frozen",
+      "frozenOn": "2026-09-26",
+      "confirmation": "用户继续要求63、101改变色块并求解；63改用q0原生L3布局，101恢复完整q0原生隐藏布局并保留opening-5水平轴向，求解和正式门禁结果如实记录，UNKNOWN不记PASS。"
+    },
+    {
+      "version": "1.63.0",
+      "ruleId": "blockout-rules-v1.63.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.63.0.md",
+      "sha256": "db5fe7b6656204f476f040f194b2e704fd9490c7a958572de44fef92924e0c00",
+      "status": "frozen",
+      "frozenOn": "2026-09-26",
+      "confirmation": "用户明确调整43关；仅43关重排色块与6台生成器落点，保留棋盘、出口、时间、奖励和机制数量，完成新鲜空间求解与路线回放。"
+    },
+    {
+      "version": "1.64.0",
+      "ruleId": "blockout-rules-v1.64.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.64.0.md",
+      "sha256": "7c45b52dedc68bec43fae7b62dc780d5935f1c972905f69bb0aa6226efddbaf4",
+      "status": "frozen",
+      "frozenOn": "2026-09-26",
+      "confirmation": "用户明确63关开局绿色块按修复后的全形状出口规则不可清除，并要求重新生成求解；仅63关重排色块并开放粉/红/青三条非绿色初始出口，完成新鲜空间路线回放。"
+    },
+    {
+      "version": "1.65.0",
+      "ruleId": "blockout-rules-v1.65.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.65.0.md",
+      "sha256": "29a1b2abaaebc3afc327644c0f26197c592751aba538e077884518be816a18eb",
+      "status": "frozen",
+      "frozenOn": "2026-09-26",
+      "confirmation": "用户明确66、93、97关无解并要求重新生成；仅三关采用末端色块重排/重着色并以最终LEVELS完成新鲜空间路线回放，其它关卡与运行、存档及发布边界保持。"
+    },
+    {
+      "version": "1.66.0",
+      "ruleId": "blockout-rules-v1.66.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.66.0.md",
+      "sha256": "d5c2da9aba2e03290ba80ff3e023902219f4eaae46f5b591bc395aa3b3bce783",
+      "status": "frozen",
+      "frozenOn": "2026-09-26",
+      "confirmation": "用户报告111关绿色出口与棋盘墙重叠；仅调整局部出口与边框的绘制层深度顺序，不改关卡数据、碰撞、机制或其它关卡。"
+    },
+    {
+      "version": "1.67.0",
+      "ruleId": "blockout-rules-v1.67.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.67.0.md",
+      "sha256": "59048316f8a755b897816757e130bf3aef1ee8aa18d8760ab1f823a9ffebb0f9",
+      "status": "frozen",
+      "frozenOn": "2026-09-26",
+      "confirmation": "用户报告72关死局并要求重新调整；仅两块色块改色后接入正式LEVELS，保留棋盘、出口、卷帘、机制计数和其它关卡，并完成新鲜空间路线回放。"
+    },
+    {
+      "version": "1.68.0",
+      "ruleId": "blockout-rules-v1.68.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.68.0.md",
+      "sha256": "1c5b52adb9d401e16e832ae8889d253a07dd5faec41457077e46d083866a99c9",
+      "status": "frozen",
+      "frozenOn": "2026-09-26",
+      "confirmation": "用户要求冰冻出口不再半透明；仅将静态冰层改为不透明，保留出口颜色匹配、计数、关卡数据、动画过渡及其它运行逻辑。"
+    },
+    {
+      "version": "1.69.0",
+      "ruleId": "blockout-rules-v1.69.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.69.0.md",
+      "sha256": "1fc74d8b6c1f06063a6f348cff77361f18a1ec3f3c33c8ed344535f13166b70e",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户要求继续115/117/118/119，下界找不到则改变色块颜色或造型；保原档位、机制、原向素材和完整新验收，不新增下界豁免，不发布。"
+    },
+    {
+      "version": "1.70.0",
+      "ruleId": "blockout-rules-v1.70.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.70.0.md",
+      "sha256": "863e327d7aeea648fdfe4a43ed28b96b6cbd136a9bb993b979d99b9319e4357a",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户要求以生成正式121–130关为目标，求解持续无结果时改变色块种类或颜色后再求解；逐变体记录来源差异并重新验证，原结构、机制和完整验收要求保持。"
+    },
+    {
+      "version": "1.71.0",
+      "ruleId": "blockout-rules-v1.71.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.71.0.md",
+      "sha256": "34dc0007148d33a93b841ada432c9675bbcf839bb79fe2e180117df92893853c",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "补正v1.70正文误承载前批文字：121–130以正式关卡为目标，求解持续无结果则改变块形或颜色再求解；保结构、已知机制和全部fresh验收，无下界豁免。"
+    },
+    {
+      "version": "1.72.0",
+      "ruleId": "blockout-rules-v1.72.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.72.0.md",
+      "sha256": "7f18e4addb8774e817bef3a31c1a6bb69466695303bec98bbaed454d4751a606",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户要求继续131–140正式关卡，找不到候选时有限预算后换色块颜色/种类再求解，保难度与完整新验收，不新增下界豁免，不发布。"
+    },
+    {
+      "version": "1.73.0",
+      "ruleId": "blockout-rules-v1.73.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.73.0.md",
+      "sha256": "4875e8443e1288d961357d56b80ff7bf326441b80198383a1cedd0505e92c28f",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户明确141–150继续生成正式关卡，有限求解失败后改变色块颜色或种类直至合格；保原几何评价、已知机关与全部难度和真实输入门禁，自主分批接入，不发布。"
+    },
+    {
+      "version": "1.74.0",
+      "ruleId": "blockout-rules-v1.74.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.74.0.md",
+      "sha256": "1b4ad280531bbfb4ddcc1393af459580f8940bef6257c31ddec53997338a6568",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户在知悉144/150门属性来源未知且必要腾挪已达标后明确正式接入；仅采用已展示四项原创门属性，保来源UNKNOWN、全部难度与正式输入门禁，不发布。"
+    },
+    {
+      "version": "1.75.0",
+      "ruleId": "blockout-rules-v1.75.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.75.0.md",
+      "sha256": "76f5a689f3b3b53f36a88a07cb058d12a5684ebf4074808ee2eefc477407f5ce",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户在三星条件审计后明确调整；仅112/115/118/119拖数目标采用已验证路线52/56/38/62，时间与玩法地图保持，完整新显示/结算及正式双屏验收，不发布。"
+    },
+    {
+      "version": "1.76.0",
+      "ruleId": "blockout-rules-v1.76.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.76.0.md",
+      "sha256": "1e88719a0a7b2cf5761803c9ff9f1cc1c93809f545a41899389517c11d7c6e66",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户在第66关晚揭升降层死锁复现后明确重新调整；只重排隐藏15格及必要普通块拆分/改色，保两冰5及其它机制与开局，重新验证晚揭层分支和完整正式输入，不发布。"
+    },
+    {
+      "version": "1.77.0",
+      "ruleId": "blockout-rules-v1.77.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.77.0.md",
+      "sha256": "a9bc50ca2912a374cae86aa19458addc47e53795063de5e79e6d1864513de11c",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户要求第9关改为明显不同的原创棋盘并按新规则重生成，另确认三星拖数同步完整路线；仅9关重做并用新版运行档，保困难16–20、105秒及75秒时间星，其它199关不改，不发布。"
+    },
+    {
+      "version": "1.78.0",
+      "ruleId": "blockout-rules-v1.78.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.78.0.md",
+      "sha256": "1fdb4943f7449831d984ce876f9e08e3a24480f4397a9bf37bad8d92e63a30d6",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户要求按最新141–150数据调整三星；统一采用已验完整路线48/51/57/31/38/54/55/44/56/26总拖，142不变，时间星/总时限及全部玩法保持，旧证据存档不改，不发布。"
+    },
+    {
+      "version": "1.79.0",
+      "ruleId": "blockout-rules-v1.79.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.79.0.md",
+      "sha256": "05e8eb88393991db827600b8bbdbd9fa22be2baabe019923007765fa996f391e",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户要求第11关原创棋盘并按新规则重生成；仅11可改几何与布局、用既有v1.4，保竞品22块/数字冰和冰门基底及困难16–20，120秒/86秒/原名奖励保持。三星36与至少38冲突已询问待答，先候选验证，不扩展9关评分授权，不发布。"
+    },
+    {
+      "version": "1.80.0",
+      "ruleId": "blockout-rules-v1.80.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.80.0.md",
+      "sha256": "294d48835b69986fb065ca1267619af5148f449b884d578d105ffdbabedd0126",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户明确第11关12次最少腾挪可以；仅本关保困难标签改fresh L12/U12，22清除合34总拖可达原三星36，故36/86和120秒保持。源库存机制/原创几何/原向素材及完整正式验收继承v1.79，其它199保持，不发布。"
+    },
+    {
+      "version": "1.81.0",
+      "ruleId": "blockout-rules-v1.81.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.81.0.md",
+      "sha256": "893c6b960a09aa08fb89404abf4a33c5fca966dae7acdfdaa425f161bd4a9825",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户要求仅第12关换原创棋盘并按新规则重生成；源12个V3占36/旧42有6空格，新轮廓可36格满铺，保实核红黄蓝绿/四数字冰/三冰门及困难16–20。120秒/86秒/reward45保持，旧三星21与至少28冲突待本关答复，其它199不改，不发布。"
+    },
+    {
+      "version": "1.82.0",
+      "ruleId": "blockout-rules-v1.82.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.82.0.md",
+      "sha256": "9aaf8779e8b60893288178d6230ef89abe88c8991dfd1af3203210080ae64687",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户明确第12关三星拖数同步新布局已验证完整路线；只改本关实际拖数目标，120秒/86秒/reward45及v1.81源库存/原创轮廓/困难16–20/全验收保持，其它199和存档不变，不发布。"
+    },
+    {
+      "version": "1.83.0",
+      "ruleId": "blockout-rules-v1.83.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.83.0.md",
+      "sha256": "4adb4df211c553ca17027babb39f7f5c18336c1062f170649fdab557b0c62900",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户要求仅15换原创棋盘并按新规则重生成；依既定外壳首教规则本次简单5–10，保源10SQ2/5壳配对/黄普通门及冰粉2绿3红5蓝6，40格满铺。120秒/实际34拖86秒/历史reward60及首教保持，其它199不顺带重排，完整fresh验收后接入，不发布。"
+    },
+    {
+      "version": "1.84.0",
+      "ruleId": "blockout-rules-v1.84.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.84.0.md",
+      "sha256": "973fbf04f012032b2683c7c9d98aae640833f9d949a7b00db25e6ca3afc462c9",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户要求16原创棋盘并明确普通巩固11–15；首稳定视频纠正旧首消后截图，21体18S+3V3/27格/黄红V3单壳，源普通蓝及冰白3黄8红12黑15，黑映紫白映青。保180秒/50拖129秒/reward65，完整fresh与正式双屏验收，其它199不变，不发布。"
+    },
+    {
+      "version": "1.85.0",
+      "ruleId": "blockout-rules-v1.85.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.85.0.md",
+      "sha256": "0c00aa0e94100f096d26795b4f330a3d78a5ca6c82496a79e0183ba1ba6283d9",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户要求按最新规则重新生成17；本次按第二普通巩固11–15，保6×8满48格，逐帧核源26体/3壳/7数字冰及门8/16/21/26恢复配置，原创排列不旋素材。保135秒/实际71拖97秒/reward70/par71，fresh完整与正式双屏验收，其它199保持，不发布。"
+    },
+    {
+      "version": "1.86.0",
+      "ruleId": "blockout-rules-v1.86.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.86.0.md",
+      "sha256": "da833aca769022fc447b9c97fa2973583186fcb115e7da746c360e370fee6e33",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户要求第20关棋盘造型不要与竞品过于相似，并按最新规则重生成；仅第20关改为原创满铺棋盘，保源14体/1卷帘计数6/7冰门及颜色绑定，卷帘首教按简单5–10次，原75秒/reward85/par24和其它199关保持。正式接入前完成可解、下界/上界、Pointer与自然时钟验收，不发布。"
+    },
+    {
+      "version": "1.87.0",
+      "ruleId": "blockout-rules-v1.87.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.87.0.md",
+      "sha256": "8d2d541746649fa48f93532ca70293f75ae7bc8941829456a18353f5fa506126",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户明确第20关保数量和计数，重复出口及对应隐藏块必要换色；源事实纠正绿8/蓝10，实施橙6紫7青10及三隐藏H2适配。保14体形状/卷帘6、原创满铺、简单5–10和75秒/实际24拖54秒，不允许未验候选接入或擅调评分，其它199保持，不发布。"
+    },
+    {
+      "version": "1.88.0",
+      "ruleId": "blockout-rules-v1.88.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.88.0.md",
+      "sha256": "22d8764dfc4fef09192bcf5c465814062bcf7aee0cd43dd1c0979ef6a3966f82",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户在121–130完成后明确调整三星；仅已证原目标不可达的122/126/127采用完整路线49/61/41总拖，保时间64/79/86与原总限/全部玩法和其它197，双屏正式显示结算及自然钟验收，不发布。"
+    },
+    {
+      "version": "1.89.0",
+      "ruleId": "blockout-rules-v1.89.0",
+      "runtimeProfile": "revised-2026-09-23-v1.4",
+      "document": "docs/rules/mechanism-rules-v1.89.0.md",
+      "sha256": "908bd1a8997b0d0337019012410043d800b87b5c9350a1d3d99fdd2a2a768343",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户在131–140正式完成后要求调整三星并继续；采用已验完整路线28/49/57/51/36/49/34/47/70/42总拖，保时间星/总时限/玩法及其它190，重新验显示/结算与正式双屏，不发布。"
+    },
+    {
+      "version": "1.90.0",
+      "ruleId": "blockout-rules-v1.90.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.90.0.md",
+      "sha256": "b82378161ab24b332f5a346684377fe07bd1573fcce9382449f398c5529221a9",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户明确冻结翻门不翻，1到0本次只解冻，下次消除/剥壳后开始翻转；修复冰层alpha0并永久登记，保地图和其它机制，独立新版验收，不发布。"
+    },
+    {
+      "version": "1.91.0",
+      "ruleId": "blockout-rules-v1.91.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.91.0.md",
+      "sha256": "83f35f04c57aac2ef1be087cfdcc9aebb4b35b520f4ed6370225339aa43f21d3",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户要求70生成器参与有效难度，允许两台并确认三星总拖同步新完整路线；保棋盘/普通11–15/180秒/129秒及其它199，双机完整真实队列fresh验收后接入，不发布。"
+    },
+    {
+      "version": "1.92.0",
+      "ruleId": "blockout-rules-v1.92.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.92.0.md",
+      "sha256": "d23ffc7a10a57befd535d1fb82105018f8aa47f4ed109bf5c983b3899d93bfd2",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户要求31–40调整三星，仅35关38拖、36关31拖、38关49拖、39关44拖采用当前完整无道具见证，保时间/地图/其它196/旧证据和存档；36/38新增当前有效路线，双屏正式显示结算自然钟验收，不发布。"
+    },
+    {
+      "version": "1.93.0",
+      "ruleId": "blockout-rules-v1.93.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.93.0.md",
+      "sha256": "fcfbd0add53e34be635851f8a4f6e0d96b59250d6cacb178bc610cb22d7fb98f",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户明确允许70提高现有三个冰门计数以使双机出货参与解锁顺序；保普通11–15、180秒及v1.91其它合同，完整fresh验收后接入，不发布。"
+    },
+    {
+      "version": "1.94.0",
+      "ruleId": "blockout-rules-v1.94.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.94.0.md",
+      "sha256": "d22ea73e29c3b623668df76181290143e13160538f5c72567ac8a828ef549de5",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户要求51–60调整三星，仅52关45拖、54关48拖、55关34拖、56关40拖、58关41拖、59关51拖取当前完整路线总拖；时间/地图/其它194/旧证据/存档保持，54/56轴修复保留，59 UNKNOWN不重标，双屏正式自然钟验收，不发布。"
+    },
+    {
+      "version": "1.95.0",
+      "ruleId": "blockout-rules-v1.95.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.95.0.md",
+      "sha256": "4470cb01b9ef38a19bbca617f50aed2dcfb90f40ee0bda9e770c8d9d8f93ed8e",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户要求41–50调整三星，仅41关45拖、43关24拖、44关39拖、46关41拖、47关46拖、48关43拖、50关27拖采用当前完整路线总拖；保时间/玩法/其它193/旧证据和存档，41下界未知及43普通档未达单列，双屏正式Pointer自然钟验收，不发布。"
+    },
+    {
+      "version": "1.96.0",
+      "ruleId": "blockout-rules-v1.96.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.96.0.md",
+      "sha256": "4e37d5de5797e15c090d65f403a7e2829ed913ef8bf204d627caf28b7ff93fb2",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户要求81–90调整三星，仅81关38拖、83关56拖、85关33拖、87关50拖、88关54拖采用当前完整路线总拖；保时间/地图/其它195/旧证据和存档。85新路线不改图，88/90下界未认证保持，双屏正式Pointer自然钟及三星结算验收，不发布。"
+    },
+    {
+      "version": "1.97.0",
+      "ruleId": "blockout-rules-v1.97.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.97.0.md",
+      "sha256": "85bcb69050f8582d14e56fccea5606857b68cfe715fd0eeb5d03a2e9f2804b02",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户要求71–80调整三星，仅71关50拖、75关37拖、76关36拖、78关37拖、79关58拖采用当前完整路线总拖；保时间/玩法/其它195/旧证据/存档，72修复及74的17次例外保持，双屏正式Pointer自然钟验收，不发布。"
+    },
+    {
+      "version": "1.98.0",
+      "ruleId": "blockout-rules-v1.98.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.98.0.md",
+      "sha256": "b33c09c83b5bcefb23297d90f6be0a550e8137495332f843e0fd2b2b26f1e591",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户要求61–70调整三星，仅61关31拖、62关41拖、65关38拖、67关40拖、68关53拖、69关52拖采用当前完整路线总拖；保全部时间/玩法/其它194/旧证据和存档，63/66/70修复保留，63当前U3超难未达单列，双屏正式Pointer自然钟验收，不发布。"
+    },
+    {
+      "version": "1.99.0",
+      "ruleId": "blockout-rules-v1.99.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.99.0.md",
+      "sha256": "914d88d0c04f5eefc618e15b45c13ffc2afa49f80c06e44f9d426bc6160a1c2c",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户要求91–100调整三星，仅91关50拖、92关44拖、94关65拖、95关46拖、98关55拖按当前完整路线设置；时间/玩法/其它195/旧证据/存档保持，94/98下界未认证和93/97修复图证据独立，双屏正式自然钟三星验收，不发布。"
+    },
+    {
+      "version": "1.100.0",
+      "ruleId": "blockout-rules-v1.100.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.100.0.md",
+      "sha256": "1ff55d10548cca10f91a6837391436eb3f9a6ad961642a1e1de55dcbe75f3d89",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户要求101–110调整三星，仅102关47拖、104关52拖、105关51拖、108关33拖采用当前完整路线总拖；时间/地图/其它196/旧证据和存档保持。103U12/104U17路线档位未重证、101轴修复与102/109用户例外保留，双屏正式Pointer自然钟及三星结算验收，不发布。"
+    },
+    {
+      "version": "1.101.0",
+      "ruleId": "blockout-rules-v1.101.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.101.0.md",
+      "sha256": "98ee407a587763c77f5727c7387eee94f9611895c38fbd442c69ebad4e91d348",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户明确棋盘无对应颜色时出口不再变暗；仅取消latent静态变暗，保冰冻/翻门/匹配/地图/数值与存档，不发布。"
+    },
+    {
+      "version": "1.102.0",
+      "ruleId": "blockout-rules-v1.102.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.102.0.md",
+      "sha256": "81b380285e7aeae3261c1d0689d65cd3587437e591f97ae6af378b56f79f2d0e",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户要求继续151–160；上下限持续未达标时有限求解后换色块颜色/种类与布局重新生成，保原难度和全部fresh验收，无下界豁免，不发布。"
+    },
+    {
+      "version": "1.103.0",
+      "ruleId": "blockout-rules-v1.103.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.103.0.md",
+      "sha256": "b5fe41e54f2c91f90201cd9e625bbfd7062746c0ef656ca3f3b2e9c6355e22ee",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户要求继续161–170，下限/上限反复不满足时有限求解后换色换形重新生成；保棋盘/机关/评价/四档及完整验收，其它190和存档保持，不发布。"
+    },
+    {
+      "version": "1.104.0",
+      "ruleId": "blockout-rules-v1.104.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.104.0.md",
+      "sha256": "4379a6136fefcba256caa2724f6ea7cd080eabea660f8a13281f6390954a26f8",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户要求修复78升降后死锁；最小隐藏层重排，保开局/出口/冰初值/评分/困难档与其它199，晚揭层和0外部帮助回归及完整新验收后接入，不打包发布。"
+    },
+    {
+      "version": "1.105.0",
+      "ruleId": "blockout-rules-v1.105.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.105.0.md",
+      "sha256": "ee50e184d462312cb3ddb8d0d29296f5f3524e37a37c874651d5f8c58067bb7c",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户明确允许162采用已验证原创开局；未拍全的源初态仍UNKNOWN，保观察到2壳5翻及初相、困难16–20和全部fresh验收，其余199保持，不发布。"
+    },
+    {
+      "version": "1.106.0",
+      "ruleId": "blockout-rules-v1.106.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.106.0.md",
+      "sha256": "bd7146485ac0b42d32b959cda7622428b5583ef60e1db2d85d8441204fa55670",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户要求继续171–180，上下界持续不满足时有限求解后换色换形与必要布局重新生成；保几何/机关库存/评价/原四档和完整fresh验收，其它190及存档保持，不发布。"
+    },
+    {
+      "version": "1.107.0",
+      "ruleId": "blockout-rules-v1.107.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.107.0.md",
+      "sha256": "a8c31eb1d54022f38fa5ff6e9174c3ee477c7ed8d4c7e2f1ed200d7d771e804d",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户明确182/185改色换形继续正式制作，上下界反复不满足则有限求解后重新生成；保几何/机关库存/评价和困难16–20及完整fresh验收，未知源不冒称确证，其余198及存档保持，不发布。"
+    },
+    {
+      "version": "1.108.0",
+      "ruleId": "blockout-rules-v1.108.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.108.0.md",
+      "sha256": "6c5f4e560d578d9d3f440b082899e6b4fa7037b3906692d6e155eb143a8cd286",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户要求继续191–200，上下界持续未满足时有限求解后换色换形与布局重新生成；保棋盘/机关库存/评分/四档与全部fresh验收，其它190及存档保持，不发布。"
+    },
+    {
+      "version": "1.109.0",
+      "ruleId": "blockout-rules-v1.109.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.109.0.md",
+      "sha256": "f42e760594d874052a4bdaaac616ab2a88c2bb90f1d3c91b0da400d773166b4c",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户要求161–170调整三星，仅161关43拖、167关50拖、168关63拖、170关37拖采用当前完整路线总拖；保全部时间/地图/其它196/旧证据/存档，正式双屏自然钟三星结算验收，不发布。"
+    },
+    {
+      "version": "1.110.0",
+      "ruleId": "blockout-rules-v1.110.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.110.0.md",
+      "sha256": "a6e11f353469412af72e107983d2a199b17c356888175d3bce57ee584075f649",
+      "status": "frozen",
+      "frozenOn": "2026-09-27",
+      "confirmation": "用户在151–160完成后要求调整三星条件；仅157采用47拖、158采用59拖完整路线总拖，不称最优，全部时间/玩法/其它198/存档保持，正式双屏Pointer自然钟与三星结算验收，不发布。"
+    },
+    {
+      "version": "1.111.0",
+      "ruleId": "blockout-rules-v1.111.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.111.0.md",
+      "sha256": "cfec892a866f5ad2be62685f2ca7d9fc3bc85eb2cc8105afb1bcc990009c9d21",
+      "status": "frozen",
+      "frozenOn": "2026-09-28",
+      "confirmation": "用户要求调整两关三星；182正式48拖，185新候选50拖，保97/93秒时间星及135/130总时限与玩法。评分不等于185未知初态许可，旧正式185保持；完整路线/双屏真实输入自然钟三星验证，旧证据存档保持，不发布。"
+    },
+    {
+      "version": "1.112.0",
+      "ruleId": "blockout-rules-v1.112.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.112.0.md",
+      "sha256": "66e9ef84593fb0c2c7c0bafbfc2dac3b60e973295087715c1f871d32cd5ef45d",
+      "status": "frozen",
+      "frozenOn": "2026-09-28",
+      "confirmation": "用户看过候选截图和机制后明确191/196接入正式；仅接受191原创开局与196粉开绿紫关初相，源UNKNOWN保留，原评分/难度/其它198与存档保持，正式双屏自然钟三星验收，不发布。"
+    },
+    {
+      "version": "1.113.0",
+      "ruleId": "blockout-rules-v1.113.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.113.0.md",
+      "sha256": "e945e653254ef9f8b909820b7c5aa66c8e4ee40124d32f38d287c4b9d77daefe",
+      "status": "frozen",
+      "frozenOn": "2026-09-28",
+      "confirmation": "用户要求171–180调整三星；仅171/174/175/176/177/180采用已验证完整路线总拖35/47/46/51/38/35，保172/173/178/179原目标、全部时间星/时限/玩法/其它关与存档，正式双屏自然钟验收，不发布。"
+    },
+    {
+      "version": "1.114.0",
+      "ruleId": "blockout-rules-v1.114.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.114.0.md",
+      "sha256": "de38e30a9ba3f1944580f911e146bed46f75b37e959bd5da96107aecf7d32b86",
+      "status": "frozen",
+      "frozenOn": "2026-09-28",
+      "confirmation": "用户要求调整191/196三星条件；仅采用已验证完整路线总拖31/27，保留原时间星、总时限、玩法、来源状态、其余198关、旧证据和存档，正式双屏自然钟三星验收，不发布。"
+    }
+  ]
+}

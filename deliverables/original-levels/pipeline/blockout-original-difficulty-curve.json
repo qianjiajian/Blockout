@@ -7,78 +7,78 @@
     "version": "blockout-d1-baseline-2026-09-05",
     "slope": 0.826935,
     "intercept": 13.161835,
-    "mean_absolute_error": 14.44
+    "mean_absolute_error": 19.23
   },
   "chapters": [
     {
       "chapter": 1,
       "levels": "1-10",
       "competitor_mean": 25.14,
-      "original_mean": 57.88,
-      "mean_absolute_error": 32.74
+      "original_mean": 55.44,
+      "mean_absolute_error": 30.3
     },
     {
       "chapter": 2,
       "levels": "11-20",
       "competitor_mean": 51.08,
-      "original_mean": 48.22,
-      "mean_absolute_error": 10.21
+      "original_mean": 62.7,
+      "mean_absolute_error": 13.3
     },
     {
       "chapter": 3,
       "levels": "21-30",
       "competitor_mean": 42.33,
-      "original_mean": 46.3,
-      "mean_absolute_error": 7.88
+      "original_mean": 61.18,
+      "mean_absolute_error": 18.85
     },
     {
       "chapter": 4,
       "levels": "31-40",
       "competitor_mean": 50.41,
-      "original_mean": 52.38,
-      "mean_absolute_error": 12.73
+      "original_mean": 71.61,
+      "mean_absolute_error": 23.93
     },
     {
       "chapter": 5,
       "levels": "41-50",
       "competitor_mean": 54.57,
-      "original_mean": 54.48,
-      "mean_absolute_error": 11.9
+      "original_mean": 67.56,
+      "mean_absolute_error": 18.75
     },
     {
       "chapter": 6,
       "levels": "51-60",
       "competitor_mean": 63.77,
-      "original_mean": 62.19,
-      "mean_absolute_error": 11.08
+      "original_mean": 62.92,
+      "mean_absolute_error": 17.42
     },
     {
       "chapter": 7,
       "levels": "61-70",
       "competitor_mean": 66.48,
-      "original_mean": 58.95,
-      "mean_absolute_error": 7.86
+      "original_mean": 65.09,
+      "mean_absolute_error": 15.82
     },
     {
       "chapter": 8,
       "levels": "71-80",
       "competitor_mean": 68.98,
-      "original_mean": 65.98,
-      "mean_absolute_error": 16.53
+      "original_mean": 64.85,
+      "mean_absolute_error": 12.75
     },
     {
       "chapter": 9,
       "levels": "81-90",
       "competitor_mean": 67.59,
-      "original_mean": 67.23,
-      "mean_absolute_error": 17.7
+      "original_mean": 63.02,
+      "mean_absolute_error": 21.31
     },
     {
       "chapter": 10,
       "levels": "91-100",
       "competitor_mean": 70.07,
-      "original_mean": 71.64,
-      "mean_absolute_error": 15.77
+      "original_mean": 64.62,
+      "mean_absolute_error": 19.86
     }
   ],
   "per_level": [
@@ -86,901 +86,901 @@
       "level_id": 1,
       "competitor_score": 8.8,
       "competitor_smoothed": 13.09,
-      "original_raw_score": 12.66,
-      "original_calibrated": 23.63,
-      "original_smoothed": 39.38,
-      "error": 14.83
+      "original_raw_score": 21.41,
+      "original_calibrated": 30.87,
+      "original_smoothed": 44.77,
+      "error": 22.07
     },
     {
       "level_id": 2,
-      "competitor_score": 13.99,
+      "competitor_score": 16.49,
       "competitor_smoothed": 15.21,
-      "original_raw_score": 42.4,
-      "original_calibrated": 48.22,
-      "original_smoothed": 41.09,
-      "error": 34.23
+      "original_raw_score": 50.28,
+      "original_calibrated": 54.74,
+      "original_smoothed": 47.66,
+      "error": 38.25
     },
     {
       "level_id": 3,
-      "competitor_score": 16.49,
+      "competitor_score": 13.99,
       "competitor_smoothed": 15.64,
-      "original_raw_score": 40.07,
-      "original_calibrated": 46.3,
-      "original_smoothed": 41.94,
-      "error": 29.81
+      "original_raw_score": 42.97,
+      "original_calibrated": 48.7,
+      "original_smoothed": 50.25,
+      "error": 34.71
     },
     {
       "level_id": 4,
       "competitor_score": 21.58,
       "competitor_smoothed": 19.23,
-      "original_raw_score": 39.96,
-      "original_calibrated": 46.21,
-      "original_smoothed": 51.25,
-      "error": 24.63
+      "original_raw_score": 52.22,
+      "original_calibrated": 56.34,
+      "original_smoothed": 56.53,
+      "error": 34.76
     },
     {
       "level_id": 5,
       "competitor_score": 17.33,
-      "competitor_smoothed": 21.15,
-      "original_raw_score": 38.92,
-      "original_calibrated": 45.35,
-      "original_smoothed": 56.03,
-      "error": 28.02
+      "competitor_smoothed": 20.65,
+      "original_raw_score": 57.38,
+      "original_calibrated": 60.61,
+      "original_smoothed": 57.6,
+      "error": 43.28
     },
     {
       "level_id": 6,
       "competitor_score": 26.74,
       "competitor_smoothed": 24.37,
-      "original_raw_score": 68.95,
-      "original_calibrated": 70.18,
-      "original_smoothed": 61.6,
-      "error": 43.44
+      "original_raw_score": 59.4,
+      "original_calibrated": 62.28,
+      "original_smoothed": 60.29,
+      "error": 35.54
     },
     {
       "level_id": 7,
       "competitor_score": 23.61,
       "competitor_smoothed": 26.41,
-      "original_raw_score": 71.27,
-      "original_calibrated": 72.1,
-      "original_smoothed": 67.47,
-      "error": 48.49
+      "original_raw_score": 56.72,
+      "original_calibrated": 60.07,
+      "original_smoothed": 60.61,
+      "error": 36.46
     },
     {
       "level_id": 8,
       "competitor_score": 32.6,
       "competitor_smoothed": 34.64,
-      "original_raw_score": 73.79,
-      "original_calibrated": 74.18,
-      "original_smoothed": 73.81,
-      "error": 41.58
+      "original_raw_score": 59.26,
+      "original_calibrated": 62.17,
+      "original_smoothed": 60.62,
+      "error": 29.57
     },
     {
       "level_id": 9,
       "competitor_score": 31.75,
       "competitor_smoothed": 39.03,
-      "original_raw_score": 75.41,
-      "original_calibrated": 75.52,
-      "original_smoothed": 68.92,
-      "error": 43.77
+      "original_raw_score": 54.11,
+      "original_calibrated": 57.91,
+      "original_smoothed": 59.73,
+      "error": 26.16
     },
     {
       "level_id": 10,
       "competitor_score": 58.48,
       "competitor_smoothed": 43.96,
-      "original_raw_score": 77.29,
-      "original_calibrated": 77.08,
-      "original_smoothed": 64.78,
-      "error": 18.6
+      "original_raw_score": 57.49,
+      "original_calibrated": 60.7,
+      "original_smoothed": 61.41,
+      "error": 2.22
     },
     {
       "level_id": 11,
       "competitor_score": 48.72,
       "competitor_smoothed": 48.74,
-      "original_raw_score": 39.39,
-      "original_calibrated": 45.73,
-      "original_smoothed": 59.05,
-      "error": -2.99
+      "original_raw_score": 53.98,
+      "original_calibrated": 57.8,
+      "original_smoothed": 60.45,
+      "error": 9.08
     },
     {
       "level_id": 12,
       "competitor_score": 48.27,
       "competitor_smoothed": 49.01,
-      "original_raw_score": 46.24,
-      "original_calibrated": 51.4,
-      "original_smoothed": 53.48,
-      "error": 3.13
+      "original_raw_score": 66.9,
+      "original_calibrated": 68.48,
+      "original_smoothed": 60.3,
+      "error": 20.21
     },
     {
       "level_id": 13,
       "competitor_score": 56.5,
       "competitor_smoothed": 44.37,
-      "original_raw_score": 39.11,
-      "original_calibrated": 45.5,
-      "original_smoothed": 47.15,
-      "error": -11
+      "original_raw_score": 53.44,
+      "original_calibrated": 57.35,
+      "original_smoothed": 60.62,
+      "error": 0.85
     },
     {
       "level_id": 14,
       "competitor_score": 33.07,
       "competitor_smoothed": 42.21,
-      "original_raw_score": 41.77,
-      "original_calibrated": 47.7,
-      "original_smoothed": 47.36,
-      "error": 14.63
+      "original_raw_score": 53.19,
+      "original_calibrated": 57.15,
+      "original_smoothed": 61.36,
+      "error": 24.08
     },
     {
       "level_id": 15,
       "competitor_score": 35.3,
       "competitor_smoothed": 45.82,
-      "original_raw_score": 38.98,
-      "original_calibrated": 45.4,
-      "original_smoothed": 46.14,
-      "error": 10.1
+      "original_raw_score": 59.43,
+      "original_calibrated": 62.31,
+      "original_smoothed": 62.57,
+      "error": 27.01
     },
     {
       "level_id": 16,
       "competitor_score": 37.9,
       "competitor_smoothed": 45.71,
-      "original_raw_score": 40.69,
-      "original_calibrated": 46.81,
-      "original_smoothed": 46.77,
-      "error": 8.91
+      "original_raw_score": 58.48,
+      "original_calibrated": 61.52,
+      "original_smoothed": 64.61,
+      "error": 23.62
     },
     {
       "level_id": 17,
       "competitor_score": 66.31,
       "competitor_smoothed": 51.08,
-      "original_raw_score": 38.82,
-      "original_calibrated": 45.26,
-      "original_smoothed": 48.61,
-      "error": -21.05
+      "original_raw_score": 74.23,
+      "original_calibrated": 74.55,
+      "original_smoothed": 63.83,
+      "error": 8.24
     },
     {
       "level_id": 18,
       "competitor_score": 55.97,
       "competitor_smoothed": 57.78,
-      "original_raw_score": 42.97,
-      "original_calibrated": 48.7,
-      "original_smoothed": 49.29,
-      "error": -7.27
+      "original_raw_score": 65.73,
+      "original_calibrated": 67.52,
+      "original_smoothed": 64.78,
+      "error": 11.55
     },
     {
       "level_id": 19,
       "competitor_score": 59.93,
       "competitor_smoothed": 55.67,
-      "original_raw_score": 52.9,
-      "original_calibrated": 56.91,
-      "original_smoothed": 48.96,
-      "error": -3.02
+      "original_raw_score": 48.52,
+      "original_calibrated": 53.28,
+      "original_smoothed": 64.29,
+      "error": -6.65
     },
     {
       "level_id": 20,
       "competitor_score": 68.78,
       "competitor_smoothed": 49.88,
-      "original_raw_score": 43.05,
-      "original_calibrated": 48.76,
-      "original_smoothed": 48.98,
-      "error": -20.02
+      "original_raw_score": 65.13,
+      "original_calibrated": 67.02,
+      "original_smoothed": 60.96,
+      "error": -1.76
     },
     {
       "level_id": 21,
       "competitor_score": 27.37,
       "competitor_smoothed": 46.04,
-      "original_raw_score": 38.7,
-      "original_calibrated": 45.16,
-      "original_smoothed": 48.87,
-      "error": 17.79
+      "original_raw_score": 55.52,
+      "original_calibrated": 59.07,
+      "original_smoothed": 61.96,
+      "error": 31.7
     },
     {
       "level_id": 22,
       "competitor_score": 37.36,
       "competitor_smoothed": 44.09,
-      "original_raw_score": 38.94,
-      "original_calibrated": 45.36,
-      "original_smoothed": 46.62,
-      "error": 8
+      "original_raw_score": 54.1,
+      "original_calibrated": 57.9,
+      "original_smoothed": 62.65,
+      "error": 20.54
     },
     {
       "level_id": 23,
       "competitor_score": 36.75,
       "competitor_smoothed": 42.41,
-      "original_raw_score": 42.3,
-      "original_calibrated": 48.14,
-      "original_smoothed": 46.25,
-      "error": 11.39
+      "original_raw_score": 71.76,
+      "original_calibrated": 72.5,
+      "original_smoothed": 61.71,
+      "error": 35.75
     },
     {
       "level_id": 24,
       "competitor_score": 50.2,
       "competitor_smoothed": 45.09,
-      "original_raw_score": 39.29,
-      "original_calibrated": 45.65,
-      "original_smoothed": 46.36,
-      "error": -4.55
+      "original_raw_score": 52.7,
+      "original_calibrated": 56.74,
+      "original_smoothed": 61.47,
+      "error": 6.54
     },
     {
       "level_id": 25,
       "competitor_score": 60.35,
       "competitor_smoothed": 46.1,
-      "original_raw_score": 40.81,
-      "original_calibrated": 46.91,
-      "original_smoothed": 47.04,
-      "error": -13.44
+      "original_raw_score": 59.47,
+      "original_calibrated": 62.34,
+      "original_smoothed": 62.87,
+      "error": 1.99
     },
     {
       "level_id": 26,
       "competitor_score": 40.78,
       "competitor_smoothed": 45.89,
-      "original_raw_score": 39.36,
-      "original_calibrated": 45.71,
-      "original_smoothed": 46.54,
-      "error": 4.93
+      "original_raw_score": 54.06,
+      "original_calibrated": 57.87,
+      "original_smoothed": 60.97,
+      "error": 17.09
     },
     {
       "level_id": 27,
       "competitor_score": 42.43,
       "competitor_smoothed": 45.36,
-      "original_raw_score": 43.07,
-      "original_calibrated": 48.78,
-      "original_smoothed": 46.59,
-      "error": 6.35
+      "original_raw_score": 62.55,
+      "original_calibrated": 64.89,
+      "original_smoothed": 61.17,
+      "error": 22.46
     },
     {
       "level_id": 28,
       "competitor_score": 35.7,
       "competitor_smoothed": 42.26,
-      "original_raw_score": 39.27,
-      "original_calibrated": 45.64,
-      "original_smoothed": 46.35,
-      "error": 9.94
+      "original_raw_score": 60.3,
+      "original_calibrated": 63.03,
+      "original_smoothed": 60.65,
+      "error": 27.33
     },
     {
       "level_id": 29,
       "competitor_score": 47.52,
       "competitor_smoothed": 41.5,
-      "original_raw_score": 39.62,
-      "original_calibrated": 45.92,
-      "original_smoothed": 46.54,
-      "error": -1.6
+      "original_raw_score": 53.92,
+      "original_calibrated": 57.75,
+      "original_smoothed": 64.67,
+      "error": 10.23
     },
     {
       "level_id": 30,
       "competitor_score": 44.89,
       "competitor_smoothed": 47.31,
-      "original_raw_score": 39.33,
-      "original_calibrated": 45.69,
-      "original_smoothed": 47.76,
-      "error": 0.8
+      "original_raw_score": 56.32,
+      "original_calibrated": 59.73,
+      "original_smoothed": 67.94,
+      "error": 14.84
     },
     {
       "level_id": 31,
       "competitor_score": 36.94,
       "competitor_smoothed": 47.79,
-      "original_raw_score": 40.51,
-      "original_calibrated": 46.66,
-      "original_smoothed": 48.7,
-      "error": 9.72
+      "original_raw_score": 78.35,
+      "original_calibrated": 77.95,
+      "original_smoothed": 70.23,
+      "error": 41.01
     },
     {
       "level_id": 32,
       "competitor_score": 71.52,
       "competitor_smoothed": 48.92,
-      "original_raw_score": 50.49,
-      "original_calibrated": 54.91,
-      "original_smoothed": 48.56,
-      "error": -16.61
+      "original_raw_score": 82.32,
+      "original_calibrated": 81.24,
+      "original_smoothed": 75.49,
+      "error": 9.72
     },
     {
       "level_id": 33,
       "competitor_score": 38.09,
       "competitor_smoothed": 46.92,
-      "original_raw_score": 44.91,
-      "original_calibrated": 50.3,
-      "original_smoothed": 49.83,
-      "error": 12.21
+      "original_raw_score": 74.14,
+      "original_calibrated": 74.47,
+      "original_smoothed": 73.51,
+      "error": 36.38
     },
     {
       "level_id": 34,
       "competitor_score": 53.17,
       "competitor_smoothed": 45.65,
-      "original_raw_score": 38.81,
-      "original_calibrated": 45.26,
-      "original_smoothed": 49.9,
-      "error": -7.91
+      "original_raw_score": 85.73,
+      "original_calibrated": 84.05,
+      "original_smoothed": 68.88,
+      "error": 30.88
     },
     {
       "level_id": 35,
       "competitor_score": 34.87,
       "competitor_smoothed": 40.76,
-      "original_raw_score": 46.97,
-      "original_calibrated": 52,
-      "original_smoothed": 51.16,
-      "error": 17.13
+      "original_raw_score": 44.35,
+      "original_calibrated": 49.84,
+      "original_smoothed": 69.58,
+      "error": 14.97
     },
     {
       "level_id": 36,
       "competitor_score": 30.61,
       "competitor_smoothed": 46.55,
-      "original_raw_score": 40.95,
-      "original_calibrated": 47.02,
-      "original_smoothed": 51.9,
-      "error": 16.41
+      "original_raw_score": 50.36,
+      "original_calibrated": 54.81,
+      "original_smoothed": 69.61,
+      "error": 24.2
     },
     {
       "level_id": 37,
       "competitor_score": 47.04,
       "competitor_smoothed": 50.87,
-      "original_raw_score": 58.12,
-      "original_calibrated": 61.22,
-      "original_smoothed": 54.56,
-      "error": 14.18
+      "original_raw_score": 86.55,
+      "original_calibrated": 84.73,
+      "original_smoothed": 65.03,
+      "error": 37.69
     },
     {
       "level_id": 38,
       "competitor_score": 67.05,
       "competitor_smoothed": 53.9,
-      "original_raw_score": 49.38,
-      "original_calibrated": 54,
-      "original_smoothed": 54.93,
-      "error": -13.05
+      "original_raw_score": 74.34,
+      "original_calibrated": 74.64,
+      "original_smoothed": 69.71,
+      "error": 7.59
     },
     {
       "level_id": 39,
       "competitor_score": 74.8,
       "competitor_smoothed": 57.91,
-      "original_raw_score": 54.88,
-      "original_calibrated": 58.54,
-      "original_smoothed": 54.55,
-      "error": -16.26
+      "original_raw_score": 58.03,
+      "original_calibrated": 61.15,
+      "original_smoothed": 70.65,
+      "error": -13.65
     },
     {
       "level_id": 40,
       "competitor_score": 50.01,
       "competitor_smoothed": 54.9,
-      "original_raw_score": 49.21,
-      "original_calibrated": 53.86,
-      "original_smoothed": 51.96,
-      "error": 3.85
+      "original_raw_score": 72.64,
+      "original_calibrated": 73.23,
+      "original_smoothed": 66.33,
+      "error": 23.22
     },
     {
       "level_id": 41,
       "competitor_score": 50.66,
       "competitor_smoothed": 50.53,
-      "original_raw_score": 38.69,
-      "original_calibrated": 45.16,
-      "original_smoothed": 53.83,
-      "error": -5.5
+      "original_raw_score": 56.02,
+      "original_calibrated": 59.49,
+      "original_smoothed": 66.39,
+      "error": 8.83
     },
     {
       "level_id": 42,
       "competitor_score": 31.98,
       "competitor_smoothed": 49.25,
-      "original_raw_score": 42.46,
-      "original_calibrated": 48.27,
-      "original_smoothed": 53.06,
-      "error": 16.29
+      "original_raw_score": 60.44,
+      "original_calibrated": 63.14,
+      "original_smoothed": 68.68,
+      "error": 31.16
     },
     {
       "level_id": 43,
       "competitor_score": 45.2,
       "competitor_smoothed": 47.34,
-      "original_raw_score": 60.63,
-      "original_calibrated": 63.3,
-      "original_smoothed": 52.29,
-      "error": 18.1
+      "original_raw_score": 74.7,
+      "original_calibrated": 74.93,
+      "original_smoothed": 67.79,
+      "error": 29.73
     },
     {
       "level_id": 44,
       "competitor_score": 68.4,
       "competitor_smoothed": 46.73,
-      "original_raw_score": 50.28,
-      "original_calibrated": 54.74,
-      "original_smoothed": 53.36,
-      "error": -13.66
+      "original_raw_score": 71.86,
+      "original_calibrated": 72.59,
+      "original_smoothed": 68.66,
+      "error": 4.19
     },
     {
       "level_id": 45,
       "competitor_score": 40.44,
       "competitor_smoothed": 54.07,
-      "original_raw_score": 44.51,
-      "original_calibrated": 49.97,
-      "original_smoothed": 55.8,
-      "error": 9.53
+      "original_raw_score": 67.26,
+      "original_calibrated": 68.78,
+      "original_smoothed": 70.18,
+      "error": 28.34
     },
     {
       "level_id": 46,
       "competitor_score": 47.62,
       "competitor_smoothed": 61.43,
-      "original_raw_score": 45.15,
-      "original_calibrated": 50.5,
-      "original_smoothed": 54.17,
-      "error": 2.88
+      "original_raw_score": 61.33,
+      "original_calibrated": 63.88,
+      "original_smoothed": 70.11,
+      "error": 16.26
     },
     {
       "level_id": 47,
       "competitor_score": 68.67,
       "competitor_smoothed": 62.9,
-      "original_raw_score": 57.22,
-      "original_calibrated": 60.48,
-      "original_smoothed": 57.22,
-      "error": -8.19
+      "original_raw_score": 69.61,
+      "original_calibrated": 70.72,
+      "original_smoothed": 66.46,
+      "error": 2.05
     },
     {
       "level_id": 48,
       "competitor_score": 82.04,
       "competitor_smoothed": 61.81,
-      "original_raw_score": 50.81,
-      "original_calibrated": 55.18,
-      "original_smoothed": 56.67,
-      "error": -26.86
+      "original_raw_score": 74.28,
+      "original_calibrated": 74.59,
+      "original_smoothed": 67.33,
+      "error": -7.45
     },
     {
       "level_id": 49,
       "competitor_score": 75.71,
       "competitor_smoothed": 61.66,
-      "original_raw_score": 68.7,
-      "original_calibrated": 69.97,
-      "original_smoothed": 56.76,
-      "error": -5.74
+      "original_raw_score": 49.79,
+      "original_calibrated": 54.33,
+      "original_smoothed": 69.4,
+      "error": -21.38
     },
     {
       "level_id": 50,
       "competitor_score": 35.02,
       "competitor_smoothed": 55.19,
-      "original_raw_score": 41.19,
-      "original_calibrated": 47.22,
-      "original_smoothed": 57,
-      "error": 12.2
+      "original_raw_score": 72.54,
+      "original_calibrated": 73.15,
+      "original_smoothed": 69.1,
+      "error": 38.13
     },
     {
       "level_id": 51,
       "competitor_score": 46.86,
       "competitor_smoothed": 53.62,
-      "original_raw_score": 45.7,
-      "original_calibrated": 50.95,
-      "original_smoothed": 60.23,
-      "error": 4.09
+      "original_raw_score": 73.83,
+      "original_calibrated": 74.21,
+      "original_smoothed": 68.75,
+      "error": 27.35
     },
     {
       "level_id": 52,
       "competitor_score": 36.34,
       "competitor_smoothed": 51.98,
-      "original_raw_score": 58.65,
-      "original_calibrated": 61.66,
-      "original_smoothed": 59.07,
-      "error": 25.32
+      "original_raw_score": 67.77,
+      "original_calibrated": 69.2,
+      "original_smoothed": 68.99,
+      "error": 32.86
     },
     {
       "level_id": 53,
       "competitor_score": 74.18,
       "competitor_smoothed": 60.42,
-      "original_raw_score": 70.36,
-      "original_calibrated": 71.34,
-      "original_smoothed": 60.99,
-      "error": -2.84
+      "original_raw_score": 72.16,
+      "original_calibrated": 72.83,
+      "original_smoothed": 67.86,
+      "error": -1.35
     },
     {
       "level_id": 54,
       "competitor_score": 67.49,
       "competitor_smoothed": 66.56,
-      "original_raw_score": 61.71,
-      "original_calibrated": 64.19,
-      "original_smoothed": 65.22,
-      "error": -3.3
+      "original_raw_score": 51.28,
+      "original_calibrated": 55.57,
+      "original_smoothed": 63.71,
+      "error": -11.92
     },
     {
       "level_id": 55,
       "competitor_score": 77.24,
       "competitor_smoothed": 73.11,
-      "original_raw_score": 52.76,
-      "original_calibrated": 56.79,
-      "original_smoothed": 64.07,
-      "error": -20.45
+      "original_raw_score": 65.7,
+      "original_calibrated": 67.49,
+      "original_smoothed": 60.93,
+      "error": -9.75
     },
     {
       "level_id": 56,
       "competitor_score": 77.56,
       "competitor_smoothed": 74.2,
-      "original_raw_score": 71.28,
-      "original_calibrated": 72.11,
-      "original_smoothed": 65.1,
-      "error": -5.45
+      "original_raw_score": 48.75,
+      "original_calibrated": 53.47,
+      "original_smoothed": 58.44,
+      "error": -24.09
     },
     {
       "level_id": 57,
       "competitor_score": 69.06,
       "competitor_smoothed": 75.32,
-      "original_raw_score": 51.69,
-      "original_calibrated": 55.91,
-      "original_smoothed": 63.89,
-      "error": -13.15
+      "original_raw_score": 50.94,
+      "original_calibrated": 55.29,
+      "original_smoothed": 59.7,
+      "error": -13.77
     },
     {
       "level_id": 58,
       "competitor_score": 79.67,
       "competitor_smoothed": 67.11,
-      "original_raw_score": 76.61,
-      "original_calibrated": 76.51,
-      "original_smoothed": 63.39,
-      "error": -3.16
+      "original_raw_score": 57.13,
+      "original_calibrated": 60.4,
+      "original_smoothed": 57.98,
+      "error": -19.27
     },
     {
       "level_id": 59,
       "competitor_score": 73.06,
       "competitor_smoothed": 62.96,
-      "original_raw_score": 54.4,
-      "original_calibrated": 58.15,
-      "original_smoothed": 59.97,
-      "error": -14.91
+      "original_raw_score": 58.89,
+      "original_calibrated": 61.86,
+      "original_smoothed": 61.66,
+      "error": -11.2
     },
     {
       "level_id": 60,
       "competitor_score": 36.19,
       "competitor_smoothed": 64.23,
-      "original_raw_score": 49.72,
-      "original_calibrated": 54.28,
-      "original_smoothed": 59.42,
-      "error": 18.09
+      "original_raw_score": 55.28,
+      "original_calibrated": 58.87,
+      "original_smoothed": 64.64,
+      "error": 22.68
     },
     {
       "level_id": 61,
       "competitor_score": 56.84,
       "competitor_smoothed": 61.49,
-      "original_raw_score": 50.63,
-      "original_calibrated": 55.03,
-      "original_smoothed": 57.15,
-      "error": -1.81
+      "original_raw_score": 71.03,
+      "original_calibrated": 71.9,
+      "original_smoothed": 66.47,
+      "error": 15.06
     },
     {
       "level_id": 62,
       "competitor_score": 75.4,
       "competitor_smoothed": 60.89,
-      "original_raw_score": 48.36,
-      "original_calibrated": 53.15,
-      "original_smoothed": 58.35,
-      "error": -22.25
+      "original_raw_score": 68.94,
+      "original_calibrated": 70.17,
+      "original_smoothed": 65.65,
+      "error": -5.23
     },
     {
       "level_id": 63,
       "competitor_score": 65.95,
       "competitor_smoothed": 63.75,
-      "original_raw_score": 62.84,
-      "original_calibrated": 65.13,
-      "original_smoothed": 56.56,
-      "error": -0.82
+      "original_raw_score": 68.21,
+      "original_calibrated": 69.57,
+      "original_smoothed": 67.74,
+      "error": 3.62
     },
     {
       "level_id": 64,
       "competitor_score": 70.08,
       "competitor_smoothed": 67.07,
-      "original_raw_score": 61.68,
-      "original_calibrated": 64.17,
-      "original_smoothed": 59.26,
-      "error": -5.91
+      "original_raw_score": 53.92,
+      "original_calibrated": 57.75,
+      "original_smoothed": 63.89,
+      "error": -12.33
     },
     {
       "level_id": 65,
       "competitor_score": 50.46,
       "competitor_smoothed": 67.82,
-      "original_raw_score": 38.91,
-      "original_calibrated": 45.34,
-      "original_smoothed": 59.77,
-      "error": -5.12
+      "original_raw_score": 67.93,
+      "original_calibrated": 69.34,
+      "original_smoothed": 61.5,
+      "error": 18.88
     },
     {
       "level_id": 66,
       "competitor_score": 73.48,
       "competitor_smoothed": 69.4,
-      "original_raw_score": 66.92,
-      "original_calibrated": 68.5,
-      "original_smoothed": 61.85,
-      "error": -4.98
+      "original_raw_score": 47.71,
+      "original_calibrated": 52.61,
+      "original_smoothed": 60.73,
+      "error": -20.87
     },
     {
       "level_id": 67,
       "competitor_score": 79.15,
       "competitor_smoothed": 70.23,
-      "original_raw_score": 51.46,
-      "original_calibrated": 55.72,
-      "original_smoothed": 61.34,
-      "error": -23.43
+      "original_raw_score": 54.5,
+      "original_calibrated": 58.23,
+      "original_smoothed": 60.3,
+      "error": -20.92
     },
     {
       "level_id": 68,
       "competitor_score": 73.85,
       "competitor_smoothed": 69.22,
-      "original_raw_score": 75.4,
-      "original_calibrated": 75.51,
-      "original_smoothed": 61.34,
-      "error": 1.66
+      "original_raw_score": 63.57,
+      "original_calibrated": 65.73,
+      "original_smoothed": 62.44,
+      "error": -8.12
     },
     {
       "level_id": 69,
       "competitor_score": 74.21,
       "competitor_smoothed": 67.75,
-      "original_raw_score": 58.59,
-      "original_calibrated": 61.61,
-      "original_smoothed": 58.72,
-      "error": -12.6
+      "original_raw_score": 51.33,
+      "original_calibrated": 55.61,
+      "original_smoothed": 63.23,
+      "error": -18.6
     },
     {
       "level_id": 70,
       "competitor_score": 45.4,
       "competitor_smoothed": 67.61,
-      "original_raw_score": 38.93,
-      "original_calibrated": 45.35,
-      "original_smoothed": 61.65,
-      "error": -0.05
+      "original_raw_score": 80.85,
+      "original_calibrated": 80.02,
+      "original_smoothed": 65.05,
+      "error": 34.62
     },
     {
       "level_id": 71,
       "competitor_score": 66.13,
       "competitor_smoothed": 69.62,
-      "original_raw_score": 51.06,
-      "original_calibrated": 55.39,
-      "original_smoothed": 61.86,
-      "error": -10.74
+      "original_raw_score": 52.49,
+      "original_calibrated": 56.57,
+      "original_smoothed": 66.32,
+      "error": -9.56
     },
     {
       "level_id": 72,
       "competitor_score": 78.47,
       "competitor_smoothed": 69.67,
-      "original_raw_score": 69.19,
-      "original_calibrated": 70.38,
-      "original_smoothed": 61.79,
-      "error": -8.09
+      "original_raw_score": 65.47,
+      "original_calibrated": 67.3,
+      "original_smoothed": 66.43,
+      "error": -11.17
     },
     {
       "level_id": 73,
       "competitor_score": 83.91,
       "competitor_smoothed": 76.97,
-      "original_raw_score": 76.7,
-      "original_calibrated": 76.59,
-      "original_smoothed": 64.02,
-      "error": -7.32
+      "original_raw_score": 71.29,
+      "original_calibrated": 72.11,
+      "original_smoothed": 63.83,
+      "error": -11.8
     },
     {
       "level_id": 74,
       "competitor_score": 74.46,
       "competitor_smoothed": 75.61,
-      "original_raw_score": 58.15,
-      "original_calibrated": 61.25,
-      "original_smoothed": 68.61,
-      "error": -13.21
+      "original_raw_score": 51.98,
+      "original_calibrated": 56.15,
+      "original_smoothed": 64.85,
+      "error": -18.31
     },
     {
       "level_id": 75,
       "competitor_score": 81.89,
       "competitor_smoothed": 73.82,
-      "original_raw_score": 52.41,
-      "original_calibrated": 56.5,
-      "original_smoothed": 66.68,
-      "error": -25.39
+      "original_raw_score": 65.12,
+      "original_calibrated": 67.01,
+      "original_smoothed": 66.16,
+      "error": -14.88
     },
     {
       "level_id": 76,
       "competitor_score": 59.3,
       "competitor_smoothed": 68.06,
-      "original_raw_score": 78.84,
-      "original_calibrated": 78.36,
-      "original_smoothed": 67.4,
-      "error": 19.06
+      "original_raw_score": 58.65,
+      "original_calibrated": 61.66,
+      "original_smoothed": 62.37,
+      "error": 2.36
     },
     {
       "level_id": 77,
       "competitor_score": 69.52,
       "competitor_smoothed": 69.16,
-      "original_raw_score": 57.49,
-      "original_calibrated": 60.7,
-      "original_smoothed": 66.32,
-      "error": -8.82
+      "original_raw_score": 73.41,
+      "original_calibrated": 73.87,
+      "original_smoothed": 63.79,
+      "error": 4.35
     },
     {
       "level_id": 78,
       "competitor_score": 55.14,
       "competitor_smoothed": 60.98,
-      "original_raw_score": 81.06,
-      "original_calibrated": 80.19,
-      "original_smoothed": 67.93,
-      "error": 25.05
+      "original_raw_score": 48.35,
+      "original_calibrated": 53.14,
+      "original_smoothed": 65.87,
+      "error": -2
     },
     {
       "level_id": 79,
       "competitor_score": 79.93,
       "competitor_smoothed": 56.12,
-      "original_raw_score": 51.63,
-      "original_calibrated": 55.86,
-      "original_smoothed": 64.54,
-      "error": -24.07
+      "original_raw_score": 60.59,
+      "original_calibrated": 63.27,
+      "original_smoothed": 66.19,
+      "error": -16.66
     },
     {
       "level_id": 80,
       "competitor_score": 41.01,
       "competitor_smoothed": 59.05,
-      "original_raw_score": 62.14,
-      "original_calibrated": 64.55,
-      "original_smoothed": 65.11,
-      "error": 23.54
+      "original_raw_score": 77.7,
+      "original_calibrated": 77.41,
+      "original_smoothed": 63.3,
+      "error": 36.4
     },
     {
       "level_id": 81,
       "competitor_score": 34.99,
       "competitor_smoothed": 63.8,
-      "original_raw_score": 58.31,
-      "original_calibrated": 61.38,
-      "original_smoothed": 63.95,
-      "error": 26.39
+      "original_raw_score": 60.56,
+      "original_calibrated": 63.24,
+      "original_smoothed": 65.22,
+      "error": 28.25
     },
     {
       "level_id": 82,
       "competitor_score": 84.19,
       "competitor_smoothed": 63.9,
-      "original_raw_score": 60.95,
-      "original_calibrated": 63.56,
-      "original_smoothed": 66.73,
-      "error": -20.63
+      "original_raw_score": 55.94,
+      "original_calibrated": 59.42,
+      "original_smoothed": 64.39,
+      "error": -24.77
     },
     {
       "level_id": 83,
       "competitor_score": 78.89,
       "competitor_smoothed": 66.88,
-      "original_raw_score": 74.08,
-      "original_calibrated": 74.42,
-      "original_smoothed": 66.57,
-      "error": -4.47
+      "original_raw_score": 60,
+      "original_calibrated": 62.78,
+      "original_smoothed": 63.62,
+      "error": -16.11
     },
     {
       "level_id": 84,
       "competitor_score": 80.44,
       "competitor_smoothed": 70.26,
-      "original_raw_score": 68.4,
-      "original_calibrated": 69.72,
-      "original_smoothed": 70.23,
-      "error": -10.72
+      "original_raw_score": 55.52,
+      "original_calibrated": 59.07,
+      "original_smoothed": 66.52,
+      "error": -21.37
     },
     {
       "level_id": 85,
       "competitor_score": 55.88,
       "competitor_smoothed": 70.17,
-      "original_raw_score": 61.17,
-      "original_calibrated": 63.75,
-      "original_smoothed": 70.06,
-      "error": 7.87
+      "original_raw_score": 73.1,
+      "original_calibrated": 73.61,
+      "original_smoothed": 66.61,
+      "error": 17.73
     },
     {
       "level_id": 86,
       "competitor_score": 51.92,
       "competitor_smoothed": 68.31,
-      "original_raw_score": 80.47,
-      "original_calibrated": 79.71,
-      "original_smoothed": 71.69,
-      "error": 27.79
+      "original_raw_score": 78.06,
+      "original_calibrated": 77.71,
+      "original_smoothed": 65.81,
+      "error": 25.79
     },
     {
       "level_id": 87,
       "competitor_score": 83.71,
       "competitor_smoothed": 70.3,
-      "original_raw_score": 59.94,
-      "original_calibrated": 62.73,
-      "original_smoothed": 69.12,
-      "error": -20.98
+      "original_raw_score": 56.51,
+      "original_calibrated": 59.89,
+      "original_smoothed": 65.57,
+      "error": -23.82
     },
     {
       "level_id": 88,
       "competitor_score": 69.58,
       "competitor_smoothed": 68.31,
-      "original_raw_score": 83.89,
-      "original_calibrated": 82.53,
-      "original_smoothed": 67.89,
-      "error": 12.95
+      "original_raw_score": 55.15,
+      "original_calibrated": 58.77,
+      "original_smoothed": 62.42,
+      "error": -10.81
     },
     {
       "level_id": 89,
       "competitor_score": 90.41,
       "competitor_smoothed": 64.71,
-      "original_raw_score": 52.85,
-      "original_calibrated": 56.87,
-      "original_smoothed": 64.82,
-      "error": -33.54
+      "original_raw_score": 54.05,
+      "original_calibrated": 57.86,
+      "original_smoothed": 60.32,
+      "error": -32.55
     },
     {
       "level_id": 90,
       "competitor_score": 45.92,
       "competitor_smoothed": 64.16,
-      "original_raw_score": 53.73,
-      "original_calibrated": 57.59,
-      "original_smoothed": 67.08,
-      "error": 11.67
+      "original_raw_score": 54.05,
+      "original_calibrated": 57.86,
+      "original_smoothed": 60.73,
+      "error": 11.94
     },
     {
       "level_id": 91,
       "competitor_score": 33.95,
       "competitor_smoothed": 66.65,
-      "original_raw_score": 61.93,
-      "original_calibrated": 64.37,
-      "original_smoothed": 65.16,
-      "error": 30.42
+      "original_raw_score": 65.38,
+      "original_calibrated": 67.23,
+      "original_smoothed": 61,
+      "error": 33.28
     },
     {
       "level_id": 92,
       "competitor_score": 80.92,
       "competitor_smoothed": 65.29,
-      "original_raw_score": 73.63,
-      "original_calibrated": 74.05,
-      "original_smoothed": 67.98,
-      "error": -6.87
+      "original_raw_score": 58.97,
+      "original_calibrated": 61.93,
+      "original_smoothed": 64.87,
+      "error": -18.99
     },
     {
       "level_id": 93,
       "competitor_score": 82.06,
       "competitor_smoothed": 68.99,
-      "original_raw_score": 72.26,
-      "original_calibrated": 72.92,
-      "original_smoothed": 70.31,
-      "error": -9.14
+      "original_raw_score": 56.77,
+      "original_calibrated": 60.11,
+      "original_smoothed": 65.64,
+      "error": -21.95
     },
     {
       "level_id": 94,
       "competitor_score": 83.59,
       "competitor_smoothed": 77.66,
-      "original_raw_score": 69.92,
-      "original_calibrated": 70.98,
-      "original_smoothed": 73.69,
-      "error": -12.61
+      "original_raw_score": 77.48,
+      "original_calibrated": 77.23,
+      "original_smoothed": 64.66,
+      "error": -6.36
     },
     {
       "level_id": 95,
       "competitor_score": 64.41,
       "competitor_smoothed": 78.88,
-      "original_raw_score": 67.82,
-      "original_calibrated": 69.24,
-      "original_smoothed": 72.25,
-      "error": 4.83
+      "original_raw_score": 58.69,
+      "original_calibrated": 61.69,
+      "original_smoothed": 64.16,
+      "error": -2.72
     },
     {
       "level_id": 96,
       "competitor_score": 77.3,
       "competitor_smoothed": 74.41,
-      "original_raw_score": 82.33,
-      "original_calibrated": 81.24,
-      "original_smoothed": 74.23,
-      "error": 3.94
+      "original_raw_score": 59.44,
+      "original_calibrated": 62.31,
+      "original_smoothed": 63.71,
+      "error": -14.99
     },
     {
       "level_id": 97,
       "competitor_score": 87.04,
       "competitor_smoothed": 75.66,
-      "original_raw_score": 64.95,
-      "original_calibrated": 66.87,
-      "original_smoothed": 73.56,
-      "error": -20.17
+      "original_raw_score": 55.96,
+      "original_calibrated": 59.44,
+      "original_smoothed": 59.81,
+      "error": -27.6
     },
     {
       "level_id": 98,
       "competitor_score": 59.72,
       "competitor_smoothed": 71.15,
-      "original_raw_score": 84.21,
-      "original_calibrated": 82.8,
-      "original_smoothed": 72.98,
-      "error": 23.08
+      "original_raw_score": 54.09,
+      "original_calibrated": 57.89,
+      "original_smoothed": 63.6,
+      "error": -1.83
     },
     {
       "level_id": 99,
       "competitor_score": 89.83,
       "competitor_smoothed": 69.61,
-      "original_raw_score": 65.88,
-      "original_calibrated": 67.64,
-      "original_smoothed": 70.91,
-      "error": -22.19
+      "original_raw_score": 53.87,
+      "original_calibrated": 57.71,
+      "original_smoothed": 63.92,
+      "error": -32.12
     },
     {
       "level_id": 100,
       "competitor_score": 41.85,
       "competitor_smoothed": 63.8,
-      "original_raw_score": 64.29,
-      "original_calibrated": 66.33,
-      "original_smoothed": 72.25,
-      "error": 24.48
+      "original_raw_score": 81.61,
+      "original_calibrated": 80.65,
+      "original_smoothed": 65.42,
+      "error": 38.8
     }
   ]
 }

@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { LEVELS } from "../src/core/levels";
 import type { BlockColor, LevelSpec } from "../src/core/types";
 
+const VIDEO_PARITY_LEVELS_1_TO_100 = LEVELS.slice(0, 100);
+
 const clearLoad = (level: LevelSpec): number => level.blocks
   .reduce((sum, block) => sum + (block.layers?.length ?? 1), 0);
 
@@ -63,6 +65,7 @@ const strategyProfile = (level: LevelSpec): string => JSON.stringify({
   frozenBlocks: level.blocks.map((block) => block.frozen ?? 0).filter(Boolean).sort((a, b) => a - b),
   frozenGates: level.gates.map((gate) => gate.frozen ?? 0).filter(Boolean).sort((a, b) => a - b),
   counters: (level.shutters ?? []).map((shutter) => [shutter.skin ?? "shutter", shutter.count]).sort(),
+  generators: (level.generators ?? []).map((generator) => generator.queueBlockIds.length).sort((a, b) => a - b),
   elevators: level.elevators?.length ?? 0,
   conveyors: level.conveyors?.length ?? 0,
   stars: level.blocks.filter((block) => block.star).length,
@@ -93,15 +96,15 @@ const openingLayoutMetrics = (level: LevelSpec): { active: number; density: numb
 describe("strategy-depth gates", () => {
   it("grows real clear workload through the ten chapters", () => {
     const medians = Array.from({ length: 10 }, (_, chapter) => {
-      const loads = LEVELS.slice(chapter * 10, chapter * 10 + 10).map(clearLoad).sort((a, b) => a - b);
+      const loads = VIDEO_PARITY_LEVELS_1_TO_100.slice(chapter * 10, chapter * 10 + 10).map(clearLoad).sort((a, b) => a - b);
       return (loads[4] + loads[5]) / 2;
     });
-    expect(medians).toEqual([9.5, 9, 9, 10, 11, 13.5, 13, 15, 15.5, 19]);
+    expect(medians).toEqual([17, 17, 26.5, 19.5, 30.5, 32, 34, 36, 38, 40]);
   });
 
   it("keeps every authored color layer geometrically connected to a compatible exit", () => {
     const violations: string[] = [];
-    for (const level of LEVELS) {
+    for (const level of VIDEO_PARITY_LEVELS_1_TO_100) {
       for (const block of level.blocks) {
         const reachable = geometricallyReachableGateColors(level, block);
         for (const color of block.layers ?? [block.color]) {
@@ -115,14 +118,14 @@ describe("strategy-depth gates", () => {
 
   it("does not let later chapters collapse into one repeated dependency profile", () => {
     const uniqueProfiles = Array.from({ length: 10 }, (_, chapter) => (
-      new Set(LEVELS.slice(chapter * 10, chapter * 10 + 10).map(strategyProfile)).size
+      new Set(VIDEO_PARITY_LEVELS_1_TO_100.slice(chapter * 10, chapter * 10 + 10).map(strategyProfile)).size
     ));
     expect(uniqueProfiles.slice(2).every((count) => count >= 6)).toBe(true);
     expect(uniqueProfiles.slice(5).every((count) => count >= 8)).toBe(true);
   });
 
   it("keeps late super levels physically occupied and interacting at the opening", () => {
-    for (const level of LEVELS.filter((candidate) => candidate.id >= 51 && candidate.difficulty === "super")) {
+    for (const level of VIDEO_PARITY_LEVELS_1_TO_100.filter((candidate) => candidate.id >= 51 && candidate.difficulty === "super")) {
       const metrics = openingLayoutMetrics(level);
       expect(metrics.density, `Lv${level.id} opening density`).toBeGreaterThanOrEqual(0.17);
       expect(metrics.contacts, `Lv${level.id} touching block pairs`).toBeGreaterThanOrEqual(1);

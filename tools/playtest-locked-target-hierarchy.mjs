@@ -9,7 +9,7 @@ await mkdir(output, { recursive: true });
 
 const save = {
   schemaVersion: 1,
-  currentLevel: 19,
+  currentLevel: 12,
   highestLevel: 100,
   coins: 1000,
   sound: false,
@@ -35,7 +35,7 @@ await page.goto(playtestUrl, { waitUntil: "networkidle" });
 await page.evaluate((value) => localStorage.setItem("color-escape-save-v1", JSON.stringify(value)), save);
 await page.reload({ waitUntil: "networkidle" });
 await page.waitForFunction(() => Boolean(window.__COLOR_ESCAPE__?.getDebugState().art?.ready));
-await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(19, true));
+await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(12, true));
 await page.waitForTimeout(300);
 
 const audit = await page.evaluate(async () => {
@@ -50,18 +50,18 @@ const audit = await page.evaluate(async () => {
     blockVisual: visuals.blockAvailabilityVisual(1),
   };
 });
-if (audit.levelId !== 19 || audit.frozenGates !== 2 || audit.openGates !== 4 || audit.frozenBlocks !== 3) {
+if (audit.levelId !== 12 || audit.frozenGates !== 1 || audit.openGates !== 3 || audit.frozenBlocks !== 1) {
   throw new Error(`Locked-target hierarchy fixture drifted: ${JSON.stringify(audit)}`);
 }
 if (audit.gateVisual.baseAlpha >= audit.blockVisual.baseAlpha || audit.gateVisual.overlayAlpha >= audit.blockVisual.overlayAlpha) {
   throw new Error(`Frozen exits are not visually quieter than frozen blocks: ${JSON.stringify(audit)}`);
 }
-await page.screenshot({ path: resolve(output, "level-019-360x792.png") });
+await page.screenshot({ path: resolve(output, "level-012-360x792.png") });
 await page.setViewportSize({ width: 320, height: 568 });
 await page.waitForTimeout(180);
-await page.screenshot({ path: resolve(output, "level-019-320x568.png") });
+await page.screenshot({ path: resolve(output, "level-012-320x568.png") });
 
 await page.close();
 await browser.close();
 if (errors.length) throw new Error(`Locked-target hierarchy browser errors:\n${errors.join("\n")}`);
-console.log("Lv19 frozen targets are visually de-emphasized while four open exits and all counters remain readable at 360x792 and 320x568.");
+console.log("Lv12 frozen targets are visually de-emphasized while three open exits and all counters remain readable at 360x792 and 320x568.");

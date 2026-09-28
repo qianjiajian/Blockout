@@ -121,7 +121,12 @@ export default defineConfig({
   plugins: [boardEditorSavePlugin()],
   test: {
     // The 100-level validation search is intentionally memory-bound. Running
-    // chapter files sequentially keeps CI and WeChat release checks stable.
+    // chapter files sequentially in one worker thread keeps CI and WeChat
+    // release checks stable. Threads also avoid the 60-second process-RPC
+    // acknowledgement timeout hit by the exact Lv5/Lv7 searches on Windows.
+    pool: "threads",
+    minWorkers: 1,
+    maxWorkers: 1,
     fileParallelism: false,
   },
   build: {

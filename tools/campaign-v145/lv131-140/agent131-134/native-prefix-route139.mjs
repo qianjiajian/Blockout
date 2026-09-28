@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+import {loadSpatialApi,searchSpatial} from '../agent139-140/witness-domain.mjs';
+import {searchNativeStationaryPrefix} from './native-rect-witness139.mjs';
+import {measureRoute} from '../../../remake21to30-quality.mjs';
+import {digest} from '../../../revised-preview-validation-v160.mjs';
+const input=process.argv[2],data=JSON.parse(fs.readFileSync(input)),api=await loadSpatialApi(),level=data.level;
+const prefix=searchNativeStationaryPrefix(level,api,{targetId:data.targetId,goalClears:12,floor:16,maxMilliseconds:Number(process.env.MS??3000),weight:Number(process.env.WEIGHT??8)});
+const tail=prefix.status==='relaxed-prefix-witness'&&prefix.actualPrefixValid?searchSpatial(level,api,{floor:16,maxMilliseconds:8000,maxStates:120000,initialDrags:prefix.drags,diagnosticTrace:true}):null;
+const drags=tail?.status==='witness'?tail.drags:prefix.drags,replay=api.replayRevisedRoute(level,drags),measurement=replay.valid&&replay.complete?measureRoute(level,drags,api):null;
+const file=`deliverables/remake131-140-v146-20260924/agent131-134/native-route139-${Date.now()}.json`;fs.writeFileSync(file,JSON.stringify({input,level,targetId:data.targetId,levelSha256:digest(level),prefix,tail,drags,replay,measurement,formalAdopted:false},null,2));console.log(JSON.stringify({file,prefixStatus:prefix.status,prefixValid:prefix.actualPrefixValid,cost:prefix.cost,clears:prefix.maxClearsSeen,complete:replay.complete,measurement,prefixKeys:Object.keys(prefix)}));

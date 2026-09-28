@@ -1,7 +1,5 @@
 import type { LevelSpec } from "./types";
 
-export const LOCAL_LEADERBOARD_PAGE_SIZE = 5;
-
 export interface ChapterLeaderboardEntry {
   chapter: number;
   stars: number;
@@ -16,14 +14,10 @@ export interface EfficiencyLeaderboardEntry {
   delta: number;
 }
 
-export interface LeaderboardPage<T> {
-  entries: T[];
-  page: number;
-  pageCount: number;
-  totalEntries: number;
-  firstRank: number;
-  canGoBack: boolean;
-  canGoForward: boolean;
+export interface ProgressLeaderboardEntry {
+  level: number;
+  stars: number;
+  moves?: number;
 }
 
 const boundedInteger = (value: unknown, minimum: number, maximum: number): number => {
@@ -69,23 +63,34 @@ export const buildEfficiencyLeaderboard = (
   .filter((entry) => entry.level >= 1 && entry.level <= levels.length && entry.moves > 0)
   .sort((a, b) => a.delta - b.delta || a.moves - b.moves || a.level - b.level);
 
-export const paginateLeaderboard = <T>(
-  entries: readonly T[],
-  requestedPage: number,
-  pageSize = LOCAL_LEADERBOARD_PAGE_SIZE,
-): LeaderboardPage<T> => {
-  const safePageSize = Math.max(1, Math.floor(pageSize));
-  const totalEntries = entries.length;
-  const pageCount = Math.max(1, Math.ceil(totalEntries / safePageSize));
-  const page = boundedInteger(requestedPage, 0, pageCount - 1);
-  const firstRank = page * safePageSize + 1;
-  return {
-    entries: entries.slice(page * safePageSize, (page + 1) * safePageSize),
-    page,
-    pageCount,
-    totalEntries,
-    firstRank,
-    canGoBack: page > 0,
-    canGoForward: page < pageCount - 1,
-  };
+/**
+ * Builds a truthful newest-first history from the local save. Reaching level N
+ * proves that 1..N-1 were cleared even if an older save is missing reward
+ * ledger entries, while level N itself is included only after its clear is
+ * recorded.
+ */
+export const buildProgressLeaderboard = (
+  levelCount: number,
+  highestLevel: number,
+  bestStars: Readonly<Record<string, number>>,
+  bestMoves: Readonly<Record<string, number>>,
+  rewardedLevels: readonly number[],
+): ProgressLeaderboardEntry[] => {
+  const safeLevelCount = Math.max(0, Math.floor(levelCount));
+  const safeHighestLevel = boundedInteger(highestLevel, 1, Math.max(1, safeLevelCount));
+  const cleared = new Set<number>();
+  for (let level = 1; level < safeHighestLevel; level += 1) cleared.add(level);
+  rewardedLevels.forEach((level) => {
+    if (Number.isInteger(level) && level >= 1 && level <= safeLevelCount) cleared.add(level);
+  });
+  return [...cleared]
+    .sort((a, b) => b - a)
+    .map((level) => {
+      const moves = Math.floor(Number(bestMoves[String(level)]) || 0);
+      return {
+        level,
+        stars: boundedInteger(bestStars[String(level)], 0, 3),
+        ...(moves > 0 ? { moves } : {}),
+      };
+    });
 };

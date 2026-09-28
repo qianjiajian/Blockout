@@ -6,9 +6,9 @@ import { chromium } from "playwright";
 const output = fileURLToPath(new URL("../playtest-results/gate-readiness-hierarchy/", import.meta.url));
 const playtestUrl = process.env.PLAYTEST_URL ?? "http://127.0.0.1:5173/";
 const checkpoints = [
-  { levelId: 30, afterDrags: 11, expected: { actionable: 1, latent: 5, frozen: 1, remainingLayers: 2 } },
-  { levelId: 35, afterDrags: 9, expected: { actionable: 1, latent: 3, frozen: 0, remainingLayers: 2 } },
-  { levelId: 40, afterDrags: 13, expected: { actionable: 1, latent: 5, frozen: 0, remainingLayers: 3 } },
+  { levelId: 12, afterDrags: 0, expected: { actionable: 3, latent: 0, frozen: 1, remainingLayers: 12 } },
+  { levelId: 19, afterDrags: 0, expected: { actionable: 5, latent: 3, frozen: 0, remainingLayers: 27 } },
+  { levelId: 98, afterDrags: 0, expected: { actionable: 3, latent: 4, frozen: 0, remainingLayers: 41 } },
 ];
 await mkdir(output, { recursive: true });
 
@@ -71,6 +71,7 @@ for (const checkpoint of checkpoints) {
   await page.evaluate((id) => window.__COLOR_ESCAPE__.loadLevel(id, true), checkpoint.levelId);
   await page.waitForTimeout(220);
   const route = await page.evaluate(async ({ levelId, afterDrags }) => {
+    if (afterDrags === 0) return [];
     const [{ LEVELS }, { solveLevelForValidation }] = await Promise.all([
       import("/src/core/levels.ts"),
       import("/src/core/levelSolver.ts"),
@@ -111,4 +112,4 @@ for (const checkpoint of checkpoints) {
 await page.close();
 await browser.close();
 if (errors.length) throw new Error(`Gate readiness browser errors:\n${errors.join("\n")}`);
-console.log("Lv30/35/40 tail states preserve 1–2 actionable exits, de-emphasize 3–5 latent exits, and remain readable at 360x792 and 320x568.");
+console.log("Lv12/19/98 opening states preserve frozen/actionable/latent exit hierarchy and remain readable at 360x792 and 320x568.");

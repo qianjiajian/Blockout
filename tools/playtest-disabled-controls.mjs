@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import { resolve } from "node:path";
 import { chromium } from "playwright";
 
-const output = fileURLToPath(new URL("../playtest-results/", import.meta.url));
+const output = fileURLToPath(new URL(`../playtest-results/playtest-disabled-controls-time-freeze-${new Date().toISOString().replaceAll(":", "-")}/`, import.meta.url));
 const shot = (name) => resolve(output, name);
 const playtestUrl = process.env.PLAYTEST_URL ?? "http://127.0.0.1:5173/";
 await mkdir(output, { recursive: true });
@@ -57,7 +57,7 @@ if (state.hudFeedback?.text !== "暂无可撤销操作" || state.puzzle.moves !=
 }
 await page.screenshot({ path: shot("round22-empty-undo-feedback.png") });
 
-for (const [x, kind, text] of [[132, "time", "加时已用完"], [248, "rocket", "火箭已用完"], [364, "pulse", "脉冲已用完"]]) {
+for (const [x, kind, text] of [[132, "time", "冻结已用完"], [248, "rocket", "火箭已用完"], [364, "pulse", "脉冲已用完"]]) {
   await page.mouse.click(x, 990);
   state = await debug();
   if (state.boosterFeedback?.text !== text || state.economy.boosters[kind] !== 0 || state.boosterTarget || state.undoActions.length !== 0) {
@@ -73,13 +73,13 @@ if (!state.controls.boosters.time || state.controls.undoEnabled) {
 }
 await page.mouse.click(132, 990);
 state = await debug();
-if (state.economy.boosters.time !== 0 || state.controls.boosters.time || !state.controls.undoEnabled || state.puzzle.remainingSeconds !== 210) {
+if (state.economy.boosters.time !== 0 || state.controls.boosters.time || !state.controls.undoEnabled || (state.puzzle.remainingSeconds !== 180 || state.puzzle.timeFreezeSeconds <= 9)) {
   throw new Error("Disabled-controls E2E: last-item depletion did not update controls atomically");
 }
 await page.screenshot({ path: shot("round22-last-item-depleted.png") });
 await page.mouse.click(54, 140);
 state = await debug();
-if (state.economy.boosters.time !== 1 || !state.controls.boosters.time || state.controls.undoEnabled || state.puzzle.remainingSeconds !== 180) {
+if (state.economy.boosters.time !== 1 || !state.controls.boosters.time || state.controls.undoEnabled || (state.puzzle.remainingSeconds !== 180 || state.puzzle.timeFreezeSeconds !== 0)) {
   throw new Error("Disabled-controls E2E: undo did not restore item affordance atomically");
 }
 await page.screenshot({ path: shot("round22-item-restored-by-undo.png") });

@@ -57,6 +57,61 @@ const clickTarget = async (page, name) => {
   await clickLogical(page, rect.x + rect.width / 2, rect.y + rect.height / 2);
 };
 
+const openMechanismGuide = async (page, label) => {
+  await clickTarget(page, "navigation.4");
+  await waitFor(page, (state) => state.screen === "records" && !state.navigation.transition
+    && state.collectionAlbum.art.ready && state.collectionAlbum.art.artworkReady,
+  `${label} collection album`);
+  await clickTarget(page, "collectionAlbumGuide");
+  return waitFor(page, (state) => state.screen === "mechanismGuide" && state.collection.guideOpen
+    && state.art.formalPage.loaded === "records" && !state.art.formalPage.error,
+  `${label} mechanism guide`);
+};
+
+const closeMechanismGuide = async (page, label) => {
+  await clickTarget(page, "mechanismGuideClose");
+  return waitFor(page, (state) => state.screen === "records" && !state.collection.guideOpen
+    && state.collectionAlbum.art.ready, `${label} guide closed to album`);
+};
+
+const swipeCollection = async (page, toward) => {
+  const state = await debug(page);
+  const rect = state.collection.layout.listViewportRect;
+  const fromRatio = toward === "later" ? 0.78 : 0.22;
+  const toRatio = toward === "later" ? 0.22 : 0.78;
+  const start = await mapLogical(page, rect.x + rect.width / 2, rect.y + rect.height * fromRatio);
+  const end = await mapLogical(page, rect.x + rect.width / 2, rect.y + rect.height * toRatio);
+  await page.mouse.move(start.x, start.y);
+  await page.mouse.down();
+  await page.mouse.move(end.x, end.y, { steps: 7 });
+  await page.mouse.up();
+  await page.waitForTimeout(50);
+};
+
+const revealCollectionItem = async (page, id) => {
+  for (let attempt = 0; attempt < 12; attempt += 1) {
+    const state = await debug(page);
+    const targetName = `collection.${id}`;
+    if (state.interactionTargets.targets[targetName]) return targetName;
+    const targetIndex = state.collection.orderedItemIds.indexOf(id);
+    const visibleIndices = Object.keys(state.interactionTargets.targets)
+      .filter((name) => name.startsWith("collection."))
+      .map((name) => state.collection.orderedItemIds.indexOf(name.slice("collection.".length)))
+      .filter((index) => index >= 0);
+    if (targetIndex < 0 || visibleIndices.length === 0) throw new Error(`Meta discovery: cannot locate Collection item ${id}`);
+    const toward = targetIndex > Math.max(...visibleIndices) ? "later" : "earlier";
+    const before = state.collection.scrollOffset;
+    await swipeCollection(page, toward);
+    const after = await debug(page);
+    if (Math.abs(after.collection.scrollOffset - before) < 0.01) {
+      throw new Error(`Meta discovery: Collection item ${id} is unreachable at the ${toward} boundary`);
+    }
+  }
+  throw new Error(`Meta discovery: Collection item ${id} was not revealed`);
+};
+
+const clickCollectionItem = async (page, id) => clickTarget(page, await revealCollectionItem(page, id));
+
 const solveLevel = (page, levelId) => page.evaluate(async (id) => {
   const [{ getLevel }, { solveLevelForValidation }] = await Promise.all([
     import("/src/core/levels.ts"),
@@ -69,7 +124,13 @@ const performDrag = async (page, drag) => {
   const state = await debug(page);
   const block = state.puzzle.blocks.find((candidate) => candidate.id === drag.blockId);
   if (!block) throw new Error(`Meta discovery: missing route block ${drag.blockId} in Lv${state.level.id}`);
-  const [anchorX, anchorY] = block.shape[0];
+  const directExit = drag.path.length === 0 && Boolean(drag.exitSide);
+  const [anchorX, anchorY] = directExit
+    ? [
+      block.shape.reduce((sum, [x]) => sum + x, 0) / block.shape.length,
+      block.shape.reduce((sum, [, y]) => sum + y, 0) / block.shape.length,
+    ]
+    : block.shape[0];
   const logicalPoint = (x, y) => ({
     x: state.board.innerX + (x + anchorX + 0.5) * state.board.cell,
     y: state.board.innerY + (y + anchorY + 0.5) * state.board.cell,
@@ -112,19 +173,59 @@ const readStoredSaveBypassingFault = (page) => page.evaluate((key) => {
   return JSON.parse(raw);
 }, SAVE_KEY);
 
-const expectDiscovery = (state, collection, daily, context) => {
-  if (state.discovery.collection.pending !== collection || state.discovery.daily.pending !== daily) {
-    throw new Error(`Meta discovery: ${context} expected ${collection}/${daily}, got ${JSON.stringify(state.discovery)}`);
+const expectDiscovery = (state, collection, context, expectedPendingItemIds) => {
+  if (state.discovery.collection.pending !== collection) {
+    throw new Error(`Meta discovery: ${context} expected Collection pending=${collection}, got ${JSON.stringify(state.discovery)}`);
+  }
+  const collectionTab = state.navigation.tabs.find((tab) => tab.screen === "records");
+  const albumOrGuidePending = collection || state.collectionAlbum.notificationVisible;
+  if (!collectionTab || collectionTab.notificationVisible !== albumOrGuidePending) {
+    throw new Error(`Meta discovery: ${context} Collection navigation notification drifted`);
+  }
+  const navigationIsVisible = Boolean(state.navigation.selected);
+  if (navigationIsVisible && albumOrGuidePending !== Boolean(collectionTab.notificationRect)) {
+    throw new Error(`Meta discovery: ${context} Collection navigation notification rect drifted`);
+  }
+  if (expectedPendingItemIds) {
+    const actual = [...state.discovery.collection.pendingItemIds].sort();
+    const expected = [...expectedPendingItemIds].sort();
+    if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+      throw new Error(`Meta discovery: ${context} expected pending items ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
+    }
   }
   if (!state.discovery.artReady) throw new Error(`Meta discovery: ${context} badge art is not ready`);
 };
 
-const expectBadgeInsideEntry = (badge, entry, context) => {
+const expectBadgeInsideEntry = (badge, entry, context, scale = 1) => {
+  const expectedLogicalSize = 39 * 496 / 720 * scale;
+  const epsilon = 0.01;
+  if (Math.abs(badge.width - expectedLogicalSize) > epsilon
+    || Math.abs(badge.height - expectedLogicalSize) > epsilon) {
+    throw new Error(
+      `Meta discovery: ${context} badge must render at the supplied 39x39 size, got ${badge.width}x${badge.height}`,
+    );
+  }
   const centerX = badge.x + badge.width / 2;
   const centerY = badge.y + badge.height / 2;
   if (centerX < entry.x || centerX > entry.x + entry.width || centerY < entry.y || centerY > entry.y + entry.height) {
     throw new Error(`Meta discovery: ${context} badge center escaped its existing entry hit area`);
   }
+};
+
+const expectCollectionItemNotification = async (page, id, visible, context) => {
+  await revealCollectionItem(page, id);
+  const state = await debug(page);
+  const entry = state.collection.visibleEntries.find((candidate) => candidate.id === id);
+  if (!entry || entry.notificationVisible !== visible) {
+    throw new Error(`Meta discovery: ${context} expected ${id} notificationVisible=${visible}`);
+  }
+  if (visible) {
+    if (!entry.notificationRect) throw new Error(`Meta discovery: ${context} ${id} notification rect is missing`);
+    expectBadgeInsideEntry(entry.notificationRect, entry.rect, `${context} ${id}`, state.collection.modal.scale);
+  } else if (entry.notificationRect) {
+    throw new Error(`Meta discovery: ${context} ${id} retained a notification rect`);
+  }
+  return state;
 };
 
 const makeSeedSave = (overrides = {}) => ({
@@ -135,15 +236,13 @@ const makeSeedSave = (overrides = {}) => ({
   sound: false,
   haptic: false,
   reducedMotion: true,
-  featureSeen: ["basics", "ice-door", "ice-block", "layer", "shutter"],
+  featureSeen: ["basics", "ice-door", "ice-block", "generator", "elevator", "conveyor", "star"],
   boosterUnlockSeen: ["time", "rocket", "pulse"],
   boosters: { time: 3, rocket: 3, pulse: 3 },
   bestStars: {},
   bestMoves: {},
   rewardedLevels: [],
-  dailyStreak: 0,
-  lastDailyCompletedDay: "",
-  metaDiscovery: { collectionViewedThroughLevel: 1, dailyUnlockSeen: false },
+  metaDiscovery: { collectionViewedThroughLevel: 1 },
   ...overrides,
 });
 
@@ -234,24 +333,51 @@ const runCollectionFaultScenario = async (mode) => {
     bestMoves: { "1": 2, "2": 10, "3": 12 },
   }));
   let state = await debug(page);
-  expectDiscovery(state, true, false, `${label} baseline`);
+  expectDiscovery(state, true, `${label} baseline`, ["irregular-block"]);
   await installStorageFaultPlan(page, mode);
-  await clickTarget(page, "navigation.4");
-  state = await waitFor(page, (candidate) => candidate.screen === "records" && !candidate.navigation.transition, `${label} navigation`);
+  const retriedUnknown = mode === "unknown" || mode === "write-then-unknown"
+    || mode === "unresolved" || mode === "write-then-unresolved";
+  const expectedWrites = retriedUnknown ? 2 : 1;
+  state = await openMechanismGuide(page, label);
+  expectDiscovery(state, true, `${label} navigation does not acknowledge`, ["irregular-block"]);
+  let probe = await storageFaultProbe(page);
+  if (probe.writes.length !== 0 || probe.reads.length !== 0) {
+    throw new Error(`Meta discovery: ${label} entering Collection touched acknowledgement storage`);
+  }
+  await expectCollectionItemNotification(page, "irregular-block", true, `${label} before card click`);
+  await page.screenshot({ path: resolve(output, `${label}-01-pending.png`) });
+  await clickCollectionItem(page, "irregular-block");
+  await page.waitForFunction(
+    (count) => globalThis.__metaDiscoveryStorageFault?.writes?.length >= count,
+    expectedWrites,
+    { timeout: 15_000 },
+  );
+  state = await debug(page);
   const runtimeAcknowledged = mode !== "rejected";
   const durableAcknowledged = runtimeAcknowledged && mode !== "unresolved";
-  expectDiscovery(state, !runtimeAcknowledged, false, `${label} runtime result`);
+  expectDiscovery(
+    state,
+    !runtimeAcknowledged,
+    `${label} runtime result`,
+    runtimeAcknowledged ? [] : ["irregular-block"],
+  );
+  await expectCollectionItemNotification(page, "irregular-block", !runtimeAcknowledged, `${label} runtime card result`);
   let stored = await readStoredSaveBypassingFault(page);
   if (stored.metaDiscovery.collectionViewedThroughLevel !== (durableAcknowledged ? 3 : 1)) {
     throw new Error(`Meta discovery: ${label} persisted the wrong acknowledgement result`);
   }
-  const probe = await storageFaultProbe(page);
-  const retriedUnknown = mode === "unknown" || mode === "write-then-unknown"
-    || mode === "unresolved" || mode === "write-then-unresolved";
-  const expectedWrites = retriedUnknown ? 2 : 1;
+  if (durableAcknowledged
+    && !stored.metaDiscovery.collectionViewedItemIds?.includes("irregular-block")) {
+    throw new Error(`Meta discovery: ${label} did not persist the clicked item id`);
+  }
+  if (!durableAcknowledged && stored.metaDiscovery.collectionViewedItemIds != null) {
+    throw new Error(`Meta discovery: ${label} unexpectedly persisted an explicit item ledger`);
+  }
+  probe = await storageFaultProbe(page);
   const expectedSecondMode = mode === "unresolved" || mode === "write-then-unresolved" ? mode : "open";
   if (probe.writes.length !== expectedWrites
     || probe.writes[0].payload.metaDiscovery.collectionViewedThroughLevel !== 3
+    || !probe.writes[0].payload.metaDiscovery.collectionViewedItemIds?.includes("irregular-block")
     || (expectedWrites === 2 && (probe.writes[1].mode !== expectedSecondMode
       || JSON.stringify(probe.writes[1].payload) !== JSON.stringify(probe.writes[0].payload)))
     || JSON.stringify(probe.reads.map((read) => read.blocked)) !== JSON.stringify(expectedVerificationReads(mode))) {
@@ -260,11 +386,17 @@ const runCollectionFaultScenario = async (mode) => {
   await page.reload({ waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => window.__COLOR_ESCAPE__?.getDebugState().discovery?.artReady === true, undefined, { timeout: 15_000 });
   state = await debug(page);
-  expectDiscovery(state, !durableAcknowledged, false, `${label} reload`);
+  expectDiscovery(
+    state,
+    !durableAcknowledged,
+    `${label} reload`,
+    durableAcknowledged ? [] : ["irregular-block"],
+  );
   stored = await readStoredSave(page);
   if (stored.metaDiscovery.collectionViewedThroughLevel !== (durableAcknowledged ? 3 : 1)) {
     throw new Error(`Meta discovery: ${label} reload changed the durable outcome`);
   }
+  await page.screenshot({ path: resolve(output, `${label}-02-reload.png`) });
   results.push({
     label,
     verificationOutcome: verificationOutcome(mode),
@@ -275,58 +407,69 @@ const runCollectionFaultScenario = async (mode) => {
   await context.close();
 };
 
-const runDailyFaultScenario = async (mode) => {
-  const label = `daily-${mode}`;
+const runMechanismDiscoveryScenario = async ({ label, level, previousLevel, itemIds, expectedUnlocked }) => {
   const { context, page } = await createSeededScenario(label, makeSeedSave({
-    currentLevel: 6,
-    highestLevel: 6,
-    rewardedLevels: [1, 2, 3, 4, 5],
-    bestStars: { "1": 3, "2": 3, "3": 3, "4": 3, "5": 3 },
-    bestMoves: { "1": 2, "2": 10, "3": 12, "4": 11, "5": 12 },
-    metaDiscovery: { collectionViewedThroughLevel: 3, dailyUnlockSeen: false },
+    currentLevel: level,
+    highestLevel: level,
+    rewardedLevels: Array.from({ length: level - 1 }, (_, index) => index + 1),
+    bestStars: Object.fromEntries(Array.from({ length: level - 1 }, (_, index) => [String(index + 1), 3])),
+    bestMoves: Object.fromEntries(Array.from({ length: level - 1 }, (_, index) => [String(index + 1), 20])),
+    metaDiscovery: { collectionViewedThroughLevel: previousLevel },
   }));
   let state = await debug(page);
-  expectDiscovery(state, true, true, `${label} baseline`);
-  await installStorageFaultPlan(page, mode);
-  await clickTarget(page, "homeDaily");
-  state = await waitFor(page, (candidate) => candidate.screen === "playing" && candidate.daily.mode, `${label} daily start`);
-  const committed = mode !== "rejected";
-  expectDiscovery(state, true, !committed, `${label} runtime result`);
-  let stored = await readStoredSaveBypassingFault(page);
-  if (stored.metaDiscovery.dailyUnlockSeen !== committed || !stored.activeRun?.daily) {
-    throw new Error(`Meta discovery: ${label} did not preserve both the acknowledgement outcome and daily journal`);
+  expectDiscovery(state, true, `${label} arrival`, itemIds);
+  if (state.discovery.collection.newestUnseenLevel !== level
+    || state.discovery.state.collectionViewedThroughLevel !== previousLevel) {
+    throw new Error(`Meta discovery: ${label} did not expose the Lv${level} mechanism milestone`);
   }
-  const probe = await storageFaultProbe(page);
-  const retriedUnknown = mode === "unknown" || mode === "write-then-unknown"
-    || mode === "unresolved" || mode === "write-then-unresolved";
-  const expectedWrites = retriedUnknown ? 3 : 2;
-  if (probe.writes.length !== expectedWrites
-    || probe.writes[0].payload.metaDiscovery.dailyUnlockSeen !== true
-    || (retriedUnknown && (probe.writes[0].payload.activeRun != null
-      || probe.writes[1].payload.activeRun != null
-      || JSON.stringify(probe.writes[1].payload) !== JSON.stringify(probe.writes[0].payload)))
-    || probe.writes.at(-1).mode !== "open"
-    || probe.writes.at(-1).payload.metaDiscovery.dailyUnlockSeen !== committed
-    || !probe.writes.at(-1).payload.activeRun?.daily
-    || JSON.stringify(probe.reads.map((read) => read.blocked)) !== JSON.stringify(expectedVerificationReads(mode))) {
-    throw new Error(`Meta discovery: ${label} did not exercise its intended storage boundary`);
+  expectBadgeInsideEntry(
+    state.discovery.collection.badgeRect,
+    state.interactionTargets.targets["navigation.4"].hit,
+    `${label} collection`,
+  );
+
+  state = await openMechanismGuide(page, label);
+  expectDiscovery(state, true, `${label} navigation retains item notifications`, itemIds);
+  if (state.collection.unlocked !== expectedUnlocked) {
+    throw new Error(`Meta discovery: ${label} exposed ${state.collection.unlocked} entries instead of ${expectedUnlocked}`);
+  }
+  for (const id of itemIds) await expectCollectionItemNotification(page, id, true, `${label} initial`);
+  await page.screenshot({ path: resolve(output, `${label}-01-pending.png`) });
+  for (const [index, id] of itemIds.entries()) {
+    await clickCollectionItem(page, id);
+    state = await debug(page);
+    if (state.collection.selectedId !== id || !state.collection.selectedUnlocked || !state.collection.selectedDetail) {
+      throw new Error(`Meta discovery: ${label} did not expose the usable ${id} guide`);
+    }
+    const remainingIds = itemIds.slice(index + 1);
+    expectDiscovery(state, remainingIds.length > 0, `${label} after selecting ${id}`, remainingIds);
+    await expectCollectionItemNotification(page, id, false, `${label} after selecting ${id}`);
+    for (const remainingId of remainingIds) {
+      await expectCollectionItemNotification(page, remainingId, true, `${label} after selecting ${id}`);
+    }
+    await page.screenshot({ path: resolve(output, `${label}-${String(index + 2).padStart(2, "0")}-${id}-cleared.png`) });
+  }
+  const stored = await readStoredSave(page);
+  if (stored.metaDiscovery?.collectionViewedThroughLevel !== level) {
+    throw new Error(`Meta discovery: ${label} acknowledgement was not persisted through Lv${level}`);
+  }
+  if (!itemIds.every((id) => stored.metaDiscovery.collectionViewedItemIds?.includes(id))) {
+    throw new Error(`Meta discovery: ${label} did not persist every explicitly viewed item`);
   }
   await page.reload({ waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => window.__COLOR_ESCAPE__?.getDebugState().discovery?.artReady === true, undefined, { timeout: 15_000 });
   state = await debug(page);
-  if (state.screen !== "home" || state.level.id !== 6 || state.daily.mode || state.activeRun) {
-    throw new Error(`Meta discovery: ${label} did not recover the interrupted daily run safely`);
-  }
-  expectDiscovery(state, true, !committed, `${label} reload`);
-  stored = await readStoredSave(page);
-  if (stored.metaDiscovery.dailyUnlockSeen !== committed || stored.activeRun) {
-    throw new Error(`Meta discovery: ${label} reload changed the durable outcome`);
+  expectDiscovery(state, false, `${label} reload`, []);
+  const reloaded = await readStoredSave(page);
+  if (!itemIds.every((id) => reloaded.metaDiscovery.collectionViewedItemIds?.includes(id))) {
+    throw new Error(`Meta discovery: ${label} reload lost an explicitly viewed item`);
   }
   results.push({
     label,
-    verificationOutcome: verificationOutcome(mode),
-    durableAcknowledged: committed,
-    pendingAfterReload: state.discovery.daily.pending,
+    newestUnseenLevel: level,
+    acknowledgedThroughLevel: reloaded.metaDiscovery.collectionViewedThroughLevel,
+    acknowledgedItemIds: itemIds,
+    unlockedEntries: state.collection.unlocked,
   });
   await context.close();
 };
@@ -347,25 +490,33 @@ const runScenario = async (label, viewport) => {
   let stored;
   if (state.screen !== "home" || state.level.id !== 1 || state.progression.highestLevel !== 1
     || state.economy.rewardedLevels.length !== 0 || state.activeRun
-    || JSON.stringify(state.discovery.state) !== JSON.stringify({ collectionViewedThroughLevel: 1, dailyUnlockSeen: false })) {
+    || state.discovery.state.collectionViewedThroughLevel !== 1) {
     throw new Error(`Meta discovery: ${label} did not start from a genuine fresh save`);
   }
-  expectDiscovery(state, false, false, `${label} fresh home`);
+  expectDiscovery(state, false, `${label} fresh home`, []);
   const featureIntroMilestones = await page.evaluate(async () => {
     const { getLevel } = await import("/src/core/levels.ts");
-    return [6, 7, 8].map((levelId) => [levelId, getLevel(levelId).featureIntro?.kind ?? null]);
+    return [6, 10, 34, 35, 50, 70, 91].map((levelId) => [levelId, getLevel(levelId).featureIntro?.kind ?? null]);
   });
   if (JSON.stringify(featureIntroMilestones) !== JSON.stringify([
-    [6, "ice-block"],
-    [7, "ice-door"],
-    [8, "layer"],
+    [6, "ice-door"],
+    [10, "ice-block"],
+    [15, "layer"],
+    [20, "shutter"],
+    [35, "generator"],
+    [50, "arrow-block"],
+    [59, "key-lock"],
+    [65, "lift"],
+    [70, "timed-generator"],
+    [73, "staged-frame"],
+    [100, "star"],
   ])) {
-    throw new Error(`Meta discovery: ${label} Lv6/Lv7/Lv8 feature intro milestones drifted: ${JSON.stringify(featureIntroMilestones)}`);
+    throw new Error(`Meta discovery: ${label} feature intro milestones drifted: ${JSON.stringify(featureIntroMilestones)}`);
   }
 
   await clickTarget(page, "homePlay");
   state = await waitFor(page, (candidate) => candidate.screen === "playing" && candidate.level.id === 1, `${label} Lv1 start`);
-  if (state.activeRun?.levelId !== 1 || state.activeRun.daily) {
+  if (state.activeRun?.levelId !== 1) {
     throw new Error(`Meta discovery: ${label} visible start did not open a journaled ordinary Lv1 run`);
   }
   for (const levelId of [1, 2, 3]) {
@@ -375,35 +526,39 @@ const runScenario = async (label, viewport) => {
     await solveCurrentLevel(page, levelId);
     state = await waitFor(
       page,
-      (candidate) => candidate.screen === "playing" && candidate.level.id === levelId + 1,
-      `${label} Lv${levelId} automatic continuation`,
+      (candidate) => candidate.screen === "playing" && candidate.level.id === levelId + 1
+        && !candidate.completionFlow?.directTransition,
+      `${label} Lv${levelId} direct advance`,
       15_000,
-      ["win"],
+      ["win", "celebrating"],
     );
+    if (state.activeRun?.levelId !== levelId + 1) {
+      throw new Error(`Meta discovery: ${label} Lv${levelId} direct advance did not journal Lv${levelId + 1}`);
+    }
     if (levelId === 1) {
-      expectDiscovery(state, true, false, `${label} after Lv1`);
-      if (state.discovery.collection.newestUnseenLevel !== 2
+      expectDiscovery(state, false, `${label} after Lv1`, []);
+      if (state.discovery.collection.newestUnseenLevel != null
         || state.discovery.state.collectionViewedThroughLevel !== 1) {
-        throw new Error(`Meta discovery: ${label} mechanism milestone did not unlock at Lv2`);
+        throw new Error(`Meta discovery: ${label} exposed a mechanism before its Lv3 milestone`);
       }
     }
     if (levelId === 2) {
-      expectDiscovery(state, true, false, `${label} after Lv2`);
-      if (state.discovery.collection.newestUnseenLevel !== 2
+      expectDiscovery(state, true, `${label} after Lv2`, ["irregular-block"]);
+      if (state.discovery.collection.newestUnseenLevel !== 3
         || state.discovery.state.collectionViewedThroughLevel !== 1) {
-        throw new Error(`Meta discovery: ${label} Lv2 mechanism milestone was not retained`);
+        throw new Error(`Meta discovery: ${label} Lv3 mechanism milestone was not unlocked`);
       }
     }
   }
 
-  expectDiscovery(state, true, false, `${label} after Lv3`);
+  expectDiscovery(state, true, `${label} after Lv3`, ["irregular-block"]);
   if (state.discovery.collection.newestUnseenLevel !== 3
     || state.discovery.state.collectionViewedThroughLevel !== 1) {
-    throw new Error(`Meta discovery: ${label} Lv3 color milestone did not supersede the Lv2 mechanism milestone`);
+    throw new Error(`Meta discovery: ${label} Lv3 irregular-block milestone was not retained`);
   }
 
-  // Return through the visible pause menu, not a debug level switch, then view
-  // the real Collection tab to acknowledge the milestone.
+  // Return through the visible pause menu, not a debug level switch, then use
+  // the real Collection card to acknowledge the milestone.
   await clickTarget(page, "pause");
   await waitFor(page, (candidate) => candidate.screen === "paused", `${label} pause`);
   await clickTarget(page, "pauseHome");
@@ -425,7 +580,7 @@ const runScenario = async (label, viewport) => {
   if (!stored.boosterUnlockSeen?.includes("time")) {
     throw new Error(`Meta discovery: ${label} time-booster acknowledgement was not persisted`);
   }
-  expectDiscovery(state, true, false, `${label} collection home badge`);
+  expectDiscovery(state, true, `${label} collection home badge`, ["irregular-block"]);
   expectBadgeInsideEntry(
     state.discovery.collection.badgeRect,
     state.interactionTargets.targets["navigation.4"].hit,
@@ -433,23 +588,34 @@ const runScenario = async (label, viewport) => {
   );
   await page.screenshot({ path: resolve(output, `${label}-01-collection-badge.png`) });
 
-  await clickTarget(page, "navigation.4");
-  state = await waitFor(
-    page,
-    (candidate) => candidate.screen === "records" && !candidate.navigation.transition,
-    `${label} collection navigation`,
-  );
-  expectDiscovery(state, false, false, `${label} viewed collection`);
-  await clickTarget(page, "collection.3");
+  state = await openMechanismGuide(page, label);
+  expectDiscovery(state, true, `${label} opening Collection keeps notification`, ["irregular-block"]);
+  await expectCollectionItemNotification(page, "irregular-block", true, `${label} newly unlocked card`);
+  await page.screenshot({ path: resolve(output, `${label}-02-collection-open-pending.png`) });
+
+  // Opening an already-viewed card cannot clear a different item's dot.
+  await clickCollectionItem(page, "color-block");
   state = await debug(page);
-  if (state.collection.selected !== 3 || state.collection.unlocked !== 4) {
-    throw new Error(`Meta discovery: ${label} newly unlocked yellow collection card is not usable`);
+  if (state.collection.selectedId !== "color-block" || state.collection.selectedTitle !== "色块"
+    || state.collection.unlocked !== 3
+    || state.collection.displayedDetail !== "将色块整体对齐同色出口范围，无需松手便会立即送出。") {
+    throw new Error(`Meta discovery: ${label} aggregate block collection card is not usable`);
   }
+  expectDiscovery(state, true, `${label} old card does not clear new card`, ["irregular-block"]);
+
+  await clickCollectionItem(page, "irregular-block");
+  state = await debug(page);
+  if (state.collection.selectedId !== "irregular-block" || !state.collection.selectedUnlocked) {
+    throw new Error(`Meta discovery: ${label} newly unlocked irregular-block card is not usable`);
+  }
+  expectDiscovery(state, false, `${label} selected Collection item`, []);
+  await expectCollectionItemNotification(page, "irregular-block", false, `${label} selected Collection item`);
   stored = await readStoredSave(page);
-  if (stored.metaDiscovery?.collectionViewedThroughLevel !== 3) {
+  if (stored.metaDiscovery?.collectionViewedThroughLevel !== 3
+    || !stored.metaDiscovery.collectionViewedItemIds?.includes("irregular-block")) {
     throw new Error(`Meta discovery: ${label} collection acknowledgement was not persisted`);
   }
-  await page.screenshot({ path: resolve(output, `${label}-02-collection-open.png`) });
+  await page.screenshot({ path: resolve(output, `${label}-03-collection-item-cleared.png`) });
 
   await page.reload({ waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => {
@@ -458,107 +624,108 @@ const runScenario = async (label, viewport) => {
   }, undefined, { timeout: 15_000 });
   state = await debug(page);
   if (state.screen !== "home" || state.level.id !== 4) throw new Error(`Meta discovery: ${label} collection reload did not return home`);
-  expectDiscovery(state, false, false, `${label} collection reload`);
+  expectDiscovery(state, false, `${label} collection reload`, []);
   stored = await readStoredSave(page);
-  if (JSON.stringify(stored.metaDiscovery) !== JSON.stringify({ collectionViewedThroughLevel: 3, dailyUnlockSeen: false })) {
+  if (stored.metaDiscovery?.collectionViewedThroughLevel !== 3
+    || !stored.metaDiscovery.collectionViewedItemIds?.includes("irregular-block")) {
     throw new Error(`Meta discovery: ${label} collection reload changed the persisted discovery state`);
   }
 
   await clickTarget(page, "homePlay");
   await waitFor(page, (candidate) => candidate.screen === "playing" && candidate.level.id === 4, `${label} Lv4 restart`);
   await solveCurrentLevel(page, 4);
-  state = await waitFor(page, (candidate) => candidate.screen === "win" && candidate.level.id === 4, `${label} Lv4 win`);
-  if (state.winAction !== "下一关" || state.winSecondaryAction !== "返回主页") {
-    throw new Error(`Meta discovery: ${label} Lv4 result actions drifted`);
-  }
-  await clickTarget(page, "modalPrimary");
   state = await waitFor(
     page,
-    (candidate) => candidate.level.id === 5 && (candidate.screen === "feature" || candidate.screen === "playing"),
-    `${label} Lv5 entry`,
+    (candidate) => candidate.level.id === 5
+      && !candidate.completionFlow?.directTransition
+      && (candidate.screen === "feature" || candidate.screen === "playing"),
+    `${label} Lv4 direct entry into Lv5`,
+    15_000,
+    ["win", "celebrating"],
   );
+  expectDiscovery(state, false, `${label} Lv5 arrival before completion`, []);
   if (state.screen === "feature") {
-    await clickTarget(page, "modalPrimary");
+    await clickTarget(page, "featurePrimary");
     await waitFor(page, (candidate) => candidate.screen === "playing" && candidate.level.id === 5, `${label} Lv5 feature intro`);
   }
   await solveCurrentLevel(page, 5);
   state = await waitFor(page, (candidate) => candidate.screen === "win" && candidate.level.id === 5, `${label} Lv5 win`);
-  if (state.winAction !== "下一关" || state.winSecondaryAction !== "返回主页") {
+  if (state.winAction !== "返回主页" || state.winSecondaryAction !== "关闭") {
     throw new Error(`Meta discovery: ${label} Lv5 result actions drifted`);
   }
-  expectDiscovery(state, true, true, `${label} after Lv5 settlement`);
+  expectDiscovery(state, true, `${label} after Lv5 settlement`, ["frozen-exit"]);
   if (state.discovery.collection.newestUnseenLevel !== 6) {
-    throw new Error(`Meta discovery: ${label} Lv5 settlement did not expose the coalesced Lv6 mechanism milestone`);
+    throw new Error(`Meta discovery: ${label} Lv5 settlement did not expose the Lv6 frozen-exit milestone`);
   }
   if (state.progression.highestLevel !== 6 || state.progression.highestLevel !== state.level.id + 1) {
     throw new Error(`Meta discovery: ${label} Lv5 did not advance the journey to Lv6`);
   }
-  await clickTarget(page, "modalSecondary");
-  state = await waitFor(page, (candidate) => candidate.screen === "home" && candidate.level.id === 6, `${label} Lv6 home`);
-  expectDiscovery(state, true, true, `${label} Lv6 collection and daily home badges`);
-  if (state.discovery.collection.newestUnseenLevel !== 6) {
-    throw new Error(`Meta discovery: ${label} three-mechanic Lv6 milestone was not coalesced at Lv6`);
-  }
-  expectBadgeInsideEntry(
-    state.discovery.daily.badgeRect,
-    state.interactionTargets.targets.homeDaily.hit,
-    `${label} daily`,
-  );
-  await page.screenshot({ path: resolve(output, `${label}-03-daily-badge.png`) });
-
-  // Numeric ice, frozen exits and multilayer shells now unlock together at
-  // Lv6. Opening Collection acknowledges the one coalesced milestone while
-  // leaving the independent daily-discovery badge pending.
-  await clickTarget(page, "navigation.4");
+  await clickTarget(page, "modalPrimary");
   state = await waitFor(
     page,
-    (candidate) => candidate.screen === "records" && !candidate.navigation.transition,
-    `${label} Lv6 collection navigation`,
+    (candidate) => candidate.screen === "home" && candidate.level.id === 6
+      && Boolean(candidate.completionFlow?.coinFlight),
+    `${label} Lv6 home coin flight`,
   );
-  expectDiscovery(state, false, true, `${label} viewed Lv6 collection milestone`);
-  await clickTarget(page, "collectionCategory.mechanisms");
-  state = await debug(page);
-  const lv6MechanismIds = ["numeric-ice", "frozen-exit", "multilayer-shell"];
-  if (state.collection.category !== "mechanisms" || state.collection.unlocked !== 6
-    || !lv6MechanismIds.every((id) => state.collection.visibleItemIds.includes(id))) {
-    throw new Error(`Meta discovery: ${label} Lv6 Collection did not expose all three new mechanisms`);
+  state = await waitFor(
+    page,
+    (candidate) => candidate.screen === "home" && candidate.level.id === 6
+      && !candidate.completionFlow?.coinFlight,
+    `${label} Lv6 home after coin flight`,
+  );
+  expectDiscovery(state, true, `${label} Lv6 collection home badge`, ["frozen-exit"]);
+  if (state.discovery.collection.newestUnseenLevel !== 6) {
+    throw new Error(`Meta discovery: ${label} Lv6 frozen-exit milestone was not retained`);
   }
-  for (const [index, id] of lv6MechanismIds.entries()) {
-    await clickTarget(page, `collection.${index + 3}`);
+  expectBadgeInsideEntry(
+    state.discovery.collection.badgeRect,
+    state.interactionTargets.targets["navigation.4"].hit,
+    `${label} Lv6 collection`,
+  );
+  await page.screenshot({ path: resolve(output, `${label}-03-lv6-collection-badge.png`) });
+
+  // Frozen exits arrive at Lv6. Numeric ice, shells and shutters remain visibly
+  // locked until Lv10, Lv15 and Lv34. Opening Collection must retain the dot;
+  // selecting the newly unlocked card is the only acknowledgement trigger.
+  state = await openMechanismGuide(page, label);
+  expectDiscovery(state, true, `${label} opening Lv6 Collection`, ["frozen-exit"]);
+  state = await debug(page);
+  if (state.collection.unlocked !== 4
+    || !state.collection.unlockedItemIds.includes("frozen-exit")) {
+    throw new Error(`Meta discovery: ${label} Lv6 Collection did not expose the frozen-exit guide`);
+  }
+  await expectCollectionItemNotification(page, "frozen-exit", true, `${label} Lv6 card before click`);
+  await page.screenshot({ path: resolve(output, `${label}-04-lv6-mechanisms-pending.png`) });
+  await clickCollectionItem(page, "frozen-exit");
+  state = await debug(page);
+  if (state.collection.selectedId !== "frozen-exit" || !state.collection.selectedUnlocked || !state.collection.selectedDetail) {
+    throw new Error(`Meta discovery: ${label} Lv6 frozen-exit guide is not visibly usable`);
+  }
+  expectDiscovery(state, false, `${label} selected Lv6 mechanism`, []);
+  await expectCollectionItemNotification(page, "frozen-exit", false, `${label} selected Lv6 mechanism`);
+  for (const [id, level] of [["numeric-ice", 10], ["multilayer-shell", 15], ["shutter", 34]]) {
+    await clickCollectionItem(page, id);
     state = await debug(page);
-    if (state.collection.selectedId !== id || !state.collection.selectedUnlocked || !state.collection.selectedDetail) {
-      throw new Error(`Meta discovery: ${label} Lv6 mechanism card ${id} is not visibly usable`);
+    if (state.collection.selectedId !== id || state.collection.selectedUnlocked
+      || state.collection.selectedDetail || state.collection.displayedDetail !== `到达第 ${level} 关后解锁`) {
+      throw new Error(`Meta discovery: ${label} ${id} guide did not stay locked until Lv${level}`);
     }
   }
   stored = await readStoredSave(page);
-  if (stored.metaDiscovery?.collectionViewedThroughLevel !== 6) {
+  if (stored.metaDiscovery?.collectionViewedThroughLevel !== 6
+    || !stored.metaDiscovery.collectionViewedItemIds?.includes("frozen-exit")) {
     throw new Error(`Meta discovery: ${label} Lv6 mechanism acknowledgement was not persisted`);
   }
-  await page.screenshot({ path: resolve(output, `${label}-04-lv6-mechanisms-open.png`) });
+  await page.screenshot({ path: resolve(output, `${label}-05-lv6-mechanisms-cleared.png`) });
+  state = await closeMechanismGuide(page, label);
+  expectDiscovery(state, false, `${label} guide closed without clearing album notifications`, []);
   await clickTarget(page, "navigation.2");
   state = await waitFor(
     page,
     (candidate) => candidate.screen === "home" && !candidate.navigation.transition,
-    `${label} return home after Lv6 collection`,
+    `${label} return home after early-mechanism collection`,
   );
-  expectDiscovery(state, false, true, `${label} independent daily badge after Lv6 collection`);
-
-  const dailyBeforeStart = { levelId: state.daily.selectedLevel, today: state.daily.today };
-  await clickTarget(page, "homeDaily");
-  state = await waitFor(page, (candidate) => candidate.screen === "playing" && candidate.daily.mode, `${label} daily start`);
-  if (!state.economy.rewardedLevels.includes(state.level.id)
-    || !state.activeRun?.daily || state.activeRun.returnLevelId !== 6
-    || state.activeRun.dailyDayKey !== state.daily.challengeDayKey
-    || (dailyBeforeStart.today === state.daily.today && state.level.id !== dailyBeforeStart.levelId)) {
-    throw new Error(`Meta discovery: ${label} daily badge did not lead to the real daily run`);
-  }
-  const playedDailyLevel = state.level.id;
-  expectDiscovery(state, false, false, `${label} daily acknowledged`);
-  stored = await readStoredSave(page);
-  if (stored.metaDiscovery?.dailyUnlockSeen !== true) {
-    throw new Error(`Meta discovery: ${label} daily acknowledgement was not persisted`);
-  }
-  await page.screenshot({ path: resolve(output, `${label}-05-daily-open.png`) });
+  expectDiscovery(state, false, `${label} collection acknowledgement after mechanism collection`, []);
 
   const progressionSnapshot = {
     coins: state.economy.coins,
@@ -566,8 +733,6 @@ const runScenario = async (label, viewport) => {
     rewardedLevels: [...state.economy.rewardedLevels].sort((left, right) => left - right),
     bestStars: state.progression.bestStars,
     bestMoves: state.progression.bestMoves,
-    lastCompletedDay: state.daily.lastCompletedDay,
-    streak: state.daily.streak,
   };
   await page.reload({ waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => {
@@ -575,18 +740,15 @@ const runScenario = async (label, viewport) => {
     return state?.art.ready && state?.discovery.artReady;
   }, undefined, { timeout: 15_000 });
   state = await debug(page);
-  expectDiscovery(state, false, false, `${label} final reload`);
+  expectDiscovery(state, false, `${label} final reload`, []);
   stored = await readStoredSave(page);
-  if (state.screen !== "home" || state.level.id !== 6 || state.daily.mode || state.activeRun
-    || !state.daily.unlocked || state.daily.completedToday
+  if (state.screen !== "home" || state.level.id !== 6 || state.activeRun
     || state.economy.coins !== progressionSnapshot.coins
     || state.progression.highestLevel !== progressionSnapshot.highestLevel
-    || JSON.stringify([...state.economy.rewardedLevels].sort((left, right) => left - right)) !== JSON.stringify([1, 2, 3, 4, 5])
+    || JSON.stringify([...state.economy.rewardedLevels].sort((left, right) => left - right)) !== JSON.stringify(progressionSnapshot.rewardedLevels)
     || JSON.stringify(state.progression.bestStars) !== JSON.stringify(progressionSnapshot.bestStars)
     || JSON.stringify(state.progression.bestMoves) !== JSON.stringify(progressionSnapshot.bestMoves)
-    || state.daily.lastCompletedDay !== progressionSnapshot.lastCompletedDay
-    || state.daily.streak !== progressionSnapshot.streak
-    || JSON.stringify(stored.metaDiscovery) !== JSON.stringify({ collectionViewedThroughLevel: 6, dailyUnlockSeen: true })) {
+    || stored.metaDiscovery?.collectionViewedThroughLevel !== 6) {
     throw new Error(`Meta discovery: ${label} final reload changed settled progression`);
   }
   await page.screenshot({ path: resolve(output, `${label}-06-final-reload.png`) });
@@ -598,7 +760,6 @@ const runScenario = async (label, viewport) => {
     finalCoins: state.economy.coins,
     rewardedLevels: state.economy.rewardedLevels,
     metaDiscovery: state.discovery.state,
-    dailyLevel: playedDailyLevel,
   });
   await context.close();
 };
@@ -606,13 +767,47 @@ const runScenario = async (label, viewport) => {
 try {
   await runScenario("720x1584", { width: 720, height: 1584 });
   await runScenario("320x568", { width: 320, height: 568 });
+  await runMechanismDiscoveryScenario({
+    label: "irregular-board-lv8-milestone",
+    level: 8,
+    previousLevel: 6,
+    itemIds: ["irregular-board"],
+    expectedUnlocked: 5,
+  });
+  await runMechanismDiscoveryScenario({
+    label: "numeric-ice-lv10-milestone",
+    level: 10,
+    previousLevel: 8,
+    itemIds: ["numeric-ice"],
+    expectedUnlocked: 6,
+  });
+  await runMechanismDiscoveryScenario({
+    label: "shell-lv15-milestone",
+    level: 15,
+    previousLevel: 10,
+    itemIds: ["multilayer-shell"],
+    expectedUnlocked: 7,
+  });
+  await runMechanismDiscoveryScenario({
+    label: "shutter-lv34-milestone",
+    level: 34,
+    previousLevel: 15,
+    itemIds: ["shutter"],
+    expectedUnlocked: 8,
+  });
+  await runMechanismDiscoveryScenario({
+    label: "conveyor-lv70-milestone",
+    level: 70,
+    previousLevel: 50,
+    itemIds: ["conveyor"],
+    expectedUnlocked: 11,
+  });
   for (const mode of ["rejected", "write-then-throw", "unknown", "write-then-unknown", "unresolved", "write-then-unresolved"]) {
     await runCollectionFaultScenario(mode);
-    await runDailyFaultScenario(mode);
   }
   await writeFile(resolve(output, "meta-discovery-report.json"), `${JSON.stringify({ results, errors }, null, 2)}\n`, "utf8");
   if (errors.length) throw new Error(`Meta discovery browser errors:\n${errors.join("\n")}`);
-  console.log("Clean-storage Lv1–5 discovery, coalesced Lv6 mechanism cards, split Lv6/Lv7/Lv8 feature metadata, and all storage acknowledgement fault outcomes passed at 720x1584/320x568.");
+  console.log("Per-item Collection dots, click-only acknowledgement, independent Lv34 shutter and Lv70 conveyor clearing, reload persistence, and all storage acknowledgement fault outcomes passed at 720x1584/320x568.");
 } finally {
   await browser.close();
 }

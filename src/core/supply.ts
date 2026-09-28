@@ -1,5 +1,7 @@
 export type SupplyKind = "time" | "rocket" | "pulse";
 
+export const TIME_FREEZE_SECONDS = 10;
+
 export interface SupplyItem {
   kind: SupplyKind;
   title: string;
@@ -12,7 +14,7 @@ export interface SupplyItem {
 export const SUPPLY_ORDER: SupplyKind[] = ["time", "rocket", "pulse"];
 
 export const SUPPLY_ITEMS: Record<SupplyKind, SupplyItem> = {
-  time: { kind: "time", title: "加时", effect: "倒计时 +30 秒", price: 180, maxStock: 9, unlockLevel: 4 },
+  time: { kind: "time", title: "冻结", effect: "总时间与炸弹暂停10秒", price: 180, maxStock: 9, unlockLevel: 4 },
   rocket: { kind: "rocket", title: "火箭", effect: "移除一个活动方块", price: 240, maxStock: 9, unlockLevel: 7 },
   pulse: { kind: "pulse", title: "脉冲", effect: "机关进度 -2", price: 210, maxStock: 9, unlockLevel: 10 },
 };

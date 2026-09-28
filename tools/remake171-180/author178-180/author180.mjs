@@ -1,0 +1,18 @@
+import fs from 'node:fs';
+import {loadApi,digest} from '../../remake161-170/common.mjs';
+import {loadSpatialApi} from '../../remake111to120-spatial-floor-v147.mjs';
+import {compile,search} from '../../remake161-170/author168-170/search.mjs';
+import {pack,SHAPES,seededRng} from '../../../deliverables/remake21-30-v139-20260924/agent28-30/packing.mjs';
+const OUT='deliverables/remake171-180-20260927/author178-180',B=JSON.parse(fs.readFileSync('deliverables/remake31-200-v145-20260924/baseline.json')).levels[179].level;
+const {api}=await loadApi(),spatial=await loadSpatialApi();for(const k in SHAPES)SHAPES[k]=SHAPES[k].filter(s=>api.matchFormalBlockShape(s,'native-only')?.quarterTurns===0);
+export const spec180=[['orange','V3'],['red','V2'],['blue','SINGLE'],['orange','SINGLE'],['green','L3'],['red','L3'],['blue','L3'],['red','V2'],['pink','V2'],['orange','V3'],['yellow','SINGLE'],['purple','V3'],['cyan','SINGLE'],['cyan','SINGLE'],['pink','V2'],['yellow','H2'],['green','V2'],['green','V2'],['red','L3'],['red','V3'],['cyan','SINGLE'],['yellow','H3'],['blue','H2']];
+const R=seededRng(Number(process.env.SEED??180106)),start=Date.now(),budget=Number(process.env.BUDGET??180000),rows=[];let trials=0,packed=0;
+const save=(n,d)=>{const p=`${OUT}/${n}-${Date.now()}.json`;fs.writeFileSync(p,JSON.stringify(d,null,2)+'\n',{flag:'wx'});return p;};
+while(Date.now()-start<budget){const seed=R.state();trials++;const l=structuredClone(B);l.mechanismRules='revised-2026-09-27-v1.5';l.difficulty='normal';const spec=spec180.map(([color,kind],i)=>({color,kind,sourceIndex:i}));for(const b of R.shuffle(spec.filter(b=>b.kind==='SINGLE')).slice(0,3))b.kind=R.rand()<.5?'V2':'H2';
+const bs=pack(spec,l.playable,R,10000,true);if(!bs)continue;packed++;l.blocks=bs.map(({kind,id,sourceIndex,...b},i)=>({...b,id:`r106-180-b${i}`}));
+const ports=[['top',1,2],['top',3,2],['left',1,3],['left',4,3],['left',7,2],['bottom',0,3],['bottom',3,3],['right',1,3]];
+const gs=R.shuffle([['orange',0],['red',2],['purple',4],['blue',6],['green',7],['cyan',7],['pink',7],['yellow',7]]);
+l.gates=ports.map(([side,offset,size],i)=>({id:`r106-180-g${i}`,color:gs[i][0],side,offset,size,...gs[i][1]?{frozen:gs[i][1]}:{}}));
+let r,proof;try{r=search(compile(l,spatial),{maxMilliseconds:500,maxStates:22000,floor:16});}catch(e){rows.push({seed,error:e.message});continue;}const row={seed,sha:digest(l),status:r.status,U:r.cost,maxClears:r.maxClears};rows.push(row);if(r.status!=='witness'||r.cost<11)continue;const replay=api.replayRevisedRoute(l,r.drags);if(!replay.valid||!replay.complete){row.replay=replay;continue;}proof=search(compile(l,spatial),{floor:11,prove:true,maxMilliseconds:3500,maxStates:150000});row.proof=proof.status;
+const file=save(proof.thresholdProven?'candidate180':'unverified180',{ruleVersion:'1.106.0',level:l,levelSha256:digest(l),drags:r.drags,replay,proof,search:r,seed,sourceSpec:spec180,adaptation:'Preserve23 known bodies;3 source SINGLE→native domino fills preserved52cells vs source49; source lime family→orange. Original placement and gate rails. Seven ice count bindings preserved.'});console.log(JSON.stringify({file,U:r.cost,proof:proof.status}));if(proof.thresholdProven)break;
+}console.log(JSON.stringify({trials,packed,log:save('attempts180',{budget,elapsed:Date.now()-start,trials,packed,rows})}));

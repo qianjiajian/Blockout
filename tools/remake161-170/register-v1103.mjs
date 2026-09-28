@@ -1,0 +1,18 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {verifyRulesLock,rulesDigest} from '../verify-rules-lock.mjs';
+const root='deliverables/remake161-170-20260927';
+const lock=verifyRulesLock();assert(lock.ok,lock.errors.join('\n'));assert.equal(lock.activeVersion,'1.102.0');
+const file='docs/rules/manifest.json',raw=fs.readFileSync(file,'utf8'),m=JSON.parse(raw);
+const doc='docs/rules/mechanism-rules-v1.103.0.md';
+const content=fs.readFileSync(root+'/rule-draft-v1102-collision.md','utf8').replaceAll('v1.102.0','v1.103.0').replace('完整承继v1.101.0','完整承继v1.102.0');
+fs.writeFileSync(doc,content,{flag:'wx'});
+m.activeVersion='1.103.0';m.versions.push({version:'1.103.0',ruleId:'blockout-rules-v1.103.0',runtimeProfile:'revised-2026-09-27-v1.5',document:doc,sha256:rulesDigest(content),status:'frozen',frozenOn:'2026-09-27',confirmation:'用户要求继续161–170，下限/上限反复不满足时有限求解后换色换形重新生成；保棋盘/机关/评价/四档及完整验收，其它190和存档保持，不发布。'});
+assert.equal(fs.readFileSync(file,'utf8'),raw,'Concurrent manifest modification');fs.writeFileSync(file,JSON.stringify(m,null,2)+'\n');
+let a=fs.readFileSync('AGENTS.md','utf8');
+a=a.replace('当前为 `docs/rules/mechanism-rules-v1.102.0.md`（151–160有限求解未达上下限则换色换形重新生成；保完整新验收，其余承继v1.101）。','当前为 `docs/rules/mechanism-rules-v1.103.0.md`（161–170有限求解，反复不满足上下界时换色换形重生成；保几何/机制/评分/四档，其余承继v1.102）。');
+a=a.replace('## 不得自行放宽的规则','## 不得自行放宽的规则\n\n- v1.103优先：161–170上下界反复不满足时有限求解后换色换形及必要重排重新生成，允许已知来源形色设计适配并分列差异。保棋盘/时间/三星/reward和已知机关/库存，四档新鲜上下界/原向素材/最终双屏Pointer自然钟全部验收后自主接入，其它190/旧证据/存档保持，不发布。');
+fs.writeFileSync('AGENTS.md',a);
+const after=verifyRulesLock();assert(after.ok,after.errors.join('\n'));
+fs.writeFileSync(root+'/registration.json',JSON.stringify({before:lock.activeVersion,after:after.activeVersion,versions:after.verified.length,oldEntriesUnchanged:JSON.stringify(m.versions.slice(0,-1))===JSON.stringify(JSON.parse(raw).versions),newEntry:m.versions.at(-1)},null,2)+'\n',{flag:'wx'});
+console.log(JSON.stringify({active:after.activeVersion,versions:after.verified.length}));

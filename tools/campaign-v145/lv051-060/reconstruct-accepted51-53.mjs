@@ -1,0 +1,20 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {digest} from '../../revised-preview-validation-v160.mjs';
+import {loadApi} from '../../native-block-repair-v143.mjs';
+import {make,seededRng,SOURCES} from './construction51-53-from-1790248323.mjs';
+const dir='deliverables/remake31-200-v145-20260924/batches/lv051-060/agent51-54',base=JSON.parse(fs.readFileSync('deliverables/remake31-200-v145-20260924/baseline.json')),{api}=await loadApi();
+const files={51:dir+'/candidate51-1790248325953.json',53:dir+'/candidate53-1790248323901.json'},d51=JSON.parse(fs.readFileSync(files[51])),d53=JSON.parse(fs.readFileSync(files[53]));
+process.env.PACK_TRIES='6000';const rng=seededRng(146051);let made;for(let n=1;n<=55;n++)made=make(51,rng);assert.deepEqual(made.level,d51.level);
+// A new explicit layout recipe, transparently reconstructed from the accepted
+// geometry. This does not pretend that the later enrichment snapshot reproduces
+// the earlier Lv53 generation with its incompletely recorded environment.
+const recipeFile=dir+'/construction53-layout-v147.json';
+const recipe=JSON.parse(fs.readFileSync(recipeFile));assert.equal(recipe.schema,'explicit-native-layout-v1');assert.equal(recipe.level,53);
+const rect=(w,h)=>Array.from({length:w*h},(_,i)=>[i%w,Math.floor(i/w)]),shapes={SINGLE:rect(1,1),H2:rect(2,1),V2:rect(1,2),H3:rect(3,1),SQ2:rect(2,2)};
+const l=structuredClone(base.levels[52].level);for(const k of ['shutters','generators','flipDoors','coloredGrids','hintPlan','construction','designTargets'])delete l[k];l.difficulty='easy';l.preservedMoveTarget=base.levels[52].starTargets.moveTarget;l.blocks=[];l.gates=[];
+for(const p of recipe.placements){const {sourceId,kind,sourceColor,...attrs}=SOURCES[53].pieces.find(b=>b.sourceId===p.sourceId);l.blocks.push({id:'v146-53-'+sourceId,...attrs,x:p.x,y:p.y,shape:shapes[kind]});}
+for(const p of recipe.gates){const frozen=SOURCES[53].gates.find(g=>g[0]===p.color)[1];l.gates.push({id:'v146-53-gate-'+p.color,color:p.color,side:p.side,offset:p.offset,size:p.size,...(frozen?{frozen}:{})});}
+assert.deepEqual(l,d53.level);assert.equal(digest(l),d53.freshVerification.levelSha256);api.validateLevel(l);assert(l.blocks.every(b=>api.matchFormalBlockShape(b.shape,'native-only')?.quarterTurns===0));
+const report={checkedAt:new Date().toISOString(),passed:true,rows:[{id:51,method:'Historical enrichment-snapshot constructor plus seed/attempt replay',seed:146051,attempt:55,packTries:6000,exactLevelMatch:true,levelSha256:digest(made.level)},{id:53,method:'New explicit source-carrier/native-shape/placement recipe',recipeFile,recipeSha256:digest(fs.readFileSync(recipeFile)),historicalSeedReplayPassed:false,exactLevelMatch:true,levelSha256:digest(l)}],historicalMismatch:{id:53,command:'node tools/campaign-v145/lv051-060/reconstruct51-53.mjs',expectedFirstBody:{id:'v146-53-orange-square',x:0,y:0},observedFirstBody:{id:'v146-53-blue-single',x:0,y:0},explanation:'Enrichment snapshot is later than original53 generation; original construction environment/version not fully bound. Failed replay retained, not relabeled successful.'},executableSnapshot:'tools/campaign-v145/lv051-060/author51-53-enrichment-snapshot-1790248323.mjs',executableSnapshotSha256:digest(fs.readFileSync('tools/campaign-v145/lv051-060/author51-53-enrichment-snapshot-1790248323.mjs')),constructionModuleSha256:digest(fs.readFileSync('tools/campaign-v145/lv051-060/construction51-53-from-1790248323.mjs')),driverSha256:digest(fs.readFileSync('tools/campaign-v145/lv051-060/reconstruct-accepted51-53.mjs')),baselineSha256:digest(fs.readFileSync('deliverables/remake31-200-v145-20260924/baseline.json')),candidateHashes:Object.fromEntries(Object.entries(files).map(([id,p])=>[id,digest(fs.readFileSync(p))])),proofsReusedOrRelabeled:false,newFloorOrPointerRun:false};
+const output=dir+'/accepted-construction-replay51-53-'+Date.now()+'.json';fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify({output,rows:report.rows,driverSha256:report.driverSha256,constructionModuleSha256:report.constructionModuleSha256}));

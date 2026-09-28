@@ -1,0 +1,15 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {loadApi,OUTPUT,writeNew,ruleGate,BASELINE} from './remake61to70-v146.mjs';
+import {digest} from '../../revised-preview-validation-v160.mjs';
+import {checkLiftFloor} from './lift-floor.mjs';
+import {archiveReviewInputs} from './review-input-archive.mjs';
+const lock=ruleGate(),file=process.argv[2],d=JSON.parse(fs.readFileSync(file)),discovery=await loadApi();
+assert.equal(d.level.id,67);
+const archive=archiveReviewInputs(`${OUTPUT}/checks/independent67-inputs-${Date.now()}`,[...discovery.inputs,file,BASELINE,'docs/rules/manifest.json',`docs/mechanism-rules-v${lock.activeVersion}.md`,'tools/campaign-v145/lv061-070/independent-floor67.mjs']);
+const {api}=await loadApi();archive.assertUnchanged();
+const proof=checkLiftFloor(d.level,api,{floor:11,maxStates:2000000,maxMilliseconds:180000}),route=api.replayRevisedRoute(d.level,d.drags);
+assert(route.valid&&route.complete);archive.assertUnchanged();
+const out=`${OUTPUT}/checks/independent-full-floor67-${Date.now()}.json`;
+writeNew(out,{status:proof.thresholdProven?'PASS':'UNKNOWN',candidate:file,levelSha256:digest(d.level),routeSha256:digest(d.drags),proof,route,inputArchive:archive.serializable(),note:'Original full state gesture BFS, no fast edges, no identity quotient, no forced terminal clear, no ice-wall pruning, no delayed reveal.'});
+console.log(JSON.stringify({out,proof,U:route.nonClearingDrags}));

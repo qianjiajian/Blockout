@@ -5,9 +5,14 @@ import { fileURLToPath } from "node:url";
 import ts from "typescript";
 import { createServer } from "vite";
 import {
-  LEVEL_FREEZE_AUTHORED_SOURCES,
-  LEVEL_FREEZE_DIFFICULTY_RULE_SOURCES,
+  levelFreezeAuthoredSources,
+  levelFreezeDifficultyRuleSources,
 } from "./level-freeze-spec.mjs";
+import {
+  assertPositiveLevelCount,
+  assertSequentialCampaign,
+  sequentialLevelIds,
+} from "./level-freeze-count.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const baselinePath = resolve(root, "tools", "level-freeze-baseline.json");
@@ -28,8 +33,9 @@ const hashValue = (value) => createHash("sha256")
 
 const baseline = JSON.parse(await readFile(baselinePath, "utf8"));
 const SHA256 = /^[A-F0-9]{64}$/;
-const REQUIRED_AUTHORED_SOURCES = LEVEL_FREEZE_AUTHORED_SOURCES;
-const REQUIRED_DIFFICULTY_RULE_SOURCES = LEVEL_FREEZE_DIFFICULTY_RULE_SOURCES;
+const baselineLevelCount = assertPositiveLevelCount(baseline.levelCount, "baseline level count");
+const REQUIRED_AUTHORED_SOURCES = levelFreezeAuthoredSources(baselineLevelCount);
+const REQUIRED_DIFFICULTY_RULE_SOURCES = levelFreezeDifficultyRuleSources(baselineLevelCount);
 const REQUIRED_INTEGRATION_CONSTANTS = [
   "LOGICAL_WIDTH",
   "LOGICAL_HEIGHT",
@@ -98,13 +104,13 @@ const assertHashMap = (label, value, expectedKeys) => {
   }
 };
 
-if (baseline.schemaVersion !== 2 || baseline.levelCount !== 100 || !SHA256.test(baseline.campaignSha256)) {
+if (baseline.schemaVersion !== 2 || !SHA256.test(baseline.campaignSha256)) {
   throw new Error("Level freeze baseline schema, level count, or campaign SHA-256 is invalid");
 }
 assertHashMap(
   "levelSha256",
   baseline.levelSha256,
-  Array.from({ length: 100 }, (_, index) => String(index + 1)),
+  sequentialLevelIds(baselineLevelCount).map(String),
 );
 assertHashMap("sourceSha256", baseline.sourceSha256, REQUIRED_AUTHORED_SOURCES);
 assertHashMap(
@@ -210,8 +216,9 @@ try {
   const { LEVELS } = await vite.ssrLoadModule("/src/core/levels.ts");
   if (!Array.isArray(LEVELS)) throw new Error("Level freeze check could not load LEVELS");
   const ids = LEVELS.map((level) => level.id);
-  const expectedIds = Array.from({ length: baseline.levelCount }, (_, index) => index + 1);
-  if (JSON.stringify(ids) !== JSON.stringify(expectedIds)) {
+  try {
+    assertSequentialCampaign(LEVELS, baselineLevelCount);
+  } catch {
     throw new Error(`Level freeze expected IDs 1-${baseline.levelCount}, received ${ids.join(",")}`);
   }
 
@@ -228,7 +235,7 @@ try {
   }
 
   console.log(
-    `Verified frozen campaign: ${LEVELS.length}/100 levels, semantic SHA-256 ${campaignSha256}, `
+    `Verified frozen campaign: ${LEVELS.length}/${baselineLevelCount} levels, semantic SHA-256 ${campaignSha256}, `
     + `${authoredSourceCount} authored sources, ${difficultyRuleSourceCount} difficulty-rule sources, `
     + `${difficultyIntegrationCount} gameplay-integration nodes.`,
   );

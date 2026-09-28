@@ -1,0 +1,31 @@
+{
+  "title": "Happy Carnival",
+  "artist": "Alex-Productions",
+  "game": "Block Out!",
+  "scene": "main interface",
+  "source": "User-provided MP3",
+  "sourceFileName": "Happy Carnival – Alex-Productions (No Copyright Music).mp3",
+  "sourceSha256": "927552A26D97FE1125479551B4DB7288EA3B91CC9E9A1908F8FF3D7F5AF24BF3",
+  "runtimeSha256": "DC114FE6B397EE6EEC88AB5C4685D12C88D05B7943D3CDCB10BCC92A42804024",
+  "durationSeconds": 148.17814583333334,
+  "sampleRate": 48000,
+  "channels": 2,
+  "loop": {
+    "startSeconds": 0,
+    "endSeconds": 148.17814583333334
+  },
+  "optimization": {
+    "codec": "MPEG-1 Layer III",
+    "mode": "LAME VBR V3",
+    "averageBitrateKbps": 182.95,
+    "originalBytes": 6135456,
+    "runtimeBytes": 3388560,
+    "reductionPercent": 44.77,
+    "embeddedArtwork": false,
+    "metadataStripped": true,
+    "integratedLufs": -14.5,
+    "peakDbfs": -0.9
+  },
+  "attribution": "Happy Carnival by Alex-Productions https://soundcloud.com/alexproductionsmusic\nCreative Commons — Attribution 3.0 Unported — CC BY 3.0\nFree Download / Stream: https://bit.ly/3uAqwbI\nMusic promoted by Audio Library https://bit.ly/49AFcq7",
+  "rightsNotice": "The embedded source metadata requires the full credit and asks users to contact the artist for projects outside YouTube; confirm release permission before publishing the game."
+}

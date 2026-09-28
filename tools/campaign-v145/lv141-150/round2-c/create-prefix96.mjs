@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+const DIR='tools/campaign-v145/lv141-150/round2-c';
+let cs=fs.readFileSync(DIR+'/native96.cs','utf8');
+cs=cs.replace('public int width,height,floor,maxStates,maxMilliseconds;','public int width,height,floor,maxStates,maxMilliseconds,goalClears;').replace('readonly int n,total;','readonly int n,total,goal;').replace('total=bodies.Sum(b=>b.layers);initial=From(p.initial);','total=bodies.Sum(b=>b.layers);goal=p.goalClears>0?p.goalClears:total;if(goal>total)throw new Exception("prefix goal exceeds inventory");initial=From(p.initial);').replace('int clears=Clears(s);M96 occupied=Occupied(s,clears);bool found=false;','int clears=Clears(s);if(clears>=goal)return s;M96 occupied=Occupied(s,clears);bool found=false;').replace('Clears(normalized)!=total','Clears(normalized)<goal').replace('if(clears==total)','if(clears>=goal)').replace('native-mask96-axis-countdown-optional-exit-identity-quotient-v173','native-mask96-before-goal-late-color-quotient-v173');
+fs.writeFileSync(DIR+'/prefix96.cs',cs);
+let w=fs.readFileSync(DIR+'/native96.mjs','utf8').replaceAll(DIR+'/native96.cs',DIR+'/prefix96.cs').replaceAll(DIR+'/native96.mjs',DIR+'/prefix96.mjs').replaceAll('/round2-c/native96','/round2-c/prefix96');
+w=w.replace('const c=compile(level,api);assert(c.W*c.H<=96',`const c=compile(level,api),goal=options.goalClears;assert(Number.isSafeInteger(goal)&&goal>0&&goal<=c.total,'Positive prefix goal within full inventory required');assert(c.W*c.H<=96`);
+w=w.replace('groups:groupsOf(c),floor:',`groups:prefixGroups(c,goal),goalClears:goal,floor:`);
+w=w.replace('export function payload(',`export function prefixGroups(c,goal){const groups=new Map();c.blocks.forEach((b,i)=>{const colors=b.layers.map(color=>{const gate=c.level?.gates?.find(g=>g.color===color);return color;});const signature=JSON.stringify({shape:b.shape,layers:b.layers.map((_,stage)=>{const exits=b.poses.filter(Boolean).flatMap(p=>p.exits[stage]?[p.exits[stage]]:[]);return exits.every(g=>(g.frozen??0)>=goal)?'late':b.layers[stage];}),ice:b.ice,reveal:b.reveal,cover:b.cover?.id,axis:b.movementAxis});if(!groups.has(signature))groups.set(signature,[]);groups.get(signature).push(i);});return [...groups.values()].filter(g=>g.length>1);}
+export function payload(`);
+fs.writeFileSync(DIR+'/prefix96.mjs',w);

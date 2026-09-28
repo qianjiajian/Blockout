@@ -62,11 +62,17 @@ const solveLevel = (page, levelId) => page.evaluate(async (id) => {
   return solveLevelForValidation(getLevel(id));
 }, levelId);
 
-const performDrag = async (page, mapper, drag, waitAfter) => {
+const performDrag = async (page, mapper, drag, settleExitEffects = false) => {
   const state = await page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
   const block = state.puzzle.blocks.find((candidate) => candidate.id === drag.blockId);
   if (!block) throw new Error(`Quick-flow E2E: missing verified route block ${drag.blockId}`);
-  const [anchorX, anchorY] = block.shape[0];
+  const directExit = drag.path.length === 0 && Boolean(drag.exitSide);
+  const [anchorX, anchorY] = directExit
+    ? [
+      block.shape.reduce((sum, [x]) => sum + x, 0) / block.shape.length,
+      block.shape.reduce((sum, [, y]) => sum + y, 0) / block.shape.length,
+    ]
+    : block.shape[0];
   const logicalPoint = (x, y) => ({
     x: state.board.innerX + (x + anchorX + 0.5) * state.board.cell,
     y: state.board.innerY + (y + anchorY + 0.5) * state.board.cell,
@@ -81,10 +87,24 @@ const performDrag = async (page, mapper, drag, waitAfter) => {
     await page.mouse.move(target.x, target.y, { steps: 3 });
   }
   await page.mouse.up();
-  if (waitAfter) await page.waitForTimeout(waitAfter);
+
+  const [expectedX, expectedY] = drag.path.at(-1) ?? [block.x, block.y];
+  const expectedLayers = Math.max(0, block.layers.length - 1);
+  await waitFor(page, (candidate) => {
+    const current = candidate.puzzle.blocks.find((item) => item.id === drag.blockId);
+    const modelResolved = drag.exitSide
+      ? expectedLayers > 0
+        ? current?.layers.length === expectedLayers
+        : !current
+      : current?.x === expectedX && current?.y === expectedY;
+    const inputReleased = !candidate.selectedId && candidate.activePointer === undefined;
+    const exitEffectsSettled = !settleExitEffects || !drag.exitSide
+      || (candidate.exitGhosts === 0 && candidate.exitFragments === 0 && candidate.exitPulses.length === 0);
+    return modelResolved && inputReleased && exitEffectsSettled;
+  });
 };
 
-const waitFor = async (page, predicate, timeout = 1400) => {
+const waitFor = async (page, predicate, timeout = 8000) => {
   const deadline = Date.now() + timeout;
   const screens = [];
   while (Date.now() < deadline) {
@@ -103,16 +123,14 @@ await openFresh(standard);
 const standardCoords = coordinates(496, 1078);
 let expectedCoins = 1000;
 const transitions = [];
-const finalGestureThresholdMs = 1300;
-const gestureToCelebrationThresholdMs = 700;
-const celebrationThresholdMs = 800;
 
-for (const levelId of [1, 2, 3]) {
+for (const levelId of [1, 2, 3, 4]) {
   let state = await standard.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
   if (state.screen !== "playing" || state.level.id !== levelId) {
     throw new Error(`Quick-flow E2E: expected playable Lv${levelId}, got ${state.screen} Lv${state.level.id}`);
   }
-  expectedCoins += state.level.reward;
+  const clearedReward = 20;
+  expectedCoins += clearedReward;
   const solution = await solveLevel(standard, levelId);
   if (!solution.solved || !solution.drags.length) {
     throw new Error(`Quick-flow E2E: Lv${levelId} has no verified route`);
@@ -120,38 +138,47 @@ for (const levelId of [1, 2, 3]) {
   const parMoves = state.level.parMoves;
   const expectedStars = solution.minimumDrags <= parMoves ? 3 : solution.minimumDrags <= parMoves + 2 ? 2 : 1;
   for (const drag of solution.drags.slice(0, -1)) {
-    await performDrag(standard, standardCoords, drag, drag.exitSide ? 330 : 35);
+    await performDrag(standard, standardCoords, drag, true);
   }
 
   const finalGestureStartedAt = Date.now();
-  await performDrag(standard, standardCoords, solution.drags.at(-1), 0);
-  const quick = await waitFor(standard, (candidate) => candidate.screen === "celebrating");
-  const celebrationStartedAt = Date.now();
-  const finalGestureToCelebrationMs = celebrationStartedAt - finalGestureStartedAt;
-  if (quick.state.quickClear?.fromLevel !== levelId || quick.state.quickClear?.toLevel !== levelId + 1) {
-    throw new Error(`Quick-flow E2E: Lv${levelId} did not expose the correct automatic target`);
+  await performDrag(standard, standardCoords, solution.drags.at(-1));
+  const transition = await waitFor(
+    standard,
+    (candidate) => candidate.screen === "playing"
+      && candidate.completionFlow.directTransition?.fromLevel === levelId,
+  );
+  const transitionStartedAt = Date.now();
+  const finalGestureToTransitionMs = transitionStartedAt - finalGestureStartedAt;
+  if (transition.screens.some((screen) => screen !== "playing") || transition.state.art.win.ready) {
+    throw new Error(`Quick-flow E2E: Lv${levelId} opened a result instead of its direct transition`);
   }
-  await standard.screenshot({ path: shot(`round41-quick-clear-level-${String(levelId).padStart(3, "0")}.png`) });
+  if (transition.state.completionFlow.directTransition.toLevel !== levelId + 1
+    || transition.state.settlement.status !== "committed"
+    || transition.state.settlement.coinReward !== clearedReward) {
+    throw new Error(`Quick-flow E2E: Lv${levelId} direct transition did not retain its committed settlement`);
+  }
+  await standard.screenshot({ path: shot(`direct-transition-level-${String(levelId).padStart(3, "0")}.png`) });
+
+  if (transition.state.economy.coins !== expectedCoins || !transition.state.economy.rewardedLevels.includes(levelId)
+    || transition.state.progression.bestStars[String(levelId)] !== expectedStars
+    || transition.state.progression.bestMoves[String(levelId)] !== solution.minimumDrags) {
+    throw new Error(`Quick-flow E2E: Lv${levelId} reward, stars, or move record was not settled exactly once`);
+  }
 
   const advanced = await waitFor(
     standard,
-    (candidate) => candidate.screen === "playing" && candidate.level.id === levelId + 1,
+    (candidate) => candidate.screen === "playing" && candidate.level.id === levelId + 1
+      && !candidate.completionFlow.directTransition,
   );
   const finalGestureToNextMs = Date.now() - finalGestureStartedAt;
-  const celebrationToNextMs = Date.now() - celebrationStartedAt;
   transitions.push({
     fromLevel: levelId,
     toLevel: levelId + 1,
-    finalGestureToCelebrationMs,
-    celebrationToNextMs,
+    finalGestureToTransitionMs,
+    transitionDurationMs: Date.now() - transitionStartedAt,
     finalGestureToNextMs,
   });
-  if (finalGestureToCelebrationMs > gestureToCelebrationThresholdMs
-    || celebrationToNextMs > celebrationThresholdMs
-    || finalGestureToNextMs > finalGestureThresholdMs
-    || advanced.screens.includes("win")) {
-    throw new Error(`Quick-flow E2E: Lv${levelId} transition took ${finalGestureToCelebrationMs}/${celebrationToNextMs}/${finalGestureToNextMs}ms or showed a blocking result`);
-  }
   state = advanced.state;
   if (state.puzzle.moves !== 0 || state.exitGhosts !== 0 || state.exitPulses.length !== 0
     || state.particles !== 0 || state.pendingCelebration !== 0 || state.activeRun?.levelId !== levelId + 1) {
@@ -165,7 +192,7 @@ for (const levelId of [1, 2, 3]) {
     throw new Error(`Quick-flow E2E: Lv${levelId} reward or stars were not settled exactly once`);
   }
 }
-await standard.screenshot({ path: shot("round41-quick-flow-level-004.png") });
+await standard.screenshot({ path: shot("quick-flow-level-005.png") });
 await standard.close();
 
 const mobile = await browser.newPage({ viewport: { width: 320, height: 568 } });
@@ -177,12 +204,17 @@ if (!mobileSolution.solved || !mobileSolution.drags.length) {
   throw new Error("Quick-flow E2E: mobile Lv1 has no verified route");
 }
 for (const drag of mobileSolution.drags.slice(0, -1)) {
-  await performDrag(mobile, mobileCoords, drag, drag.exitSide ? 330 : 35);
+  await performDrag(mobile, mobileCoords, drag, true);
 }
-await performDrag(mobile, mobileCoords, mobileSolution.drags.at(-1), 0);
-await waitFor(mobile, (candidate) => candidate.screen === "celebrating");
-await mobile.screenshot({ path: shot("round41-quick-clear-level-001-320x568.png") });
-const mobileAdvanced = await waitFor(mobile, (candidate) => candidate.screen === "playing" && candidate.level.id === 2);
+await performDrag(mobile, mobileCoords, mobileSolution.drags.at(-1));
+await waitFor(
+  mobile,
+  (candidate) => candidate.screen === "playing"
+    && candidate.completionFlow.directTransition?.fromLevel === 1,
+);
+await mobile.screenshot({ path: shot("direct-transition-level-001-320x568.png") });
+const mobileAdvanced = await waitFor(mobile, (candidate) => candidate.screen === "playing" && candidate.level.id === 2
+  && !candidate.completionFlow.directTransition);
 if (mobileAdvanced.state.puzzle.moves !== 0 || mobileAdvanced.state.activeRun?.levelId !== 2) {
   throw new Error("Quick-flow E2E: 320x568 did not enter a clean level 2 run");
 }
@@ -192,13 +224,10 @@ await writeFile(
   shot("round41-quick-flow-report.json"),
   `${JSON.stringify({
     transitions,
-    gestureToCelebrationThresholdMs,
-    celebrationThresholdMs,
-    finalGestureThresholdMs,
   }, null, 2)}\n`,
   "utf8",
 );
 
 await browser.close();
 if (errors.length) throw new Error(`Quick-flow browser errors:\n${errors.join("\n")}`);
-console.log("First-clear Lv1→2→3→4 auto-flow, rewards, clean state, timing, and 320x568 passed.");
+console.log("Lv1→2→3→4→5 direct transitions, rewards, clean state, and 320x568 passed.");

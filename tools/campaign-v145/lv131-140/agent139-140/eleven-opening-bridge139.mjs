@@ -1,0 +1,18 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';
+import {loadApi} from '../../../native-block-repair-v143.mjs';
+import {verifyRulesLock} from '../../../verify-rules-lock.mjs';
+import {checkQueueStationaryObligations} from '../root-native/stationary-queue-obligations.mjs';
+import {auditOpeningCoverage} from '../../../revised-opening-coverage.mjs';
+import {auditHiddenCoverage} from '../../../revised-hidden-coverage.mjs';
+import {auditGateSpanLimits} from '../../../revised-gate-span-limits.mjs';
+import {auditGeneratorQueueColors} from '../../../revised-generator-queue-colors.mjs';
+import {createSourceReview139} from './source-review-current139.mjs';
+assert(verifyRulesLock().ok);const {api}=await loadApi();
+const source='deliverables/remake131-140-v146-20260924/agent131-134/twin-eleven139-1790482429755.json',old=JSON.parse(fs.readFileSync(source)),level=structuredClone(old.level);
+level.blocks.find(b=>b.id==='a139-twin-bridge-extra-1').color='purple';
+level.blocks.find(b=>b.id==='n139-queue-2').color='cyan';
+const q=new Set(level.generators.flatMap(g=>g.queueBlockIds)),onboard=level.blocks.filter(b=>!q.has(b.id)),adj=(a,b)=>a.shutterId===b.shutterId&&a.shape.some(([x,y])=>b.shape.some(([u,v])=>Math.abs(a.x+x-b.x-u)+Math.abs(a.y+y-b.y-v)===1));
+const proof=checkQueueStationaryObligations(level,api,{floor:11}),checks={opening:auditOpeningCoverage(new api.PuzzleModel(level).snapshot()),hidden:auditHiddenCoverage(level),gates:auditGateSpanLimits(level),queue:auditGeneratorQueueColors(level),art:api.auditCandidateBlockArt(level),adjacency:{passed:!onboard.some((a,i)=>onboard.some((b,j)=>j>i&&a.color===b.color&&adj(a,b)))}};
+assert(Object.values(checks).every(c=>c.passed));assert(proof.thresholdProven);assert.equal(proof.contract.goalClears,12);assert.equal(proof.contract.targetIds.length,11);assert.equal(proof.contract.queuedTargetIds.length,1);
+const sourceReview=createSourceReview139(level,api),file='deliverables/remake131-140-v146-20260924/agent139-140/eleven-opening-bridge139-'+Date.now()+'.json';
+fs.writeFileSync(file,JSON.stringify({level,targetId:old.targetId,targetIds:old.targetIds,proof,checks,sourceReview,sourceCandidate:source,change:'Right bridge singleton becomes the eleventh opening ordinary-color body; FIFO stage2 becomes cyan. K remains12 and the head ordinary queue can finish K before any nonordinary FIFO requires parking.',formalAdopted:false},null,2)+'\n',{flag:'wx'});console.log(JSON.stringify({file,L:proof.provedObligations,K:proof.contract.goalClears,openingOrdinary:11,queuedOrdinary:1}));

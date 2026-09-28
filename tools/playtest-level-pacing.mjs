@@ -50,53 +50,81 @@ const clickLogical = async (page, x, y) => {
   const point = screenPoint(page, { x, y });
   await page.mouse.click(point.x, point.y);
 };
+const clickInteractionTarget = async (page, name) => {
+  const state = await debug(page);
+  const hit = state.interactionTargets?.targets?.[name]?.hit;
+  const bounds = await page.locator("canvas").boundingBox();
+  if (!hit || !bounds) throw new Error(`Pacing E2E: missing interaction target ${name}`);
+  await page.mouse.click(
+    bounds.x + state.viewportTransform.offsetX + (hit.x + hit.width / 2) * state.viewportTransform.scale,
+    bounds.y + state.viewportTransform.offsetY + (hit.y + hit.height / 2) * state.viewportTransform.scale,
+  );
+};
 
 const page = await browser.newPage({ viewport: { width: 496, height: 1078 } });
 attachErrors(page);
 await page.goto(playtestUrl, { waitUntil: "networkidle" });
 const pacingFixture = await page.evaluate(async () => {
-  const [{ LEVELS }, { solveLevelForValidation }] = await Promise.all([
+  const [{ LEVELS }, { solveLevelForValidation }, { campaignPacingForTarget }] = await Promise.all([
     import("/src/core/levels.ts"),
     import("/src/core/levelSolver.ts"),
+    import("/src/core/campaignDifficultyTargets.ts"),
   ]);
   const intro = LEVELS.find((level) => level.featureIntro?.kind === "generator")
     ?? LEVELS.find((level) => level.featureIntro && level.id < LEVELS.length);
-  if (!intro?.featureIntro) throw new Error("Pacing E2E: no low-pressure feature intro");
-  const application = LEVELS.slice(intro.id).find((level) => level.difficulty !== "normal");
+  if (!intro?.featureIntro) throw new Error("Pacing E2E: no formal feature intro");
+  const application = LEVELS[intro.id];
   const solution = solveLevelForValidation(intro);
   if (!application || !solution.solved || !solution.drags[0]) throw new Error("Pacing E2E: feature/application route missing");
+  const introPacing = campaignPacingForTarget(intro.designTargets?.calibratedDifficulty ?? Number.NaN);
+  const applicationPacing = campaignPacingForTarget(application.designTargets?.calibratedDifficulty ?? Number.NaN);
   return {
     introId: intro.id,
     introName: intro.name,
     kind: intro.featureIntro.kind,
+    introDifficulty: introPacing.difficulty,
+    introTime: introPacing.timeSeconds,
     applicationId: application.id,
     applicationName: application.name,
     applicationDifficulty: application.difficulty,
     applicationTime: application.timeSeconds,
+    expectedApplicationDifficulty: applicationPacing.difficulty,
+    expectedApplicationTime: applicationPacing.timeSeconds,
     firstDrag: solution.drags[0],
   };
 });
 await seed(page, pacingFixture.introId);
-await clickLogical(page, 248, 852);
+await clickInteractionTarget(page, "homePlay");
 await page.waitForTimeout(100);
 let state = await debug(page);
 if (state.screen !== "feature" || state.level.id !== pacingFixture.introId
   || state.level.name !== pacingFixture.introName || state.level.featureIntro?.kind !== pacingFixture.kind) {
   throw new Error(`Pacing E2E: ${pacingFixture.kind} introduction did not open on level ${pacingFixture.introId}`);
 }
-if (state.level.difficulty !== "normal" || state.level.timeSeconds !== 180) {
-  throw new Error("Pacing E2E: feature introduction retained a high-pressure configuration");
+if (state.level.difficulty !== pacingFixture.introDifficulty || state.level.timeSeconds !== pacingFixture.introTime) {
+  throw new Error("Pacing E2E: feature introduction drifted from its formal target tier");
 }
-if (state.puzzle.started || state.puzzle.remainingSeconds !== 180) {
-  throw new Error("Pacing E2E: explanation screen consumed the low-pressure timer");
+if (state.puzzle.started || state.puzzle.autonomousStarted
+  || state.puzzle.remainingSeconds !== pacingFixture.introTime) {
+  throw new Error("Pacing E2E: explanation screen consumed the formal timer");
 }
 await page.screenshot({ path: shot("round54-feature-intro-pacing.png") });
 
-await clickLogical(page, 248, 755);
-await page.waitForTimeout(80);
+await clickInteractionTarget(page, "featurePrimary");
+await page.waitForTimeout(30);
 state = await debug(page);
-if (state.screen !== "playing" || state.puzzle.started || state.puzzle.remainingSeconds !== 180) {
-  throw new Error("Pacing E2E: confirming the explanation started the timer before player input");
+if (state.screen !== "playing" || !state.puzzle.started || state.puzzle.autonomousStarted
+  || state.puzzle.remainingSeconds > pacingFixture.introTime
+  || state.puzzle.remainingSeconds < pacingFixture.introTime - 0.12) {
+  throw new Error("Pacing E2E: confirming the explanation did not start only the level countdown");
+}
+const dismissedRemaining = state.puzzle.remainingSeconds;
+await page.waitForTimeout(300);
+state = await debug(page);
+const elapsedAfterDismiss = dismissedRemaining - state.puzzle.remainingSeconds;
+if (!state.puzzle.started || state.puzzle.autonomousStarted
+  || elapsedAfterDismiss < 0.12 || elapsedAfterDismiss > 0.7) {
+  throw new Error(`Pacing E2E: timer did not advance after explanation dismissal (${elapsedAfterDismiss})`);
 }
 await page.screenshot({ path: shot("round54-feature-first-play.png") });
 
@@ -129,8 +157,11 @@ if (pacingFixture.firstDrag.exitSide) {
 await page.mouse.up();
 await page.waitForTimeout(100);
 state = await debug(page);
-if (!state.puzzle.started || state.puzzle.remainingSeconds > 180 || state.puzzle.remainingSeconds < 178) {
-  throw new Error(`Pacing E2E: first real drag did not start from the 180-second budget (${state.puzzle.remainingSeconds})`);
+if (!state.puzzle.started
+  || !state.puzzle.autonomousStarted
+  || state.puzzle.remainingSeconds > pacingFixture.introTime
+  || state.puzzle.remainingSeconds < pacingFixture.introTime - 2) {
+  throw new Error(`Pacing E2E: first real drag did not start from the formal budget (${state.puzzle.remainingSeconds})`);
 }
 if (state.puzzle.moves !== 1) throw new Error("Pacing E2E: first teaching drag did not commit exactly once");
 await page.screenshot({ path: shot("round54-feature-first-action.png") });
@@ -139,7 +170,9 @@ await page.evaluate((levelId) => window.__COLOR_ESCAPE__.loadLevel(levelId, true
 await page.waitForTimeout(100);
 state = await debug(page);
 if (state.level.name !== pacingFixture.applicationName || state.level.difficulty !== pacingFixture.applicationDifficulty
-  || state.level.timeSeconds !== pacingFixture.applicationTime) {
+  || state.level.timeSeconds !== pacingFixture.applicationTime
+  || state.level.difficulty !== pacingFixture.expectedApplicationDifficulty
+  || state.level.timeSeconds !== pacingFixture.expectedApplicationTime) {
   throw new Error("Pacing E2E: the later mechanism application no longer provides the intended difficulty step");
 }
 await page.screenshot({ path: shot("round54-feature-application.png") });
@@ -148,20 +181,21 @@ await page.close();
 const small = await browser.newPage({ viewport: { width: 320, height: 568 } });
 attachErrors(small);
 await seed(small, pacingFixture.introId);
-await clickLogical(small, 248, 852);
+await clickInteractionTarget(small, "homePlay");
 await small.waitForTimeout(100);
 state = await debug(small);
-if (state.screen !== "feature" || state.puzzle.remainingSeconds !== 180) {
+if (state.screen !== "feature" || state.puzzle.remainingSeconds !== pacingFixture.introTime) {
   throw new Error("Pacing E2E: 320x568 shutter introduction diverged from the standard viewport");
 }
 await small.screenshot({ path: shot("round54-feature-intro-320x568.png") });
-await clickLogical(small, 248, 755);
+await clickInteractionTarget(small, "featurePrimary");
+await small.waitForTimeout(30);
 state = await debug(small);
-if (state.screen !== "playing" || state.puzzle.started) {
+if (state.screen !== "playing" || !state.puzzle.started || state.puzzle.autonomousStarted) {
   throw new Error("Pacing E2E: 320x568 confirmation target or timer contract failed");
 }
 await small.close();
 
 await browser.close();
 if (errors.length) throw new Error(`Pacing browser errors:\n${errors.join("\n")}`);
-console.log("Low-pressure feature introduction, first-action timer, later application, and 320x568 path passed.");
+console.log("Formal feature-introduction pacing, post-dismiss timer, first-action mechanism activation, next application, and 320x568 path passed.");

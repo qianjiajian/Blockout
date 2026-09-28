@@ -35,27 +35,39 @@ page.on("console", (message) => { if (message.type() === "error") errors.push(me
 page.on("pageerror", (error) => errors.push(error.message));
 
 await page.goto(playtestUrl, { waitUntil: "networkidle" });
-await page.evaluate(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), { key: saveKey, value: matureSave });
+const updateId = await page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState().updateNotice.id);
+const currentMatureSave = { ...matureSave, lastSeenUpdate: updateId };
+await page.evaluate(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), { key: saveKey, value: currentMatureSave });
 await page.reload({ waitUntil: "networkidle" });
 await page.waitForTimeout(350);
 const debug = () => page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
+const clickTarget = async (targetPage, name) => {
+  const state = await targetPage.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
+  const hit = state.interactionTargets?.targets?.[name]?.hit;
+  const canvas = await targetPage.locator("canvas").boundingBox();
+  if (!hit || !canvas) throw new Error(`Reset E2E: missing ${name} target or canvas bounds`);
+  await targetPage.mouse.click(
+    canvas.x + state.viewportTransform.offsetX + (hit.x + hit.width / 2) * state.viewportTransform.scale,
+    canvas.y + state.viewportTransform.offsetY + (hit.y + hit.height / 2) * state.viewportTransform.scale,
+  );
+};
 
-await page.mouse.click(454, 70);
+await clickTarget(page, "homeSettings");
 await page.screenshot({ path: shot("round32-settings-reset-entry.png") });
-await page.mouse.click(248, 877);
+await clickTarget(page, "settingsReset");
 let state = await debug();
 if (state.screen !== "resetConfirm" || state.progression.highestLevel !== 24 || state.economy.coins !== 4321) {
   throw new Error("Reset E2E: confirmation did not open without mutating progress");
 }
 await page.screenshot({ path: shot("round32-reset-confirmation.png") });
 
-await page.mouse.click(248, 833);
+await clickTarget(page, "modalSecondary");
 state = await debug();
 if (state.screen !== "settings" || state.progression.highestLevel !== 24 || state.economy.coins !== 4321) {
   throw new Error("Reset E2E: cancel did not preserve the existing save");
 }
 
-await page.mouse.click(248, 877);
+await clickTarget(page, "settingsReset");
 await page.evaluate((key) => {
   const originalSet = Storage.prototype.setItem;
   window.__BLOCK_RESET_WRITE__ = true;
@@ -66,7 +78,7 @@ await page.evaluate((key) => {
     return originalSet.call(this, name, value);
   };
 }, saveKey);
-await page.mouse.click(248, 755);
+await clickTarget(page, "modalPrimary");
 state = await debug();
 const rawAfterFailedReset = await page.evaluate((key) => JSON.parse(localStorage.getItem(key)), saveKey);
 if (state.screen !== "resetConfirm" || state.reset.saveFailed !== true
@@ -78,7 +90,7 @@ if (state.screen !== "resetConfirm" || state.reset.saveFailed !== true
 }
 await page.screenshot({ path: shot("round103-reset-write-failure-protected.png") });
 await page.evaluate(() => { window.__BLOCK_RESET_WRITE__ = false; });
-await page.mouse.click(248, 755);
+await clickTarget(page, "modalPrimary");
 state = await debug();
 if (state.screen !== "home" || state.level.id !== 1 || state.progression.highestLevel !== 1) {
   throw new Error("Reset E2E: confirmed reset did not return to a fresh level 1 home");
@@ -88,9 +100,9 @@ if (state.economy.coins !== 1000 || state.economy.rewardedLevels.length !== 0
   throw new Error("Reset E2E: economy did not return to defaults");
 }
 if (Object.keys(state.progression.bestStars).length || Object.keys(state.progression.bestMoves).length
-  || state.daily.streak !== 0 || state.onboarding.basicsSeen
+  || state.onboarding.basicsSeen
   || JSON.stringify(state.discovery.state) !== JSON.stringify({ collectionViewedThroughLevel: 1, dailyUnlockSeen: false })) {
-  throw new Error("Reset E2E: records, daily state, or onboarding were not cleared");
+  throw new Error("Reset E2E: records, discovery state, or onboarding were not cleared");
 }
 if (state.settings.sound || state.settings.haptic || !state.settings.reducedMotion) {
   throw new Error("Reset E2E: device preferences were not preserved");
@@ -110,17 +122,14 @@ await page.close();
 
 const small = await browser.newPage({ viewport: { width: 320, height: 568 } });
 await small.goto(playtestUrl, { waitUntil: "networkidle" });
-await small.evaluate(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), { key: saveKey, value: matureSave });
+await small.evaluate(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), { key: saveKey, value: currentMatureSave });
 await small.reload({ waitUntil: "networkidle" });
-const scale = Math.min(320 / 496, 568 / 1078);
-const offsetX = (320 - 496 * scale) / 2;
-const clickLogical = (x, y) => small.mouse.click(offsetX + x * scale, y * scale);
-await clickLogical(454, 70);
-await clickLogical(248, 877);
+await clickTarget(small, "homeSettings");
+await clickTarget(small, "settingsReset");
 state = await small.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
 if (state.screen !== "resetConfirm") throw new Error("Reset E2E: 320x568 reset target missed");
 await small.screenshot({ path: shot("round32-reset-confirmation-320x568.png") });
-await clickLogical(248, 833);
+await clickTarget(small, "modalSecondary");
 state = await small.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
 if (state.screen !== "settings" || state.progression.highestLevel !== 24) {
   throw new Error("Reset E2E: 320x568 cancel target failed");

@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "batch": 1,
+  "encoding": {
+    "codec": "mp3",
+    "encoder": "libmp3lame",
+    "bitrateKbps": 160,
+    "sampleRate": 44100,
+    "channels": 2,
+    "writeXing": true,
+    "metadataStripped": true,
+    "videoAndCoverArtRemoved": true
+  },
+  "tracks": [
+    {
+      "id": "tides-smiles",
+      "title": "暖阳微风",
+      "artist": "Moavii",
+      "unlockLevel": 15,
+      "runtimeFile": "assets/audio/music-library/tides-smiles.mp3",
+      "runtimeBytes": 1575183,
+      "runtimeSha256": "bce63088fafb98b657b79901866f9bb89bf530cc94a79e03bb66ffc16ed8aacf",
+      "durationSeconds": 78.73,
+      "loop": {
+        "startSeconds": 0,
+        "endSeconds": 78.73
+      }
+    },
+    {
+      "id": "dreamscape",
+      "title": "梦境漫游",
+      "artist": "Roa",
+      "unlockLevel": 30,
+      "runtimeFile": "assets/audio/music-library/dreamscape.mp3",
+      "runtimeBytes": 3829028,
+      "runtimeSha256": "e7ea0945a86a18106165561b6c8341827861ecdde8fe7ed4b76d96c6bbc141e1",
+      "durationSeconds": 191.43,
+      "loop": {
+        "startSeconds": 0,
+        "endSeconds": 191.43
+      }
+    },
+    {
+      "id": "do-you-see-me",
+      "title": "霓虹节拍",
+      "artist": "Bass Rebels",
+      "unlockLevel": 45,
+      "runtimeFile": "assets/audio/music-library/do-you-see-me.mp3",
+      "runtimeBytes": 3333747,
+      "runtimeSha256": "e14d4dfeff971b3f842b07283ed9d38fde2b23c80f9aa52c7e974ddf33971e5d",
+      "durationSeconds": 166.66,
+      "loop": {
+        "startSeconds": 0,
+        "endSeconds": 166.66
+      }
+    },
+    {
+      "id": "smile",
+      "title": "欢乐漫步",
+      "artist": "Scandinavianz",
+      "unlockLevel": 60,
+      "runtimeFile": "assets/audio/music-library/smile.mp3",
+      "runtimeBytes": 2964375,
+      "runtimeSha256": "71e33d2b919b6b16941d970f6054f9486881845c2c69acc6577e8d6d512ce15f",
+      "durationSeconds": 148.19,
+      "loop": {
+        "startSeconds": 0,
+        "endSeconds": 148.19
+      }
+    },
+    {
+      "id": "splash",
+      "title": "海湾水花",
+      "artist": "Roa",
+      "unlockLevel": 75,
+      "runtimeFile": "assets/audio/music-library/splash.mp3",
+      "runtimeBytes": 3906351,
+      "runtimeSha256": "24c3e4a47d22ad78aff42c3b961d4cc4cbca1c8a0d65f8825053e5ceb4a2608c",
+      "durationSeconds": 195.29,
+      "loop": {
+        "startSeconds": 0,
+        "endSeconds": 195.29
+      }
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+import { build } from "esbuild";
+import { mkdir, writeFile, readFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+const root=process.cwd(); const outDir=resolve(root,"deliverables/axis-retry-20260926/agent101"); await mkdir(outDir,{recursive:true});
+const src=`export {LEVELS} from ${JSON.stringify(resolve(root,"src/core/levels.ts"))}; export {replayRevisedRoute} from ${JSON.stringify(resolve(root,"src/core/revisedLevelSearch.ts"))}; export {validateLevel} from ${JSON.stringify(resolve(root,"src/core/PuzzleModel.ts"))}; export {matchFormalBlockShapeForLevel} from ${JSON.stringify(resolve(root,"src/game/formalBlockShapes.ts"))};`;
+const b=await build({stdin:{contents:src,resolveDir:root,loader:"ts"},bundle:true,platform:"node",format:"esm",write:false,logLevel:"silent"}); const mp=resolve(outDir,`.replay-api-${process.pid}.mjs`); await writeFile(mp,b.outputFiles[0].text); const api=await import(pathToFileURL(mp).href);
+const raw=JSON.parse(await readFile(resolve(root,"deliverables/remake101-110-v146-20260924/proof101-v152/enriched101-1790326396635.json"),"utf8")); const live=api.LEVELS.find(l=>l.id===101); const hidden=new Map(raw.level.blocks.filter(b=>b.shutterId==="r147-101-cover4").map(b=>[b.id,b]));
+const level={...live,blocks:live.blocks.map(b=>{const r=hidden.get(b.id); return r ? {...b,x:r.x,y:r.y,shape:r.shape.map(c=>[...c]),movementAxis:undefined}:b;})};
+const replay=api.replayRevisedRoute(level,raw.drags); const rows={replay,blocks:level.blocks.filter(b=>b.shutterId==="r147-101-cover4")}; await writeFile(resolve(outDir,"candidate101-original-hidden-replay.json"),`${JSON.stringify({level,drags:raw.drags,replay},null,2)}\n`); console.log(JSON.stringify(replay,null,2));

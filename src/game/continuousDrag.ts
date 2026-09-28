@@ -1,4 +1,14 @@
-import type { Point, PuzzleSnapshot, Side } from "../core/types";
+import { matchingPortalForExitFrontier } from "../core/blockExitFrontier";
+import { portalBoundaryAnchor } from "../core/gatePortals";
+import { usesRevisedMechanisms } from "../core/mechanismRules";
+import { isMechanismBlockVisible, isMechanismRegionBlocking } from "./revisedMechanismPresentation";
+import {
+  type BlockState,
+  type GatePortalSpec,
+  type Point,
+  type PuzzleSnapshot,
+  type Side,
+} from "../core/types";
 
 export interface ContinuousPose {
   x: number;
@@ -12,6 +22,8 @@ export interface GridStep extends ContinuousPose {
 export interface SweepResult extends ContinuousPose {
   blockedX: boolean;
   blockedY: boolean;
+  /** Chronological sub-cell poses visited by this pointer sample. */
+  path: ContinuousPose[];
 }
 
 export interface TurnAssistInput {
@@ -24,6 +36,25 @@ export interface ReleaseBoardBounds {
   innerY: number;
   innerWidth: number;
   innerHeight: number;
+}
+
+export interface PortalReleaseBoardBounds extends ReleaseBoardBounds {
+  cell: number;
+}
+
+export interface ContinuousExitPortalMatch {
+  gateId: string;
+  gateKind: "fixed" | "flipDoor";
+  portalIndex: number;
+  portal: GatePortalSpec;
+  /** False only for a side/offset/size gate normalized to its outer portal. */
+  authoredPortal: boolean;
+}
+
+export interface PortalReleaseCandidate {
+  portal: GatePortalSpec;
+  /** Lets normalized legacy candidates preserve the old side chooser exactly. */
+  authoredPortal?: boolean;
 }
 
 export interface ReachableGridSnap extends ContinuousPose {
@@ -67,21 +98,43 @@ export const createContinuousCollisionValidator = (
 
   for (const other of snapshot.blocks) {
     if (other.id === blockId) continue;
-    const hiddenBehindShutter = other.shutterId
-      ? snapshot.shutters.some((shutter) => shutter.id === other.shutterId && shutter.count > 0)
-      : false;
-    if (hiddenBehindShutter) continue;
+    if (!isMechanismBlockVisible(snapshot, other)) continue;
     for (const [dx, dy] of other.shape) obstacleCells.push([other.x + dx, other.y + dy]);
   }
 
   for (const shutter of snapshot.shutters) {
-    if (shutter.count <= 0) continue;
+    if (!isMechanismRegionBlocking(snapshot, shutter)) continue;
     for (let y = shutter.y; y < shutter.y + shutter.height; y += 1) {
       for (let x = shutter.x; x < shutter.x + shutter.width; x += 1) obstacleCells.push([x, y]);
     }
   }
 
   return (anchorX: number, anchorY: number): boolean => {
+    if (usesRevisedMechanisms(snapshot)) {
+      if (block.movementAxis === "horizontal" && Math.abs(anchorY - block.y) > CONTACT_EPSILON) return false;
+      if (block.movementAxis === "vertical" && Math.abs(anchorX - block.x) > CONTACT_EPSILON) return false;
+      if (snapshot.coloredGrids.some((grid) => grid.color !== block.layers[0]
+        && grid.cells.some(([gx, gy]) => block.shape.some(([dx, dy]) => (
+          overlapsUnitCell(anchorX + dx, anchorY + dy, gx, gy)
+        ))))) return false;
+    }
+    const crossesSeam = (snapshot.seams ?? []).some((seam) => block.shape.some(([dx, dy]) => {
+      const cellX = anchorX + dx;
+      const cellY = anchorY + dy;
+      if (seam.orientation === "horizontal") {
+        const crossesNormal = cellY < seam.offset - CONTACT_EPSILON
+          && cellY + 1 > seam.offset + CONTACT_EPSILON;
+        const overlapsTangent = cellX < seam.start + seam.size - CONTACT_EPSILON
+          && cellX + 1 > seam.start + CONTACT_EPSILON;
+        return crossesNormal && overlapsTangent;
+      }
+      const crossesNormal = cellX < seam.offset - CONTACT_EPSILON
+        && cellX + 1 > seam.offset + CONTACT_EPSILON;
+      const overlapsTangent = cellY < seam.start + seam.size - CONTACT_EPSILON
+        && cellY + 1 > seam.start + CONTACT_EPSILON;
+      return crossesNormal && overlapsTangent;
+    }));
+    if (crossesSeam) return false;
     for (const [dx, dy] of block.shape) {
       const x = anchorX + dx;
       const y = anchorY + dy;
@@ -121,6 +174,14 @@ export const sweepContinuousPose = (
   let y = start.y;
   let blockedX = false;
   let blockedY = false;
+  const path: ContinuousPose[] = [];
+
+  const recordPose = (): void => {
+    const previous = path.at(-1);
+    if (!previous || Math.abs(previous.x - x) > 1e-9 || Math.abs(previous.y - y) > 1e-9) {
+      path.push({ x, y });
+    }
+  };
 
   const advanceAxisToContact = (axis: "x" | "y", delta: number): void => {
     if (delta === 0) return;
@@ -145,6 +206,7 @@ export const sweepContinuousPose = (
     if (isValid(nextX, nextY)) {
       x = nextX;
       y = nextY;
+      recordPose();
       continue;
     }
 
@@ -164,9 +226,10 @@ export const sweepContinuousPose = (
         }
       }
     }
+    recordPose();
   }
 
-  return { x, y, blockedX, blockedY };
+  return { x, y, blockedX, blockedY, path };
 };
 
 /**
@@ -242,6 +305,7 @@ export const sweepContinuousPoseWithTurnAssist = (
     ...turn,
     blockedX: rail.blockedX || turn.blockedX,
     blockedY: rail.blockedY || turn.blockedY,
+    path: [...rail.path, ...turn.path],
   };
   const rawRemaining = Math.abs(raw[requestedAxis] - target[requestedAxis]);
   const assistedRemaining = Math.abs(assisted[requestedAxis] - target[requestedAxis]);
@@ -349,6 +413,87 @@ export const isContinuousPoseAtEdge = (
 };
 
 /**
+ * Tests contact at one physical portal rail and the full rigid shape's
+ * tangential extent. A leading tip alone must never admit the wider rear.
+ */
+export const isContinuousPoseAtPortal = (
+  pose: ContinuousPose,
+  shape: readonly Point[],
+  portal: GatePortalSpec,
+  tolerance = 0.04,
+  _mechanismRules?: PuzzleSnapshot["mechanismRules"],
+): boolean => {
+  if (shape.length === 0) return false;
+  const [railX, railY] = portalBoundaryAnchor(portal);
+  const extreme = portal.side === "top"
+    ? Math.min(...shape.map(([, y]) => y))
+    : portal.side === "bottom"
+      ? Math.max(...shape.map(([, y]) => y))
+      : portal.side === "left"
+        ? Math.min(...shape.map(([x]) => x))
+        : Math.max(...shape.map(([x]) => x));
+  const blockRail = portal.side === "top"
+    ? pose.y + extreme
+    : portal.side === "bottom"
+      ? pose.y + extreme + 1
+      : portal.side === "left"
+        ? pose.x + extreme
+        : pose.x + extreme + 1;
+  const portalRail = portal.side === "top" || portal.side === "bottom" ? railY : railX;
+  if (Math.abs(blockRail - portalRail) > tolerance) return false;
+
+  const tangentStart = portal.side === "top" || portal.side === "bottom"
+    ? portal.origin[0]
+    : portal.origin[1];
+  const tangentEnd = tangentStart + portal.size;
+  return shape.every(([x, y]) => {
+    const blockStart = portal.side === "top" || portal.side === "bottom"
+      ? pose.x + x
+      : pose.y + y;
+    return blockStart >= tangentStart - tolerance
+      && blockStart + 1 <= tangentEnd + tolerance;
+  });
+};
+
+/**
+ * Resolves physical portal identities for a block at its committed grid pose.
+ * Pass PuzzleModel.possibleExitSides(block) to keep model state (colour, ice,
+ * star and flip-door openness) authoritative while retaining portal identity.
+ */
+export const matchingContinuousExitPortals = (
+  snapshot: Readonly<Pick<
+    PuzzleSnapshot,
+    "width" | "height" | "playable" | "blocked" | "seams" | "gates" | "flipDoors" | "mechanismRules"
+  >>,
+  block: Readonly<Pick<BlockState, "x" | "y" | "shape">>,
+  sides: readonly Side[],
+): ContinuousExitPortalMatch[] => {
+  if (sides.length === 0) return [];
+  const requestedSides = new Set(sides);
+  const cells = block.shape.map(([x, y]) => [block.x + x, block.y + y] as Point);
+  const owners = [
+    ...snapshot.gates.map((gate) => ({ gate, gateKind: "fixed" as const })),
+    ...snapshot.flipDoors.map((gate) => ({ gate, gateKind: "flipDoor" as const })),
+  ];
+  const matches: ContinuousExitPortalMatch[] = [];
+  for (const side of ["top", "right", "bottom", "left"] as const) {
+    if (!requestedSides.has(side)) continue;
+    for (const { gate, gateKind } of owners) {
+      const match = matchingPortalForExitFrontier(snapshot, cells, gate, side);
+      if (!match) continue;
+      matches.push({
+        gateId: gate.id,
+        gateKind,
+        portalIndex: match.portalIndex,
+        portal: match.portal,
+        authoredPortal: Boolean(gate.portals?.length),
+      });
+    }
+  }
+  return matches;
+};
+
+/**
  * Chooses the matching edge that owns a release. Directional intent wins when
  * it names a valid edge; otherwise the closest matching board edge wins. This
  * makes a block released while moving along a gate disappear through that gate
@@ -368,6 +513,51 @@ export const chooseReleaseExitSide = (
     left: Math.abs(point.x - board.innerX),
   };
   return [...possible].sort((a, b) => distance[a] - distance[b])[0];
+};
+
+const portalReleaseDistanceSquared = (
+  point: ContinuousPose,
+  portal: GatePortalSpec,
+  board: PortalReleaseBoardBounds,
+): number => {
+  const [anchorX, anchorY] = portalBoundaryAnchor(portal);
+  const centerX = board.innerX + anchorX * board.cell;
+  const centerY = board.innerY + anchorY * board.cell;
+  const halfSpan = portal.size * board.cell / 2;
+  if (portal.side === "top" || portal.side === "bottom") {
+    const nearestX = Math.max(centerX - halfSpan, Math.min(centerX + halfSpan, point.x));
+    return (point.x - nearestX) ** 2 + (point.y - centerY) ** 2;
+  }
+  const nearestY = Math.max(centerY - halfSpan, Math.min(centerY + halfSpan, point.y));
+  return (point.x - centerX) ** 2 + (point.y - nearestY) ** 2;
+};
+
+/**
+ * Chooses a physical portal, not just a side. Directional intent wins when it
+ * identifies candidates; same-side portals are then disambiguated by distance
+ * to their real rail segment. A purely normalized legacy set delegates to the
+ * original side chooser so side/offset/size behavior remains byte-for-byte.
+ */
+export const choosePortalReleaseCandidate = <T extends PortalReleaseCandidate>(
+  candidates: readonly T[],
+  point: ContinuousPose,
+  board: PortalReleaseBoardBounds,
+  inferred?: Side,
+): T | undefined => {
+  if (candidates.length === 0) return undefined;
+  if (candidates.every((candidate) => candidate.authoredPortal === false)) {
+    const possible = [...new Set(candidates.map(({ portal }) => portal.side))];
+    const side = chooseReleaseExitSide(possible, point, board, inferred);
+    return candidates.find(({ portal }) => portal.side === side);
+  }
+  const inferredCandidates = inferred
+    ? candidates.filter(({ portal }) => portal.side === inferred)
+    : [];
+  const eligible = inferredCandidates.length > 0 ? inferredCandidates : candidates;
+  return [...eligible].sort((a, b) => (
+    portalReleaseDistanceSquared(point, a.portal, board)
+    - portalReleaseDistanceSquared(point, b.portal, board)
+  ))[0];
 };
 
 export const easeOutCubic = (progress: number): number => {

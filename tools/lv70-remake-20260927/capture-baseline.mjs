@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {createHash} from 'node:crypto';
+import {loadApi} from '../native-block-repair-v143.mjs';
+import {verifyRulesLock} from '../verify-rules-lock.mjs';
+const lock=verifyRulesLock();if(!lock.ok)throw Error(lock.errors.join('\n'));
+const {api}=await loadApi(),level=api.LEVELS[69];
+const sha=x=>createHash('sha256').update(typeof x==='string'||Buffer.isBuffer(x)?x:JSON.stringify(x)).digest('hex');
+const files={};function walk(dir){for(const e of fs.readdirSync(dir,{withFileTypes:true})){const p=path.join(dir,e.name).replaceAll('\\','/');if(e.isDirectory())walk(p);else files[p]=sha(fs.readFileSync(p));}}walk('src');
+const output='deliverables/lv70-remake-20260927/baseline.json';fs.mkdirSync(path.dirname(output),{recursive:true});
+fs.writeFileSync(output,JSON.stringify({capturedAt:new Date().toISOString(),activeVersion:lock.activeVersion,level,stars:api.levelStarTargets(level),levels:api.LEVELS,levelHashes:api.LEVELS.map(l=>({id:l.id,sha256:sha(l)})),files},null,2),{flag:'wx'});
+console.log(JSON.stringify({output,level:70,stars:api.levelStarTargets(level),runtime:level.mechanismRules,hash:sha(level)}));

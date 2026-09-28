@@ -1,0 +1,31 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';
+import {loadApi} from '../../../native-block-repair-v143.mjs';
+import {checkQueueStationaryObligations} from '../root-native/stationary-queue-obligations.mjs';
+import {searchNativeOpeningWitness} from './native-opening-witness139.mjs';
+import {loadSpatialApi,searchSpatial} from './witness-domain.mjs';
+import {auditOpeningCoverage} from '../../../revised-opening-coverage.mjs';
+import {auditHiddenCoverage} from '../../../revised-hidden-coverage.mjs';
+import {auditGateSpanLimits} from '../../../revised-gate-span-limits.mjs';
+import {auditGeneratorQueueColors} from '../../../revised-generator-queue-colors.mjs';
+import {measureRoute} from '../../../remake21to30-quality.mjs';
+import {createSourceReview139} from './source-review-current139.mjs';
+import {verifyRulesLock} from '../../../verify-rules-lock.mjs';
+Error.stackTraceLimit=0;assert(verifyRulesLock().ok);const {api}=await loadApi(),spatial=await loadSpatialApi(),root='deliverables/remake131-140-v146-20260924/agent139-140';
+const sources=['deliverables/remake131-140-v146-20260924/agent136-138/down-park-sq139-1790480383955.json','deliverables/remake131-140-v146-20260924/agent136-138/manual-m11-139-1790480692645.json'];
+const adj=(a,b)=>a.shutterId===b.shutterId&&a.shape.some(([x,y])=>b.shape.some(([u,v])=>Math.abs(a.x+x-b.x-u)+Math.abs(a.y+y-b.y-v)===1)),rows=[];
+for(const source of sources){const old=JSON.parse(fs.readFileSync(source)),level=structuredClone(old.level),targetId='n139-opening-3';
+ for(const id of ['n139-opening-1','n139-opening-2'])level.blocks.find(b=>b.id===id).color='yellow';
+ for(const id of ['n139-queue-0','n139-queue-2'])level.blocks.find(b=>b.id===id).color='purple';
+ const q1=level.blocks.find(b=>b.id==='n139-queue-1');q1.shape=[[1,0],[0,1],[1,1],[2,1]];q1.color='blue';
+ level.blocks.find(b=>b.id==='n139-queue-3').shape=[[0,0],[1,0],[1,1],[2,1]];
+ Object.assign(level.generators[0],{side:'bottom',offset:1,spawn:[0,11]});Object.assign(level.gates.find(g=>g.color==='orange'),{side:'top',offset:6});
+ const queueIds=new Set(level.generators[0].queueBlockIds),onboard=level.blocks.filter(b=>!queueIds.has(b.id));
+ const checks={opening:auditOpeningCoverage(new api.PuzzleModel(level).snapshot()),hidden:auditHiddenCoverage(level),art:api.auditCandidateBlockArt(level),gates:auditGateSpanLimits(level),queue:auditGeneratorQueueColors(level),adjacency:{passed:!onboard.some((a,i)=>onboard.some((b,j)=>j>i&&a.color===b.color&&adj(a,b)))}};
+ const proof=checkQueueStationaryObligations(level,api,{floor:11,targetIds:[targetId]}),stamp=Date.now(),file=root+'/ten-opening-bottom139-'+stamp+'.json';
+ if(!Object.values(checks).every(c=>c.passed)||!proof.thresholdProven){rows.push({source,checks,proof});console.log(JSON.stringify({source,checks,L:proof.provedObligations}));continue;}
+ const sourceReview=createSourceReview139(level,api);fs.writeFileSync(file,JSON.stringify({level,targetId,checks,proof,sourceReview,sourceCandidate:source,formalAdopted:false},null,2)+'\n',{flag:'wx'});
+ const prefix=searchNativeOpeningWitness(level,api,{targetId,goalClears:10,floor:16,maxMilliseconds:10000,maxStates:400000,weight:1000});
+ const tail=prefix.status==='relaxed-prefix-witness'&&prefix.actualPrefixValid?searchSpatial(level,spatial,{floor:16,maxMilliseconds:8000,maxStates:150000,initialDrags:prefix.drags,diagnosticTrace:true}):null,replay=tail?.status==='witness'?api.replayRevisedRoute(level,tail.drags):null,measurement=replay?.complete?measureRoute(level,tail.drags,api):null;
+ const report=root+'/ten-opening-bottom-result139-'+Date.now()+'.json';fs.writeFileSync(report,JSON.stringify({file,level,targetId,checks,proof,sourceReview,prefix,tail,replay,measurement},null,2)+'\n',{flag:'wx'});const row={file,report,L:proof.provedObligations,clears:prefix.maxClearsSeen,cost:prefix.cost,h:prefix.h,term:prefix.termination,actual:prefix.actualPrefixValid,tail:tail?.status,U:replay?.nonClearingDrags};rows.push(row);console.log(JSON.stringify(row));
+}
+fs.writeFileSync(root+'/ten-opening-bottom-report139-'+Date.now()+'.json',JSON.stringify({rows},null,2)+'\n',{flag:'wx'});

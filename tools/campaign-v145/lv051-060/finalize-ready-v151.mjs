@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+import {digest} from '../../revised-preview-validation-v160.mjs';
+import {verifyRulesLock} from '../../verify-rules-lock.mjs';
+const root='deliverables/remake31-200-v145-20260924/batches/lv051-060';
+const lock=verifyRulesLock();if(!lock.ok||lock.activeVersion!=='1.51.0')throw new Error('v1.51 lock required');
+const summaryFile=`${root}/summary.json`,summary=JSON.parse(fs.readFileSync(summaryFile));
+const row=summary.rows.find(r=>r.id===58);if(row?.status!=='CANDIDATE_PASS_USER_EXCEPTION')throw new Error('summary level58 exception row missing');
+const out={...JSON.parse(fs.readFileSync(`${root}/ready-candidates.json`)),updatedAt:new Date().toISOString(),ruleVersion:lock.activeVersion,summary:{file:summaryFile,sha256:digest(fs.readFileSync(summaryFile))},readyIds:summary.candidatePass,allTenComplete:false,formalAdopted:false,finalProductionPointerValidated:false,published:false,userExceptionIds:summary.candidatePassUserException,formalEligibleIds:summary.formalEligible,userException58:{status:row.status,candidate:row.candidate,levelSha256:row.levelSha256,routeSha256:row.routeSha256,U:row.U,L:null,floor:row.floor,pointer:row.pointerReport,userException:row.userException,lowerBoundCertified:false,note:row.note}};
+fs.writeFileSync(`${root}/ready-candidates.json`,JSON.stringify(out,null,2)+'\n');
+console.log(JSON.stringify({file:`${root}/ready-candidates.json`,ruleVersion:out.ruleVersion,readyIds:out.readyIds,userExceptionIds:out.userExceptionIds,formalEligibleIds:out.formalEligibleIds}));

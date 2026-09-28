@@ -1,9 +1,31 @@
-import type { GameHost, PointerHandlers, SoundKind, StorageReadResult, Viewport } from "./Host";
+import { ProceduralSoundscape, RECORDED_MUSIC_LOOP_DURATIONS } from "../audio/ProceduralSoundscape";
+import type { MusicTrack } from "../audio/ProceduralSoundscape";
+import { MUSIC_CATALOG, musicTrackForScene } from "../audio/musicCatalog";
+import type { GameHost, MusicScene, MusicTransport, PointerHandlers, SoundKind, StorageReadResult, Viewport } from "./Host";
+import { filteredRawLocales } from "./preferredLocales";
+
+const IMAGE_LOAD_TIMEOUT_MS = 5_000;
+const MUSIC_ASSETS: Record<MusicTrack, string> = Object.fromEntries(
+  MUSIC_CATALOG.map((entry) => [entry.id, entry.assetPath]),
+) as Record<MusicTrack, string>;
+const RECORDED_SOUND_KINDS = [
+  "blocked", "exit", "ice", "thaw", "win", "button", "putdown", "fail",
+  "reward", "booster", "unlock",
+  "time", "rocket", "pulse", "mechanic", "shell", "shutter",
+] as const satisfies readonly SoundKind[];
 
 export class WebHost implements GameHost {
   readonly canvas: HTMLCanvasElement;
   readonly context: CanvasRenderingContext2D;
   private audio?: AudioContext;
+  private soundscape?: ProceduralSoundscape;
+  private musicScene: MusicScene = "menu";
+  private musicEnabled = false;
+  private selectedMusicTrack?: MusicTrack;
+  private retainedMusicTrack: MusicTrack = "menu";
+  private readonly loadedMusicAssets = new Set<MusicTrack>();
+  private readonly musicAssetsLoading: Partial<Record<MusicTrack, Promise<void>>> = {};
+  private effectsAssetsLoading?: Promise<void>;
   private hiddenCallbacks: Array<() => void> = [];
   private shownCallbacks: Array<() => void> = [];
   private resizeCallbacks: Array<() => void> = [];
@@ -20,7 +42,9 @@ export class WebHost implements GameHost {
     }, { passive: true });
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) {
-        try { void this.audio?.suspend(); } catch { /* optional */ }
+        this.soundscape?.suspend();
+      } else {
+        this.soundscape?.resume();
       }
       const callbacks = document.hidden ? this.hiddenCallbacks : this.shownCallbacks;
       callbacks.forEach((callback) => callback());
@@ -58,6 +82,16 @@ export class WebHost implements GameHost {
 
   prefersReducedMotion(): boolean {
     return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+  }
+
+  preferredLocales(): readonly string[] {
+    const candidates: unknown[] = [];
+    if (typeof navigator !== "object" || navigator === null) return [];
+    try {
+      if (Array.isArray(navigator.languages)) candidates.push(...navigator.languages);
+    } catch { /* an embedded browser may deny access to locale preferences */ }
+    try { candidates.push(navigator.language); } catch { /* use any collected language list */ }
+    return filteredRawLocales(candidates);
   }
 
   onPointer(handlers: PointerHandlers): void {
@@ -114,10 +148,31 @@ export class WebHost implements GameHost {
   createImage(src: string): Promise<HTMLImageElement> {
     return new Promise((resolve, reject) => {
       const image = new Image();
-      image.onload = () => resolve(image);
-      image.onerror = () => reject(new Error(`Could not load image: ${src}`));
+      let settled = false;
+      const finish = (callback: () => void) => {
+        if (settled) return;
+        settled = true;
+        window.clearTimeout(timeout);
+        image.onload = null;
+        image.onerror = null;
+        callback();
+      };
+      const timeout = window.setTimeout(() => {
+        finish(() => {
+          try { image.src = ""; } catch { /* best-effort request cancellation */ }
+          reject(new Error(`Timed out loading image after ${IMAGE_LOAD_TIMEOUT_MS}ms: ${src}`));
+        });
+      }, IMAGE_LOAD_TIMEOUT_MS);
+      image.onload = () => finish(() => resolve(image));
+      image.onerror = () => finish(() => reject(new Error(`Could not load image: ${src}`)));
       image.src = src;
     });
+  }
+
+  releaseImage(image: HTMLImageElement): void {
+    image.onload = null;
+    image.onerror = null;
+    image.src = "";
   }
 
   storageRead<T>(key: string): StorageReadResult<T> {
@@ -149,25 +204,73 @@ export class WebHost implements GameHost {
     }
   }
 
+  music(scene: MusicScene, enabled: boolean, selectedTrack?: MusicTrack): void {
+    this.musicScene = scene;
+    this.musicEnabled = enabled;
+    this.selectedMusicTrack = selectedTrack;
+    const track = musicTrackForScene(scene, selectedTrack);
+    if (track && track !== this.retainedMusicTrack) {
+      const releasedTrack = this.retainedMusicTrack;
+      this.retainedMusicTrack = track;
+      this.soundscape?.releaseMusicBuffer(releasedTrack);
+      this.loadedMusicAssets.delete(releasedTrack);
+    }
+    if (enabled && track) this.beginMusicAssetLoad(track);
+    this.soundscape?.setMusic(scene, enabled, selectedTrack);
+  }
+
+  musicTransport(): MusicTransport { return this.soundscape?.musicTransport() ?? { positionSeconds: 0, durationSeconds: 0, playing: false }; }
+  setMusicPaused(paused: boolean): void { this.soundscape?.setMusicPaused(paused); }
+  seekMusic(positionSeconds: number): void { this.soundscape?.seekMusic(positionSeconds); }
+
+  private decodeAudioAsset(path: string): Promise<AudioBuffer> {
+    if (!this.audio || typeof this.audio.decodeAudioData !== "function" || typeof fetch !== "function") {
+      return Promise.reject(new Error("Recorded WebAudio is unavailable"));
+    }
+    const context = this.audio;
+    return (async () => {
+      const response = await fetch(new URL(path, document.baseURI));
+      if (!response.ok) throw new Error(`Could not load audio asset: ${path}`);
+      return context.decodeAudioData(await response.arrayBuffer());
+    })();
+  }
+
+  private beginMusicAssetLoad(track: MusicTrack): void {
+    if (!this.audio || !this.soundscape || this.loadedMusicAssets.has(track) || this.musicAssetsLoading[track]) return;
+    const soundscape = this.soundscape;
+    soundscape.expectMusicBuffer(track);
+    const pending = this.decodeAudioAsset(MUSIC_ASSETS[track])
+      .then((buffer) => {
+        if (this.musicAssetsLoading[track] !== pending || this.retainedMusicTrack !== track) return;
+        this.loadedMusicAssets.add(track);
+        soundscape.setMusicBuffer(track, buffer, RECORDED_MUSIC_LOOP_DURATIONS[track]);
+      })
+      .catch(() => {
+        if (this.musicAssetsLoading[track] === pending) soundscape.useSynthMusicFallback(track);
+      })
+      .finally(() => {
+        if (this.musicAssetsLoading[track] === pending) delete this.musicAssetsLoading[track];
+      });
+    this.musicAssetsLoading[track] = pending;
+  }
+
+  private beginEffectsAssetLoad(): void {
+    if (this.effectsAssetsLoading || !this.audio || !this.soundscape) return;
+    const soundscape = this.soundscape;
+    this.effectsAssetsLoading = Promise.all(RECORDED_SOUND_KINDS.map(async (kind) => {
+      try { soundscape.setSoundBuffer(kind, await this.decodeAudioAsset(`assets/audio/sfx/${kind}.mp3`)); } catch { /* one fallback recipe remains available */ }
+    })).then(() => undefined);
+  }
+
   sound(kind: SoundKind): void {
     try {
       this.audio ??= new AudioContext();
-      if (this.audio.state === "suspended") void this.audio.resume();
-      const now = this.audio.currentTime;
-      const oscillator = this.audio.createOscillator();
-      const gain = this.audio.createGain();
-      const frequencies: Record<SoundKind, number> = {
-        select: 420, move: 520, blocked: 140, exit: 720, ice: 880, win: 1040, button: 600, fail: 110,
-      };
-      oscillator.type = kind === "blocked" || kind === "fail" ? "sawtooth" : "sine";
-      oscillator.frequency.setValueAtTime(frequencies[kind], now);
-      if (kind === "exit" || kind === "win") oscillator.frequency.exponentialRampToValueAtTime(frequencies[kind] * 1.8, now + 0.16);
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(kind === "win" ? 0.13 : 0.07, now + 0.012);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + (kind === "win" ? 0.35 : 0.12));
-      oscillator.connect(gain).connect(this.audio.destination);
-      oscillator.start(now);
-      oscillator.stop(now + (kind === "win" ? 0.36 : 0.14));
+      this.soundscape ??= new ProceduralSoundscape(this.audio);
+      const track = musicTrackForScene(this.musicScene, this.selectedMusicTrack);
+      if (this.musicEnabled && track) this.beginMusicAssetLoad(track);
+      this.beginEffectsAssetLoad();
+      this.soundscape.setMusic(this.musicScene, this.musicEnabled, this.selectedMusicTrack);
+      this.soundscape.play(kind);
     } catch { /* sound is a progressive enhancement */ }
   }
 

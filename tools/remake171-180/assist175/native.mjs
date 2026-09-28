@@ -1,0 +1,5 @@
+import fs from 'node:fs';import path from 'node:path';import {execFileSync} from 'node:child_process';
+import {payload,SOURCE} from '../../campaign-v145/lv141-150/round2-c/native96.mjs';
+import {digest} from '../common.mjs';
+const OUT='deliverables/remake171-180-20260927/assist175';
+export function freshFloor(l,api,options){const p=structuredClone(l);p.mechanismRules='revised-2026-09-23-v1.4';const input=payload(p,api,options),sha=digest(fs.readFileSync(SOURCE)),exe=path.resolve(OUT,'native-'+sha.slice(0,16)+'.exe');if(!fs.existsSync(exe))execFileSync('C:/Windows/Microsoft.NET/Framework64/v4.0.30319/csc.exe',['/nologo','/optimize+','/r:System.Web.Extensions.dll','/out:'+exe,path.resolve(SOURCE)],{windowsHide:true,stdio:'pipe'});const stem=path.resolve(OUT,'proof-'+Date.now()+'-'+process.pid),f=stem+'-input.json',o=stem+'-output.json';fs.writeFileSync(f,JSON.stringify(input),{flag:'wx'});execFileSync(exe,[f,o],{windowsHide:true,stdio:'pipe',timeout:input.maxMilliseconds+10000});return{...JSON.parse(fs.readFileSync(o)),input:f,output:o,levelSha256:digest(l),sourceSha256:sha,qualificationRequired:true};}

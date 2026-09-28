@@ -1,28 +1,28 @@
 {
-  "scope": "Block Out original Lv1-Lv10 difficulty uplift pilot",
+  "scope": "Block Out original Lv1-Lv10 competitor-composition redesign comparison",
   "calibration": "blockout-d1-baseline-2026-09-05 (fixed)",
-  "solver_note": "Drag counts are executable validation-route counts, not optimality proofs.",
+  "solver_note": "Drag counts are solver-proven optima; Lv1–10 are replayed through PuzzleModel and real Pointer input.",
   "summary": {
     "calibrated_mean": {
       "before": 44.22,
-      "after": 57.88,
-      "delta": 13.65
+      "after": 65.39,
+      "delta": 21.16
     },
     "raw_mean": {
       "before": 37.56,
-      "after": 54.07,
-      "delta": 16.51
+      "after": 63.16,
+      "delta": 25.59
     },
     "validation_route_drags": {
       "before": 123,
-      "after": 145,
-      "delta": 22,
-      "delta_percent": 17.89
+      "after": 160,
+      "delta": 37,
+      "delta_percent": 30.08
     },
     "reposition_overhead": {
       "before": 46,
-      "after": 49,
-      "delta": 3
+      "after": 5,
+      "delta": -41
     }
   },
   "per_level": [
@@ -39,18 +39,18 @@
       "after": {
         "level": 1,
         "name": "新手教程",
-        "calibrated": 23.63,
-        "raw": 12.66,
-        "drags": 2,
+        "calibrated": 35.29,
+        "raw": 26.759255564222098,
+        "drags": 3,
         "repositions": 0,
-        "blocks": 2
+        "blocks": 3
       },
-      "calibrated_delta": 0,
-      "drag_delta": 0
+      "calibrated_delta": 11.66,
+      "drag_delta": 1
     },
     {
       "level_id": 2,
-      "name": "转角校准",
+      "name": "缺角拼形",
       "before": {
         "level": 2,
         "calibrated": 48.22,
@@ -60,19 +60,19 @@
       },
       "after": {
         "level": 2,
-        "name": "转角校准",
-        "calibrated": 48.22,
-        "raw": 42.4,
-        "drags": 12,
-        "repositions": 6,
-        "blocks": 6
+        "name": "缺角拼形",
+        "calibrated": 50.54,
+        "raw": 45.20085012727723,
+        "drags": 9,
+        "repositions": 1,
+        "blocks": 8
       },
-      "calibrated_delta": 0,
-      "drag_delta": 0
+      "calibrated_delta": 2.32,
+      "drag_delta": -3
     },
     {
       "level_id": 3,
-      "name": "四色罗盘",
+      "name": "错层九宫",
       "before": {
         "level": 3,
         "calibrated": 46.3,
@@ -82,19 +82,19 @@
       },
       "after": {
         "level": 3,
-        "name": "四色罗盘",
-        "calibrated": 46.3,
-        "raw": 40.07,
-        "drags": 13,
-        "repositions": 8,
-        "blocks": 5
+        "name": "错层九宫",
+        "calibrated": 57.1,
+        "raw": 53.13375900161439,
+        "drags": 10,
+        "repositions": 1,
+        "blocks": 9
       },
-      "calibrated_delta": 0,
-      "drag_delta": 0
+      "calibrated_delta": 10.8,
+      "drag_delta": -3
     },
     {
       "level_id": 4,
-      "name": "双向分流",
+      "name": "折线彩条",
       "before": {
         "level": 4,
         "calibrated": 46.21,
@@ -104,19 +104,19 @@
       },
       "after": {
         "level": 4,
-        "name": "双向分流",
-        "calibrated": 46.21,
-        "raw": 39.96,
-        "drags": 11,
+        "name": "折线彩条",
+        "calibrated": 58.71,
+        "raw": 55.08070767351727,
+        "drags": 21,
         "repositions": 3,
-        "blocks": 8
+        "blocks": 18
       },
-      "calibrated_delta": 0,
-      "drag_delta": 0
+      "calibrated_delta": 12.5,
+      "drag_delta": 10
     },
     {
       "level_id": 5,
-      "name": "轻装复盘",
+      "name": "三色错肩",
       "before": {
         "level": 5,
         "calibrated": 45.35,
@@ -126,19 +126,19 @@
       },
       "after": {
         "level": 5,
-        "name": "轻装复盘",
-        "calibrated": 45.35,
-        "raw": 38.92,
-        "drags": 11,
-        "repositions": 1,
-        "blocks": 10
+        "name": "三色错肩",
+        "calibrated": 60.49,
+        "raw": 57.23323477661485,
+        "drags": 20,
+        "repositions": 0,
+        "blocks": 20
       },
-      "calibrated_delta": 0,
-      "drag_delta": 0
+      "calibrated_delta": 15.14,
+      "drag_delta": 9
     },
     {
       "level_id": 6,
-      "name": "冰块初试",
+      "name": "四向冰门",
       "before": {
         "level": 6,
         "calibrated": 46.38,
@@ -148,19 +148,19 @@
       },
       "after": {
         "level": 6,
-        "name": "冰块初试",
-        "calibrated": 70.18,
-        "raw": 68.95,
-        "drags": 12,
-        "repositions": 3,
-        "blocks": 8
+        "name": "四向冰门",
+        "calibrated": 81.09,
+        "raw": 82.14450349785655,
+        "drags": 21,
+        "repositions": 0,
+        "blocks": 21
       },
-      "calibrated_delta": 23.8,
-      "drag_delta": 1
+      "calibrated_delta": 34.71,
+      "drag_delta": 10
     },
     {
       "level_id": 7,
-      "name": "冰门换轨",
+      "name": "骨牌折桥",
       "before": {
         "level": 7,
         "calibrated": 47.44,
@@ -170,19 +170,19 @@
       },
       "after": {
         "level": 7,
-        "name": "冰门换轨",
-        "calibrated": 72.1,
-        "raw": 71.27,
-        "drags": 15,
-        "repositions": 3,
-        "blocks": 9
+        "name": "骨牌折桥",
+        "calibrated": 73.27,
+        "raw": 72.68789566289975,
+        "drags": 16,
+        "repositions": 0,
+        "blocks": 16
       },
-      "calibrated_delta": 24.66,
-      "drag_delta": 3
+      "calibrated_delta": 25.83,
+      "drag_delta": 4
     },
     {
       "level_id": 8,
-      "name": "外壳侧泊",
+      "name": "折肩大核",
       "before": {
         "level": 8,
         "calibrated": 45.77,
@@ -192,19 +192,19 @@
       },
       "after": {
         "level": 8,
-        "name": "外壳侧泊",
-        "calibrated": 74.18,
-        "raw": 73.79,
-        "drags": 26,
-        "repositions": 10,
-        "blocks": 12
+        "name": "折肩大核",
+        "calibrated": 80.57,
+        "raw": 81.51567535537859,
+        "drags": 25,
+        "repositions": 0,
+        "blocks": 25
       },
-      "calibrated_delta": 28.41,
-      "drag_delta": 4
+      "calibrated_delta": 34.8,
+      "drag_delta": 3
     },
     {
       "level_id": 9,
-      "name": "双线预判",
+      "name": "双折方阵",
       "before": {
         "level": 9,
         "calibrated": 47.4,
@@ -214,19 +214,19 @@
       },
       "after": {
         "level": 9,
-        "name": "双线预判",
-        "calibrated": 75.52,
-        "raw": 75.41,
-        "drags": 24,
-        "repositions": 7,
-        "blocks": 12
+        "name": "双折方阵",
+        "calibrated": 74.05,
+        "raw": 73.63113787661666,
+        "drags": 10,
+        "repositions": 0,
+        "blocks": 10
       },
-      "calibrated_delta": 28.12,
-      "drag_delta": 9
+      "calibrated_delta": 26.65,
+      "drag_delta": -5
     },
     {
       "level_id": 10,
-      "name": "冰块初醒",
+      "name": "六色冰核",
       "before": {
         "level": 10,
         "calibrated": 45.55,
@@ -236,15 +236,15 @@
       },
       "after": {
         "level": 10,
-        "name": "冰块初醒",
-        "calibrated": 77.08,
-        "raw": 77.29,
-        "drags": 19,
-        "repositions": 8,
-        "blocks": 8
+        "name": "六色冰核",
+        "calibrated": 82.76,
+        "raw": 84.16400926312227,
+        "drags": 25,
+        "repositions": 0,
+        "blocks": 25
       },
-      "calibrated_delta": 31.53,
-      "drag_delta": 5
+      "calibrated_delta": 37.21,
+      "drag_delta": 11
     }
   ]
 }

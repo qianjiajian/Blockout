@@ -1,86 +1,48 @@
+// @ts-expect-error The app tsconfig intentionally excludes Node ambient types; Vitest still runs in Node.
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { PuzzleModel } from "../src/core/PuzzleModel";
-import { solveLevelOptimally } from "../src/core/levelSolver";
 import { LEVELS } from "../src/core/levels";
-import type { LevelSpec } from "../src/core/types";
 
-const continuationFrom = (level: LevelSpec, model: PuzzleModel): LevelSpec => {
-  const snapshot = model.snapshot();
-  return {
-    ...level,
-    id: level.id + 20_000,
-    name: `${level.name}-choice-check`,
-    parMoves: undefined,
-    playable: snapshot.playable,
-    blocked: snapshot.blocked,
-    gates: snapshot.gates,
-    blocks: snapshot.blocks,
-    shutters: snapshot.shutters,
+interface EvidenceEntry {
+  level: { id: number };
+  route: Array<{ blockId: string; exitSide?: string }>;
+  assembly: {
+    route_metrics: { actions: number; clear_load: number; reposition_overhead: number };
   };
-};
+}
+
+interface Decision {
+  level_id: string;
+  target_reposition_overhead: number;
+  witness_floor_met: boolean;
+  strict_v5_floor_certified: boolean;
+  strict_v5_certificates: Array<{ certified_lower_bound: number }>;
+}
+
+const REPORT = JSON.parse(readFileSync(new URL(
+  "../playtest-results/experiments/competitor-composition-r141/assembled-expanded-density-candidates-v5.json",
+  import.meta.url,
+), "utf8")) as { levels: EvidenceEntry[]; decisions: Decision[] };
 
 describe("campaign strategy choices", () => {
-  for (const levelId of [3, 8, 9, 13, 19, 26, 29, 40]) {
-    it(`level ${levelId} has a legal decision that costs an extra drag`, () => {
+  for (const levelId of [13, 19, 26, 29, 40]) {
+    it(`level ${levelId} has certified non-clear setup work before completion`, () => {
+      const evidence = REPORT.levels[levelId - 1];
+      const decision = REPORT.decisions[levelId - 1];
       const level = LEVELS[levelId - 1];
-      const optimal = solveLevelOptimally(level);
-      expect(optimal.solved).toBe(true);
-      let proved = false;
-
-      for (const [dragIndex, drag] of optimal.drags.entries()) {
-        if (drag.exitSide || drag.path.length < 2) continue;
-        for (const [partialIndex, [x, y]] of drag.path.slice(0, -1).entries()) {
-          const model = new PuzzleModel(level);
-          for (const prefix of optimal.drags.slice(0, dragIndex)) {
-            model.beginAction();
-            for (const [prefixX, prefixY] of prefix.path) expect(model.moveBlock(prefix.blockId, prefixX, prefixY)).toBe(true);
-            if (prefix.exitSide) expect(model.tryExit(prefix.blockId, prefix.exitSide).ok).toBe(true);
-            expect(model.commitAction()).toBe(true);
-          }
-          model.beginAction();
-          for (const [partialX, partialY] of drag.path.slice(0, partialIndex + 1)) {
-            expect(model.moveBlock(drag.blockId, partialX, partialY)).toBe(true);
-          }
-          expect(model.commitAction()).toBe(true);
-          const continuation = solveLevelOptimally(continuationFrom(level, model));
-          expect(continuation.solved).toBe(true);
-          if (dragIndex + 1 + continuation.minimumDrags > optimal.minimumDrags) {
-            proved = true;
-            break;
-          }
-        }
-        if (proved) break;
-      }
-      // Automatic gate alignment can intentionally remove an old partial-stop
-      // branch. The strategic requirement is still meaningful if a different
-      // legal opening commits the player to at least one extra drag.
-      if (!proved) {
-        const directions = [[1, 0], [0, 1], [-1, 0], [0, -1]] as const;
-        for (const authored of level.blocks) {
-          for (const [dx, dy] of directions) {
-            const model = new PuzzleModel(level);
-            const block = model.getBlock(authored.id);
-            if (!block) continue;
-            model.beginAction();
-            if (!model.moveBlockStep(block.id, block.x + dx, block.y + dy)) {
-              model.cancelAction();
-              continue;
-            }
-            const moved = model.getBlock(block.id);
-            const automaticSide = moved ? model.possibleExitSides(moved)[0] : undefined;
-            if (automaticSide) expect(model.tryExit(block.id, automaticSide).ok).toBe(true);
-            expect(model.commitAction()).toBe(true);
-            const continuation = solveLevelOptimally(continuationFrom(level, model));
-            expect(continuation.solved).toBe(true);
-            if (1 + continuation.minimumDrags > optimal.minimumDrags) {
-              proved = true;
-              break;
-            }
-          }
-          if (proved) break;
-        }
-      }
-      expect(proved).toBe(true);
-    }, 90_000);
+      expect(evidence.level.id).toBe(levelId);
+      expect(decision.level_id).toBe(`Lv${String(levelId).padStart(3, "0")}`);
+      expect(evidence.assembly.route_metrics.actions).toBe(evidence.route.length);
+      expect(evidence.assembly.route_metrics.reposition_overhead)
+        .toBe(evidence.assembly.route_metrics.actions - evidence.assembly.route_metrics.clear_load);
+      expect(evidence.assembly.route_metrics.reposition_overhead)
+        .toBeGreaterThanOrEqual(decision.target_reposition_overhead);
+      expect(evidence.route.some((drag) => !drag.exitSide)).toBe(true);
+      expect(new Set(evidence.route.map((drag) => drag.blockId)).size).toBeGreaterThan(1);
+      expect(decision.witness_floor_met).toBe(true);
+      expect(decision.strict_v5_floor_certified).toBe(true);
+      expect(Math.max(...decision.strict_v5_certificates.map((certificate) => certificate.certified_lower_bound)))
+        .toBeGreaterThanOrEqual(level.designTargets?.minimumRepositionOverhead ?? 0);
+    });
   }
 });

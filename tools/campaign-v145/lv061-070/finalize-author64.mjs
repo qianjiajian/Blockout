@@ -1,0 +1,39 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {build} from 'esbuild';
+import {loadApi} from '../../remake21to30-v120.mjs';
+import {digest} from '../../revised-preview-validation-v160.mjs';
+import {shapeClass} from '../../remake31to40-source-v141.mjs';
+const dir='deliverables/remake31-200-v145-20260924/batches/lv061-070/author61-64',input=process.argv[2],d=JSON.parse(fs.readFileSync(input)),{level}=d,{api}=await loadApi();
+const exact=JSON.parse(fs.readFileSync(dir+'/source-inventory64-exact-1790254017416.json'));
+d.source=exact.source;d.activeRuleVersion='1.47.0';
+const reasons={
+ 'opening-11':'源蓝L3实际足迹没有q0整图；选择同面积原向H3，填保留棋盘的三格底行。原向L3另形存在，未声称此替代为跨布局唯一。',
+ 'cover-5-3':'源紫L3实际[[0,0],[1,0],[1,1]]没有q0整图；V2锚点(1,0)+同色S锚点(0,0)可完整分解源足迹/颜色/面积，单整图不可用故精确足迹分解至少2块。随后两独立块按授权原创布局重排。存在H3/V3等同面积改形选择，不声称拆分为跨布局唯一或全局最少适配。',
+ 'cover-8-2':'源70格与保留棋盘66格有4格容量差。此普通SQ3由9格改为H3的3格，帘8以两新增普通黄色单格补2格，净减4格；帘区原24→20格。保26个来源主ID及全部机关/初值，明确同区增普通体与颜色差异，不冒称精确复制。',
+ 'cover-8-4':'源L4壳的实际足迹没有原向整块外壳图；同面积SQ2保green外orange内、2层及帘8批次。',
+ 'cover-13-2':'源T4壳的实际足迹没有原向整块外壳图；同面积SQ2保purple外green内、2层及帘13批次。',
+ 'cover-13-3':'源L4壳的实际足迹没有原向整块外壳图；同面积SQ2保blue外cyan内、2层及帘13批次。'
+};
+d.adaptations=Object.entries(reasons).map(([sourceId,reason])=>({sourceId,from:d.source.stages.flatMap(s=>s.items).find(b=>b.sourceId===sourceId).kind,to:shapeClass(level.blocks.find(b=>b.id===`v146-64-${sourceId}`).shape),reason}));
+d.adaptations.push({from:'26 source bodies /70 cells',to:'29 design bodies /66 cells',reason:'紫L3同色拆为V2+S（+1体/面积不变）；SQ3→H3减6格并增2普通yellowS（+2体/+2格），全关净减4格。三新增体无机关。异形原10体经三壳必需原图修复及蓝/紫L3适配降为5体，5/26本已≤30%，不是靠加体稀释比例。'});
+d.originality={layoutIntent:'保留7×10上下缺角轮廓，用顶端5×4帘8、右侧3×6帘13、左下4×3帘5构成三个对齐仓区。',alignment:'三个真实矩形帘区沿整数格边对齐；底行原向H3与右侧V2填补边缘可玩格。',changes:'重组开局、各批隐藏体与七色门，形成左侧紫红绿递进通路；非镜像或整体换色。',constraints:'来源70格与基线66格、源不规则足迹无q0整图及三壳素材缺失分别列出；保原计时和实际三星。'};
+d.design={primaryMechanism:'三片不同计数的卷帘与冰门、外壳的通路协作',concreteDecision:'先清低冰紫色打开左下帘；释放绿门并清同色拆分体达到8次，顶帘内绿色壳及长块需要停车让出红色S4路径。第13次揭开右仓后继续清除解冻隐藏冰3与蓝/青出口。'};
+d.sourceAdaptation={source:d.source,changes:d.adaptations,notExactReplica:true,sourceBodyCount:26,designBodyCount:29,sourceCells:70,designCells:66,sourceIrregularCount:10,designIrregularCount:5,sourceIdMapping:level.blocks.map(b=>({blockId:b.id,sourceId:b.id.endsWith('added-cover5-1')?'cover-5-3 (same-color split fragment)':b.id.includes('added-cover8')?null:b.id.replace('v146-64-',''),shape:b.shape,color:b.color}))};
+delete d.freshAxisProof.axisSpecific;d.freshProof=d.freshAxisProof;d.proofKind='qualified optional-exit countdown graph, no axes present';
+d.replay=api.replayRevisedRoute(level,d.drags);assert(d.replay.valid&&d.replay.complete&&d.replay.nonClearingDrags===10);assert(d.freshProof.thresholdProven&&d.freshProof.floor===5);
+const frames=['0236','0254','0269','0283','0285','0290','0295'].map(n=>`.codex-temp/video-audit-41-70/frames-61-70/frame-${n}.jpg`),bindings=Object.fromEntries(frames.map(p=>[p,digest(fs.readFileSync(p))]));
+const sourceRows=[];for(const stage of d.source.stages)for(const src of stage.items){const b=level.blocks.find(b=>b.id===`v146-64-${src.sourceId}`),adaptation=d.adaptations.find(a=>a.sourceId===src.sourceId);assert(b);assert.equal(b.color,src.color);for(const k of ['layers','frozen','movementAxis'])assert.deepEqual(b[k],src[k]);assert.equal(shapeClass(b.shape),adaptation?.to??src.kind);assert.equal(b.shutterId,stage.id==='opening'?undefined:`v146-64-${stage.id}`);sourceRows.push({sourceId:src.sourceId,blockId:b.id,stage:stage.id,color:b.color,sourceKind:src.kind,candidateKind:shapeClass(b.shape),layers:b.layers??null,frozen:b.frozen??null,adaptation:adaptation??null,propertiesMatched:true});}
+assert.deepEqual(level.gates.map(g=>[g.color,g.frozen??0]).sort(),d.source.gates.map(g=>[g.color,g.frozen??0]).sort());assert.deepEqual(level.shutters.map(s=>s.count).sort((a,b)=>a-b),[5,8,13]);
+const extras=level.blocks.filter(b=>!sourceRows.some(r=>r.blockId===b.id));assert.equal(extras.length,3);assert.equal(extras.find(b=>b.id.endsWith('added-cover5-1')).color,'purple');assert(extras.filter(b=>b.id.includes('added-cover8')).every(b=>b.color==='yellow'&&b.shape.length===1&&!b.layers&&!b.frozen));
+const report={levelId:64,activeRuleVersion:'1.47.0',sourceType:'independent exact local video frames',bindings,sourceInventory:d.source,rows:sourceRows,extraBodies:extras,sourceKnownPrimaryIdsPreserved:true,oneSourceBodySplit:'cover-5-3 -> same-color V2 and S',gateColorAndInitialIceMatched:true,curtainValuesMatched:true,correctionsToTruth:['cover5 has five source bodies/12cells (includes blue V2); cover13 has five bodies/18cells, not six/20.','source whole26 bodies/70cells, three shells, hidden cyan L3 ice3; source redS4 is native shape5 footprint, not opposite S shape11.'],levelSha256:digest(level),passed:true};
+const sourcePath=`${dir}/source-review64-${Date.now()}.json`;fs.writeFileSync(sourcePath,JSON.stringify(report,null,2)+'\n',{flag:'wx'});d.sourceEvidence={file:sourcePath,sha256:digest(fs.readFileSync(sourcePath)),bindings,sourceAlignment:report};
+d.levelSha256=digest(level);d.routeSha256=digest(d.drags);d.sourceFootprintStatus='bound independent sidecar required';d.originalEvaluation={timeSeconds:level.timeSeconds,preservedMoveTarget:level.preservedMoveTarget,totalDrags:d.drags.length,routeMeetsPreservedMoveTarget:d.drags.length<=level.preservedMoveTarget,notHumanBlindTest:true};
+const out=`${dir}/bound-candidate64-${Date.now()}.json`;fs.writeFileSync(out,JSON.stringify(d,null,2)+'\n',{flag:'wx'});
+const compiled=await build({stdin:{contents:'export * from "./src/game/formalBlockShapes.ts";',resolveDir:process.cwd()},bundle:true,write:false,platform:'node',format:'esm',logLevel:'silent'}),art=await import('data:text/javascript;base64,'+Buffer.from(compiled.outputFiles[0].text).toString('base64'));
+const prior=JSON.parse(fs.readFileSync(dir+'/source-footprint-binding64-1790254017415.json')),norm=s=>JSON.stringify([...s].sort((a,b)=>a[1]-b[1]||a[0]-b[0]));
+const rows=prior.rows.map(r=>{const b=level.blocks.find(b=>b.id===r.blockId),adaptation=d.adaptations.find(a=>a.sourceId===r.sourceId),same=norm(r.sourceShape)===norm(b.shape),areaPreserved=r.sourceShape.length===b.shape.length;assert(api.auditCandidateBlockArt({id:64,blocks:[b]}).passed);if(!same&&!adaptation)assert(!r.sourceNativeMatch||!r.sourceArt.passed);return {...r,candidateShape:b.shape,designCells:b.shape,designBlockId:b.id,sameFootprint:same,actualFootprintMatched:same,sourceNativeMatch:art.matchFormalBlockShape(r.sourceShape,'native-only')??null,adaptationReason:same?'实际原向足迹保持':adaptation?.reason??'源同名类的实际足迹无所需q0原向整图，换现有同面积原向整图；不冒称实际足迹一致。',priorDeclaredAdaptation:adaptation??null,propertiesAndAreaPreserved:areaPreserved,splitFragment:r.sourceId==='cover-5-3'?{blockId:extras.find(b=>b.id.endsWith('added-cover5-1')).id,sourceRelativePlacement:{V2:[1,0],S:[0,0]},sameColor:true,combinedSourceArea:3}:null};});
+assert(rows.find(r=>r.sourceId==='cover-8-5').sameFootprint);
+const footprint={activeRuleVersion:'1.47.0',levelId:64,status:'PASS',unknown:[],frameBindings:prior.frameBindings,scope:prior.scope,sourceEvidence:prior.sourceEvidence,candidate:out,candidateSha256:digest(fs.readFileSync(out)),levelSha256:digest(level),rows,counts:{sourceIrregularRows:10,actualFootprintChanges:rows.filter(r=>!r.sameFootprint).length,unknownFootprints:0},qualification:'Complete exact irregular-footprint comparison. Same-color two-fragment decomposition retains source purple footprint before authorized spatial rearrangement. Other rectangle H/V and area differences are explicit in source review.',passed:true};
+const footPath=`${dir}/source-footprint-binding64-${Date.now()}.json`;fs.writeFileSync(footPath,JSON.stringify(footprint,null,2)+'\n',{flag:'wx'});
+console.log(JSON.stringify({out,sourcePath,footPath,levelSha256:digest(level),L:5,U:10,drags:d.drags.length,rows:26,extras:3}));

@@ -14,14 +14,11 @@ const ACTIVE_TARGET: LockedTargetVisualTreatment = {
 
 const FROZEN_GATE: LockedTargetVisualTreatment = {
   baseAlpha: 0.38,
-  overlayAlpha: 0.54,
+  // Frozen exits use an opaque ice treatment so the underlying gate colour
+  // cannot bleed through and make adjacent frozen exits look like different
+  // lock states. The gate frame remains dimmed while the ice face is solid.
+  overlayAlpha: 1,
   shadowBlur: 4,
-};
-
-const LATENT_GATE: LockedTargetVisualTreatment = {
-  baseAlpha: 0.52,
-  overlayAlpha: 0,
-  shadowBlur: 3,
 };
 
 const FROZEN_BLOCK: LockedTargetVisualTreatment = {
@@ -35,7 +32,8 @@ export const gateAvailabilityVisual = (frozen: number): LockedTargetVisualTreatm
 );
 
 export const gateReadinessVisual = (readiness: GateReadiness): LockedTargetVisualTreatment => (
-  readiness === "frozen" ? FROZEN_GATE : readiness === "latent" ? LATENT_GATE : ACTIVE_TARGET
+  // Missing or currently unavailable matching blocks do not dim an exit.
+  readiness === "frozen" ? FROZEN_GATE : ACTIVE_TARGET
 );
 
 export const blockAvailabilityVisual = (frozen: number): LockedTargetVisualTreatment => (

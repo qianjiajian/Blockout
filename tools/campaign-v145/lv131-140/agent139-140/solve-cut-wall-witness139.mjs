@@ -1,0 +1,13 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';
+import {loadApi} from '../../../native-block-repair-v143.mjs';import{verifyRulesLock}from'../../../verify-rules-lock.mjs';
+import {validateQueueObligationPrefix} from '../root-native/stationary-queue-obligations.mjs';
+import {searchNativeOpeningWitness} from './native-cut-wall-witness139.mjs';
+import {repairOrdinaryFifoPrefix} from './repair-ordinary-fifo-prefix139.mjs';
+import {loadSpatialApi,searchSpatial} from './witness-domain.mjs';import {measureRoute} from '../../../remake21to30-quality.mjs';
+Error.stackTraceLimit=0;const source=process.argv[2],d=JSON.parse(fs.readFileSync(source)),{level,targetId}=d,{api}=await loadApi(),spatial=await loadSpatialApi();assert(verifyRulesLock().ok);
+const contract=validateQueueObligationPrefix(level,api);
+const prefix=searchNativeOpeningWitness(level,api,{targetId,goalClears:contract.targets.length,floor:16,maxMilliseconds:20000,maxStates:1000000,weight:1000});
+const repaired=repairOrdinaryFifoPrefix(level,prefix.drags,api);console.log(JSON.stringify({stage:'prefix',status:prefix.status,clears:prefix.maxClearsSeen,cost:prefix.cost,h:prefix.h,repaired:repaired.selected.completeProjected,inserted:repaired.selected.inserted}));
+const search=prefix.status==='relaxed-prefix-witness'&&repaired.selected.completeProjected?searchSpatial(level,spatial,{floor:16,maxMilliseconds:8000,maxStates:150000,initialDrags:repaired.selected.drags,diagnosticTrace:true}):null;
+const replay=search?.status==='witness'?api.replayRevisedRoute(level,search.drags):null,measurement=replay?.complete?measureRoute(level,search.drags,api):null;
+const file='deliverables/remake131-140-v146-20260924/agent139-140/cut-wall-witness-solve139-'+Date.now()+'.json';fs.writeFileSync(file,JSON.stringify({...d,prefix,repaired,search,replay,measurement,drags:search?.drags??[],sourceCandidate:source,L:null,thresholdProven:false,witnessOnly:true,formalAdopted:false},null,2)+'\n',{flag:'wx'});console.log(JSON.stringify({file,status:prefix.status,clears:prefix.maxClearsSeen,cost:prefix.cost,search:search?.status,U:replay?.nonClearingDrags,measurement}));

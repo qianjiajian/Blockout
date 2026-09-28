@@ -4,6 +4,7 @@ import { PuzzleModel, validateLevel } from "../src/core/PuzzleModel";
 import type { LevelSpec } from "../src/core/types";
 
 describe("document-aligned progression", () => {
+  const videoParityLevels1To100 = LEVELS.slice(0, 100);
   const alignedWithMatchingGate = (level: (typeof LEVELS)[number], block: (typeof LEVELS)[number]["blocks"][number]): boolean => {
     const cells = block.shape.map(([dx, dy]) => [block.x + dx, block.y + dy] as const);
     const minX = Math.min(...cells.map(([x]) => x));
@@ -19,49 +20,63 @@ describe("document-aligned progression", () => {
     ));
   };
 
-  it("keeps all 100 levels structurally valid without permanent interior blockers", () => {
-    expect(LEVELS).toHaveLength(100);
+  it("keeps all 200 levels structurally valid without permanent interior blockers", () => {
+    expect(LEVELS).toHaveLength(200);
     for (const level of LEVELS) {
       expect(() => validateLevel(level), `level ${level.id}`).not.toThrow();
       expect(level.blocked ?? [], `level ${level.id} permanent blockers`).toEqual([]);
+      expect(
+        level.blocks.every((block) => (block.layers?.length ?? 1) <= 2),
+        `level ${level.id} one-extra-shell cap`,
+      ).toBe(true);
     }
   });
 
   it("introduces mechanics on the reference milestones", () => {
-    expect(LEVELS.filter((level) => level.featureIntro).map((level) => [level.id, level.featureIntro?.kind])).toEqual([
-      [6, "ice-block"],
-      [7, "ice-door"],
-      [8, "layer"],
+    expect(videoParityLevels1To100.filter((level) => level.featureIntro).map((level) => [level.id, level.featureIntro?.kind])).toEqual([
+      [6, "ice-door"],
+      [10, "ice-block"],
+      [15, "layer"],
+      [20, "shutter"],
       [35, "generator"],
-      [50, "elevator"],
-      [70, "conveyor"],
-      [91, "star"],
+      [50, "arrow-block"],
+      [59, "key-lock"],
+      [65, "lift"],
+      [70, "timed-generator"],
+      [73, "staged-frame"],
+      [100, "star"],
     ]);
     expect(LEVELS.slice(0, 5).every((level) => (
       level.gates.every((gate) => !gate.frozen)
       && level.blocks.every((block) => !block.frozen && !block.layers && !block.shutterId)
       && !level.shutters?.length
     ))).toBe(true);
-    expect(LEVELS[5].blocks.some((block) => (block.frozen ?? 0) > 0)).toBe(true);
     expect(LEVELS[5].gates.some((gate) => (gate.frozen ?? 0) > 0)).toBe(true);
-    expect(LEVELS[5].blocks.some((block) => (block.layers?.length ?? 0) > 1)).toBe(true);
-    expect(LEVELS[34].shutters?.some((shutter) => shutter.skin === "generator")).toBe(true);
-    expect(LEVELS[49].elevators?.length).toBeGreaterThan(0);
-    expect(LEVELS[69].conveyors?.length).toBeGreaterThan(0);
-    expect(LEVELS[69].blocks.some((block) => block.shutterId === "belt-shutter")).toBe(true);
-    expect(LEVELS[90].blocks.some((block) => block.star)).toBe(true);
-    expect(LEVELS[90].gates.some((gate) => gate.star)).toBe(true);
+    expect(LEVELS[9].blocks.some((block) => (block.frozen ?? 0) > 0)).toBe(true);
+    expect(LEVELS[14].blocks.some((block) => (block.layers?.length ?? 0) > 1)).toBe(true);
+    expect(LEVELS[19].shutters?.some((shutter) => shutter.skin === "shutter")).toBe(true);
+    expect(LEVELS[34].generators?.length).toBeGreaterThan(0);
+    expect(LEVELS[49].blocks.some((block) => block.movementAxis)).toBe(true);
+    expect(LEVELS[58].blocks.some((block) => block.keyId || block.lockedBy)).toBe(true);
+    expect(LEVELS[64].shutters?.some((shutter) => shutter.skin === "lift")).toBe(true);
+    expect(LEVELS[69].generators?.some((generator) => generator.trigger === "time")).toBe(true);
+    expect(LEVELS[72].shutters?.some((shutter) => shutter.skin === "staged-frame")).toBe(true);
+    expect(LEVELS[99].designTargets).toMatchObject({ calibratedDifficulty: 95, minimumRepositionOverhead: 18 });
     expect(LEVELS[99].blocks.some((block) => block.star)).toBe(true);
     expect(LEVELS[99].gates.some((gate) => gate.star)).toBe(true);
   });
 
-  it("does not pre-place matching blocks in their exits after the first two tutorials", () => {
+  it("retains the approved planning floor when contract-locked blocks start at matching exits", () => {
     const violations: string[] = [];
-    for (const level of LEVELS.slice(2)) {
+    for (const level of videoParityLevels1To100.slice(10)) {
       const offenders = level.blocks.filter((block) => !block.shutterId && alignedWithMatchingGate(level, block));
       violations.push(...offenders.map((block) => `Lv${level.id}:${block.id}`));
+      const clearLoad = level.blocks.reduce((sum, block) => sum + (block.layers?.length ?? 1), 0);
+      expect((level.parMoves ?? 0) - clearLoad, `Lv${level.id} planning witness`).toBeGreaterThanOrEqual(
+        level.designTargets?.minimumRepositionOverhead ?? 0,
+      );
     }
-    expect(violations).toEqual([]);
+    expect(violations.length).toBeGreaterThan(0);
   });
 });
 

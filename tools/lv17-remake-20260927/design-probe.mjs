@@ -1,0 +1,14 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';
+import {witness} from '../lv11-remake-20260927/design-witness.mjs';
+import {checkSymmetryFloor} from '../remake21to30-symmetry-floor-v139.mjs';
+import {loadPreviewCore,digest} from '../revised-preview-validation-v160.mjs';
+import {verifyRulesLock} from '../verify-rules-lock.mjs';
+const lock=verifyRulesLock();assert(lock.ok);assert.equal(lock.activeVersion,'1.85.0');
+const source=process.argv[2],maxCost=Number(process.argv[3]??15),maxMilliseconds=Number(process.argv[4]??8000),weight=Number(process.argv[5]??10);
+const {level}=JSON.parse(fs.readFileSync(source)),result=witness(level,{maxCost,maxMilliseconds,maxStates:500000,weight});
+const {api}=await loadPreviewCore(),drags=result.drags??[],replay=drags.length?api.replayRevisedRoute(level,drags):null;
+const nc=drags.filter(d=>!d.exitSide),multi=nc.filter(d=>level.blocks.find(b=>b.id===d.blockId).shape.length>1).length;
+const report={ruleVersion:lock.activeVersion,source,level,levelSha256:digest(level),result,drags,replay,kinds:{multiCell:multi,singleCell:nc.length-multi},diagnosticOnly:maxCost>15};
+if(replay?.valid&&replay.complete&&result.cost>=11&&result.cost<=15&&multi>0)report.floor=checkSymmetryFloor(level,{floor:11,maxStates:700000,maxMilliseconds:15000});
+const output=`deliverables/lv17-remake-20260927/design-probe-${Date.now()}.json`;fs.writeFileSync(output,JSON.stringify(report,null,2));
+console.log(JSON.stringify({output,status:result.status,cost:result.cost,bestClears:result.bestClears,kinds:report.kinds,replay:replay?{valid:replay.valid,complete:replay.complete,total:replay.effectiveDrags}:null,floor:report.floor}));

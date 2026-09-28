@@ -1,0 +1,15 @@
+import fs from 'node:fs';
+import {loadSpatialApi} from '../agent139-140/witness-domain.mjs';
+import {checkStationaryObligations} from '../root-native/stationary-obligations.mjs';
+import {loadPreviewCore,digest} from '../../../revised-preview-validation-v160.mjs';
+import {auditOpeningCoverage} from '../../../revised-opening-coverage.mjs';
+import {auditHiddenCoverage} from '../../../revised-hidden-coverage.mjs';
+import {auditGateSpanLimits} from '../../../revised-gate-span-limits.mjs';
+import {auditGeneratorQueueColors} from '../../../revised-generator-queue-colors.mjs';
+const input=process.argv[2],d=JSON.parse(fs.readFileSync(input)),api={...await loadSpatialApi(),...(await loadPreviewCore()).api};
+const level=structuredClone(d.level);level.generators[0].offset=7;level.generators[0].spawn=[6,0];
+api.validateLevel(level);const checks={opening:auditOpeningCoverage(new api.PuzzleModel(level).snapshot()),hidden:auditHiddenCoverage(level),spans:auditGateSpanLimits(level),queue:auditGeneratorQueueColors(level),art:api.auditCandidateBlockArt(level)};
+if(!Object.values(checks).every(x=>x.passed))throw new Error(JSON.stringify(checks));
+const proof=checkStationaryObligations(level,api,{floor:11,targetIds:[d.targetId]});
+const file=`deliverables/remake131-140-v146-20260924/agent131-134/stationary-right139-${Date.now()}.json`;
+fs.writeFileSync(file,JSON.stringify({level,targetId:d.targetId,checks,proof,input,change:'Move sole generator rim center 1 to 7 and fixed spawn [0,0] to [6,0]; preserve all four FIFO bodies and all counters.',levelSha256:digest(level),formalAdopted:false},null,2));console.log(file);

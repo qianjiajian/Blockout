@@ -16,12 +16,52 @@ page.on("console", (message) => { if (message.type() === "error") errors.push(me
 page.on("pageerror", (error) => errors.push(error.message));
 
 const state = () => page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
+const logicalToPage = async (targetPage, point) => {
+  const current = await targetPage.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
+  const bounds = await targetPage.locator("canvas").boundingBox();
+  if (!bounds) throw new Error("Onboarding E2E: canvas bounds are unavailable");
+  return {
+    x: bounds.x + current.viewportTransform.offsetX + point.x * current.viewportTransform.scale,
+    y: bounds.y + current.viewportTransform.offsetY + point.y * current.viewportTransform.scale,
+  };
+};
+const clickTarget = async (targetPage, name) => {
+  const current = await targetPage.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
+  const hit = current.interactionTargets?.targets?.[name]?.hit;
+  if (!hit) throw new Error(`Onboarding E2E: missing ${name} interaction target`);
+  const point = await logicalToPage(targetPage, {
+    x: hit.x + hit.width / 2,
+    y: hit.y + hit.height / 2,
+  });
+  await targetPage.mouse.click(point.x, point.y);
+};
+const assertDirectExitGuide = (guide, openingDrag, label) => {
+  if (!guide?.points?.[1] || guide.blockId !== openingDrag.blockId) {
+    throw new Error(`Onboarding E2E: ${label} guide does not target the verified opening block`);
+  }
+  if (openingDrag.path.length !== 0 || !openingDrag.exitSide) {
+    throw new Error("Onboarding E2E: verified Level 1 opening is no longer the approved direct exit");
+  }
+  if (guide.exitSide !== openingDrag.exitSide || guide.origins.length !== 2 || guide.points.length !== 2) {
+    throw new Error(`Onboarding E2E: ${label} direct-exit guide contract is incomplete`);
+  }
+  const dx = guide.end.x - guide.start.x;
+  const dy = guide.end.y - guide.start.y;
+  const pointsOutward = guide.exitSide === "top"
+    ? dy < 0 && Math.abs(dy) > Math.abs(dx)
+    : guide.exitSide === "bottom"
+      ? dy > 0 && Math.abs(dy) > Math.abs(dx)
+      : guide.exitSide === "left"
+        ? dx < 0 && Math.abs(dx) > Math.abs(dy)
+        : dx > 0 && Math.abs(dx) > Math.abs(dy);
+  if (!pointsOutward) throw new Error(`Onboarding E2E: ${label} guide does not travel through its exit`);
+};
 const openFreshLevelOne = async () => {
   await page.goto(playtestUrl, { waitUntil: "networkidle" });
   await page.evaluate(() => localStorage.clear());
   await page.reload({ waitUntil: "networkidle" });
   await page.waitForTimeout(250);
-  await page.mouse.click(248, 852);
+  await clickTarget(page, "homePlay");
   await page.waitForTimeout(120);
 };
 
@@ -32,98 +72,73 @@ if (current.screen !== "playing" || current.onboarding.basicsSeen || current.puz
 }
 await page.screenshot({ path: shot("round14-onboarding-idle.png") });
 
-// Level layouts are intentionally re-authored during difficulty iteration.
 // Follow the first verified route instead of assuming a color or grid cell.
+// Level 1 deliberately begins with a zero-reposition exit, so the renderer
+// synthesizes the final outward segment through the matching gate.
 const openingDrag = await page.evaluate(async () => {
   const [{ LEVELS }, { solveLevelForValidation }] = await Promise.all([
     import("/src/core/levels.ts"),
     import("/src/core/levelSolver.ts"),
   ]);
-  return solveLevelForValidation(LEVELS[0]).drags.find((drag) => drag.path.length > 0);
+  return solveLevelForValidation(LEVELS[0]).drags[0];
 });
-if (!openingDrag) throw new Error("Onboarding E2E: level one has no legal opening movement");
+if (!openingDrag) throw new Error("Onboarding E2E: level one has no verified opening action");
 
 const guide = current.onboarding.guide;
-if (!guide || guide.blockId !== openingDrag.blockId) {
-  throw new Error("Onboarding E2E: rendered guide does not target the verified opening block");
-}
-if (JSON.stringify(guide.origins.slice(1)) !== JSON.stringify(openingDrag.path)) {
-  throw new Error("Onboarding E2E: rendered guide path is stale relative to the verified opening drag");
-}
-const start = guide.start;
-const target = guide.end;
-const firstGuideStep = guide.points[1];
+assertDirectExitGuide(guide, openingDrag, "496x1078");
+const openingBlockCount = current.puzzle.blocks.length;
+const start = await logicalToPage(page, guide.start);
 
-// A tap is not proof of understanding: the hand and instruction must survive it.
+// Touching the already-aligned guided block performs the verified direct exit.
 await page.mouse.click(start.x, start.y);
 await page.waitForTimeout(100);
 current = await state();
-if (current.onboarding.basicsSeen || current.puzzle.started || current.puzzle.moves !== 0) {
-  throw new Error("Onboarding E2E: a no-move tap consumed the tutorial");
+if (!current.onboarding.basicsSeen || !current.puzzle.started || current.onboarding.guide
+  || current.puzzle.moves !== 1 || current.puzzle.blocks.length !== openingBlockCount - 1
+  || current.puzzle.blocks.some((block) => block.id === openingDrag.blockId)
+  || current.activePointer != null || current.selectedId != null) {
+  throw new Error("Onboarding E2E: guided direct exit did not complete and persist the tutorial");
 }
-await page.screenshot({ path: shot("round14-onboarding-after-tap.png") });
-
-// The first real grid movement dismisses and persists the contextual tutorial.
-await page.mouse.move(start.x, start.y);
-await page.mouse.down();
-await page.mouse.move(
-  start.x + (firstGuideStep.x - start.x) * 0.5,
-  start.y + (firstGuideStep.y - start.y) * 0.5,
-  { steps: 3 },
-);
-await page.waitForTimeout(80);
-current = await state();
-if (current.onboarding.basicsSeen || current.puzzle.started || current.puzzle.moves !== 0 || !current.onboarding.guide) {
-  throw new Error("Onboarding E2E: a half-cell drag consumed the tutorial before the first legal grid move");
-}
-await page.mouse.move(target.x, target.y, { steps: 5 });
-await page.waitForTimeout(80);
-current = await state();
-if (!current.onboarding.basicsSeen || !current.puzzle.started || current.onboarding.guide) {
-  throw new Error("Onboarding E2E: first valid movement did not consume the tutorial");
-}
-await page.screenshot({ path: shot("round14-onboarding-after-first-move.png") });
-await page.mouse.up();
+await page.screenshot({ path: shot("round14-onboarding-after-direct-exit.png") });
 
 await page.reload({ waitUntil: "networkidle" });
 await page.waitForTimeout(200);
-await page.mouse.click(248, 852);
+await clickTarget(page, "homePlay");
 await page.waitForTimeout(120);
 current = await state();
-if (current.screen !== "playing" || !current.onboarding.basicsSeen || current.puzzle.started || current.onboarding.guide) {
+if (current.screen !== "playing" || !current.onboarding.basicsSeen || current.onboarding.guide) {
   throw new Error("Onboarding E2E: tutorial completion did not persist cleanly across reload");
 }
 await page.screenshot({ path: shot("round14-onboarding-returning-player.png") });
 
-// The same no-move behavior must hold at the minimum supported viewport.
+// The direct-exit guide and its touch target must stay aligned at the minimum viewport.
 const small = await browser.newPage({ viewport: { width: 320, height: 568 } });
 await small.goto(playtestUrl, { waitUntil: "networkidle" });
 await small.evaluate(() => localStorage.clear());
 await small.reload({ waitUntil: "networkidle" });
 await small.waitForTimeout(220);
-const scale = 568 / 1078;
-const offsetX = (320 - 496 * scale) / 2;
-await small.mouse.click(offsetX + 248 * scale, 852 * scale);
+await clickTarget(small, "homePlay");
 await small.waitForTimeout(120);
 const smallState = await small.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
 const smallBlock = smallState.puzzle.blocks.find((block) => block.id === openingDrag.blockId);
 if (!smallBlock) throw new Error(`Onboarding E2E: 320x568 is missing ${openingDrag.blockId}`);
 const smallGuide = smallState.onboarding.guide;
-if (!smallGuide || smallGuide.blockId !== openingDrag.blockId) {
-  throw new Error("Onboarding E2E: 320x568 guide does not target the verified opening block");
-}
-const smallStartX = offsetX + smallGuide.start.x * scale;
-const smallStartY = smallGuide.start.y * scale;
-await small.mouse.click(smallStartX, smallStartY);
+assertDirectExitGuide(smallGuide, openingDrag, "320x568");
+await small.screenshot({ path: shot("round14-onboarding-idle-320x568.png") });
+const smallOpeningBlockCount = smallState.puzzle.blocks.length;
+const smallStart = await logicalToPage(small, smallGuide.start);
+await small.mouse.click(smallStart.x, smallStart.y);
 await small.waitForTimeout(100);
-const smallAfterTap = await small.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
-if (smallAfterTap.onboarding.basicsSeen || smallAfterTap.puzzle.started) {
-  throw new Error("Onboarding E2E: 320x568 no-move tap consumed the tutorial");
+const smallAfterExit = await small.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
+if (!smallAfterExit.onboarding.basicsSeen || !smallAfterExit.puzzle.started || smallAfterExit.onboarding.guide
+  || smallAfterExit.puzzle.moves !== 1 || smallAfterExit.puzzle.blocks.length !== smallOpeningBlockCount - 1
+  || smallAfterExit.puzzle.blocks.some((block) => block.id === openingDrag.blockId)) {
+  throw new Error("Onboarding E2E: 320x568 guided direct exit did not complete the tutorial");
 }
-await small.screenshot({ path: shot("round14-onboarding-after-tap-320x568.png") });
+await small.screenshot({ path: shot("round14-onboarding-after-direct-exit-320x568.png") });
 await small.close();
 
 await context.close();
 await browser.close();
 if (errors.length) throw new Error(`Onboarding browser errors:\n${errors.join("\n")}`);
-console.log("Idle tap retention, first-move dismissal, reload persistence, and 320x568 onboarding passed.");
+console.log("Direct-exit gesture, completion persistence, reload behavior, and 320x568 onboarding passed.");

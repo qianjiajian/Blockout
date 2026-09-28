@@ -1,0 +1,1 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';const f='tools/campaign-v145/lv131-140/agent139-140/author139.mjs';let s=fs.readFileSync(f,'utf8');const a='inv=[5,6,10,11,8,9,7,8]',b='inv=[...Array.from({length:4},()=>[5,6,10,11][Math.floor(random()*4)]),8,9,7,8]';assert(s.includes(a));s=s.replace(a,b);fs.writeFileSync(f,s);

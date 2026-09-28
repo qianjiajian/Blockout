@@ -1,0 +1,31 @@
+import { build } from "esbuild";
+import { mkdir, writeFile, readFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+
+const root = process.cwd();
+const out = resolve(root, "deliverables/axis-retry-20260926/agent101");
+await mkdir(out, { recursive: true });
+const source = `export {LEVELS} from ${JSON.stringify(resolve(root, "src/core/levels.ts"))}; export {replayRevisedRoute} from ${JSON.stringify(resolve(root, "src/core/revisedLevelSearch.ts"))};`;
+const bundle = await build({ stdin: { contents: source, resolveDir: root, loader: "ts" }, bundle: true, platform: "node", format: "esm", write: false, logLevel: "silent" });
+const modulePath = resolve(out, `.find-api-${process.pid}.mjs`);
+await writeFile(modulePath, bundle.outputFiles[0].text);
+const api = await import(pathToFileURL(modulePath).href);
+const raw = JSON.parse(await readFile(resolve(root, "deliverables/remake101-110-v146-20260924/proof101-v152/enriched101-1790326396635.json"), "utf8"));
+const live = api.LEVELS.find((level) => level.id === 101);
+const hidden = new Map(raw.level.blocks.filter((block) => block.shutterId === "r147-101-cover4").map((block) => [block.id, block]));
+const level = { ...live, blocks: live.blocks.map((block) => {
+  const sourceBlock = hidden.get(block.id);
+  return sourceBlock ? { ...block, x: sourceBlock.x, y: sourceBlock.y, shape: sourceBlock.shape.map((cell) => [...cell]), movementAxis: undefined } : block;
+}) };
+const before = raw.drags.slice(0, 34);
+const blue = { blockId: "r147-101-cover4-9", path: [[3, 8], [3, 7], [3, 6], [3, 5], [3, 4], [3, 3], [3, 2], [3, 1], [3, 0], [4, 0]], exitSide: "top" };
+const red1 = raw.drags[35];
+const red2 = raw.drags[36];
+const moveYellow = { blockId: "r147-101-cover4-8", path: [[0, 4]] };
+const exitYellow = { blockId: "r147-101-cover4-8", path: [[0, 5], [0, 6], [0, 7]], exitSide: "left" };
+const route = [...before, moveYellow, blue, red1, red2, exitYellow];
+const replay = api.replayRevisedRoute(level, route);
+const report = { replay, route, level };
+console.log(JSON.stringify({ replay, drags: route.length }, null, 2));
+if (replay.valid && replay.complete) await writeFile(resolve(out, "candidate101-route.json"), `${JSON.stringify(report, null, 2)}\n`);

@@ -102,7 +102,7 @@ levelSelect.innerHTML = LEVELS.map((level) => (
   `<option value="${level.id}">第 ${level.id} 关 · ${level.name} · ${level.width}×${level.height}</option>`
 )).join("");
 
-let levelId = Math.max(1, Math.min(100, Number(new URLSearchParams(location.search).get("level")) || 1));
+let levelId = Math.max(1, Math.min(LEVELS.length, Number(new URLSearchParams(location.search).get("level")) || 1));
 let level: LevelSpec = getLevelStrict(levelId);
 let sourceRows: string[] = [];
 let rows: string[] = [];
@@ -239,6 +239,10 @@ const render = (): void => {
       !isEditorFloor(x + 1, y) && !isEditorFloor(x, y - 1) && !isEditorFloor(x + 1, y - 1) ? '<span class="cell-corner top-right" aria-hidden="true"></span>' : "",
       !isEditorFloor(x + 1, y) && !isEditorFloor(x, y + 1) && !isEditorFloor(x + 1, y + 1) ? '<span class="cell-corner bottom-right" aria-hidden="true"></span>' : "",
       !isEditorFloor(x - 1, y) && !isEditorFloor(x, y + 1) && !isEditorFloor(x - 1, y + 1) ? '<span class="cell-corner bottom-left" aria-hidden="true"></span>' : "",
+      isEditorFloor(x, y - 1) && isEditorFloor(x + 1, y) && !isEditorFloor(x + 1, y - 1) ? '<span class="cell-inner-corner missing-ne" aria-hidden="true"></span>' : "",
+      isEditorFloor(x + 1, y) && isEditorFloor(x, y + 1) && !isEditorFloor(x + 1, y + 1) ? '<span class="cell-inner-corner missing-se" aria-hidden="true"></span>' : "",
+      isEditorFloor(x - 1, y) && isEditorFloor(x, y + 1) && !isEditorFloor(x - 1, y + 1) ? '<span class="cell-inner-corner missing-sw" aria-hidden="true"></span>' : "",
+      isEditorFloor(x, y - 1) && isEditorFloor(x - 1, y) && !isEditorFloor(x - 1, y - 1) ? '<span class="cell-inner-corner missing-nw" aria-hidden="true"></span>' : "",
     ].join("") : "";
     return `<button type="button" role="gridcell" class="${classes.join(" ")}" data-x="${x}" data-y="${y}" aria-label="${title}" title="${title}">${rim}<span class="cell-marker">${marker}</span><span class="cell-coord">${x},${y}</span></button>`;
   })).join("");

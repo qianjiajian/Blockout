@@ -40,6 +40,16 @@ const screenPoint = (page, logical) => {
 const seed = async (page, levelId, reducedMotion) => {
   page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
   page.on("pageerror", (error) => errors.push(error.message));
+  await page.addInitScript(() => {
+    const originalDrawImage = CanvasRenderingContext2D.prototype.drawImage;
+    globalThis.__collisionBlockerFrameDraws = 0;
+    CanvasRenderingContext2D.prototype.drawImage = function drawImage(image, ...args) {
+      if (typeof image?.src === "string" && image.src.includes("blocker-focus-corners-v1.png")) {
+        globalThis.__collisionBlockerFrameDraws += 1;
+      }
+      return originalDrawImage.call(this, image, ...args);
+    };
+  });
   await page.goto(playtestUrl, { waitUntil: "networkidle" });
   await page.evaluate((value) => localStorage.setItem("color-escape-save-v1", JSON.stringify(value)), save(levelId, reducedMotion));
   await page.reload({ waitUntil: "networkidle" });
@@ -91,21 +101,22 @@ const exercise = async ({ levelId, viewport, reducedMotion, fileName }) => {
   await page.mouse.down();
   await page.mouse.move(target.x, target.y, { steps: 4 });
   state = await debug(page);
-  if (state.selectionFeedback?.mode !== "blocked"
-    || state.blockerFocus?.blockId !== fixture.blockerId
-    || state.blockerFocus?.artReady !== true) {
-    throw new Error(`Blocker-focus E2E: collision did not expose the real blocker (${JSON.stringify({ fixture, selectionFeedback: state.selectionFeedback, blockerFocus: state.blockerFocus })})`);
+  const blockerFrameDraws = await page.evaluate(() => globalThis.__collisionBlockerFrameDraws);
+  if (state.selectionFeedback?.mode !== "blocked" || state.blockerFocus || blockerFrameDraws !== 0) {
+    throw new Error(`Blocker-focus E2E: collision still selected/framed the other block (${JSON.stringify({ fixture, selectionFeedback: state.selectionFeedback, blockerFocus: state.blockerFocus, blockerFrameDraws })})`);
   }
   await page.screenshot({ path: resolve(output, fileName) });
   await page.mouse.up();
   await page.waitForTimeout(reducedMotion ? 80 : 120);
   state = await debug(page);
-  if (state.selectedId || state.blockerFocus?.blockId !== fixture.blockerId) {
-    throw new Error("Blocker-focus E2E: focus did not linger briefly after release");
+  if (state.selectedId || state.blockerFocus) {
+    throw new Error("Blocker-focus E2E: collision frame appeared or selection remained after release");
   }
   await page.waitForTimeout(reducedMotion ? 360 : 620);
   state = await debug(page);
-  if (state.blockerFocus) throw new Error("Blocker-focus E2E: focus did not expire");
+  if (state.blockerFocus || await page.evaluate(() => globalThis.__collisionBlockerFrameDraws) !== 0) {
+    throw new Error("Blocker-focus E2E: the other block gained a delayed collision frame");
+  }
   await page.close();
   return fixture;
 };
@@ -117,12 +128,12 @@ const samples = [
 ];
 
 await writeFile(resolve(output, "blocker-focus-report.json"), `${JSON.stringify({
-  method: "Real Pointer collision against a dynamically discovered adjacent movable block; no authored solution or route is used.",
+  method: "Real Pointer collision against a dynamically discovered adjacent movable block; only the dragged block keeps tactile blocked feedback.",
   samples,
-  standardDurationSeconds: 0.62,
-  reducedMotionDurationSeconds: 0.34,
+  otherBlockFrameDraws: 0,
+  otherBlockSelected: false,
   browserErrors: errors,
 }, null, 2)}\n`, "utf8");
 await browser.close();
 if (errors.length) throw new Error(`Blocker-focus browser errors:\n${errors.join("\n")}`);
-console.log("Lv58/Lv60 real-block collision focus, release linger, expiry, DPR2, reduced motion, and 320x568 passed.");
+console.log("Lv58/Lv60 collisions keep dragged-block feedback without selecting or framing the other block; DPR2, reduced motion, and 320x568 passed.");

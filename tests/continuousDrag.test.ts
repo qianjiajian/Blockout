@@ -4,13 +4,16 @@ import type { LevelSpec, PuzzleSnapshot } from "../src/core/types";
 import {
   advanceContinuousDragPose,
   candidateGridSteps,
+  choosePortalReleaseCandidate,
   chooseReleaseExitSide,
   chooseNearestReachableSnap,
   createContinuousCollisionValidator,
   easeOutCubic,
   isContinuousPoseAtEdge,
+  isContinuousPoseAtPortal,
   isContinuousPoseValid,
   isPoseAlignedToGrid,
+  matchingContinuousExitPortals,
   sweepContinuousPose,
   sweepContinuousPoseWithTurnAssist,
 } from "../src/game/continuousDrag";
@@ -54,6 +57,57 @@ describe("continuous hybrid drag", () => {
     expect(isContinuousPoseValid(state, "red", -0.01, 0)).toBe(false);
     expect(isContinuousPoseValid(state, "red", 1.01, 1)).toBe(false);
     expect(isContinuousPoseValid(state, "red", 2.01, 2)).toBe(false);
+  });
+
+  it("treats authored board seams as zero-width collision rails", () => {
+    const level: LevelSpec = {
+      id: 9_983,
+      name: "continuous seam fixture",
+      difficulty: "normal",
+      timeSeconds: 60,
+      reward: 0,
+      width: 5,
+      height: 5,
+      seams: [
+        { orientation: "horizontal", offset: 2, start: 0, size: 2 },
+        { orientation: "vertical", offset: 3, start: 2, size: 3 },
+      ],
+      gates: [],
+      blocks: [{ id: "red", x: 1, y: 1, shape: [[0, 0]], color: "red" }],
+    };
+    const state = new PuzzleModel(level).snapshot();
+    const validator = createContinuousCollisionValidator(state, "red");
+
+    expect(validator(1, 1)).toBe(true);
+    expect(validator(1, 1.25)).toBe(false);
+    expect(validator(2.25, 3)).toBe(false);
+    // Both finite seams may still be walked around at their authored ends.
+    expect(validator(3, 1.25)).toBe(true);
+    expect(validator(2.25, 1)).toBe(true);
+  });
+
+  it("clamps a sparse continuous sweep at a seam instead of drawing across it", () => {
+    const level: LevelSpec = {
+      id: 9_984,
+      name: "seam sweep fixture",
+      difficulty: "normal",
+      timeSeconds: 60,
+      reward: 0,
+      width: 4,
+      height: 4,
+      seams: [{ orientation: "horizontal", offset: 2, start: 0, size: 4 }],
+      gates: [],
+      blocks: [{ id: "red", x: 1, y: 1, shape: [[0, 0]], color: "red" }],
+    };
+    const state = new PuzzleModel(level).snapshot();
+    const result = sweepContinuousPose(
+      { x: 1, y: 1 },
+      { x: 1, y: 3 },
+      createContinuousCollisionValidator(state, "red"),
+    );
+
+    expect(result.blockedY).toBe(true);
+    expect(result.y).toBeCloseTo(1.001, 3);
   });
 
   it("sweeps without tunnelling through a blocker", () => {
@@ -105,6 +159,18 @@ describe("continuous hybrid drag", () => {
     expect(result.blockedY).toBe(true);
     expect(result.x).toBeGreaterThan(1);
     expect(result.y).toBeLessThan(1.01);
+  });
+
+  it("retains chronological gate contacts inside one sparse diagonal sample", () => {
+    const result = sweepContinuousPose(
+      { x: 0, y: 4 },
+      { x: 4, y: -4 },
+      (x, y) => x >= 0 && x <= 4 && y >= 0 && y <= 4,
+    );
+
+    expect(result.x).toBeCloseTo(4, 2);
+    expect(result.y).toBeCloseTo(0, 2);
+    expect(result.path.some((pose) => Math.abs(pose.x - 3) <= 0.09 && pose.y <= 0.002)).toBe(true);
   });
 
   it("does not let turn assist consume the free axis of a diagonal wall slide", () => {
@@ -245,6 +311,108 @@ describe("continuous hybrid drag", () => {
     expect(isPoseAlignedToGrid({ x: 1.94, y: 2 }, { x: 2, y: 2 })).toBe(false);
   });
 
+  it("hits a local portal's directed rail and tangent aperture instead of the outer rectangle", () => {
+    const shape = [[0, 0], [0, 1]] as const;
+    const localRight = { side: "right", origin: [1, 1], size: 2 } as const;
+    expect(isContinuousPoseAtPortal({ x: 1, y: 1 }, shape, localRight)).toBe(true);
+    expect(isContinuousPoseAtPortal({ x: 0.9, y: 1 }, shape, localRight)).toBe(false);
+    expect(isContinuousPoseAtPortal({ x: 1, y: 1.08 }, shape, localRight)).toBe(false);
+    expect(isContinuousPoseAtEdge({ x: 1, y: 1 }, shape, 5, 5, "right")).toBe(false);
+
+    const localLeft = { side: "left", origin: [3, 1], size: 2 } as const;
+    expect(isContinuousPoseAtPortal({ x: 3, y: 1 }, shape, localLeft)).toBe(true);
+    expect(isContinuousPoseAtPortal({ x: 3.1, y: 1 }, shape, localLeft)).toBe(false);
+
+    const verticalShape = [[0, 0], [0, 1]] as const;
+    const localTop = { side: "top", origin: [1, 1], size: 1 } as const;
+    const localBottom = { side: "bottom", origin: [1, 2], size: 1 } as const;
+    expect(isContinuousPoseAtPortal({ x: 1, y: 1 }, verticalShape, localTop)).toBe(true);
+    expect(isContinuousPoseAtPortal({ x: 1, y: 1.1 }, verticalShape, localTop)).toBe(false);
+    expect(isContinuousPoseAtPortal({ x: 1, y: 1 }, verticalShape, localBottom)).toBe(true);
+    expect(isContinuousPoseAtPortal({ x: 1, y: 0.9 }, verticalShape, localBottom)).toBe(false);
+  });
+
+  it("keeps the Lv5 T block inside the board until its lower rear cell also aligns", () => {
+    const shape = [[0, 0], [1, 0], [2, 0], [1, 1]] as const;
+    const portal = { side: "left", origin: [0, 3], size: 3 } as const;
+    for (const profile of [undefined, "revised-2026-09-21-v1.2"] as const) {
+      expect(isContinuousPoseAtPortal({ x: 0, y: 5 }, shape, portal, 0.04, profile)).toBe(false);
+      expect(isContinuousPoseAtPortal({ x: 0, y: 4.15 }, shape, portal, 0.04, profile)).toBe(false);
+      expect(isContinuousPoseAtPortal({ x: 0, y: 4 }, shape, portal, 0.04, profile)).toBe(true);
+    }
+  });
+
+  it.each([
+    { side: "top", shape: [[1, 0], [0, 1], [1, 1], [2, 1]], origin: [2, 0], wideOrigin: [1, 0], pose: { x: 1, y: 0 } },
+    { side: "bottom", shape: [[0, 0], [1, 0], [2, 0], [1, 1]], origin: [2, 4], wideOrigin: [1, 4], pose: { x: 1, y: 3 } },
+    { side: "left", shape: [[1, 0], [0, 1], [1, 1], [1, 2]], origin: [0, 2], wideOrigin: [0, 1], pose: { x: 0, y: 1 } },
+    { side: "right", shape: [[0, 0], [0, 1], [0, 2], [1, 1]], origin: [4, 2], wideOrigin: [4, 1], pose: { x: 3, y: 1 } },
+  ] as const)("$side: a narrow tip cannot visually authorize a rigid wide block", ({ side, shape, origin, wideOrigin, pose }) => {
+    expect(isContinuousPoseAtPortal(pose, shape, { side, origin, size: 1 })).toBe(false);
+    expect(isContinuousPoseAtPortal(pose, shape, { side, origin: wideOrigin, size: 3 })).toBe(true);
+  });
+
+  it("resolves exact same-colour and multiportal owners at the committed block rail", () => {
+    const localFixture: LevelSpec = {
+      ...fixture,
+      id: 995,
+      width: 5,
+      height: 3,
+      playable: [
+        [0, 0], [1, 0], [3, 0], [4, 0],
+        [0, 1], [1, 1], [3, 1], [4, 1],
+        [0, 2], [1, 2], [3, 2], [4, 2],
+      ],
+      blocked: [],
+      gates: [
+        {
+          id: "red-shared",
+          side: "right",
+          offset: 1,
+          size: 1,
+          color: "red",
+          portals: [
+            { side: "right", origin: [1, 1], size: 1 },
+            { side: "left", origin: [3, 1], size: 1 },
+          ],
+        },
+        {
+          id: "red-independent",
+          side: "left",
+          offset: 0,
+          size: 1,
+          color: "red",
+          portals: [{ side: "left", origin: [3, 0], size: 1 }],
+        },
+      ],
+      blocks: [
+        { id: "left-red", x: 1, y: 1, shape: [[0, 0]], color: "red" },
+        { id: "right-red", x: 3, y: 1, shape: [[0, 0]], color: "red" },
+        { id: "top-right-red", x: 3, y: 0, shape: [[0, 0]], color: "red" },
+      ],
+    };
+    const model = new PuzzleModel(localFixture);
+    const state = model.snapshot();
+    const leftBlock = model.getBlock("left-red")!;
+    const rightBlock = model.getBlock("right-red")!;
+    const independentBlock = model.getBlock("top-right-red")!;
+    expect(matchingContinuousExitPortals(state, leftBlock, ["right"])).toMatchObject([{
+      gateId: "red-shared",
+      gateKind: "fixed",
+      portalIndex: 0,
+      portal: { side: "right", origin: [1, 1], size: 1 },
+      authoredPortal: true,
+    }]);
+    expect(matchingContinuousExitPortals(state, rightBlock, ["left"])).toMatchObject([{
+      gateId: "red-shared",
+      portalIndex: 1,
+    }]);
+    expect(matchingContinuousExitPortals(state, independentBlock, ["left"])).toMatchObject([{
+      gateId: "red-independent",
+      portalIndex: 0,
+    }]);
+  });
+
   it("keeps simultaneous diagonal intent and a bounded snap curve", () => {
     const steps = candidateGridSteps({ x: 0.8, y: 0.7 }, { x: 0, y: 0 });
     expect(steps.map((step) => step.axis)).toEqual(["x", "y"]);
@@ -263,6 +431,72 @@ describe("continuous hybrid drag", () => {
     const board = { innerX: 50, innerY: 100, innerWidth: 300, innerHeight: 400 };
     expect(chooseReleaseExitSide(["top", "left"], { x: 52, y: 104 }, board, "left")).toBe("left");
     expect(chooseReleaseExitSide(["top", "left"], { x: 54, y: 101 }, board, "bottom")).toBe("top");
+  });
+
+  it("chooses local and same-side portals by their physical rail, with intent taking priority", () => {
+    const board = {
+      innerX: 100,
+      innerY: 200,
+      innerWidth: 100,
+      innerHeight: 60,
+      cell: 20,
+    };
+    const upperRight = {
+      id: "upper-right",
+      portal: { side: "right", origin: [1, 0], size: 1 } as const,
+      authoredPortal: true,
+    };
+    const lowerRight = {
+      id: "lower-right",
+      portal: { side: "right", origin: [1, 2], size: 1 } as const,
+      authoredPortal: true,
+    };
+    const localLeft = {
+      id: "local-left",
+      portal: { side: "left", origin: [3, 1], size: 1 } as const,
+      authoredPortal: true,
+    };
+    expect(choosePortalReleaseCandidate(
+      [upperRight, lowerRight],
+      { x: 141, y: 249 },
+      board,
+    )?.id).toBe("lower-right");
+    expect(choosePortalReleaseCandidate(
+      [lowerRight, localLeft],
+      { x: 142, y: 249 },
+      board,
+    )?.id).toBe("lower-right");
+    expect(choosePortalReleaseCandidate(
+      [lowerRight, localLeft],
+      { x: 142, y: 249 },
+      board,
+      "left",
+    )?.id).toBe("local-left");
+  });
+
+  it("delegates normalized legacy portals to the unchanged outer-edge chooser", () => {
+    const board = {
+      innerX: 50,
+      innerY: 100,
+      innerWidth: 300,
+      innerHeight: 400,
+      cell: 50,
+    };
+    const candidates = [
+      {
+        id: "top",
+        portal: { side: "top", origin: [0, 0], size: 1 } as const,
+        authoredPortal: false,
+      },
+      {
+        id: "left",
+        portal: { side: "left", origin: [0, 0], size: 1 } as const,
+        authoredPortal: false,
+      },
+    ];
+    const point = { x: 54, y: 101 };
+    const expectedSide = chooseReleaseExitSide(["top", "left"], point, board, "bottom");
+    expect(choosePortalReleaseCandidate(candidates, point, board, "bottom")?.portal.side).toBe(expectedSide);
   });
 
   it("exposes a strict adjacent model step without heuristic routing", () => {

@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {loadApi} from '../../native-block-repair-v143.mjs';
+import {digest} from '../../revised-preview-validation-v160.mjs';
+const proofFile=process.argv[2],report=JSON.parse(fs.readFileSync(proofFile));
+const candidateFile=report.candidate,d=JSON.parse(fs.readFileSync(candidateFile));
+assert.equal(digest(d.level),report.levelSha256);assert.equal(report.proof.status,'relaxed-shortcut');
+const {api}=await loadApi(),replay=api.replayRevisedRoute(d.level,report.proof.relaxedRoute);
+assert(replay.valid&&replay.complete);assert.equal(replay.nonClearingDrags,report.proof.relaxedNonClearingDrags);
+const result={checkedAt:new Date().toISOString(),candidateFile,candidateSha256:digest(fs.readFileSync(candidateFile)),proofFile,proofSha256:digest(fs.readFileSync(proofFile)),levelSha256:digest(d.level),routeSha256:digest(report.proof.relaxedRoute),replay,target:[21,30],conclusion:'真实PuzzleModel完整通关低于21，因此该候选不符合目标；不是仅放宽模型反例。',formalAdopted:false};
+const output='deliverables/remake31-200-v145-20260924/batches/lv051-060/agent51-54/shortcut-actual52-'+Date.now()+'.json';fs.writeFileSync(output,JSON.stringify(result,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify({output,valid:replay.valid,complete:replay.complete,cost:replay.nonClearingDrags}));

@@ -1,0 +1,2 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';
+const f='tools/campaign-v145/lv131-140/agent139-140/author139.mjs';let s=fs.readFileSync(f,'utf8');const replacements=[['if(set.size===bs.length)return true;',"if(set.size===bs.length)return !process.env.SEVEN_ICE||bs.filter(b=>!b.shutterId&&b.color==='purple').length>=12;"],["offset:0,size:3},{id:'n139-purple'","offset:0,size:3,...(process.env.SEVEN_ICE?{frozen:20}:{})},{id:'n139-purple'"]];for(const[a,b]of replacements){assert(s.includes(a));s=s.replace(a,b);}fs.writeFileSync(f,s);

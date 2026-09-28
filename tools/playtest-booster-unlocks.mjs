@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import { resolve } from "node:path";
 import { chromium } from "playwright";
 
-const output = fileURLToPath(new URL("../playtest-results/booster-unlocks/", import.meta.url));
+const output = fileURLToPath(new URL(`../playtest-results/playtest-booster-unlocks-time-freeze-${new Date().toISOString().replaceAll(":", "-")}/`, import.meta.url));
 const playtestUrl = process.env.PLAYTEST_URL ?? "http://127.0.0.1:5173/";
 await mkdir(output, { recursive: true });
 
@@ -32,6 +32,18 @@ const attachErrors = (page) => {
   page.on("pageerror", (error) => errors.push(error.message));
 };
 const debug = (page) => page.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
+const clickTarget = async (page, name, waitMs = 80) => {
+  const state = await debug(page);
+  const hit = state.interactionTargets?.targets?.[name]?.hit;
+  const bounds = await page.locator("canvas").boundingBox();
+  if (!hit || !bounds) throw new Error(`Booster unlock E2E: missing ${name} target`);
+  await page.mouse.click(
+    bounds.x + state.viewportTransform.offsetX + (hit.x + hit.width / 2) * state.viewportTransform.scale,
+    bounds.y + state.viewportTransform.offsetY + (hit.y + hit.height / 2) * state.viewportTransform.scale,
+  );
+  await page.waitForTimeout(waitMs);
+  return debug(page);
+};
 const seed = async (page, highestLevel) => {
   await page.goto(playtestUrl, { waitUntil: "networkidle" });
   await page.evaluate((save) => localStorage.setItem("color-escape-save-v1", JSON.stringify(save)), makeSave(highestLevel));
@@ -53,7 +65,7 @@ await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(1, true));
 await page.waitForTimeout(100);
 await page.screenshot({ path: resolve(output, "01-level-1-three-locked.png") });
 for (const [x, kind, message] of [
-  [132, "time", "Lv 4 解锁加时"],
+  [132, "time", "Lv 4 解锁冻结"],
   [248, "rocket", "Lv 7 解锁火箭"],
   [364, "pulse", "Lv 10 解锁脉冲"],
 ]) {
@@ -67,15 +79,15 @@ for (const [x, kind, message] of [
 
 await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(1, false));
 await page.waitForTimeout(80);
-await page.mouse.click(151, 70);
+state = await clickTarget(page, "homeSupply", 180);
+await page.waitForFunction(() => window.__COLOR_ESCAPE__?.getDebugState().art.formalPage.loaded === "supply");
 state = await debug(page);
 if (state.screen !== "supply" || state.supply.items.some((item) => item.unlocked)) {
   throw new Error("Booster unlock E2E: fresh shop did not preserve the unlock state");
 }
 await page.screenshot({ path: resolve(output, "02-shop-three-locked.png") });
-await page.mouse.click(377, 450);
-state = await debug(page);
-if (state.supply.feedback?.text !== "Lv 4 解锁加时" || state.economy.coins !== 1000
+state = await clickTarget(page, "supply.time");
+if (state.supply.feedback?.text !== "Lv 4 解锁冻结" || state.economy.coins !== 1000
   || state.economy.boosters.time !== 3) {
   throw new Error("Booster unlock E2E: locked shop purchase changed the economy");
 }

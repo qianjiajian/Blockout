@@ -1,0 +1,20 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {build} from 'esbuild';
+import {digest} from '../revised-preview-validation-v160.mjs';
+import {verifyRulesLock} from '../verify-rules-lock.mjs';
+const root='deliverables/repair78-lift-20260927';
+const beforeFile=root+'/before-write.json',before=JSON.parse(fs.readFileSync(beforeFile));
+const candidateFile=root+'/design/candidate-color-3-5-1790517660677.json',candidate=JSON.parse(fs.readFileSync(candidateFile));
+const lock=verifyRulesLock();assert(lock.ok);assert.equal(lock.activeVersion,'1.105.0');
+const b=await build({stdin:{resolveDir:process.cwd(),contents:"export {LEVELS,LEVELS_BEFORE_LEVEL78_LATE_LIFT_REPAIR} from './src/core/levels.ts';export {replayRevisedRoute} from './src/core/revisedLevelSearch.ts';"},bundle:true,write:false,platform:'node',format:'esm',logLevel:'silent'});
+const api=await import('data:text/javascript;base64,'+Buffer.from(b.outputFiles[0].text).toString('base64'));
+assert.equal(digest(api.LEVELS_BEFORE_LEVEL78_LATE_LIFT_REPAIR),digest(before.priorLevels));
+assert.equal(digest(api.LEVELS[77]),candidate.levelSha256);
+const changed=api.LEVELS.filter((l,i)=>digest(l)!==digest(before.priorLevels[i])).map(l=>l.id);assert.deepEqual(changed,[78]);
+const sourceDifferences=[];
+for(const[p,h]of Object.entries(before.bindings))if(p.startsWith('src/')&&digest(fs.readFileSync(p))!==h)sourceDifferences.push(p);
+assert.deepEqual(sourceDifferences,['src/core/levels.ts']);
+const routes={};for(const kind of ['drags','lateDrags']){const r=api.replayRevisedRoute(api.LEVELS[77],candidate[kind]);assert(r.valid&&r.complete);routes[kind]={...r,finalStateKey:undefined};}
+const result={createdAt:new Date().toISOString(),status:'FORMAL_INTEGRATION_PASS',activeRule:lock.activeVersion,taskRule:'1.104.0',beforeFile,beforeSha256:digest(fs.readFileSync(beforeFile)),candidateFile,candidateSha256:digest(fs.readFileSync(candidateFile)),levelSha256:candidate.levelSha256,changedIds:changed,other199Preserved:true,preservedParallelIds:before.parallelChangedIds,sourceDifferences,newProductionFile:'src/core/level78LateLiftRepair.ts',newProductionSha256:digest(fs.readFileSync('src/core/level78LateLiftRepair.ts')),routes};
+const output=root+`/integration-${Date.now()}.json`;fs.writeFileSync(output,JSON.stringify(result,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify({output,...result}));

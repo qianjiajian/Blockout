@@ -1,0 +1,30 @@
+import fs from 'node:fs';
+import {digest} from '../../../revised-preview-validation-v160.mjs';
+import {verifyRulesLock} from '../../../verify-rules-lock.mjs';
+const lock=verifyRulesLock();if(!lock.ok)throw Error(lock.errors.join('\n'));
+const root='deliverables/remake131-140-v146-20260924/agent131-134',input=process.argv[2]??root+'/mutated133-18-1790472211787.json',data=JSON.parse(fs.readFileSync(input)),level=data.level;
+const opening='deliverables/competitor-vs-ours-lv101-200-candidates-v1/competitor-opening/level-133.jpg',frame=n=>`.codex-temp/video-audit-101-134/130-134/frames-1fps/sec-${String(n).padStart(4,'0')}.jpg`;
+const rows=[];
+function bind(sourceId,sourceStage,shape,color,position,target,mechanism=null,evidence=opening){const candidate=level.blocks.find(b=>b.id===`r172-133-${target}`);if(!candidate)throw Error('missing '+target);rows.push({sourceId,sourceStage,sourceShape:shape,sourceColor:color,sourcePosition:position,sourceMechanism:mechanism,evidence,candidateId:candidate.id,candidate,authoredDifference:{shape:candidate.shape,color:candidate.color,position:[candidate.x,candidate.y],layers:candidate.layers??null,phase:candidate.shutterId??'opening'}});}
+const singles=[['yellow',[0,1]],['blue',[1,1]],['green',[2,1]],['pink',[3,1]],['blue',[0,2]],['yellow',[1,2]],['pink',[2,2]],['green',[3,2]],['pink',[4,2]],['green',[2,3]]];
+singles.forEach(([c,p],i)=>bind(`opening-single-${i}`,'opening','SINGLE',c,p,`source-opening-${i}`));
+bind('opening-left-ice','opening','H2','pink',[0,0],'source-opening-10',{frozen:3},frame(301));
+bind('opening-right-ice','opening','H2','yellow',[2,0],'source-opening-11',{frozen:3},frame(301));
+bind('opening-shell','opening','H2','pink',[0,3],'source-opening-12',{layers:['pink','green']});
+bind('opening-yellow-bar','opening','H2','yellow',[3,3],'source-opening-13');
+bind('opening-axis','opening','V2','yellow',[5,0],'source-opening-14',{movementAxis:'horizontal'});
+bind('opening-red-left','opening','V2','red',[4,0],'source-opening-15');
+bind('opening-red-right','opening','V2','red',[6,0],'source-opening-16');
+bind('opening-blue-square','opening','SQ2','blue',[5,2],'source-opening-17');
+const middle=[['V2','green',[0,0]],['V3','red',[1,0],{movementAxis:'vertical'}],['V2','yellow',[2,0]],['V2','blue',[0,2]],['SINGLE','blue',[2,2]],['H2','pink',[1,3]],['V2','green',[0,4]],['V2','green',[1,4],{layers:['green','purple']}],['V2','blue',[2,4]]];
+middle.forEach(([kind,color,pos,mechanism],i)=>bind(`middle15-${i}`,'middle15',kind,color,pos,`middle-${i}`,mechanism,frame(326)));
+bind('left19-square','left19','SQ2','pink',[0,0],'left-square',null,frame(342));
+bind('left19-bar','left19','H2','purple',[0,2],'left-bar',null,frame(342));
+bind('right21-square','right21','SQ2','yellow',[0,0],'right-square',null,frame(350));
+bind('right21-bar','right21','H2','green',[0,2],'right-bar',null,frame(350));
+const stageMap={opening:'opening',middle15:'middle15',left19:'left19',right21:'right21'};
+for(const row of rows){if((row.candidate.shutterId??'opening')!==stageMap[row.sourceStage])throw Error('stage');for(const[k,v]of Object.entries(row.sourceMechanism??{}))if(JSON.stringify(row.candidate[k])!==JSON.stringify(v))throw Error('mechanism '+row.sourceId+'/'+k);}
+if(rows.length!==31||new Set(rows.map(r=>r.candidateId)).size!==31)throw Error('source cardinality');
+const capacity=level.blocks.filter(b=>b.id.includes('-capacity-'));if(capacity.length!==4||capacity.reduce((n,b)=>n+b.shape.length,0)!==17)throw Error('capacity');
+const evidence=[opening,...[300,301,302,303,306,326,342,350].map(frame)],ledger={ruleVersion:lock.activeVersion,candidate:input,levelSha256:digest(level),sourceRows:rows,capacityBodies:capacity,stageMap,sources:evidence.map(file=>({file,sha256:digest(fs.readFileSync(file))})),sourceTotals:{openingBodies:18,openingCells:28,hiddenBodies:13,hiddenCells:30,fullBodies:31,fullCells:58,ice:[3,3],shells:2,axes:['horizontal','vertical'],M11:0,covers:[15,19,21],frozenGates:[4,9,12,20,23,26],ordinaryGates:1},candidateTotals:{openingBodies:22,openingCells:45,hiddenBodies:13,hiddenCells:30,fullBodies:35,fullCells:75,ice:[3,3],shells:2,axes:['horizontal','vertical'],M11:0},adaptations:['The preserved v1.45 board has75 cells while the source has58. Four plain capacity bodies SQ3/SQ2/H3/SINGLE fill the17-cell difference. No invented mechanism.','Source middle curtain3x6 is authored as6x3, both side2x3 regions as3x2; exact per-phase18/6/6 cells, 9/2/2 inventory and15/19/21 countdowns retained.','Color and shape adaptation is explicit under1.72: V2↔H2 adjustments repack regions, ordinary colors changed to satisfy solvability/difficulty. Source facts above remain immutable.','Source ordinary yellow and frozen yellow23 would duplicate the same ordinary gate color; authored frozen23 is cyan. All six frozen initial values and ordinary gate count retained; exit locations and colors authored.','The opening horizontal-axis V2 and hidden vertical-axis V3 retain original axis semantics, both shells stay with the source body and phase, both opening ice3 stay with their source H2 bodies.','Source irregular count is zero; authored source bodies and capacity bodies are all full rectangles.'],fullyBound:true,formalAdopted:false};
+const ledgerFile=root+'/source133-reviewed-'+Date.now()+'.json';fs.writeFileSync(ledgerFile,JSON.stringify(ledger,null,2)+'\n');const out=root+'/enriched133-'+Date.now()+'.json';fs.writeFileSync(out,JSON.stringify({...data,sourceReview:{ledger:ledgerFile,sha256:digest(fs.readFileSync(ledgerFile)),fullyBound:true},mechanismFloorProof:data.proof?input:input.replace('.json','-proof.json')},null,2)+'\n');console.log(JSON.stringify({out,ledger:ledgerFile,levelSha256:digest(level)}));

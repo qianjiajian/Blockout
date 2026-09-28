@@ -1,0 +1,15 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import {loadApi} from '../../native-block-repair-v143.mjs';
+import {verifyRulesLock} from '../../verify-rules-lock.mjs';
+import {digest} from '../../revised-preview-validation-v160.mjs';
+import {search} from './campaign-axis-key-search-v146.mjs';
+const lock=verifyRulesLock();assert(lock.ok);const {api}=await loadApi();
+const [file,floorString]=process.argv.slice(2),floor=Number(floorString);assert(floor>0);
+const d=JSON.parse(fs.readFileSync(file));assert(d.level.id>=51&&d.level.id<=60);
+const r=search(d.level,{floor,maxStates:Number(process.env.STATES??500000),maxMilliseconds:Number(process.env.MS??60000),weight:Number(process.env.WEIGHT??10)});
+const replay=r.drags?api.replayRevisedRoute(d.level,r.drags):null;
+const out=path.dirname(file)+'/shortcut-search'+d.level.id+'-'+Date.now()+'.json';
+const report={ruleVersion:lock.activeVersion,candidate:file,candidateSha256:digest(fs.readFileSync(file)),levelSha256:digest(d.level),floor,search:r,replay,actualShortcut:!!(replay?.valid&&replay.complete&&replay.nonClearingDrags<floor),thresholdProven:false,note:'Discovery only; UNKNOWN never proves the requested lower bound.'};
+fs.writeFileSync(out,JSON.stringify(report,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify({out,status:r.status,cost:r.cost,states:r.states,actualShortcut:report.actualShortcut}));

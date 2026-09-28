@@ -1,0 +1,41 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import ts from 'typescript';
+import {build} from 'esbuild';
+import {chromium} from 'playwright';
+import {createServer} from 'vite';
+import {verifyRulesLock} from '../verify-rules-lock.mjs';
+import {digest} from '../revised-preview-validation-v160.mjs';
+import {observe as observeFormalModelTiming,replayTiming as replayObservedModelTiming} from '../campaign-v145/lv141-150/observed-timing-flips.mjs';
+import {IDS,TARGETS,OLD_TARGETS,TIME_TARGETS,FIXTURE,RULE_FILE,clean,omitTarget,validateBeforeContinuity,validateScoringData,replaySpatial} from './verification.mjs';
+
+// Final scoring-only Pointer run. No gameplay or clock mutation, no difficulty claim.
+const OUTPUT='deliverables/star-targets121-130-20260927/pointer-support';
+const [beforeFile,expectedBeforeSha,appliedFile,expectedAppliedSha,expectedRuleSha]=process.argv.slice(2);
+assert(process.argv.length===7&&[expectedBeforeSha,expectedAppliedSha,expectedRuleSha].every(s=>/^[a-f0-9]{64}$/.test(s??'')),'Usage: playtest.mjs BEFORE SHA APPLIED SHA RULE_SHA');
+const lock=verifyRulesLock();assert(lock.ok,lock.errors.join('\n'));assert(['1.88.0','1.89.0'].includes(lock.activeVersion),'Reviewed scoring versions required');
+const activeRuleFile='docs/rules/mechanism-rules-v'+lock.activeVersion+'.md';
+if(lock.activeVersion==='1.89.0')assert.equal(digest(fs.readFileSync(activeRuleFile)),'908bd1a8997b0d0337019012410043d800b87b5c9350a1d3d99fdd2a2a768343');
+assert.equal(digest(fs.readFileSync(RULE_FILE)),expectedRuleSha,'Reviewed scoring contract');
+assert.equal(digest(fs.readFileSync(beforeFile)),expectedBeforeSha);assert.equal(digest(fs.readFileSync(appliedFile)),expectedAppliedSha);
+const before=JSON.parse(fs.readFileSync(beforeFile)),applied=JSON.parse(fs.readFileSync(appliedFile));assert(applied.passed===true||applied.status==='PASS','Root must confirm scoring application before Pointer');
+assert.equal(applied.beforeSha256,expectedBeforeSha);assert.deepEqual(applied.modifiedIds,IDS);
+const archiveContinuity=validateBeforeContinuity(before);
+const viewport={width:Number(process.env.REMAKE_VIEWPORT_WIDTH??496),height:Number(process.env.REMAKE_VIEWPORT_HEIGHT??1078)};
+assert([[320,568],[496,1078]].some(([w,h])=>viewport.width===w&&viewport.height===h));
+const bindings={};
+function bind(file){const absolute=path.resolve(file),p=path.relative(process.cwd(),absolute).replaceAll('\\','/');assert(!p.startsWith('../')&&!path.isAbsolute(p));if(Object.hasOwn(bindings,p))return;const bytes=fs.readFileSync(p);bindings[p]=digest(bytes);if(/\.[cm]?[jt]s$/.test(p)){const source=ts.createSourceFile(p,bytes.toString('utf8'),ts.ScriptTarget.Latest,true);for(const node of source.statements){if(!ts.isImportDeclaration(node)&&!ts.isExportDeclaration(node))continue;const s=node.moduleSpecifier;if(s&&ts.isStringLiteral(s)&&/^\..*\.[cm]?[jt]s$/.test(s.text))bind(path.resolve(path.dirname(absolute),s.text));}}}
+const tree=dir=>{for(const e of fs.readdirSync(dir,{withFileTypes:true})){const p=path.join(dir,e.name);if(e.isDirectory())tree(p);else bind(p);}};
+tree('src');tree('public/assets/art');for(const p of [beforeFile,appliedFile,FIXTURE,RULE_FILE,activeRuleFile,'docs/rules/manifest.json','tools/star-targets121-130/browser.mjs','tools/star-targets121-130/index.html','tools/star-targets121-130/playtest.mjs'])bind(p);
+bind(before.originalBefore.file);bind(before.concurrentBeforeWrite.file);for(const[p,h]of Object.entries(applied.files))assert.equal(digest(fs.readFileSync(p)),h);
+const fixture=JSON.parse(fs.readFileSync(FIXTURE));
+const compiled=await build({stdin:{resolveDir:process.cwd(),contents:`export {LEVELS} from './src/core/levels.ts';export {PuzzleModel} from './src/core/PuzzleModel.ts';export {replayRevisedRoute} from './src/core/revisedLevelSearch.ts';export {levelStarTargets,evaluateLevelStars} from './src/core/levelStarConditions.ts';`},bundle:true,write:false,platform:'node',format:'esm',logLevel:'silent'});
+const api=await import('data:text/javascript;base64,'+Buffer.from(compiled.outputFiles[0].text).toString('base64')),levels=clean(api.LEVELS),scoring=validateScoringData(before,fixture,levels,api);
+assert.equal(applied.campaignAfterSha256,digest(levels));
+const sourceBindings={};
+for(const id of IDS){const row=before.fixture.rows.find(r=>r.id===id);bind(row.candidate);const old=JSON.parse(fs.readFileSync(row.candidate));assert.deepEqual(old.level,before.priorLevels[id-1]);assert.deepEqual(old.drags,row.drags);assert(old.sourceReview?.passed);for(const[p,h]of Object.entries(old.sourceReview.bindings)){assert.equal(digest(fs.readFileSync(p)),h);sourceBindings[p]=h;}}
+const candidates=IDS.map(id=>{const row=fixture.rows.find(r=>r.id===id),level=levels[id-1],oldStars=api.levelStarTargets(before.priorLevels[id-1]),stars=api.levelStarTargets(level),replay=replaySpatial(level,row.drags,api);assert(replay.valid&&replay.complete);assert.equal(replay.effectiveDrags,TARGETS[id]);const prefixStates=row.drags.map((_,i)=>{const r=replaySpatial(level,row.drags.slice(0,i+1),api);assert(r.valid,r.error);return JSON.parse(r.finalStateKey);});return {...row,level,oldStars,stars,prefixStates};});
+const output=path.resolve(OUTPUT,`pointer-${Date.now()}-${viewport.width}x${viewport.height}-${process.pid}`);fs.mkdirSync(output,{recursive:true});
+const report={status:'running',ruleVersion:lock.activeVersion,scope:'122/126/127 scoring-only final LEVELS verification',requestedIds:IDS,viewport,beforeFile,beforeSha256:expectedBeforeSha,appliedFile,appliedSha256:expectedAppliedSha,ruleSha256:expectedRuleSha,fixture:FIXTURE,bindings,sourceBindings,scoring,archiveContinuity,rows:[],errors:[],formalDataValidated:true,all200OnlyAuthorizedFieldsChanged:true,other197Preserved:true,oldRoutesPreserved:true,timeTargetsPreserved:true,naturalClock:true,clockFrozen:false,playerSaveTouched:false,lowerBoundsRecomputed:false,mechanismRecertificationClaimed:false,humanBlindTested:false,releaseApproved:false};
+if(process.env.STAR_TARGETS_PREFLIGHT_ONLY==='1'){report.status='PREFLIGHT_PASS';report.pointerValidated=false;report.naturalClockValidated=false;report.preflightRows=candidates.map(({id,drags,stars,level})=>({id,drags:drags.length,stars,levelSha256:digest(level),gameplaySha256:digest(omitTarget(level)),routeSha256:digest(drags)}));fs.writeFileSync(path.join(output,'preflight.json'),JSON.stringify(report,null,2));console.log(JSON.stringify({output,status:report.status,rows:report.preflightRows}));process.exit(0);}
