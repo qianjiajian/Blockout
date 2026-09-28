@@ -438,19 +438,24 @@ type MusicLibraryArt = {
   [Key in Exclude<keyof MusicLibraryArtUrls, "albums">]: HTMLImageElement;
 } & { albums: readonly HTMLImageElement[] };
 
-// The supplied reference plate is 941×1672. The game home artboard is
-// 720×1584, so use the same explicit x/y mapping as the reference preview
-// rather than letting each control acquire a separate ad-hoc scale.
-const MUSIC_PREVIEW_SIZE = { width: 941, height: 1672 } as const;
-const MUSIC_PREVIEW_SCALE_X = HOME_ARTBOARD.width / MUSIC_PREVIEW_SIZE.width;
-const MUSIC_PREVIEW_SCALE_Y = HOME_ARTBOARD.height / MUSIC_PREVIEW_SIZE.height;
-const MUSIC_PREVIEW_OFFSET_X = 0;
-const musicPreviewRect = (rect: { x: number; y: number; width: number; height: number }) => ({
-  x: MUSIC_PREVIEW_OFFSET_X + rect.x * MUSIC_PREVIEW_SCALE_X,
-  y: rect.y * MUSIC_PREVIEW_SCALE_Y,
-  width: rect.width * MUSIC_PREVIEW_SCALE_X,
-  height: rect.height * MUSIC_PREVIEW_SCALE_Y,
-});
+// Music artwork is assembled from the individual generated resources. Keep a
+// single artboard scale for hit areas and layout so no source image is
+// stretched independently to fit the phone viewport.
+const MUSIC_LAYOUT = {
+  panel: { x: 28, y: 188, width: 664, height: 996 },
+  header: { x: 128, y: 54, width: 510, height: 170 },
+  close: { x: 628, y: 62, width: 78, height: 78 },
+  player: { x: 48, y: 254, width: 624, height: 352 },
+  album: { x: 77, y: 294, size: 218 },
+  progress: { x: 332, y: 424, width: 294 },
+  previous: { x: 332, y: 492, size: 58 },
+  play: { x: 414, y: 480, size: 84 },
+  next: { x: 514, y: 492, size: 58 },
+  volume: { x: 602, y: 498, size: 52 },
+  rows: { x: 48, y: 646, width: 624, height: 132, pitch: 144, viewportHeight: 664 },
+} as const;
+
+const musicArtRect = (rect: { x: number; y: number; width: number; height: number }) => rect;
 
 interface CompletionMetrics {
   moves: number;
@@ -1163,7 +1168,7 @@ const BUTTONS = {
   updateToast: { x: 70, y: 130, width: 356, height: 96 },
   settingsLanguage: homeArtRect(PAUSE_SETTINGS_LAYOUT.languageButton),
   settingsReset: homeArtRect(PAUSE_SETTINGS_LAYOUT.settingsClearButton),
-  musicClose: homeArtRect(musicPreviewRect({ x: 800, y: 60, width: 130, height: 145 })),
+  musicClose: homeArtRect(MUSIC_LAYOUT.close),
   languageBack: homeArtRect(LANGUAGE_PICKER_LAYOUT.close),
   achievementClose: homeArtRect(ACHIEVEMENT_LAYOUT.close),
   undo: gameplayArtRect(GAMEPLAY_ART_LAYOUT.back),
@@ -1762,29 +1767,35 @@ export class ColorEscapeGame {
     this.musicLibraryArtLoading = true;
     const token = ++this.musicLibraryArtRequestToken;
     const paths = GAME_ART.ui.musicLibrary;
-    // The full reference plate already contains the exact panel, controls and
-    // cards. Load that single plate for the first screen; the split PNGs stay
-    // available as replaceable authoring resources without adding a dozen
-    // simultaneous decoded textures to the first library frame.
-    return this.host.createImage(paths.preview).then((preview) => {
+    const orderedPaths = [
+      paths.panel,
+      paths.header,
+      paths.close,
+      paths.play,
+      paths.previous,
+      paths.next,
+      paths.volume,
+      paths.entry,
+      ...paths.albums,
+    ] as const;
+    return this.loadImages(orderedPaths).then((images) => {
       if (token !== this.musicLibraryArtRequestToken) {
-        this.host.releaseImage?.(preview);
+        images.forEach((image) => this.host.releaseImage?.(image));
         return false;
       }
       this.musicLibraryArt = {
-        preview,
-        panel: preview,
-        header: preview,
-        close: preview,
-        play: preview,
-        previous: preview,
-        next: preview,
-        volume: preview,
-        entry: this.musicEntryArt ?? preview,
-        albums: [preview],
+        panel: images[0],
+        header: images[1],
+        close: images[2],
+        play: images[3],
+        previous: images[4],
+        next: images[5],
+        volume: images[6],
+        entry: this.musicEntryArt ?? images[7],
+        albums: images.slice(8),
       };
       this.musicLibraryArtError = undefined;
-      this.artLoadedImageCount += 1;
+      this.artLoadedImageCount += images.length;
       return true;
     }).catch((error: unknown) => {
       this.musicLibraryArtError = error instanceof Error ? error.message : String(error);
@@ -8379,10 +8390,10 @@ export class ColorEscapeGame {
       return;
     }
     if (this.screen === "musicLibrary") {
-      const playRect = homeArtRect(musicPreviewRect({ x: 548, y: 515, width: 125, height: 125 }));
-      const previousRect = homeArtRect(musicPreviewRect({ x: 420, y: 515, width: 125, height: 125 }));
-      const nextRect = homeArtRect(musicPreviewRect({ x: 690, y: 515, width: 125, height: 125 }));
-      const progressRect = homeArtRect(musicPreviewRect({ x: 430, y: 420, width: 450, height: 70 }));
+      const playRect = homeArtRect({ x: MUSIC_LAYOUT.play.x - 10, y: MUSIC_LAYOUT.play.y - 10, width: MUSIC_LAYOUT.play.size + 20, height: MUSIC_LAYOUT.play.size + 20 });
+      const previousRect = homeArtRect({ x: MUSIC_LAYOUT.previous.x - 10, y: MUSIC_LAYOUT.previous.y - 10, width: MUSIC_LAYOUT.previous.size + 20, height: MUSIC_LAYOUT.previous.size + 20 });
+      const nextRect = homeArtRect({ x: MUSIC_LAYOUT.next.x - 10, y: MUSIC_LAYOUT.next.y - 10, width: MUSIC_LAYOUT.next.size + 20, height: MUSIC_LAYOUT.next.size + 20 });
+      const progressRect = homeArtRect({ x: MUSIC_LAYOUT.progress.x, y: MUSIC_LAYOUT.progress.y - 20, width: MUSIC_LAYOUT.progress.width, height: 50 });
       if (this.interactionHit(point, playRect)) {
         const transport = this.host.musicTransport();
         this.host.setMusicPaused(transport.playing);
@@ -8408,8 +8419,9 @@ export class ColorEscapeGame {
         this.scheduleFrame();
         return;
       }
-      if (inside(point.x, point.y, homeArtRect({ x: 650, y: 560, width: 35, height: 570 }))) {
-        const midpoint = homeArtRect({ x: 650, y: 560, width: 35, height: 570 }).y + 285;
+      if (inside(point.x, point.y, homeArtRect({ x: MUSIC_LAYOUT.rows.x + MUSIC_LAYOUT.rows.width - 12, y: MUSIC_LAYOUT.rows.y, width: 20, height: MUSIC_LAYOUT.rows.viewportHeight }))) {
+        const rail = homeArtRect({ x: MUSIC_LAYOUT.rows.x + MUSIC_LAYOUT.rows.width - 12, y: MUSIC_LAYOUT.rows.y, width: 20, height: MUSIC_LAYOUT.rows.viewportHeight });
+        const midpoint = rail.y + rail.height / 2;
         this.musicLibraryScrollOffset = point.y > midpoint ? this.musicLibraryMaxScrollOffset() : 0;
         this.dirty = true;
         this.scheduleFrame();
@@ -13550,12 +13562,12 @@ export class ColorEscapeGame {
   }
 
   private musicLibraryRowRect(index: number): Rect {
-    return homeArtRect(musicPreviewRect({
-      x: 52,
-      y: 690 + index * 186 - this.musicLibraryScrollOffset / MUSIC_PREVIEW_SCALE_Y,
-      width: 836,
-      height: 178,
-    }));
+    return homeArtRect({
+      x: MUSIC_LAYOUT.rows.x,
+      y: MUSIC_LAYOUT.rows.y + index * MUSIC_LAYOUT.rows.pitch - this.musicLibraryScrollOffset,
+      width: MUSIC_LAYOUT.rows.width,
+      height: MUSIC_LAYOUT.rows.height,
+    });
   }
 
   private musicLibraryUnlockLevel(entry: MusicCatalogEntry, index: number): number {
@@ -13566,7 +13578,7 @@ export class ColorEscapeGame {
   }
 
   private musicLibraryMaxScrollOffset(): number {
-    return Math.max(0, (MUSIC_CATALOG.length - 4) * 186 * MUSIC_PREVIEW_SCALE_Y);
+    return Math.max(0, (MUSIC_CATALOG.length - 4) * MUSIC_LAYOUT.rows.pitch);
   }
 
   private selectMusicTrack(track: MusicTrackId): void {
@@ -13610,16 +13622,12 @@ export class ColorEscapeGame {
   private drawMusicLibrary(): void {
     const ctx = this.ctx;
     const art = this.musicLibraryArt;
-    // The music screen is a full-page composition.  Drawing it over the home
-    // page keeps the navigation state intact, while the reference plate fixes
-    // every visual edge (background, title, vinyl, buttons and card geometry)
-    // to the supplied design instead of approximating it with a second set of
-    // rounded rectangles.
+    this.drawDim(0.72, "#0a0627");
     this.withHomeArtboard(() => {
       if (!art) {
         this.label(
           this.musicLibraryArtError ? "音乐资源加载失败，请重新打开" : "音乐资源加载中…",
-          360,
+          HOME_ARTBOARD.width / 2,
           740,
           25,
           "#fff8e9",
@@ -13629,181 +13637,171 @@ export class ColorEscapeGame {
           3,
           600,
         );
-        const fallbackClose = this.art.pauseSettings?.close;
-        if (fallbackClose) ctx.drawImage(fallbackClose, 584, 172, 94, 94);
         return;
       }
-      if (art.preview) {
-        ctx.drawImage(
-          art.preview,
-          0,
-          0,
-          HOME_ARTBOARD.width,
-          HOME_ARTBOARD.height,
-        );
+
+      const selectedTrack = this.save.selectedMusicTrack ?? "menu";
+      const selectedEntry = musicCatalogEntry(selectedTrack);
+      const selectedIndex = Math.max(0, MUSIC_CATALOG.findIndex((entry) => entry.id === selectedEntry.id));
+      const album = art.albums[selectedIndex % Math.max(1, art.albums.length)];
+      const playback = this.host.musicTransport();
+      const position = playback.track === selectedTrack ? Math.max(0, playback.positionSeconds) : 0;
+      const duration = playback.track === selectedTrack
+        ? Math.max(0, playback.durationSeconds)
+        : selectedEntry.loopEndSeconds;
+      const progress = duration > 0 ? Math.min(1, position / duration) : 0;
+      const formatTime = (seconds: number): string => {
+        const total = Math.max(0, Math.floor(seconds));
+        return String(Math.floor(total / 60)).padStart(2, "0") + ":" + String(total % 60).padStart(2, "0");
+      };
+
+      // The panel and header preserve the generated PNG aspect ratios. The
+      // reference plate is not loaded or stretched; all live text and controls
+      // are composed on top of these replaceable split assets.
+      ctx.drawImage(art.panel, MUSIC_LAYOUT.panel.x, MUSIC_LAYOUT.panel.y, MUSIC_LAYOUT.panel.width, MUSIC_LAYOUT.panel.height);
+      ctx.drawImage(art.header, MUSIC_LAYOUT.header.x, MUSIC_LAYOUT.header.y, MUSIC_LAYOUT.header.width, MUSIC_LAYOUT.header.height);
+      this.label("背景音乐", HOME_ARTBOARD.width / 2, 151, 45, "#fff3b8", "center", 950, "#5b219f", 4, 430);
+      this.drawPressable("musicClose", MUSIC_LAYOUT.close, () => {
+        ctx.drawImage(art.close, MUSIC_LAYOUT.close.x, MUSIC_LAYOUT.close.y, MUSIC_LAYOUT.close.width, MUSIC_LAYOUT.close.height);
+      });
+
+      // Player card: the vinyl and controls are assembled from the album and
+      // control PNGs. Album art is clipped to the record label instead of
+      // being non-uniformly scaled.
+      ctx.save();
+      ctx.fillStyle = "rgba(73, 73, 190, .78)";
+      ctx.strokeStyle = "rgba(148, 170, 255, .95)";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      traceRoundedRect(ctx, MUSIC_LAYOUT.player.x, MUSIC_LAYOUT.player.y, MUSIC_LAYOUT.player.width, MUSIC_LAYOUT.player.height, 28);
+      ctx.fill();
+      ctx.stroke();
+      const recordCenter = {
+        x: MUSIC_LAYOUT.album.x + MUSIC_LAYOUT.album.size / 2,
+        y: MUSIC_LAYOUT.album.y + MUSIC_LAYOUT.album.size / 2,
+      };
+      ctx.fillStyle = "rgba(9, 8, 35, .78)";
+      ctx.beginPath();
+      ctx.arc(recordCenter.x, recordCenter.y, MUSIC_LAYOUT.album.size * 0.6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(30, 25, 84, .95)";
+      ctx.lineWidth = 10;
+      ctx.stroke();
+      ctx.strokeStyle = "rgba(125, 124, 190, .62)";
+      ctx.lineWidth = 2;
+      for (let ring = 0.44; ring <= 0.58; ring += 0.04) {
+        ctx.beginPath();
+        ctx.arc(recordCenter.x, recordCenter.y, MUSIC_LAYOUT.album.size * ring, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      if (album) {
         ctx.save();
-        ctx.scale(MUSIC_PREVIEW_SCALE_X, MUSIC_PREVIEW_SCALE_Y);
-        const selectedTrack = this.save.selectedMusicTrack ?? "menu";
-        const selectedEntry = musicCatalogEntry(selectedTrack);
-        const playback = this.host.musicTransport();
-        const position = playback.track === selectedTrack ? Math.max(0, playback.positionSeconds) : 0;
-        const duration = playback.track === selectedTrack ? Math.max(0, playback.durationSeconds) : selectedEntry.loopEndSeconds;
-        const progress = duration > 0 ? Math.min(1, position / duration) : 0;
+        ctx.beginPath();
+        ctx.arc(recordCenter.x, recordCenter.y, MUSIC_LAYOUT.album.size * 0.47, 0, Math.PI * 2);
+        ctx.clip();
+        ctx.drawImage(album, MUSIC_LAYOUT.album.x, MUSIC_LAYOUT.album.y, MUSIC_LAYOUT.album.size, MUSIC_LAYOUT.album.size);
+        ctx.restore();
+      }
+      ctx.fillStyle = "rgba(244, 234, 193, .9)";
+      ctx.beginPath();
+      ctx.arc(recordCenter.x, recordCenter.y, 17, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#6c43b8";
+      ctx.beginPath();
+      ctx.arc(recordCenter.x, recordCenter.y, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
 
-        // Mask only the dynamic portions of the reference plate.  The plate
-        // remains the source for all supplied artwork, including controls.
-        ctx.fillStyle = "#4c49c4";
-        ctx.beginPath();
-        traceRoundedRect(ctx, 425, 292, 455, 245, 18);
-        ctx.fill();
-        this.label(selectedEntry.title, 445, 358, 41, "#fffdf5", "left", 950, "#352078", 3, 405);
-        this.label(selectedEntry.artist, 445, 397, 26, "#d9d4ff", "left", 750, "#352078", 2, 405);
-        ctx.strokeStyle = "#51ddf1";
-        ctx.lineWidth = 10;
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.moveTo(445, 449);
-        ctx.lineTo(862, 449);
-        ctx.stroke();
-        ctx.strokeStyle = "#e8fbff";
-        ctx.lineWidth = 10;
-        ctx.beginPath();
-        ctx.moveTo(445, 449);
-        ctx.lineTo(445 + 417 * progress, 449);
-        ctx.stroke();
-        ctx.fillStyle = "#f3fbff";
-        ctx.beginPath();
-        ctx.arc(445 + 417 * progress, 449, 16, 0, Math.PI * 2);
-        ctx.fill();
-        const formatTime = (seconds: number): string => {
-          const total = Math.max(0, Math.floor(seconds));
-          return `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
+      const infoX = 332;
+      this.label(selectedEntry.title, infoX, 333, 31, "#fffdf5", "left", 950, "#352078", 3, 310);
+      this.label(selectedEntry.artist, infoX, 369, 21, "#d9d4ff", "left", 750, "#352078", 2, 310);
+      ctx.strokeStyle = "rgba(14, 30, 132, .78)";
+      ctx.lineWidth = 14;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(MUSIC_LAYOUT.progress.x, MUSIC_LAYOUT.progress.y);
+      ctx.lineTo(MUSIC_LAYOUT.progress.x + MUSIC_LAYOUT.progress.width, MUSIC_LAYOUT.progress.y);
+      ctx.stroke();
+      ctx.strokeStyle = "#53e4f3";
+      ctx.lineWidth = 9;
+      ctx.beginPath();
+      ctx.moveTo(MUSIC_LAYOUT.progress.x, MUSIC_LAYOUT.progress.y);
+      ctx.lineTo(MUSIC_LAYOUT.progress.x + MUSIC_LAYOUT.progress.width * progress, MUSIC_LAYOUT.progress.y);
+      ctx.stroke();
+      ctx.fillStyle = "#e8fbff";
+      ctx.beginPath();
+      ctx.arc(MUSIC_LAYOUT.progress.x + MUSIC_LAYOUT.progress.width * progress, MUSIC_LAYOUT.progress.y, 13, 0, Math.PI * 2);
+      ctx.fill();
+      this.label(formatTime(position), MUSIC_LAYOUT.progress.x, MUSIC_LAYOUT.progress.y + 31, 17, "#ece8ff", "left", 800);
+      this.label(formatTime(duration), MUSIC_LAYOUT.progress.x + MUSIC_LAYOUT.progress.width, MUSIC_LAYOUT.progress.y + 31, 17, "#ece8ff", "right", 800);
+      ctx.drawImage(art.previous, MUSIC_LAYOUT.previous.x, MUSIC_LAYOUT.previous.y, MUSIC_LAYOUT.previous.size, MUSIC_LAYOUT.previous.size);
+      ctx.drawImage(art.play, MUSIC_LAYOUT.play.x, MUSIC_LAYOUT.play.y, MUSIC_LAYOUT.play.size, MUSIC_LAYOUT.play.size);
+      ctx.drawImage(art.next, MUSIC_LAYOUT.next.x, MUSIC_LAYOUT.next.y, MUSIC_LAYOUT.next.size, MUSIC_LAYOUT.next.size);
+      ctx.drawImage(art.volume, MUSIC_LAYOUT.volume.x, MUSIC_LAYOUT.volume.y, MUSIC_LAYOUT.volume.size, MUSIC_LAYOUT.volume.size);
+
+      // Scrollable cards use the album PNGs and live status text. The rows
+      // remain inside a clipped viewport so a page turn cannot distort them.
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(MUSIC_LAYOUT.rows.x, MUSIC_LAYOUT.rows.y, MUSIC_LAYOUT.rows.width, MUSIC_LAYOUT.rows.viewportHeight);
+      ctx.clip();
+      MUSIC_CATALOG.forEach((entry, index) => {
+        const row = {
+          x: MUSIC_LAYOUT.rows.x,
+          y: MUSIC_LAYOUT.rows.y + index * MUSIC_LAYOUT.rows.pitch - this.musicLibraryScrollOffset,
+          width: MUSIC_LAYOUT.rows.width,
+          height: MUSIC_LAYOUT.rows.height,
         };
-        this.label(formatTime(position), 445, 487, 22, "#ece8ff", "left", 800);
-        this.label(formatTime(duration), 862, 487, 22, "#ece8ff", "right", 800);
-
-        // Status buttons are dynamic, while the card fills and the supplied
-        // lock/equalizer artwork remain untouched from the reference image.
-        MUSIC_CATALOG.slice(0, 4).forEach((entry, index) => {
-          const unlockLevel = this.musicLibraryUnlockLevel(entry, index);
-          const unlocked = this.save.highestLevel >= unlockLevel;
-          const selected = selectedTrack === entry.id;
-          // At the reference state (level 1, menu track selected) the plate
-          // already contains the exact supplied status buttons. Do not paint
-          // a second approximation over them; only redraw when live state
-          // differs from that reference state.
-          if (unlocked === (index === 0) && selected === (index === 0)) return;
-          const row = { x: 52, y: 690 + index * 186 - this.musicLibraryScrollOffset / MUSIC_PREVIEW_SCALE_Y, width: 836, height: 178 };
-          const button = { x: 610, y: row.y + 61, width: 170, height: 70 };
-          ctx.fillStyle = unlocked ? (selected ? "#25bb5b" : "#6b5ad4") : "#9698bd";
+        const unlockLevel = this.musicLibraryUnlockLevel(entry, index);
+        const unlocked = this.save.highestLevel >= unlockLevel;
+        const selected = selectedTrack === entry.id;
+        this.drawPressable("music." + entry.id, row, () => {
+          ctx.save();
+          ctx.shadowColor = selected ? "rgba(255, 220, 80, .86)" : "rgba(16, 12, 78, .28)";
+          ctx.shadowBlur = selected ? 14 : 6;
+          ctx.fillStyle = selected ? "#fff5d8" : unlocked ? "#f1f0ff" : "#b7b9df";
+          ctx.strokeStyle = selected ? "#ffd44d" : "#d4d6fa";
+          ctx.lineWidth = selected ? 5 : 3;
           ctx.beginPath();
-          traceRoundedRect(ctx, button.x, button.y, button.width, button.height, 18);
+          traceRoundedRect(ctx, row.x, row.y, row.width, row.height, 22);
           ctx.fill();
+          ctx.stroke();
+          ctx.restore();
+          const rowAlbum = art.albums[index % Math.max(1, art.albums.length)];
+          if (rowAlbum) ctx.drawImage(rowAlbum, row.x + 14, row.y + 13, 106, 106);
+          this.label(entry.title, row.x + 143, row.y + 47, 25, unlocked ? "#30206f" : "#706c8e", "left", 900, undefined, 0, 260);
+          this.label("关卡音乐", row.x + 143, row.y + 82, 17, unlocked ? "#615a98" : "#8583a0", "left", 700, undefined, 0, 260);
+          const button = { x: row.x + row.width - 178, y: row.y + 34, width: 154, height: 60 };
+          ctx.fillStyle = unlocked ? (selected ? "#25bb5b" : "#6657c9") : "#777aa9";
+          ctx.strokeStyle = unlocked ? (selected ? "#118b3b" : "#42359c") : "#5a5d8b";
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          traceRoundedRect(ctx, button.x, button.y, button.width, button.height, 23);
+          ctx.fill();
+          ctx.stroke();
           this.label(
-            unlocked ? (selected ? "已解锁" : "选择") : `第${unlockLevel}关解锁`,
+            unlocked ? (selected ? "播放中" : "已解锁") : "第" + unlockLevel + "关解锁",
             button.x + button.width / 2,
-            button.y + 39,
-            23,
-            "#ffffff",
+            button.y + 37,
+            unlocked ? 19 : 17,
+            "#fffdfd",
             "center",
             900,
             undefined,
             0,
-            button.width - 10,
+            button.width - 12,
           );
-        });
-        ctx.restore();
-        // The close button is already part of the reference plate. Keep the
-        // hit target above it without painting a second scaled copy.
-        return;
-      }
-      const panel = { x: 34, y: 160, width: 652, height: 978 };
-      const header = { x: 76, y: 188, width: 570, height: 190 };
-      const close = { x: 584, y: 172, width: 94, height: 94 };
-      const selectedTrack = this.save.selectedMusicTrack ?? "menu";
-      const selectedEntry = musicCatalogEntry(selectedTrack);
-      const selectedIndex = Math.max(0, MUSIC_CATALOG.findIndex((entry) => entry.id === selectedEntry.id));
-      const album = art.albums[selectedIndex % art.albums.length];
-
-      ctx.save();
-      ctx.drawImage(art.panel, panel.x, panel.y, panel.width, panel.height);
-      ctx.drawImage(art.header, header.x, header.y, header.width, header.height);
-      this.label("背景音乐", 360, 282, 47, "#fff6c2", "center", 950, "#5b219f", 4, 520);
-      ctx.fillStyle = "rgba(92, 86, 205, .52)";
-      ctx.beginPath();
-      traceRoundedRect(ctx, 52, 340, 616, 792, 28);
-      ctx.fill();
-      ctx.fillStyle = "rgba(76, 73, 196, .88)";
-      ctx.strokeStyle = "rgba(148, 170, 255, .95)";
-      ctx.lineWidth = 4;
-      ctx.beginPath();
-      traceRoundedRect(ctx, 55, 350, 610, 225, 26);
-      ctx.fill();
-      ctx.stroke();
-      ctx.drawImage(album, 72, 375, 145, 145);
-      this.label(selectedEntry.title, 240, 410, 29, "#fffdf5", "left", 950, "#352078", 3, 365);
-      this.label(selectedEntry.artist, 240, 444, 20, "#d9d4ff", "left", 750, "#352078", 2, 365);
-      ctx.strokeStyle = "#51ddf1";
-      ctx.lineWidth = 10;
-      ctx.lineCap = "round";
-      ctx.beginPath();
-      ctx.moveTo(240, 475);
-      ctx.lineTo(615, 475);
-      ctx.stroke();
-      ctx.fillStyle = "#f3fbff";
-      ctx.beginPath();
-      ctx.arc(420, 475, 13, 0, Math.PI * 2);
-      ctx.fill();
-      this.label("00:00", 240, 505, 16, "#ece8ff", "left", 800);
-      this.label("--:--", 615, 505, 16, "#ece8ff", "right", 800);
-      ctx.drawImage(art.previous, 270, 515, 48, 48);
-      ctx.drawImage(art.play, 342, 502, 76, 76);
-      ctx.drawImage(art.next, 440, 515, 48, 48);
-      ctx.drawImage(art.volume, 540, 517, 48, 48);
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(55, 560, 610, 570);
-      ctx.clip();
-      MUSIC_CATALOG.forEach((entry, index) => {
-        const row = { x: 70, y: 570 + index * 145 - this.musicLibraryScrollOffset, width: 580, height: 126 };
-        const unlocked = this.save.highestLevel >= entry.unlockLevel;
-        const selected = selectedTrack === entry.id;
-        this.drawPressable(`music.${entry.id}`, row, () => {
-          ctx.shadowColor = selected ? "rgba(255, 222, 79, .78)" : "rgba(21, 17, 96, .25)";
-          ctx.shadowBlur = selected ? 14 : 5;
-          ctx.fillStyle = selected ? "#fff4d2" : unlocked ? "#fffdfb" : "#e3e6ff";
-          ctx.strokeStyle = selected ? "#ffd84d" : "#c6caf0";
-          ctx.lineWidth = selected ? 5 : 3;
-          ctx.beginPath();
-          traceRoundedRect(ctx, row.x, row.y, row.width, row.height, 18);
-          ctx.fill();
-          ctx.stroke();
-          ctx.shadowBlur = 0;
-          ctx.drawImage(art.albums[index % art.albums.length], row.x + 12, row.y + 12, 102, 102);
-          this.label(entry.title, row.x + 135, row.y + 46, 25, unlocked ? "#30206f" : "#706c8e", "left", 900, undefined, 0, 260);
-          this.label(entry.artist, row.x + 135, row.y + 82, 17, unlocked ? "#615a98" : "#8583a0", "left", 700, undefined, 0, 260);
-          const status = unlocked ? (selected ? "播放中" : "选择") : `第${entry.unlockLevel}关`;
-          ctx.fillStyle = unlocked ? (selected ? "#25bb5b" : "#6b5ad4") : "#9698bd";
-          ctx.beginPath();
-          traceRoundedRect(ctx, row.x + row.width - 150, row.y + 36, 134, 54, 18);
-          ctx.fill();
-          this.label(status, row.x + row.width - 83, row.y + 63, 17, "#ffffff", "center", 900, undefined, 0, 128);
         });
       });
       ctx.restore();
-      // A small rail indicates that the remaining unlocked/locked songs are
-      // below the four reference rows; the same list can be extended with a
-      // drag gesture without changing row geometry.
-      ctx.fillStyle = "rgba(210, 218, 255, .42)";
+
+      // The rail is a visual affordance only; paging remains deterministic.
+      ctx.fillStyle = "rgba(222, 226, 255, .48)";
       ctx.beginPath();
-      traceRoundedRect(ctx, 670, 560, 6, 570, 3);
+      traceRoundedRect(ctx, MUSIC_LAYOUT.rows.x + MUSIC_LAYOUT.rows.width - 8, MUSIC_LAYOUT.rows.y, 6, MUSIC_LAYOUT.rows.viewportHeight, 3);
       ctx.fill();
-      this.drawPressable("musicClose", close, () => ctx.drawImage(art.close, close.x, close.y, close.width, close.height));
-      ctx.restore();
     });
   }
-
   private drawLanguagePicker(): void {
     const art = this.art.pauseSettings;
     if (!art) return;
@@ -18603,3 +18601,4 @@ export class ColorEscapeGame {
   }
 
 }
+

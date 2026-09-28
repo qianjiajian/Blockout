@@ -40,8 +40,6 @@ export interface AchievementArtUrls {
 }
 
 export interface MusicLibraryArtUrls {
-  /** Full-screen visual reference plate. Dynamic text and playback controls are drawn above it. */
-  readonly preview: string;
   readonly panel: string;
   readonly header: string;
   readonly close: string;
@@ -54,7 +52,6 @@ export interface MusicLibraryArtUrls {
 }
 
 export const MUSIC_LIBRARY_ART_URLS = {
-  preview: "assets/art/ui/music-player-v1/preview-mockup.png",
   panel: "assets/art/ui/music-player-v1/music-panel-frame.png",
   header: "assets/art/ui/music-player-v1/music-header-banner.png",
   close: "assets/art/ui/music-player-v1/music-close-button.png",
