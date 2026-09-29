@@ -5,6 +5,12 @@
 | 文件 | 用途 | 格式 | 透明背景 |
 |---|---|---|---|
 | `music-background.png` | 音乐播放器独立背景层 | PNG 941×1672 | 否 |
+| `music-player-deck.png` | 播放器内层面板 | PNG（透明） | 是 |
+| `music-vinyl-overlay.png` | 黑胶唱片、唱针和唱头组合层 | PNG（透明） | 是 |
+| `music-progress-track.png` / `music-progress-fill.png` / `music-progress-knob.png` | 播放进度条拆分资源 | PNG（透明） | 是 |
+| `music-row-selected.png` / `music-row-locked.png` | 歌曲卡片背景 | PNG（透明） | 是 |
+| `music-status-unlocked.png` / `music-status-locked.png` | 状态按钮底图 | PNG（透明） | 是 |
+| `music-lock-icon.png` / `music-equalizer-icon.png` | 锁定和播放状态图标 | PNG（透明） | 是 |
 | `music-entry-icon.png` | 主界面音乐入口图标 | PNG 1254×1254 | 是 |
 | `music-panel-frame.png` | 播放器内容面板外框 | PNG 1024×1536 | 是 |
 | `music-header-banner.png` | “背景音乐”标题横幅底图，文字由界面绘制 | PNG 2172×724 | 是 |

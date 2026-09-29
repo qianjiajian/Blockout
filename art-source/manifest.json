@@ -7302,6 +7302,160 @@
       "loadGroup": "music-player-panel"
     },
     {
+      "key": "ui.musicPlayer.deck",
+      "source": "ui/music-player-v1/music-player-deck.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/music-player-deck.png",
+      "width": 1619,
+      "height": 971,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-deck"
+    },
+    {
+      "key": "ui.musicPlayer.vinyl",
+      "source": "ui/music-player-v1/music-vinyl-overlay.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/music-vinyl-overlay.png",
+      "width": 1448,
+      "height": 1086,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-vinyl"
+    },
+    {
+      "key": "ui.musicPlayer.progressTrack",
+      "source": "ui/music-player-v1/music-progress-track.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/music-progress-track.png",
+      "width": 2172,
+      "height": 724,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-progress"
+    },
+    {
+      "key": "ui.musicPlayer.progressFill",
+      "source": "ui/music-player-v1/music-progress-fill.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/music-progress-fill.png",
+      "width": 1774,
+      "height": 887,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-progress"
+    },
+    {
+      "key": "ui.musicPlayer.progressKnob",
+      "source": "ui/music-player-v1/music-progress-knob.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/music-progress-knob.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-progress"
+    },
+    {
+      "key": "ui.musicPlayer.rowSelected",
+      "source": "ui/music-player-v1/music-row-selected.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/music-row-selected.png",
+      "width": 2172,
+      "height": 724,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-rows"
+    },
+    {
+      "key": "ui.musicPlayer.rowLocked",
+      "source": "ui/music-player-v1/music-row-locked.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/music-row-locked.png",
+      "width": 1942,
+      "height": 809,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-rows"
+    },
+    {
+      "key": "ui.musicPlayer.statusUnlocked",
+      "source": "ui/music-player-v1/music-status-unlocked.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/music-status-unlocked.png",
+      "width": 2172,
+      "height": 724,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-status"
+    },
+    {
+      "key": "ui.musicPlayer.statusLocked",
+      "source": "ui/music-player-v1/music-status-locked.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/music-status-locked.png",
+      "width": 1983,
+      "height": 793,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-status"
+    },
+    {
+      "key": "ui.musicPlayer.lock",
+      "source": "ui/music-player-v1/music-lock-icon.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/music-lock-icon.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-status"
+    },
+    {
+      "key": "ui.musicPlayer.equalizer",
+      "source": "ui/music-player-v1/music-equalizer-icon.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/music-equalizer-icon.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-status"
+    },
+    {
       "key": "ui.musicPlayer.header",
       "source": "ui/music-player-v1/music-header-banner.png",
       "runtime": "../public/assets/art/ui/music-player-v1/music-header-banner.png",

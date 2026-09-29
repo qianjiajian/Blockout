@@ -447,6 +447,7 @@ const MUSIC_LAYOUT = {
   close: { x: 628, y: 62, width: 90, height: 90 },
   player: { x: 28, y: 240, width: 664, height: 390 },
   album: { x: 77, y: 316, size: 218 },
+  vinyl: { x: 46, y: 286, width: 280, height: 274 },
   progress: { x: 332, y: 423, width: 310 },
   previous: { x: 322, y: 501, size: 90 },
   play: { x: 402, y: 486, size: 120 },
@@ -1770,7 +1771,18 @@ export class ColorEscapeGame {
     const orderedPaths = [
       paths.background,
       paths.panel,
+      paths.deck,
       paths.header,
+      paths.vinyl,
+      paths.progressTrack,
+      paths.progressFill,
+      paths.progressKnob,
+      paths.rowSelected,
+      paths.rowLocked,
+      paths.statusUnlocked,
+      paths.statusLocked,
+      paths.lock,
+      paths.equalizer,
       paths.close,
       paths.play,
       paths.previous,
@@ -1787,14 +1799,25 @@ export class ColorEscapeGame {
       this.musicLibraryArt = {
         background: images[0],
         panel: images[1],
-        header: images[2],
-        close: images[3],
-        play: images[4],
-        previous: images[5],
-        next: images[6],
-        volume: images[7],
-        entry: this.musicEntryArt ?? images[8],
-        albums: images.slice(9),
+        deck: images[2],
+        header: images[3],
+        vinyl: images[4],
+        progressTrack: images[5],
+        progressFill: images[6],
+        progressKnob: images[7],
+        rowSelected: images[8],
+        rowLocked: images[9],
+        statusUnlocked: images[10],
+        statusLocked: images[11],
+        lock: images[12],
+        equalizer: images[13],
+        close: images[14],
+        play: images[15],
+        previous: images[16],
+        next: images[17],
+        volume: images[18],
+        entry: this.musicEntryArt ?? images[19],
+        albums: images.slice(20),
       };
       this.musicLibraryArtError = undefined;
       return true;
@@ -2589,7 +2612,7 @@ export class ColorEscapeGame {
   }
 
   private async loadFormalStarAndGeneratorArt(): Promise<void> {
-    const starShapeIds = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
+    const starShapeIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 19] as const;
     const paths = [
       GAME_ART.gameplay.videoParity.sideGeneratorVertical,
       ...starShapeIds.map((shapeId) => GAME_ART.gameplay.starBlocks[shapeId]),
@@ -13685,89 +13708,59 @@ export class ColorEscapeGame {
       // Player card: the vinyl and controls are assembled from the album and
       // control PNGs. Album art is clipped to the record label instead of
       // being non-uniformly scaled.
+      // The player deck is a generated, replaceable bitmap. Runtime code only
+      // places dynamic album art and transport text on top of it.
       ctx.save();
-      ctx.fillStyle = "rgba(73, 73, 190, .78)";
-      ctx.strokeStyle = "rgba(148, 170, 255, .95)";
-      ctx.lineWidth = 4;
-      ctx.beginPath();
-      traceRoundedRect(ctx, MUSIC_LAYOUT.player.x, MUSIC_LAYOUT.player.y, MUSIC_LAYOUT.player.width, MUSIC_LAYOUT.player.height, 28);
-      ctx.fill();
-      ctx.stroke();
+      ctx.globalAlpha = 0.4;
+      ctx.drawImage(art.deck, 50, 88, (art.deck.naturalWidth || art.deck.width) - 100, 791, MUSIC_LAYOUT.player.x, MUSIC_LAYOUT.player.y, MUSIC_LAYOUT.player.width, MUSIC_LAYOUT.player.height);
+      ctx.restore();
       const recordCenter = {
         x: MUSIC_LAYOUT.album.x + MUSIC_LAYOUT.album.size / 2,
         y: MUSIC_LAYOUT.album.y + MUSIC_LAYOUT.album.size / 2,
       };
-      ctx.fillStyle = "rgba(9, 8, 35, .78)";
-      ctx.beginPath();
-      ctx.arc(recordCenter.x, recordCenter.y, MUSIC_LAYOUT.album.size * 0.6, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = "rgba(30, 25, 84, .95)";
-      ctx.lineWidth = 10;
-      ctx.stroke();
-      ctx.strokeStyle = "rgba(125, 124, 190, .62)";
-      ctx.lineWidth = 2;
-      for (let ring = 0.44; ring <= 0.58; ring += 0.04) {
-        ctx.beginPath();
-        ctx.arc(recordCenter.x, recordCenter.y, MUSIC_LAYOUT.album.size * ring, 0, Math.PI * 2);
-        ctx.stroke();
-      }
       if (album) {
         ctx.save();
         ctx.beginPath();
-        ctx.arc(recordCenter.x, recordCenter.y, MUSIC_LAYOUT.album.size * 0.47, 0, Math.PI * 2);
+        ctx.arc(recordCenter.x, recordCenter.y, MUSIC_LAYOUT.album.size * 0.6, 0, Math.PI * 2);
         ctx.clip();
         ctx.drawImage(album, MUSIC_LAYOUT.album.x, MUSIC_LAYOUT.album.y, MUSIC_LAYOUT.album.size, MUSIC_LAYOUT.album.size);
         ctx.restore();
       }
-      ctx.fillStyle = "rgba(244, 234, 193, .9)";
-      ctx.beginPath();
-      ctx.arc(recordCenter.x, recordCenter.y, 17, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "#6c43b8";
-      ctx.beginPath();
-      ctx.arc(recordCenter.x, recordCenter.y, 6, 0, Math.PI * 2);
-      ctx.fill();
-      // The reference uses a visible gold tonearm over the record. It is a
-      // small code-drawn detail because the generated control assets are
-      // intentionally split into the reusable buttons only.
-      ctx.strokeStyle = "#ffd15a";
-      ctx.lineWidth = 10;
-      ctx.lineCap = "round";
-      ctx.lineJoin = "round";
-      ctx.beginPath();
-      ctx.moveTo(recordCenter.x + 94, recordCenter.y - 112);
-      ctx.lineTo(recordCenter.x + 73, recordCenter.y - 28);
-      ctx.lineTo(recordCenter.x + 90, recordCenter.y + 34);
-      ctx.stroke();
-      ctx.fillStyle = "#6c4dd7";
-      ctx.strokeStyle = "#332080";
-      ctx.lineWidth = 4;
-      ctx.beginPath();
-      traceRoundedRect(ctx, recordCenter.x + 72, recordCenter.y + 20, 30, 48, 8);
-      ctx.fill();
-      ctx.stroke();
-      ctx.restore();
+      ctx.drawImage(
+        art.vinyl,
+        189,
+        20,
+        1070,
+        1045,
+        MUSIC_LAYOUT.vinyl.x,
+        MUSIC_LAYOUT.vinyl.y,
+        MUSIC_LAYOUT.vinyl.width,
+        MUSIC_LAYOUT.vinyl.height,
+      );
 
       const infoX = 332;
       this.label(selectedEntry.title, infoX, 347, 44, "#fffdf5", "left", 950, "#352078", 3, 310);
       this.label(selectedEntry.artist, infoX, 387, 25, "#d9d4ff", "left", 750, "#352078", 2, 310);
-      ctx.strokeStyle = "rgba(14, 30, 132, .78)";
-      ctx.lineWidth = 14;
-      ctx.lineCap = "round";
-      ctx.beginPath();
-      ctx.moveTo(MUSIC_LAYOUT.progress.x, MUSIC_LAYOUT.progress.y);
-      ctx.lineTo(MUSIC_LAYOUT.progress.x + MUSIC_LAYOUT.progress.width, MUSIC_LAYOUT.progress.y);
-      ctx.stroke();
-      ctx.strokeStyle = "#53e4f3";
-      ctx.lineWidth = 9;
-      ctx.beginPath();
-      ctx.moveTo(MUSIC_LAYOUT.progress.x, MUSIC_LAYOUT.progress.y);
-      ctx.lineTo(MUSIC_LAYOUT.progress.x + MUSIC_LAYOUT.progress.width * progress, MUSIC_LAYOUT.progress.y);
-      ctx.stroke();
-      ctx.fillStyle = "#e8fbff";
-      ctx.beginPath();
-      ctx.arc(MUSIC_LAYOUT.progress.x + MUSIC_LAYOUT.progress.width * progress, MUSIC_LAYOUT.progress.y, 13, 0, Math.PI * 2);
-      ctx.fill();
+      const progressAssetWidth = art.progressTrack.naturalWidth || art.progressTrack.width;
+      const progressY = MUSIC_LAYOUT.progress.y - 16;
+      ctx.drawImage(art.progressTrack, 32, 205, progressAssetWidth - 64, 315, MUSIC_LAYOUT.progress.x, progressY, MUSIC_LAYOUT.progress.width, 32);
+      if (progress > 0) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(MUSIC_LAYOUT.progress.x, progressY, MUSIC_LAYOUT.progress.width * progress, 32);
+        ctx.clip();
+        const fillAssetWidth = art.progressFill.naturalWidth || art.progressFill.width;
+        ctx.drawImage(art.progressFill, 350, 260, Math.max(1, fillAssetWidth - 700), 240, MUSIC_LAYOUT.progress.x, progressY, MUSIC_LAYOUT.progress.width, 32);
+        ctx.restore();
+      }
+      const knobSize = 34;
+      ctx.drawImage(
+        art.progressKnob,
+        MUSIC_LAYOUT.progress.x + MUSIC_LAYOUT.progress.width * progress - knobSize / 2,
+        MUSIC_LAYOUT.progress.y - knobSize / 2,
+        knobSize,
+        knobSize,
+      );
       this.label(formatTime(position), MUSIC_LAYOUT.progress.x, MUSIC_LAYOUT.progress.y + 31, 19, "#ece8ff", "left", 800);
       this.label(formatTime(duration), MUSIC_LAYOUT.progress.x + MUSIC_LAYOUT.progress.width, MUSIC_LAYOUT.progress.y + 31, 19, "#ece8ff", "right", 800);
       ctx.drawImage(art.previous, MUSIC_LAYOUT.previous.x, MUSIC_LAYOUT.previous.y, MUSIC_LAYOUT.previous.size, MUSIC_LAYOUT.previous.size);
@@ -13792,17 +13785,11 @@ export class ColorEscapeGame {
         const unlocked = this.save.highestLevel >= unlockLevel;
         const selected = selectedTrack === entry.id;
         this.drawPressable("music." + entry.id, row, () => {
-          ctx.save();
-          ctx.shadowColor = selected ? "rgba(255, 220, 80, .86)" : "rgba(16, 12, 78, .28)";
-          ctx.shadowBlur = selected ? 14 : 6;
-          ctx.fillStyle = selected ? "#fff5d8" : unlocked ? "#f1f0ff" : "#b7b9df";
-          ctx.strokeStyle = selected ? "#ffd44d" : "#d4d6fa";
-          ctx.lineWidth = selected ? 5 : 3;
-          ctx.beginPath();
-          traceRoundedRect(ctx, row.x, row.y, row.width, row.height, 22);
-          ctx.fill();
-          ctx.stroke();
-          ctx.restore();
+          if (selected) {
+            ctx.drawImage(art.rowSelected, 0, 59, 2169, 569, row.x, row.y, row.width, row.height);
+          } else {
+            ctx.drawImage(art.rowLocked, 21, 133, 1902, 512, row.x, row.y, row.width, row.height);
+          }
           const rowAlbum = art.albums[index % Math.max(1, art.albums.length)];
           if (rowAlbum) ctx.drawImage(rowAlbum, row.x + 14, row.y + 14, 132, 130);
           this.label(entry.title, row.x + 166, row.y + 70, 33, "#30206f", "left", 900, undefined, 0, 250);
@@ -13816,13 +13803,11 @@ export class ColorEscapeGame {
             width: buttonWidth,
             height: 62,
           };
-          ctx.fillStyle = unlocked ? (selected ? "#25bb5b" : "#6657c9") : "#777aa9";
-          ctx.strokeStyle = unlocked ? (selected ? "#118b3b" : "#42359c") : "#5a5d8b";
-          ctx.lineWidth = 3;
-          ctx.beginPath();
-          traceRoundedRect(ctx, button.x, button.y, button.width, button.height, 23);
-          ctx.fill();
-          ctx.stroke();
+          if (unlocked && selected) {
+            ctx.drawImage(art.statusUnlocked, 102, 67, 1968, 598, button.x, button.y, button.width, button.height);
+          } else {
+            ctx.drawImage(art.statusLocked, 89, 111, 1809, 578, button.x, button.y, button.width, button.height);
+          }
           this.label(
             unlocked ? "已解锁" : "第" + unlockLevel + "关解锁",
             unlocked ? button.x + button.width / 2 : button.x + button.width / 2 + 14,
@@ -13836,38 +13821,14 @@ export class ColorEscapeGame {
             button.width - 12,
           );
           if (unlocked && selected) {
-            ctx.strokeStyle = "#2ee36a";
-            ctx.lineWidth = 5;
-            ctx.lineCap = "round";
-            for (let bar = 0; bar < 3; bar += 1) {
-              const height = 18 + bar * 9;
-              const x = row.x + row.width - 68 + bar * 11;
-              ctx.beginPath();
-              ctx.moveTo(x, row.y + row.height / 2 - height / 2);
-              ctx.lineTo(x, row.y + row.height / 2 + height / 2);
-              ctx.stroke();
-            }
+            ctx.drawImage(art.equalizer, 138, 137, 981, 887, row.x + row.width - 56, row.y + row.height / 2 - 16, 32, 32);
           } else if (!unlocked) {
-            ctx.fillStyle = "#f1f2ff";
-            ctx.strokeStyle = "#5c5f93";
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            traceRoundedRect(ctx, button.x + 14, button.y + 16, 30, 32, 6);
-            ctx.fill();
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.arc(button.x + 29, button.y + 17, 13, Math.PI, 0);
-            ctx.stroke();
+            ctx.drawImage(art.lock, 161, 45, 932, 1159, button.x + 10, button.y + 8, 48, 48);
           }
         });
       });
       ctx.restore();
 
-      // The rail is a visual affordance only; paging remains deterministic.
-      ctx.fillStyle = "rgba(222, 226, 255, .48)";
-      ctx.beginPath();
-      traceRoundedRect(ctx, MUSIC_LAYOUT.rows.x + MUSIC_LAYOUT.rows.width - 8, MUSIC_LAYOUT.rows.y, 6, MUSIC_LAYOUT.rows.viewportHeight, 3);
-      ctx.fill();
     });
   }
   private drawLanguagePicker(): void {

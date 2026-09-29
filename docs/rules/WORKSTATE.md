@@ -13,6 +13,7 @@
 - 2026-09-28参考图复核继续：播放器已移除运行时整图`preview-mockup.png`，改为面板、标题横幅、关闭/上一首/播放/下一首/音量控件和4张专辑图的拆分PNG组合。各素材按自身宽高比绘制，黑胶唱片、实时文字、进度条、时间和解锁卡片由代码叠加；播放器进度由`GameHost.musicTransport()`提供，支持暂停/继续和进度条点击定位，播放中页面持续刷新；暂停状态不会被每帧`syncMusic`重新启动。设计用预览图仅留在`design-assets/`，不进入运行时资源清单。
 - 拆分资源回归证据：`playtest-results/music-split-final.png`为内部浏览器首屏，确认没有整图底板和非等比拉伸；`music-split-progress-a.png`与`music-split-progress-b.png`间隔2.2秒像素差645，暂停后`music-split-paused-a.png`与`music-split-paused-b.png`差异为0；网页构建、20项音频测试、art:verify和TypeScript均通过。
 - 2026-09-29示意图复核修复：新增独立可替换的`music-background.png`（蓝紫菱格、城堡浮岛、星星及底部方块），运行时按背景比例cover绘制；播放器移除主页HUD遮挡并按示意图重新对齐面板、标题、黑胶唱片/唱针、播放控制、四条歌曲卡和关闭按钮。歌曲名统一为“沙漠晨曦 / 海湾灯塔 / 星空旅途 / 森林溪流”，选中态显示“已解锁+均衡器”，锁定态显示锁头与“第15/30/45关解锁”。证据为`playtest-results/music-fixed-final-v7.png`；拆分PNG仍单独加载，运行时未引用`preview-mockup.png`。
+- 2026-09-29 ImageGen 资源化复核：将播放器内层、黑胶唱片与唱针、空轨道/填充/滑块、选中/锁定歌曲卡、状态按钮、锁头和均衡器均改为独立透明PNG；代码仅负责动态专辑图、播放时间、进度裁剪和交互。证据为`playtest-results/music-image-assets-final-v2.png`，TypeScript通过；`art:verify`在本轮并行旅程资源删除未恢复的工作区上被无关缺失文件阻塞，音乐新增资源自身已登记到manifest并通过尺寸核对。
 
 ## 微信包重新打包（2026-09-28，活动v1.114.0，已完成）
 

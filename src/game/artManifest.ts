@@ -42,7 +42,18 @@ export interface AchievementArtUrls {
 export interface MusicLibraryArtUrls {
   readonly background: string;
   readonly panel: string;
+  readonly deck: string;
   readonly header: string;
+  readonly vinyl: string;
+  readonly progressTrack: string;
+  readonly progressFill: string;
+  readonly progressKnob: string;
+  readonly rowSelected: string;
+  readonly rowLocked: string;
+  readonly statusUnlocked: string;
+  readonly statusLocked: string;
+  readonly lock: string;
+  readonly equalizer: string;
   readonly close: string;
   readonly play: string;
   readonly previous: string;
@@ -55,7 +66,18 @@ export interface MusicLibraryArtUrls {
 export const MUSIC_LIBRARY_ART_URLS = {
   background: "assets/art/ui/music-player-v1/music-background.png",
   panel: "assets/art/ui/music-player-v1/music-panel-frame.png",
+  deck: "assets/art/ui/music-player-v1/music-player-deck.png",
   header: "assets/art/ui/music-player-v1/music-header-banner.png",
+  vinyl: "assets/art/ui/music-player-v1/music-vinyl-overlay.png",
+  progressTrack: "assets/art/ui/music-player-v1/music-progress-track.png",
+  progressFill: "assets/art/ui/music-player-v1/music-progress-fill.png",
+  progressKnob: "assets/art/ui/music-player-v1/music-progress-knob.png",
+  rowSelected: "assets/art/ui/music-player-v1/music-row-selected.png",
+  rowLocked: "assets/art/ui/music-player-v1/music-row-locked.png",
+  statusUnlocked: "assets/art/ui/music-player-v1/music-status-unlocked.png",
+  statusLocked: "assets/art/ui/music-player-v1/music-status-locked.png",
+  lock: "assets/art/ui/music-player-v1/music-lock-icon.png",
+  equalizer: "assets/art/ui/music-player-v1/music-equalizer-icon.png",
   close: "assets/art/ui/music-player-v1/music-close-button.png",
   play: "assets/art/ui/music-player-v1/music-play-button.png",
   previous: "assets/art/ui/music-player-v1/music-prev-button.png",
@@ -207,9 +229,7 @@ const formalBlockArt = (color: string) => ({
     ...(color === "yellow" ? {
       18: "assets/art/gameplay/blocks/formal-v1/yellow-t-hexomino-generated.png",
     } : {}),
-    ...(color === "yellow" ? {
-      19: "assets/art/gameplay/blocks/formal-v1/yellow-mirrored-l-tetromino-generated.png",
-    } : {}),
+    19: `assets/art/gameplay/blocks/formal-v1/${color}-mirrored-l-tetromino.png`,
     ...(color === "cyan" ? {
       20: "assets/art/gameplay/blocks/formal-v1/cyan-square-3x3-corner-notch-generated.png",
     } : {}),
@@ -266,6 +286,8 @@ const FORMAL_STAR_BLOCK_ART = {
   7: "assets/art/gameplay/mechanics/formal-star-v1/star-block-square-2x2.png",
   8: "assets/art/gameplay/mechanics/formal-star-v1/star-block-horizontal-2.png",
   9: "assets/art/gameplay/mechanics/formal-star-v1/star-block-horizontal-3.png",
+  10: "assets/art/gameplay/mechanics/formal-star-v1/star-block-l-tetromino.png",
+  19: "assets/art/gameplay/mechanics/formal-star-v1/star-block-mirrored-l-tetromino.png",
 } as const;
 
 const FORMAL_STAR_GATE_ART = {
