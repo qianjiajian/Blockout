@@ -448,8 +448,10 @@ const MUSIC_LAYOUT = {
   player: { x: 40, y: 222, width: 640, height: 405 },
   // The cover sits in the transparent centre of the generated vinyl disc.
   // Keep it centred on the record hole instead of the old, lower album box.
-  album: { x: 94, y: 307, size: 184 },
-  vinyl: { x: 54, y: 270, width: 264, height: 258 },
+  // Lower the complete record group so its visual centre sits in the middle
+  // of the player card's left half, matching the reference composition.
+  album: { x: 94, y: 327, size: 184 },
+  vinyl: { x: 54, y: 290, width: 264, height: 258 },
   progress: { x: 344, y: 430, width: 326 },
   previous: { x: 322, y: 501, size: 90 },
   play: { x: 402, y: 486, size: 120 },
