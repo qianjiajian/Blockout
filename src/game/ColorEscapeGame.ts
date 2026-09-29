@@ -463,7 +463,7 @@ const MUSIC_LAYOUT = {
 // Keep the hit areas at the established row bounds, but leave a small,
 // consistent inset around each visual card so the list stays inside the
 // player frame on the narrower browser/phone viewports.
-const MUSIC_ROW_SCALE = 0.94;
+const MUSIC_ROW_SCALE = 1;
 
 const musicArtRect = (rect: { x: number; y: number; width: number; height: number }) => rect;
 
@@ -14002,21 +14002,22 @@ export class ColorEscapeGame {
         const selected = selectedTrack === entry.id;
         this.drawPressable("music." + entry.id, row, () => {
           if (selected) {
-            drawAspectFit(
+            drawHorizontalSlice(
               art.rowSelected,
               16,
               127,
               2141,
               421,
               rowVisual.x,
-              rowVisual.y,
+              rowVisual.y - 10,
               rowVisual.width,
-              rowVisual.height,
+              rowVisual.height + 20,
+              180,
             );
           } else {
             ctx.save();
             ctx.globalAlpha = 1;
-            drawAspectFit(
+            drawHorizontalSlice(
               art.rowLocked,
               27,
               161,
@@ -14026,26 +14027,35 @@ export class ColorEscapeGame {
               rowVisual.y,
               rowVisual.width,
               rowVisual.height,
+              180,
             );
             ctx.restore();
           }
           const rowAlbum = art.albums[index % Math.max(1, art.albums.length)];
           if (rowAlbum) {
+            const albumX = rowVisual.x + 28 * MUSIC_ROW_SCALE;
+            const albumY = rowVisual.y + (selected ? 32 : 27) * MUSIC_ROW_SCALE;
+            const albumSize = 140 * MUSIC_ROW_SCALE;
+            ctx.save();
+            ctx.beginPath();
+            traceRoundedRect(ctx, albumX, albumY, albumSize, albumSize, 16 * MUSIC_ROW_SCALE);
+            ctx.clip();
             drawAspectFit(
               rowAlbum,
               0,
               0,
               rowAlbum.naturalWidth || rowAlbum.width,
               rowAlbum.naturalHeight || rowAlbum.height,
-              rowVisual.x + 32 * MUSIC_ROW_SCALE,
-              rowVisual.y + (selected ? 32 : 27) * MUSIC_ROW_SCALE,
-              132 * MUSIC_ROW_SCALE,
-              132 * MUSIC_ROW_SCALE,
+              albumX,
+              albumY,
+              albumSize,
+              albumSize,
             );
+            ctx.restore();
           }
           this.label(
             entry.title,
-            rowVisual.x + 180 * MUSIC_ROW_SCALE,
+            rowVisual.x + 174 * MUSIC_ROW_SCALE,
             rowVisual.y + 87 * MUSIC_ROW_SCALE,
             33 * MUSIC_ROW_SCALE,
             "#30206f",
@@ -14057,7 +14067,7 @@ export class ColorEscapeGame {
           );
           this.label(
             "关卡音乐",
-            rowVisual.x + 180 * MUSIC_ROW_SCALE,
+            rowVisual.x + 174 * MUSIC_ROW_SCALE,
             rowVisual.y + 124 * MUSIC_ROW_SCALE,
             21 * MUSIC_ROW_SCALE,
             "#615a98",
@@ -14069,7 +14079,7 @@ export class ColorEscapeGame {
           );
           // Locked rows use the wider pill from the reference plate so the
           // lock glyph and the full unlock requirement remain readable.
-          const buttonWidth = (unlocked ? 128 : 204) * MUSIC_ROW_SCALE;
+          const buttonWidth = (unlocked ? 140 : 214) * MUSIC_ROW_SCALE;
           const button = {
             x: unlocked
               ? rowVisual.x + rowVisual.width - 224 * MUSIC_ROW_SCALE
