@@ -40,6 +40,7 @@ export interface AchievementArtUrls {
 }
 
 export interface MusicLibraryArtUrls {
+  readonly background: string;
   readonly panel: string;
   readonly header: string;
   readonly close: string;
@@ -52,6 +53,7 @@ export interface MusicLibraryArtUrls {
 }
 
 export const MUSIC_LIBRARY_ART_URLS = {
+  background: "assets/art/ui/music-player-v1/music-background.png",
   panel: "assets/art/ui/music-player-v1/music-panel-frame.png",
   header: "assets/art/ui/music-player-v1/music-header-banner.png",
   close: "assets/art/ui/music-player-v1/music-close-button.png",

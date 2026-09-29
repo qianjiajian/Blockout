@@ -7280,6 +7280,17 @@
       ]
     },
     {
+      "key": "ui.musicPlayer.background",
+      "source": "ui/music-player-v1/music-background.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/music-background.png",
+      "width": 941,
+      "height": 1672,
+      "alpha": false,
+      "grid": [1, 1],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-background"
+    },
+    {
       "key": "ui.musicPlayer.panel",
       "source": "ui/music-player-v1/music-panel-frame.png",
       "runtime": "../public/assets/art/ui/music-player-v1/music-panel-frame.png",

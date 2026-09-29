@@ -442,17 +442,17 @@ type MusicLibraryArt = {
 // single artboard scale for hit areas and layout so no source image is
 // stretched independently to fit the phone viewport.
 const MUSIC_LAYOUT = {
-  panel: { x: 28, y: 188, width: 664, height: 996 },
-  header: { x: 128, y: 54, width: 510, height: 170 },
-  close: { x: 628, y: 62, width: 78, height: 78 },
-  player: { x: 48, y: 254, width: 624, height: 352 },
-  album: { x: 77, y: 294, size: 218 },
-  progress: { x: 332, y: 424, width: 294 },
-  previous: { x: 332, y: 492, size: 58 },
-  play: { x: 414, y: 480, size: 84 },
-  next: { x: 514, y: 492, size: 58 },
-  volume: { x: 602, y: 498, size: 52 },
-  rows: { x: 48, y: 646, width: 624, height: 122, pitch: 132, viewportHeight: 528 },
+  panel: { x: 4, y: 216, width: 712, height: 1210 },
+  header: { x: 144, y: 44, width: 432, height: 195 },
+  close: { x: 628, y: 62, width: 90, height: 90 },
+  player: { x: 28, y: 240, width: 664, height: 390 },
+  album: { x: 77, y: 316, size: 218 },
+  progress: { x: 332, y: 423, width: 310 },
+  previous: { x: 322, y: 501, size: 90 },
+  play: { x: 402, y: 486, size: 120 },
+  next: { x: 510, y: 501, size: 90 },
+  volume: { x: 604, y: 505, size: 66 },
+  rows: { x: 42, y: 650, width: 636, height: 170, pitch: 184, viewportHeight: 730 },
 } as const;
 
 const musicArtRect = (rect: { x: number; y: number; width: number; height: number }) => rect;
@@ -1768,6 +1768,7 @@ export class ColorEscapeGame {
     const token = ++this.musicLibraryArtRequestToken;
     const paths = GAME_ART.ui.musicLibrary;
     const orderedPaths = [
+      paths.background,
       paths.panel,
       paths.header,
       paths.close,
@@ -1784,15 +1785,16 @@ export class ColorEscapeGame {
         return false;
       }
       this.musicLibraryArt = {
-        panel: images[0],
-        header: images[1],
-        close: images[2],
-        play: images[3],
-        previous: images[4],
-        next: images[5],
-        volume: images[6],
-        entry: this.musicEntryArt ?? images[7],
-        albums: images.slice(8),
+        background: images[0],
+        panel: images[1],
+        header: images[2],
+        close: images[3],
+        play: images[4],
+        previous: images[5],
+        next: images[6],
+        volume: images[7],
+        entry: this.musicEntryArt ?? images[8],
+        albums: images.slice(9),
       };
       this.musicLibraryArtError = undefined;
       return true;
@@ -13621,7 +13623,6 @@ export class ColorEscapeGame {
   private drawMusicLibrary(): void {
     const ctx = this.ctx;
     const art = this.musicLibraryArt;
-    this.drawDim(0.72, "#0a0627");
     this.withHomeArtboard(() => {
       if (!art) {
         this.label(
@@ -13654,12 +13655,29 @@ export class ColorEscapeGame {
         return String(Math.floor(total / 60)).padStart(2, "0") + ":" + String(total % 60).padStart(2, "0");
       };
 
+      // Replace the home scene completely while this page is open. The
+      // generated background keeps its 941:1672 aspect ratio and uses a
+      // cover fit, so narrow phone viewports crop the sides instead of
+      // stretching the scene vertically.
+      const backgroundWidth = art.background.naturalWidth || art.background.width;
+      const backgroundHeight = art.background.naturalHeight || art.background.height;
+      const backgroundScale = Math.max(HOME_ARTBOARD.width / backgroundWidth, HOME_ARTBOARD.height / backgroundHeight);
+      const backgroundDrawWidth = backgroundWidth * backgroundScale;
+      const backgroundDrawHeight = backgroundHeight * backgroundScale;
+      ctx.drawImage(
+        art.background,
+        (HOME_ARTBOARD.width - backgroundDrawWidth) / 2,
+        (HOME_ARTBOARD.height - backgroundDrawHeight) / 2,
+        backgroundDrawWidth,
+        backgroundDrawHeight,
+      );
+
       // The panel and header preserve the generated PNG aspect ratios. The
       // reference plate is not loaded or stretched; all live text and controls
       // are composed on top of these replaceable split assets.
       ctx.drawImage(art.panel, MUSIC_LAYOUT.panel.x, MUSIC_LAYOUT.panel.y, MUSIC_LAYOUT.panel.width, MUSIC_LAYOUT.panel.height);
       ctx.drawImage(art.header, MUSIC_LAYOUT.header.x, MUSIC_LAYOUT.header.y, MUSIC_LAYOUT.header.width, MUSIC_LAYOUT.header.height);
-      this.label("背景音乐", HOME_ARTBOARD.width / 2, 151, 45, "#fff3b8", "center", 950, "#5b219f", 4, 430);
+      this.label("背景音乐", 390, 128, 64, "#fff3b8", "center", 950, "#5b219f", 4, 500);
       this.drawPressable("musicClose", MUSIC_LAYOUT.close, () => {
         ctx.drawImage(art.close, MUSIC_LAYOUT.close.x, MUSIC_LAYOUT.close.y, MUSIC_LAYOUT.close.width, MUSIC_LAYOUT.close.height);
       });
@@ -13709,11 +13727,30 @@ export class ColorEscapeGame {
       ctx.beginPath();
       ctx.arc(recordCenter.x, recordCenter.y, 6, 0, Math.PI * 2);
       ctx.fill();
+      // The reference uses a visible gold tonearm over the record. It is a
+      // small code-drawn detail because the generated control assets are
+      // intentionally split into the reusable buttons only.
+      ctx.strokeStyle = "#ffd15a";
+      ctx.lineWidth = 10;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.beginPath();
+      ctx.moveTo(recordCenter.x + 94, recordCenter.y - 112);
+      ctx.lineTo(recordCenter.x + 73, recordCenter.y - 28);
+      ctx.lineTo(recordCenter.x + 90, recordCenter.y + 34);
+      ctx.stroke();
+      ctx.fillStyle = "#6c4dd7";
+      ctx.strokeStyle = "#332080";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      traceRoundedRect(ctx, recordCenter.x + 72, recordCenter.y + 20, 30, 48, 8);
+      ctx.fill();
+      ctx.stroke();
       ctx.restore();
 
       const infoX = 332;
-      this.label(selectedEntry.title, infoX, 333, 31, "#fffdf5", "left", 950, "#352078", 3, 310);
-      this.label(selectedEntry.artist, infoX, 369, 21, "#d9d4ff", "left", 750, "#352078", 2, 310);
+      this.label(selectedEntry.title, infoX, 347, 44, "#fffdf5", "left", 950, "#352078", 3, 310);
+      this.label(selectedEntry.artist, infoX, 387, 25, "#d9d4ff", "left", 750, "#352078", 2, 310);
       ctx.strokeStyle = "rgba(14, 30, 132, .78)";
       ctx.lineWidth = 14;
       ctx.lineCap = "round";
@@ -13731,8 +13768,8 @@ export class ColorEscapeGame {
       ctx.beginPath();
       ctx.arc(MUSIC_LAYOUT.progress.x + MUSIC_LAYOUT.progress.width * progress, MUSIC_LAYOUT.progress.y, 13, 0, Math.PI * 2);
       ctx.fill();
-      this.label(formatTime(position), MUSIC_LAYOUT.progress.x, MUSIC_LAYOUT.progress.y + 31, 17, "#ece8ff", "left", 800);
-      this.label(formatTime(duration), MUSIC_LAYOUT.progress.x + MUSIC_LAYOUT.progress.width, MUSIC_LAYOUT.progress.y + 31, 17, "#ece8ff", "right", 800);
+      this.label(formatTime(position), MUSIC_LAYOUT.progress.x, MUSIC_LAYOUT.progress.y + 31, 19, "#ece8ff", "left", 800);
+      this.label(formatTime(duration), MUSIC_LAYOUT.progress.x + MUSIC_LAYOUT.progress.width, MUSIC_LAYOUT.progress.y + 31, 19, "#ece8ff", "right", 800);
       ctx.drawImage(art.previous, MUSIC_LAYOUT.previous.x, MUSIC_LAYOUT.previous.y, MUSIC_LAYOUT.previous.size, MUSIC_LAYOUT.previous.size);
       ctx.drawImage(art.play, MUSIC_LAYOUT.play.x, MUSIC_LAYOUT.play.y, MUSIC_LAYOUT.play.size, MUSIC_LAYOUT.play.size);
       ctx.drawImage(art.next, MUSIC_LAYOUT.next.x, MUSIC_LAYOUT.next.y, MUSIC_LAYOUT.next.size, MUSIC_LAYOUT.next.size);
@@ -13767,10 +13804,18 @@ export class ColorEscapeGame {
           ctx.stroke();
           ctx.restore();
           const rowAlbum = art.albums[index % Math.max(1, art.albums.length)];
-          if (rowAlbum) ctx.drawImage(rowAlbum, row.x + 14, row.y + 13, 106, 106);
-          this.label(entry.title, row.x + 143, row.y + 47, 25, unlocked ? "#30206f" : "#706c8e", "left", 900, undefined, 0, 260);
-          this.label("关卡音乐", row.x + 143, row.y + 82, 17, unlocked ? "#615a98" : "#8583a0", "left", 700, undefined, 0, 260);
-          const button = { x: row.x + row.width - 178, y: row.y + 34, width: 154, height: 60 };
+          if (rowAlbum) ctx.drawImage(rowAlbum, row.x + 14, row.y + 14, 132, 130);
+          this.label(entry.title, row.x + 166, row.y + 70, 33, "#30206f", "left", 900, undefined, 0, 250);
+          this.label("关卡音乐", row.x + 166, row.y + 107, 21, "#615a98", "left", 700, undefined, 0, 250);
+          // Locked rows use the wider pill from the reference plate so the
+          // lock glyph and the full unlock requirement remain readable.
+          const buttonWidth = unlocked ? 132 : 202;
+          const button = {
+            x: unlocked ? row.x + row.width - 212 : row.x + row.width - buttonWidth - 8,
+            y: row.y + 57,
+            width: buttonWidth,
+            height: 62,
+          };
           ctx.fillStyle = unlocked ? (selected ? "#25bb5b" : "#6657c9") : "#777aa9";
           ctx.strokeStyle = unlocked ? (selected ? "#118b3b" : "#42359c") : "#5a5d8b";
           ctx.lineWidth = 3;
@@ -13779,10 +13824,10 @@ export class ColorEscapeGame {
           ctx.fill();
           ctx.stroke();
           this.label(
-            unlocked ? (selected ? "播放中" : "已解锁") : "第" + unlockLevel + "关解锁",
-            button.x + button.width / 2,
+            unlocked ? "已解锁" : "第" + unlockLevel + "关解锁",
+            unlocked ? button.x + button.width / 2 : button.x + button.width / 2 + 14,
             button.y + 37,
-            unlocked ? 19 : 17,
+            unlocked ? 20 : 22,
             "#fffdfd",
             "center",
             900,
@@ -13790,6 +13835,30 @@ export class ColorEscapeGame {
             0,
             button.width - 12,
           );
+          if (unlocked && selected) {
+            ctx.strokeStyle = "#2ee36a";
+            ctx.lineWidth = 5;
+            ctx.lineCap = "round";
+            for (let bar = 0; bar < 3; bar += 1) {
+              const height = 18 + bar * 9;
+              const x = row.x + row.width - 68 + bar * 11;
+              ctx.beginPath();
+              ctx.moveTo(x, row.y + row.height / 2 - height / 2);
+              ctx.lineTo(x, row.y + row.height / 2 + height / 2);
+              ctx.stroke();
+            }
+          } else if (!unlocked) {
+            ctx.fillStyle = "#f1f2ff";
+            ctx.strokeStyle = "#5c5f93";
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            traceRoundedRect(ctx, button.x + 14, button.y + 16, 30, 32, 6);
+            ctx.fill();
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(button.x + 29, button.y + 17, 13, Math.PI, 0);
+            ctx.stroke();
+          }
         });
       });
       ctx.restore();

@@ -30,17 +30,17 @@ export const MUSIC_CATALOG: readonly MusicCatalogEntry[] = Object.freeze([
     loopStartSeconds: 0, loopEndSeconds: 7_112_551 / 48_000, rights: "PROJECT_AUDIO",
   },
   {
-    id: "challenge", title: "快乐时光", artist: "Infraction", unlockLevel: 1, scene: "challenge",
+    id: "challenge", title: "海湾灯塔", artist: "关卡音乐", unlockLevel: 1, scene: "challenge",
     assetPath: "assets/audio/happy-foods.mp3", wechatPath: "audio/happy-foods.mp3", wechatSubpackage: "audio",
     loopStartSeconds: 0, loopEndSeconds: 6_048_768 / 48_000, rights: "PROJECT_AUDIO",
   },
   {
-    id: "tides-smiles", title: "暖阳微风", artist: "Moavii", unlockLevel: 15, scene: "menu",
+    id: "tides-smiles", title: "星空旅途", artist: "关卡音乐", unlockLevel: 15, scene: "menu",
     assetPath: "assets/audio/music-library/tides-smiles.mp3", loopStartSeconds: 0, loopEndSeconds: 78.73,
     rights: "USER_PROVIDED_NEEDS_COMMERCIAL_LICENSE_CONFIRMATION",
   },
   {
-    id: "dreamscape", title: "梦境漫游", artist: "Roa", unlockLevel: 30, scene: "menu",
+    id: "dreamscape", title: "森林溪流", artist: "关卡音乐", unlockLevel: 30, scene: "menu",
     assetPath: "assets/audio/music-library/dreamscape.mp3", loopStartSeconds: 0, loopEndSeconds: 191.43,
     rights: "USER_PROVIDED_NEEDS_COMMERCIAL_LICENSE_CONFIRMATION",
   },
