@@ -13976,7 +13976,6 @@ export class ColorEscapeGame {
       ctx.drawImage(art.previous, MUSIC_LAYOUT.previous.x, MUSIC_LAYOUT.previous.y, MUSIC_LAYOUT.previous.size, MUSIC_LAYOUT.previous.size);
       ctx.drawImage(art.play, MUSIC_LAYOUT.play.x, MUSIC_LAYOUT.play.y, MUSIC_LAYOUT.play.size, MUSIC_LAYOUT.play.size);
       ctx.drawImage(art.next, MUSIC_LAYOUT.next.x, MUSIC_LAYOUT.next.y, MUSIC_LAYOUT.next.size, MUSIC_LAYOUT.next.size);
-      ctx.drawImage(art.volume, MUSIC_LAYOUT.volume.x, MUSIC_LAYOUT.volume.y, MUSIC_LAYOUT.volume.size, MUSIC_LAYOUT.volume.size);
 
       // Scrollable cards use the album PNGs and live status text. The rows
       // remain inside a clipped viewport so a page turn cannot distort them.
@@ -14111,19 +14110,7 @@ export class ColorEscapeGame {
             0,
             button.width - 12 * MUSIC_ROW_SCALE,
           );
-          if (unlocked && selected) {
-            drawAspectFit(
-              art.equalizer,
-              138,
-              137,
-              981,
-              887,
-              rowVisual.x + rowVisual.width - 78 * MUSIC_ROW_SCALE,
-              rowVisual.y + rowVisual.height / 2 - 16 * MUSIC_ROW_SCALE,
-              32 * MUSIC_ROW_SCALE,
-              32 * MUSIC_ROW_SCALE,
-            );
-          } else if (!unlocked) {
+          if (!unlocked) {
             drawAspectFit(
               art.lock,
               161,
