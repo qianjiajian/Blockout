@@ -456,6 +456,11 @@ const MUSIC_LAYOUT = {
   rows: { x: 30, y: 637, width: 660, height: 184, pitch: 184, viewportHeight: 730 },
 } as const;
 
+// Keep the hit areas at the established row bounds, but leave a small,
+// consistent inset around each visual card so the list stays inside the
+// player frame on the narrower browser/phone viewports.
+const MUSIC_ROW_SCALE = 0.94;
+
 const musicArtRect = (rect: { x: number; y: number; width: number; height: number }) => rect;
 
 interface CompletionMetrics {
@@ -13781,30 +13786,88 @@ export class ColorEscapeGame {
           width: MUSIC_LAYOUT.rows.width,
           height: MUSIC_LAYOUT.rows.height,
         };
+        const rowVisual = {
+          x: row.x + (row.width * (1 - MUSIC_ROW_SCALE)) / 2,
+          y: row.y + (row.height * (1 - MUSIC_ROW_SCALE)) / 2,
+          width: row.width * MUSIC_ROW_SCALE,
+          height: row.height * MUSIC_ROW_SCALE,
+        };
         const unlockLevel = this.musicLibraryUnlockLevel(entry, index);
         const unlocked = this.save.highestLevel >= unlockLevel;
         const selected = selectedTrack === entry.id;
         this.drawPressable("music." + entry.id, row, () => {
           if (selected) {
-            ctx.drawImage(art.rowSelected, 16, 127, 2141, 421, row.x - 2, row.y - 10, row.width + 6, 224);
+            ctx.drawImage(
+              art.rowSelected,
+              16,
+              127,
+              2141,
+              421,
+              rowVisual.x,
+              rowVisual.y - 8,
+              rowVisual.width,
+              224 * MUSIC_ROW_SCALE,
+            );
           } else {
             ctx.save();
             ctx.globalAlpha = 1;
-            ctx.drawImage(art.rowLocked, 27, 161, 2122, 394, row.x, row.y + 16, row.width, row.height + 2);
+            ctx.drawImage(
+              art.rowLocked,
+              27,
+              161,
+              2122,
+              394,
+              rowVisual.x,
+              rowVisual.y + 16 * MUSIC_ROW_SCALE,
+              rowVisual.width,
+              (row.height + 2) * MUSIC_ROW_SCALE,
+            );
             ctx.restore();
           }
           const rowAlbum = art.albums[index % Math.max(1, art.albums.length)];
-          if (rowAlbum) ctx.drawImage(rowAlbum, row.x + 32, row.y + (selected ? 32 : 27), 132, 130);
-          this.label(entry.title, row.x + 180, row.y + 87, 33, "#30206f", "left", 900, undefined, 0, 250);
-          this.label("关卡音乐", row.x + 180, row.y + 124, 21, "#615a98", "left", 700, undefined, 0, 250);
+          if (rowAlbum) {
+            ctx.drawImage(
+              rowAlbum,
+              rowVisual.x + 32 * MUSIC_ROW_SCALE,
+              rowVisual.y + (selected ? 32 : 27) * MUSIC_ROW_SCALE,
+              132 * MUSIC_ROW_SCALE,
+              130 * MUSIC_ROW_SCALE,
+            );
+          }
+          this.label(
+            entry.title,
+            rowVisual.x + 180 * MUSIC_ROW_SCALE,
+            rowVisual.y + 87 * MUSIC_ROW_SCALE,
+            33 * MUSIC_ROW_SCALE,
+            "#30206f",
+            "left",
+            900,
+            undefined,
+            0,
+            250 * MUSIC_ROW_SCALE,
+          );
+          this.label(
+            "关卡音乐",
+            rowVisual.x + 180 * MUSIC_ROW_SCALE,
+            rowVisual.y + 124 * MUSIC_ROW_SCALE,
+            21 * MUSIC_ROW_SCALE,
+            "#615a98",
+            "left",
+            700,
+            undefined,
+            0,
+            250 * MUSIC_ROW_SCALE,
+          );
           // Locked rows use the wider pill from the reference plate so the
           // lock glyph and the full unlock requirement remain readable.
-          const buttonWidth = unlocked ? 128 : 204;
+          const buttonWidth = (unlocked ? 128 : 204) * MUSIC_ROW_SCALE;
           const button = {
-            x: unlocked ? row.x + row.width - 224 : row.x + row.width - buttonWidth - 35,
-            y: row.y + 70,
+            x: unlocked
+              ? rowVisual.x + rowVisual.width - 224 * MUSIC_ROW_SCALE
+              : rowVisual.x + rowVisual.width - buttonWidth - 35 * MUSIC_ROW_SCALE,
+            y: rowVisual.y + 70 * MUSIC_ROW_SCALE,
             width: buttonWidth,
-            height: 62,
+            height: 62 * MUSIC_ROW_SCALE,
           };
           if (unlocked && selected) {
             ctx.save();
@@ -13820,19 +13883,39 @@ export class ColorEscapeGame {
           this.label(
             unlocked ? "已解锁" : "第" + unlockLevel + "关解锁",
             unlocked ? button.x + button.width / 2 : button.x + button.width / 2 + 14,
-            button.y + 37,
-            unlocked ? 20 : 22,
+            button.y + 37 * MUSIC_ROW_SCALE,
+            (unlocked ? 20 : 22) * MUSIC_ROW_SCALE,
             "#fffdfd",
             "center",
             900,
             undefined,
             0,
-            button.width - 12,
+            button.width - 12 * MUSIC_ROW_SCALE,
           );
           if (unlocked && selected) {
-            ctx.drawImage(art.equalizer, 138, 137, 981, 887, row.x + row.width - 78, row.y + row.height / 2 - 16, 32, 32);
+            ctx.drawImage(
+              art.equalizer,
+              138,
+              137,
+              981,
+              887,
+              rowVisual.x + rowVisual.width - 78 * MUSIC_ROW_SCALE,
+              rowVisual.y + rowVisual.height / 2 - 16 * MUSIC_ROW_SCALE,
+              32 * MUSIC_ROW_SCALE,
+              32 * MUSIC_ROW_SCALE,
+            );
           } else if (!unlocked) {
-            ctx.drawImage(art.lock, 161, 45, 932, 1159, button.x + 12, button.y + 10, 52, 52);
+            ctx.drawImage(
+              art.lock,
+              161,
+              45,
+              932,
+              1159,
+              button.x + 12 * MUSIC_ROW_SCALE,
+              button.y + 10 * MUSIC_ROW_SCALE,
+              52 * MUSIC_ROW_SCALE,
+              52 * MUSIC_ROW_SCALE,
+            );
           }
         });
       });
