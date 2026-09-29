@@ -13697,6 +13697,110 @@ export class ColorEscapeGame {
         return String(Math.floor(total / 60)).padStart(2, "0") + ":" + String(total % 60).padStart(2, "0");
       };
 
+      // UI plates are generated at a different resolution from the logical
+      // artboard. Stretching the whole bitmap distorts rounded corners and
+      // highlights, so preserve each edge with a small nine-slice renderer.
+      const drawNineSlice = (
+        image: HTMLImageElement,
+        sx: number,
+        sy: number,
+        sw: number,
+        sh: number,
+        dx: number,
+        dy: number,
+        dw: number,
+        dh: number,
+        capX: number,
+        capY: number,
+      ): void => {
+        const sourceCapX = Math.min(capX, sw / 2);
+        const sourceCapY = Math.min(capY, sh / 2);
+        const destCapX = Math.min(sourceCapX, dw / 2);
+        const destCapY = Math.min(sourceCapY, dh / 2);
+        const sourceMidW = Math.max(0, sw - sourceCapX * 2);
+        const sourceMidH = Math.max(0, sh - sourceCapY * 2);
+        const destMidW = Math.max(0, dw - destCapX * 2);
+        const destMidH = Math.max(0, dh - destCapY * 2);
+        const drawPart = (fromX: number, fromY: number, fromW: number, fromH: number, toX: number, toY: number, toW: number, toH: number): void => {
+          if (fromW <= 0 || fromH <= 0 || toW <= 0 || toH <= 0) return;
+          ctx.drawImage(image, fromX, fromY, fromW, fromH, toX, toY, toW, toH);
+        };
+        const sxMid = sx + sourceCapX;
+        const syMid = sy + sourceCapY;
+        const dxMid = dx + destCapX;
+        const dyMid = dy + destCapY;
+        drawPart(sx, sy, sourceCapX, sourceCapY, dx, dy, destCapX, destCapY);
+        drawPart(sxMid, sy, sourceMidW, sourceCapY, dxMid, dy, destMidW, destCapY);
+        drawPart(sx + sw - sourceCapX, sy, sourceCapX, sourceCapY, dx + dw - destCapX, dy, destCapX, destCapY);
+        drawPart(sx, syMid, sourceCapX, sourceMidH, dx, dyMid, destCapX, destMidH);
+        drawPart(sxMid, syMid, sourceMidW, sourceMidH, dxMid, dyMid, destMidW, destMidH);
+        drawPart(sx + sw - sourceCapX, syMid, sourceCapX, sourceMidH, dx + dw - destCapX, dyMid, destCapX, destMidH);
+        drawPart(sx, sy + sh - sourceCapY, sourceCapX, sourceCapY, dx, dy + dh - destCapY, destCapX, destCapY);
+        drawPart(sxMid, sy + sh - sourceCapY, sourceMidW, sourceCapY, dxMid, dy + dh - destCapY, destMidW, destCapY);
+        drawPart(sx + sw - sourceCapX, sy + sh - sourceCapY, sourceCapX, sourceCapY, dx + dw - destCapX, dy + dh - destCapY, destCapX, destCapY);
+      };
+
+      const aspectFitRect = (
+        sx: number,
+        sy: number,
+        sw: number,
+        sh: number,
+        dx: number,
+        dy: number,
+        dw: number,
+        dh: number,
+      ): { x: number; y: number; width: number; height: number } => {
+        const scale = Math.min(dw / sw, dh / sh);
+        const width = sw * scale;
+        const height = sh * scale;
+        return {
+          x: dx + (dw - width) / 2,
+          y: dy + (dh - height) / 2,
+          width,
+          height,
+        };
+      };
+
+      const drawAspectFit = (
+        image: HTMLImageElement,
+        sx: number,
+        sy: number,
+        sw: number,
+        sh: number,
+        dx: number,
+        dy: number,
+        dw: number,
+        dh: number,
+      ): { x: number; y: number; width: number; height: number } => {
+        const rect = aspectFitRect(sx, sy, sw, sh, dx, dy, dw, dh);
+        ctx.drawImage(image, sx, sy, sw, sh, rect.x, rect.y, rect.width, rect.height);
+        return rect;
+      };
+
+      const drawHorizontalSlice = (
+        image: HTMLImageElement,
+        sx: number,
+        sy: number,
+        sw: number,
+        sh: number,
+        dx: number,
+        dy: number,
+        dw: number,
+        dh: number,
+        capX: number,
+      ): void => {
+        const sourceCapX = Math.min(capX, sw / 2);
+        const verticalScale = dh / sh;
+        const destCapX = Math.min(sourceCapX * verticalScale, dw / 2);
+        const sourceMidW = Math.max(0, sw - sourceCapX * 2);
+        const destMidW = Math.max(0, dw - destCapX * 2);
+        ctx.drawImage(image, sx, sy, sourceCapX, sh, dx, dy, destCapX, dh);
+        if (sourceMidW > 0 && destMidW > 0) {
+          ctx.drawImage(image, sx + sourceCapX, sy, sourceMidW, sh, dx + destCapX, dy, destMidW, dh);
+        }
+        ctx.drawImage(image, sx + sw - sourceCapX, sy, sourceCapX, sh, dx + dw - destCapX, dy, destCapX, dh);
+      };
+
       // Replace the home scene completely while this page is open. The
       // generated background keeps its 941:1672 aspect ratio and uses a
       // cover fit, so narrow phone viewports crop the sides instead of
@@ -13717,8 +13821,30 @@ export class ColorEscapeGame {
       // The panel and header preserve the generated PNG aspect ratios. The
       // reference plate is not loaded or stretched; all live text and controls
       // are composed on top of these replaceable split assets.
-      ctx.drawImage(art.panel, MUSIC_LAYOUT.panel.x, MUSIC_LAYOUT.panel.y, MUSIC_LAYOUT.panel.width, MUSIC_LAYOUT.panel.height);
-      ctx.drawImage(art.header, MUSIC_LAYOUT.header.x, MUSIC_LAYOUT.header.y, MUSIC_LAYOUT.header.width, MUSIC_LAYOUT.header.height);
+      drawNineSlice(
+        art.panel,
+        0,
+        0,
+        art.panel.naturalWidth || art.panel.width,
+        art.panel.naturalHeight || art.panel.height,
+        MUSIC_LAYOUT.panel.x,
+        MUSIC_LAYOUT.panel.y,
+        MUSIC_LAYOUT.panel.width,
+        MUSIC_LAYOUT.panel.height,
+        96,
+        96,
+      );
+      drawAspectFit(
+        art.header,
+        0,
+        0,
+        art.header.naturalWidth || art.header.width,
+        art.header.naturalHeight || art.header.height,
+        MUSIC_LAYOUT.header.x,
+        MUSIC_LAYOUT.header.y,
+        MUSIC_LAYOUT.header.width,
+        MUSIC_LAYOUT.header.height,
+      );
       this.label("背景音乐", 390, 128, 64, "#fff3b8", "center", 950, "#5b219f", 4, 500);
       this.drawPressable("musicClose", MUSIC_LAYOUT.close, () => {
         ctx.drawImage(art.close, MUSIC_LAYOUT.close.x, MUSIC_LAYOUT.close.y, MUSIC_LAYOUT.close.width, MUSIC_LAYOUT.close.height);
@@ -13731,11 +13857,33 @@ export class ColorEscapeGame {
       // places dynamic album art and transport text on top of it.
       ctx.save();
       ctx.globalAlpha = 0.7;
-      ctx.drawImage(art.deck, 51, 103, 2069, 501, MUSIC_LAYOUT.player.x, MUSIC_LAYOUT.player.y + 13, MUSIC_LAYOUT.player.width, 390);
+      drawNineSlice(
+        art.deck,
+        51,
+        103,
+        2069,
+        501,
+        MUSIC_LAYOUT.player.x,
+        MUSIC_LAYOUT.player.y + 13,
+        MUSIC_LAYOUT.player.width,
+        390,
+        140,
+        120,
+      );
       ctx.restore();
+      const vinylDraw = aspectFitRect(
+        0,
+        0,
+        art.vinylDisc.naturalWidth || art.vinylDisc.width,
+        art.vinylDisc.naturalHeight || art.vinylDisc.height,
+        MUSIC_LAYOUT.vinyl.x,
+        MUSIC_LAYOUT.vinyl.y,
+        MUSIC_LAYOUT.vinyl.width,
+        MUSIC_LAYOUT.vinyl.height,
+      );
       const vinylCenter = {
-        x: MUSIC_LAYOUT.album.x + MUSIC_LAYOUT.album.size / 2,
-        y: MUSIC_LAYOUT.album.y + MUSIC_LAYOUT.album.size / 2,
+        x: vinylDraw.x + vinylDraw.width / 2,
+        y: vinylDraw.y + vinylDraw.height / 2,
       };
       if (album) {
         ctx.save();
@@ -13762,13 +13910,13 @@ export class ColorEscapeGame {
         0,
         art.vinylDisc.naturalWidth || art.vinylDisc.width,
         art.vinylDisc.naturalHeight || art.vinylDisc.height,
-        MUSIC_LAYOUT.vinyl.x,
-        MUSIC_LAYOUT.vinyl.y,
-        MUSIC_LAYOUT.vinyl.width,
-        MUSIC_LAYOUT.vinyl.height,
+        vinylDraw.x,
+        vinylDraw.y,
+        vinylDraw.width,
+        vinylDraw.height,
       );
       ctx.restore();
-      ctx.drawImage(
+      drawAspectFit(
         art.tonearm,
         0,
         0,
@@ -13783,16 +13931,36 @@ export class ColorEscapeGame {
       const infoX = 342;
       this.label(selectedEntry.title, infoX, 342, 38, "#fffdf5", "left", 950, "#352078", 3, 310);
       this.label(selectedEntry.artist, infoX, 380, 24, "#d9d4ff", "left", 750, "#352078", 2, 310);
-      const progressAssetWidth = art.progressTrack.naturalWidth || art.progressTrack.width;
       const progressY = MUSIC_LAYOUT.progress.y - 16;
-      ctx.drawImage(art.progressTrack, 32, 205, progressAssetWidth - 64, 315, MUSIC_LAYOUT.progress.x, progressY, MUSIC_LAYOUT.progress.width, 32);
+      drawHorizontalSlice(
+        art.progressTrack,
+        49,
+        236,
+        2073,
+        245,
+        MUSIC_LAYOUT.progress.x,
+        progressY,
+        MUSIC_LAYOUT.progress.width,
+        32,
+        120,
+      );
       if (progress > 0) {
         ctx.save();
         ctx.beginPath();
         ctx.rect(MUSIC_LAYOUT.progress.x, progressY, MUSIC_LAYOUT.progress.width * progress, 32);
         ctx.clip();
-        const fillAssetWidth = art.progressFill.naturalWidth || art.progressFill.width;
-        ctx.drawImage(art.progressFill, 350, 260, Math.max(1, fillAssetWidth - 700), 240, MUSIC_LAYOUT.progress.x, progressY, MUSIC_LAYOUT.progress.width, 32);
+        drawHorizontalSlice(
+          art.progressFill,
+          375,
+          356,
+          1005,
+          179,
+          MUSIC_LAYOUT.progress.x,
+          progressY,
+          MUSIC_LAYOUT.progress.width,
+          32,
+          90,
+        );
         ctx.restore();
       }
       const knobSize = 34;
@@ -13834,41 +14002,45 @@ export class ColorEscapeGame {
         const selected = selectedTrack === entry.id;
         this.drawPressable("music." + entry.id, row, () => {
           if (selected) {
-            ctx.drawImage(
+            drawAspectFit(
               art.rowSelected,
               16,
               127,
               2141,
               421,
               rowVisual.x,
-              rowVisual.y - 8,
+              rowVisual.y,
               rowVisual.width,
-              224 * MUSIC_ROW_SCALE,
+              rowVisual.height,
             );
           } else {
             ctx.save();
             ctx.globalAlpha = 1;
-            ctx.drawImage(
+            drawAspectFit(
               art.rowLocked,
               27,
               161,
               2122,
               394,
               rowVisual.x,
-              rowVisual.y + 16 * MUSIC_ROW_SCALE,
+              rowVisual.y,
               rowVisual.width,
-              (row.height + 2) * MUSIC_ROW_SCALE,
+              rowVisual.height,
             );
             ctx.restore();
           }
           const rowAlbum = art.albums[index % Math.max(1, art.albums.length)];
           if (rowAlbum) {
-            ctx.drawImage(
+            drawAspectFit(
               rowAlbum,
+              0,
+              0,
+              rowAlbum.naturalWidth || rowAlbum.width,
+              rowAlbum.naturalHeight || rowAlbum.height,
               rowVisual.x + 32 * MUSIC_ROW_SCALE,
               rowVisual.y + (selected ? 32 : 27) * MUSIC_ROW_SCALE,
               132 * MUSIC_ROW_SCALE,
-              130 * MUSIC_ROW_SCALE,
+              132 * MUSIC_ROW_SCALE,
             );
           }
           this.label(
@@ -13909,12 +14081,12 @@ export class ColorEscapeGame {
           if (unlocked && selected) {
             ctx.save();
             ctx.globalAlpha = 0.92;
-            ctx.drawImage(art.statusUnlocked, 102, 67, 1968, 598, button.x, button.y, button.width, button.height);
+            drawAspectFit(art.statusUnlocked, 102, 67, 1968, 598, button.x, button.y, button.width, button.height);
             ctx.restore();
           } else {
             ctx.save();
             ctx.globalAlpha = 0.9;
-            ctx.drawImage(art.statusLocked, 128, 214, 1518, 435, button.x, button.y, button.width, button.height);
+            drawAspectFit(art.statusLocked, 128, 214, 1518, 435, button.x, button.y, button.width, button.height);
             ctx.restore();
           }
           this.label(
@@ -13930,7 +14102,7 @@ export class ColorEscapeGame {
             button.width - 12 * MUSIC_ROW_SCALE,
           );
           if (unlocked && selected) {
-            ctx.drawImage(
+            drawAspectFit(
               art.equalizer,
               138,
               137,
@@ -13942,7 +14114,7 @@ export class ColorEscapeGame {
               32 * MUSIC_ROW_SCALE,
             );
           } else if (!unlocked) {
-            ctx.drawImage(
+            drawAspectFit(
               art.lock,
               161,
               45,
