@@ -446,7 +446,9 @@ const MUSIC_LAYOUT = {
   header: { x: 116, y: 24, width: 476, height: 225 },
   close: { x: 614, y: 45, width: 100, height: 100 },
   player: { x: 40, y: 222, width: 640, height: 405 },
-  album: { x: 77, y: 316, size: 218 },
+  // The cover sits in the transparent centre of music-vinyl-overlay.png.
+  // Keep it centred on the record hole instead of the old, lower album box.
+  album: { x: 94, y: 307, size: 184 },
   vinyl: { x: 54, y: 270, width: 264, height: 258 },
   progress: { x: 344, y: 430, width: 326 },
   previous: { x: 322, y: 501, size: 90 },
@@ -1518,6 +1520,7 @@ export class ColorEscapeGame {
   private musicLibraryArtRequestToken = 0;
   private musicLibraryArtError?: string;
   private musicLibraryScrollOffset = 0;
+  private musicRecordAngle = 0;
   private art: {
     home?: HTMLImageElement;
     homeUi?: {
@@ -5364,6 +5367,14 @@ export class ColorEscapeGame {
     const delta = Math.min(0.05, rawDelta);
     this.lastFrame = time;
     this.elapsed += delta;
+    const musicPlayback = this.host.musicTransport();
+    if (this.screen === "musicLibrary" && this.appVisible && musicPlayback.playing) {
+      // The generated overlay includes the tonearm, so only the cover art is
+      // rotated below. This gives a clear playing cue without rotating the
+      // stationary arm with the record.
+      this.musicRecordAngle = (this.musicRecordAngle + delta * (Math.PI * 2 / 12)) % (Math.PI * 2);
+      this.dirty = true;
+    }
     if (this.navigationTransition) {
       this.navigationTransition.age = Math.min(
         this.navigationTransition.duration,
@@ -13726,8 +13737,13 @@ export class ColorEscapeGame {
       if (album) {
         ctx.save();
         ctx.beginPath();
-        ctx.arc(recordCenter.x, recordCenter.y, MUSIC_LAYOUT.album.size * 0.6, 0, Math.PI * 2);
+        // The source vinyl has a transparent centre; clipping to the hole
+        // keeps the square album artwork from leaking past the black record.
+        ctx.arc(recordCenter.x, recordCenter.y, MUSIC_LAYOUT.album.size / 2, 0, Math.PI * 2);
         ctx.clip();
+        ctx.translate(recordCenter.x, recordCenter.y);
+        ctx.rotate(this.musicRecordAngle);
+        ctx.translate(-recordCenter.x, -recordCenter.y);
         ctx.drawImage(album, MUSIC_LAYOUT.album.x, MUSIC_LAYOUT.album.y, MUSIC_LAYOUT.album.size, MUSIC_LAYOUT.album.size);
         ctx.restore();
       }
