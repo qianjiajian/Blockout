@@ -6,7 +6,8 @@
 |---|---|---|---|
 | `music-background.png` | 音乐播放器独立背景层 | PNG 941×1672 | 否 |
 | `music-player-deck.png` | 播放器内层面板 | PNG（透明） | 是 |
-| `music-vinyl-overlay.png` | 黑胶唱片、唱针和唱头组合层 | PNG（透明） | 是 |
+| `music-vinyl-disc.png` | 可独立旋转的黑胶唱片与唱片内圈 | PNG 1254×1254（透明） | 是 |
+| `music-vinyl-tonearm.png` | 静态金属唱针、唱臂与底座 | PNG 1254×1254（透明） | 是 |
 | `music-progress-track.png` / `music-progress-fill.png` / `music-progress-knob.png` | 播放进度条拆分资源 | PNG（透明） | 是 |
 | `music-row-selected.png` / `music-row-locked.png` | 歌曲卡片背景 | PNG（透明） | 是 |
 | `music-status-unlocked.png` / `music-status-locked.png` | 状态按钮底图 | PNG（透明） | 是 |

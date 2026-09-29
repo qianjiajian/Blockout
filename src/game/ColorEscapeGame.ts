@@ -435,7 +435,7 @@ interface SettlementPresentation {
 }
 
 type MusicLibraryArt = {
-  [Key in Exclude<keyof MusicLibraryArtUrls, "albums">]: HTMLImageElement;
+  [Key in Exclude<keyof MusicLibraryArtUrls, "albums" | "vinyl">]: HTMLImageElement;
 } & { albums: readonly HTMLImageElement[] };
 
 // Music artwork is assembled from the individual generated resources. Keep a
@@ -446,7 +446,7 @@ const MUSIC_LAYOUT = {
   header: { x: 116, y: 24, width: 476, height: 225 },
   close: { x: 614, y: 45, width: 100, height: 100 },
   player: { x: 40, y: 222, width: 640, height: 405 },
-  // The cover sits in the transparent centre of music-vinyl-overlay.png.
+  // The cover sits in the transparent centre of the generated vinyl disc.
   // Keep it centred on the record hole instead of the old, lower album box.
   album: { x: 94, y: 307, size: 184 },
   vinyl: { x: 54, y: 270, width: 264, height: 258 },
@@ -1781,7 +1781,8 @@ export class ColorEscapeGame {
       paths.panel,
       paths.deck,
       paths.header,
-      paths.vinyl,
+      paths.vinylDisc,
+      paths.tonearm,
       paths.progressTrack,
       paths.progressFill,
       paths.progressKnob,
@@ -1809,23 +1810,24 @@ export class ColorEscapeGame {
         panel: images[1],
         deck: images[2],
         header: images[3],
-        vinyl: images[4],
-        progressTrack: images[5],
-        progressFill: images[6],
-        progressKnob: images[7],
-        rowSelected: images[8],
-        rowLocked: images[9],
-        statusUnlocked: images[10],
-        statusLocked: images[11],
-        lock: images[12],
-        equalizer: images[13],
-        close: images[14],
-        play: images[15],
-        previous: images[16],
-        next: images[17],
-        volume: images[18],
-        entry: this.musicEntryArt ?? images[19],
-        albums: images.slice(20),
+        vinylDisc: images[4],
+        tonearm: images[5],
+        progressTrack: images[6],
+        progressFill: images[7],
+        progressKnob: images[8],
+        rowSelected: images[9],
+        rowLocked: images[10],
+        statusUnlocked: images[11],
+        statusLocked: images[12],
+        lock: images[13],
+        equalizer: images[14],
+        close: images[15],
+        play: images[16],
+        previous: images[17],
+        next: images[18],
+        volume: images[19],
+        entry: this.musicEntryArt ?? images[20],
+        albums: images.slice(21),
       };
       this.musicLibraryArtError = undefined;
       return true;
@@ -5369,9 +5371,8 @@ export class ColorEscapeGame {
     this.elapsed += delta;
     const musicPlayback = this.host.musicTransport();
     if (this.screen === "musicLibrary" && this.appVisible && musicPlayback.playing) {
-      // The generated overlay includes the tonearm, so only the cover art is
-      // rotated below. This gives a clear playing cue without rotating the
-      // stationary arm with the record.
+      // Keep one angle for the cover and generated record-player overlay so
+      // the whole disc animation stays visually synchronized.
       this.musicRecordAngle = (this.musicRecordAngle + delta * (Math.PI * 2 / 12)) % (Math.PI * 2);
       this.dirty = true;
     }
@@ -13730,7 +13731,7 @@ export class ColorEscapeGame {
       ctx.globalAlpha = 0.7;
       ctx.drawImage(art.deck, 51, 103, 2069, 501, MUSIC_LAYOUT.player.x, MUSIC_LAYOUT.player.y + 13, MUSIC_LAYOUT.player.width, 390);
       ctx.restore();
-      const recordCenter = {
+      const vinylCenter = {
         x: MUSIC_LAYOUT.album.x + MUSIC_LAYOUT.album.size / 2,
         y: MUSIC_LAYOUT.album.y + MUSIC_LAYOUT.album.size / 2,
       };
@@ -13739,20 +13740,38 @@ export class ColorEscapeGame {
         ctx.beginPath();
         // The source vinyl has a transparent centre; clipping to the hole
         // keeps the square album artwork from leaking past the black record.
-        ctx.arc(recordCenter.x, recordCenter.y, MUSIC_LAYOUT.album.size / 2, 0, Math.PI * 2);
+        ctx.arc(vinylCenter.x, vinylCenter.y, MUSIC_LAYOUT.album.size / 2, 0, Math.PI * 2);
         ctx.clip();
-        ctx.translate(recordCenter.x, recordCenter.y);
+        ctx.translate(vinylCenter.x, vinylCenter.y);
         ctx.rotate(this.musicRecordAngle);
-        ctx.translate(-recordCenter.x, -recordCenter.y);
+        ctx.translate(-vinylCenter.x, -vinylCenter.y);
         ctx.drawImage(album, MUSIC_LAYOUT.album.x, MUSIC_LAYOUT.album.y, MUSIC_LAYOUT.album.size, MUSIC_LAYOUT.album.size);
         ctx.restore();
       }
+      // The generated disc and tonearm are separate assets: only the black
+      // vinyl spins during playback, while the metal tonearm stays fixed.
+      ctx.save();
+      ctx.translate(vinylCenter.x, vinylCenter.y);
+      ctx.rotate(this.musicRecordAngle);
+      ctx.translate(-vinylCenter.x, -vinylCenter.y);
       ctx.drawImage(
-        art.vinyl,
+        art.vinylDisc,
         0,
         0,
-        art.vinyl.naturalWidth || art.vinyl.width,
-        art.vinyl.naturalHeight || art.vinyl.height,
+        art.vinylDisc.naturalWidth || art.vinylDisc.width,
+        art.vinylDisc.naturalHeight || art.vinylDisc.height,
+        MUSIC_LAYOUT.vinyl.x,
+        MUSIC_LAYOUT.vinyl.y,
+        MUSIC_LAYOUT.vinyl.width,
+        MUSIC_LAYOUT.vinyl.height,
+      );
+      ctx.restore();
+      ctx.drawImage(
+        art.tonearm,
+        0,
+        0,
+        art.tonearm.naturalWidth || art.tonearm.width,
+        art.tonearm.naturalHeight || art.tonearm.height,
         MUSIC_LAYOUT.vinyl.x,
         MUSIC_LAYOUT.vinyl.y,
         MUSIC_LAYOUT.vinyl.width,

@@ -45,6 +45,8 @@ export interface MusicLibraryArtUrls {
   readonly deck: string;
   readonly header: string;
   readonly vinyl: string;
+  readonly vinylDisc: string;
+  readonly tonearm: string;
   readonly progressTrack: string;
   readonly progressFill: string;
   readonly progressKnob: string;
@@ -69,6 +71,8 @@ export const MUSIC_LIBRARY_ART_URLS = {
   deck: "assets/art/ui/music-player-v1/music-player-deck.png",
   header: "assets/art/ui/music-player-v1/music-header-banner.png",
   vinyl: "assets/art/ui/music-player-v1/music-vinyl-overlay.png",
+  vinylDisc: "assets/art/ui/music-player-v1/music-vinyl-disc.png",
+  tonearm: "assets/art/ui/music-player-v1/music-vinyl-tonearm.png",
   progressTrack: "assets/art/ui/music-player-v1/music-progress-track.png",
   progressFill: "assets/art/ui/music-player-v1/music-progress-fill.png",
   progressKnob: "assets/art/ui/music-player-v1/music-progress-knob.png",

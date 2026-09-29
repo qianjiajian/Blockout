@@ -7330,6 +7330,28 @@
       "loadGroup": "music-player-vinyl"
     },
     {
+      "key": "ui.musicPlayer.vinylDisc",
+      "source": "ui/music-player-v1/music-vinyl-disc.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/music-vinyl-disc.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "grid": [1, 1],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-vinyl"
+    },
+    {
+      "key": "ui.musicPlayer.tonearm",
+      "source": "ui/music-player-v1/music-vinyl-tonearm.png",
+      "runtime": "../public/assets/art/ui/music-player-v1/music-vinyl-tonearm.png",
+      "width": 1254,
+      "height": 1254,
+      "alpha": true,
+      "grid": [1, 1],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "music-player-vinyl"
+    },
+    {
       "key": "ui.musicPlayer.progressTrack",
       "source": "ui/music-player-v1/music-progress-track.png",
       "runtime": "../public/assets/art/ui/music-player-v1/music-progress-track.png",
