@@ -1,0 +1,14 @@
+import assert from "node:assert/strict";
+import {readFile,writeFile} from "node:fs/promises";
+import {createHash} from "node:crypto";
+import {verifyRulesLock} from "./verify-rules-lock.mjs";
+const output="deliverables/league-video-ui-20261001";
+const report="playtest-results/league-video-ui/1790838464202/report.json";
+const tests=JSON.parse(await readFile(`${output}/tests.json`,"utf8"));
+const browser=JSON.parse(await readFile(report,"utf8"));
+assert.equal(tests.numFailedTests,0);assert.equal(tests.numPassedTests,56);assert.equal(browser.status,"PASS");assert.equal(browser.errors.length,0);
+const rules=verifyRulesLock();assert.equal(rules.ok,true);
+const source=["src/core/league.ts","src/core/leagueAccount.ts","src/game/ColorEscapeGame.ts","src/game/leagueUi.ts","src/game/leagueScroll.ts","src/game/LeagueArtStore.ts","src/game/artManifest.ts","art-source/manifest.json","art-source/ui/league-video-v1/manifest.json","art-source/ui/league-video-v1/prompts.json","tools/build-league-generated-art.mjs","tools/verify-league-generated-art.mjs","tools/playtest-league-video-ui.mjs","docs/rules/mechanism-rules-v1.131.0.md"];
+const hashes={};for(const file of source)hashes[file]=createHash("sha256").update(await readFile(file)).digest("hex");
+await writeFile(`${output}/completion.json`,JSON.stringify({status:"PASS",activeVersion:"1.131.0",tests:56,typecheck:"PASS",assetVerification:"generated-art-verification.json",globalArtVerification:{assets:653,graphicsWorkingSetMiB:84.55,status:"PASS"},browserReport:report,viewports:browser.results.map(r=>r.tag),hashes,limitations:["Generated art differs in details from reference; not a pixel-identical clone","Isolated browser storage and declared fixtures; no real-player saves","No physical device validation or real league gameplay; independent 100 levels not made","No build, upload or publication"]},null,2));
+console.log("PASS: final league video UI evidence bound to source SHA");

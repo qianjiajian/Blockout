@@ -1,0 +1,8018 @@
+{
+  "ruleVersion": "v1.124.0",
+  "levels": {
+    "201": {
+      "route": [
+        {
+          "blockId": "l201-continuation-c201-r171-121-o14",
+          "path": [],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o8",
+          "path": [],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o6",
+          "path": [
+            [
+              3,
+              0
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o16",
+          "path": [
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              4,
+              0
+            ]
+          ]
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o15",
+          "path": [
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o2",
+          "path": [
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o23",
+          "path": [
+            [
+              3,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              0,
+              1
+            ]
+          ]
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o7",
+          "path": [
+            [
+              5,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              3,
+              0
+            ]
+          ]
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o0",
+          "path": [
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o5",
+          "path": [
+            [
+              1,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o13",
+          "path": [
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o4",
+          "path": [
+            [
+              4,
+              3
+            ],
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o1",
+          "path": [],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o5",
+          "path": [
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o13",
+          "path": [
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o7",
+          "path": [
+            [
+              3,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o3",
+          "path": [
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o9",
+          "path": [
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o12",
+          "path": [
+            [
+              5,
+              4
+            ],
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o10",
+          "path": [
+            [
+              4,
+              5
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o11",
+          "path": [
+            [
+              5,
+              5
+            ],
+            [
+              5,
+              4
+            ],
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-h0",
+          "path": [
+            [
+              3,
+              3
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o22",
+          "path": [
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              5
+            ]
+          ]
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o23",
+          "path": [
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o21",
+          "path": [
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o18",
+          "path": [
+            [
+              0,
+              3
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o17",
+          "path": [
+            [
+              0,
+              4
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o20",
+          "path": [
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              4
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o19",
+          "path": [
+            [
+              4,
+              2
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o22",
+          "path": [
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              2
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-h2",
+          "path": [
+            [
+              3,
+              6
+            ],
+            [
+              4,
+              6
+            ],
+            [
+              4,
+              5
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              2
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o16",
+          "path": [],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o16",
+          "path": [
+            [
+              4,
+              1
+            ],
+            [
+              4,
+              2
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              4
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o17",
+          "path": [
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              4,
+              2
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-o17",
+          "path": [
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              5
+            ],
+            [
+              4,
+              6
+            ],
+            [
+              3,
+              6
+            ],
+            [
+              2,
+              6
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-h1",
+          "path": [
+            [
+              1,
+              4
+            ],
+            [
+              0,
+              4
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l201-continuation-c201-r171-121-h1",
+          "path": [
+            [
+              1,
+              4
+            ],
+            [
+              2,
+              4
+            ],
+            [
+              2,
+              5
+            ]
+          ],
+          "exitSide": "bottom"
+        }
+      ],
+      "lowerBound": 5,
+      "upperBound": 7,
+      "totalDrags": 37,
+      "starTargets": {
+        "moveTarget": 37,
+        "timeTargetSeconds": 86
+      }
+    },
+    "202": {
+      "route": [
+        {
+          "blockId": "l202-continuation-l202-q21-11-11",
+          "path": [],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-4-4",
+          "path": [
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              6
+            ]
+          ]
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-5-5",
+          "path": [
+            [
+              0,
+              4
+            ]
+          ]
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-9-9",
+          "path": [
+            [
+              3,
+              4
+            ]
+          ]
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-13-13",
+          "path": [
+            [
+              0,
+              8
+            ]
+          ]
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-12-12",
+          "path": [
+            [
+              3,
+              7
+            ]
+          ]
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-10-10",
+          "path": [
+            [
+              5,
+              6
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-2-2",
+          "path": [
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              4
+            ],
+            [
+              5,
+              5
+            ],
+            [
+              5,
+              6
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-6-6",
+          "path": [
+            [
+              5,
+              4
+            ],
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-12-12",
+          "path": [
+            [
+              4,
+              7
+            ],
+            [
+              4,
+              6
+            ]
+          ]
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-13-13",
+          "path": [
+            [
+              1,
+              8
+            ],
+            [
+              2,
+              8
+            ],
+            [
+              3,
+              8
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-8-8",
+          "path": [
+            [
+              2,
+              6
+            ]
+          ]
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-9-9",
+          "path": [
+            [
+              3,
+              5
+            ],
+            [
+              3,
+              6
+            ]
+          ]
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-5-5",
+          "path": [
+            [
+              1,
+              4
+            ],
+            [
+              2,
+              4
+            ],
+            [
+              2,
+              5
+            ],
+            [
+              3,
+              5
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-3-3",
+          "path": [
+            [
+              0,
+              4
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              2,
+              4
+            ]
+          ]
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-0-0",
+          "path": [
+            [
+              0,
+              3
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-hidden-0-14",
+          "path": [
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ]
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-7-7",
+          "path": [
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-8-8",
+          "path": [
+            [
+              2,
+              5
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-9-9",
+          "path": [
+            [
+              2,
+              6
+            ],
+            [
+              2,
+              5
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              1,
+              4
+            ]
+          ]
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-12-12",
+          "path": [
+            [
+              4,
+              7
+            ],
+            [
+              3,
+              7
+            ],
+            [
+              2,
+              7
+            ],
+            [
+              1,
+              7
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-9-9",
+          "path": [
+            [
+              1,
+              5
+            ],
+            [
+              2,
+              5
+            ],
+            [
+              2,
+              6
+            ],
+            [
+              3,
+              6
+            ],
+            [
+              4,
+              6
+            ],
+            [
+              5,
+              6
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-4-4",
+          "path": [
+            [
+              1,
+              6
+            ],
+            [
+              2,
+              6
+            ],
+            [
+              3,
+              6
+            ],
+            [
+              3,
+              7
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-3-3",
+          "path": [
+            [
+              1,
+              4
+            ],
+            [
+              0,
+              4
+            ],
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              6
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-hidden-0-14",
+          "path": [
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              1,
+              6
+            ],
+            [
+              1,
+              7
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-hidden-1-15",
+          "path": [
+            [
+              2,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              1,
+              6
+            ],
+            [
+              2,
+              6
+            ],
+            [
+              3,
+              6
+            ],
+            [
+              3,
+              7
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-1-1",
+          "path": [
+            [
+              3,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              1,
+              6
+            ],
+            [
+              2,
+              6
+            ],
+            [
+              3,
+              6
+            ],
+            [
+              4,
+              6
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-1-1",
+          "path": [
+            [
+              4,
+              7
+            ],
+            [
+              3,
+              7
+            ],
+            [
+              2,
+              7
+            ],
+            [
+              1,
+              7
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-5-5",
+          "path": [
+            [
+              3,
+              6
+            ],
+            [
+              2,
+              6
+            ],
+            [
+              1,
+              6
+            ],
+            [
+              0,
+              6
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-6-6",
+          "path": [
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              4
+            ],
+            [
+              5,
+              5
+            ],
+            [
+              5,
+              6
+            ],
+            [
+              4,
+              6
+            ],
+            [
+              3,
+              6
+            ],
+            [
+              2,
+              6
+            ],
+            [
+              1,
+              6
+            ],
+            [
+              0,
+              6
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l202-continuation-l202-q21-7-7",
+          "path": [
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              5,
+              0
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              4
+            ],
+            [
+              5,
+              5
+            ],
+            [
+              5,
+              6
+            ]
+          ],
+          "exitSide": "right"
+        }
+      ],
+      "lowerBound": 12,
+      "upperBound": 13,
+      "totalDrags": 31,
+      "starTargets": {
+        "moveTarget": 31,
+        "timeTargetSeconds": 86
+      }
+    },
+    "203": {
+      "route": [
+        {
+          "blockId": "l203-continuation-l203-s40-o-11-1",
+          "path": [],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-o-1-2",
+          "path": [
+            [
+              2,
+              0
+            ]
+          ]
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-o-6-3",
+          "path": [
+            [
+              3,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-o-5-7",
+          "path": [],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-o-3-6",
+          "path": [
+            [
+              0,
+              3
+            ]
+          ]
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-o-4-4",
+          "path": [
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-o-3-6",
+          "path": [
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              1
+            ]
+          ]
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-c1-6-17",
+          "path": [
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-o-2-9",
+          "path": [
+            [
+              1,
+              4
+            ],
+            [
+              0,
+              4
+            ]
+          ]
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-o-7-10",
+          "path": [
+            [
+              2,
+              5
+            ],
+            [
+              1,
+              5
+            ]
+          ]
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-c1-7-18",
+          "path": [
+            [
+              4,
+              5
+            ],
+            [
+              3,
+              5
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-o-1-2",
+          "path": [
+            [
+              3,
+              0
+            ],
+            [
+              4,
+              0
+            ]
+          ]
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-c1-1-12",
+          "path": [
+            [
+              2,
+              0
+            ]
+          ]
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-c1-2-15",
+          "path": [
+            [
+              3,
+              1
+            ]
+          ]
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-o-7-10",
+          "path": [
+            [
+              2,
+              5
+            ],
+            [
+              2,
+              4
+            ],
+            [
+              3,
+              4
+            ]
+          ]
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-o-2-9",
+          "path": [
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              2,
+              5
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-o-7-10",
+          "path": [
+            [
+              2,
+              4
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              0,
+              4
+            ]
+          ]
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-c1-4-16",
+          "path": [
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              2,
+              4
+            ]
+          ]
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-c1-8-13",
+          "path": [
+            [
+              4,
+              2
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              5
+            ],
+            [
+              3,
+              5
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-o-8-8",
+          "path": [
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ]
+          ]
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-o-1-2",
+          "path": [
+            [
+              4,
+              1
+            ],
+            [
+              4,
+              2
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              5,
+              3
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-c1-2-15",
+          "path": [
+            [
+              4,
+              1
+            ],
+            [
+              4,
+              0
+            ]
+          ]
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-c1-3-14",
+          "path": [
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              3,
+              4
+            ]
+          ]
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-c1-1-12",
+          "path": [
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              4,
+              3
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-o-10-0",
+          "path": [
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              5,
+              3
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-c1-5-11",
+          "path": [
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-c1-6-17",
+          "path": [
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-o-7-10",
+          "path": [
+            [
+              0,
+              3
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              4,
+              3
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-c1-2-15",
+          "path": [
+            [
+              4,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-o-9-5",
+          "path": [
+            [
+              4,
+              1
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              3,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-c1-4-16",
+          "path": [
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              5,
+              1
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-o-3-6",
+          "path": [
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              5,
+              1
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-o-8-8",
+          "path": [
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              2
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l203-continuation-l203-s40-c1-3-14",
+          "path": [
+            [
+              3,
+              3
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              5,
+              1
+            ]
+          ],
+          "exitSide": "right"
+        }
+      ],
+      "lowerBound": 11,
+      "upperBound": 15,
+      "totalDrags": 34,
+      "starTargets": {
+        "moveTarget": 34,
+        "timeTargetSeconds": 86
+      }
+    },
+    "204": {
+      "route": [
+        {
+          "blockId": "l204-continuation-l204-lv28-b06-5",
+          "path": [],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b09-8",
+          "path": [
+            [
+              3,
+              5
+            ]
+          ]
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b02-1",
+          "path": [
+            [
+              2,
+              5
+            ]
+          ]
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b08-7",
+          "path": [
+            [
+              2,
+              6
+            ]
+          ]
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b03-2",
+          "path": [
+            [
+              1,
+              8
+            ]
+          ]
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b07-6",
+          "path": [
+            [
+              0,
+              6
+            ]
+          ]
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b01-0",
+          "path": [
+            [
+              0,
+              3
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b07-6",
+          "path": [
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              4
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b13-12",
+          "path": [
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              6
+            ]
+          ]
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b02-1",
+          "path": [
+            [
+              1,
+              5
+            ],
+            [
+              1,
+              6
+            ],
+            [
+              1,
+              7
+            ]
+          ]
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b09-8",
+          "path": [
+            [
+              2,
+              5
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              0,
+              5
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b10-9",
+          "path": [
+            [
+              1,
+              5
+            ],
+            [
+              2,
+              5
+            ],
+            [
+              3,
+              5
+            ]
+          ]
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b07-6",
+          "path": [
+            [
+              0,
+              3
+            ]
+          ]
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b04-3",
+          "path": [
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ]
+          ]
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b12-11",
+          "path": [
+            [
+              2,
+              2
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b14-13",
+          "path": [
+            [
+              3,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b11-10",
+          "path": [
+            [
+              4,
+              3
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              1,
+              3
+            ]
+          ]
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b14-13",
+          "path": [
+            [
+              3,
+              3
+            ],
+            [
+              3,
+              4
+            ]
+          ]
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b12-11",
+          "path": [
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              3
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b11-10",
+          "path": [
+            [
+              2,
+              3
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              4,
+              3
+            ]
+          ]
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b04-3",
+          "path": [
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b02-1",
+          "path": [
+            [
+              1,
+              6
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b07-6",
+          "path": [
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              5
+            ]
+          ]
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b14-13",
+          "path": [
+            [
+              2,
+              4
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              0,
+              4
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b14-13",
+          "path": [
+            [
+              1,
+              4
+            ],
+            [
+              2,
+              4
+            ],
+            [
+              3,
+              4
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l204-continuation-l204-bay8-red-15",
+          "path": [
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l204-continuation-l204-bay8-green-14",
+          "path": [],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b07-6",
+          "path": [
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              0,
+              1
+            ]
+          ]
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b13-12",
+          "path": [
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              4
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b03-2",
+          "path": [
+            [
+              0,
+              8
+            ],
+            [
+              0,
+              7
+            ],
+            [
+              0,
+              6
+            ],
+            [
+              0,
+              5
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b08-7",
+          "path": [
+            [
+              2,
+              7
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b10-9",
+          "path": [
+            [
+              2,
+              5
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              6
+            ],
+            [
+              0,
+              7
+            ],
+            [
+              0,
+              8
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b05-4",
+          "path": [],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b11-10",
+          "path": [
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              5
+            ],
+            [
+              4,
+              6
+            ],
+            [
+              4,
+              7
+            ],
+            [
+              4,
+              8
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b07-6",
+          "path": [
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              4
+            ],
+            [
+              0,
+              5
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              2,
+              5
+            ],
+            [
+              3,
+              5
+            ],
+            [
+              3,
+              6
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b13-12",
+          "path": [
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              2,
+              4
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              5,
+              3
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b13-12",
+          "path": [
+            [
+              5,
+              4
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              2,
+              4
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l204-continuation-l204-bay11-blue-16",
+          "path": [
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              2,
+              4
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              5,
+              4
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l204-continuation-l204-bay11-yellow-17",
+          "path": [
+            [
+              2,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              1,
+              6
+            ],
+            [
+              1,
+              7
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l204-continuation-l204-bay15-purple-18",
+          "path": [
+            [
+              4,
+              1
+            ],
+            [
+              4,
+              2
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              5
+            ],
+            [
+              4,
+              6
+            ],
+            [
+              4,
+              7
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l204-continuation-l204-lv28-b04-3",
+          "path": [
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              3,
+              5
+            ],
+            [
+              3,
+              6
+            ],
+            [
+              3,
+              7
+            ]
+          ],
+          "exitSide": "bottom"
+        }
+      ],
+      "lowerBound": 17,
+      "upperBound": 19,
+      "totalDrags": 41,
+      "starTargets": {
+        "moveTarget": 41,
+        "timeTargetSeconds": 129
+      }
+    },
+    "205": {
+      "route": [
+        {
+          "blockId": "l205-continuation-c205-r171-124-4",
+          "path": [],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-6",
+          "path": [],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-26",
+          "path": [
+            [
+              6,
+              0
+            ]
+          ]
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-10",
+          "path": [
+            [
+              5,
+              1
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-25",
+          "path": [
+            [
+              6,
+              1
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              4,
+              1
+            ]
+          ]
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-19",
+          "path": [
+            [
+              6,
+              2
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-7",
+          "path": [
+            [
+              6,
+              3
+            ],
+            [
+              6,
+              2
+            ],
+            [
+              6,
+              1
+            ],
+            [
+              5,
+              1
+            ]
+          ]
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-5",
+          "path": [
+            [
+              6,
+              4
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              6,
+              2
+            ],
+            [
+              6,
+              1
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-18",
+          "path": [
+            [
+              6,
+              3
+            ],
+            [
+              6,
+              4
+            ],
+            [
+              6,
+              5
+            ],
+            [
+              6,
+              6
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-7",
+          "path": [
+            [
+              6,
+              1
+            ],
+            [
+              6,
+              2
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              6,
+              4
+            ],
+            [
+              6,
+              5
+            ],
+            [
+              6,
+              6
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-25",
+          "path": [
+            [
+              5,
+              1
+            ],
+            [
+              6,
+              1
+            ],
+            [
+              6,
+              2
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              6,
+              4
+            ],
+            [
+              6,
+              5
+            ],
+            [
+              6,
+              6
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-9",
+          "path": [
+            [
+              4,
+              1
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              6,
+              1
+            ],
+            [
+              6,
+              2
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              6,
+              4
+            ],
+            [
+              6,
+              5
+            ],
+            [
+              6,
+              6
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-15",
+          "path": [
+            [
+              4,
+              1
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              6,
+              1
+            ],
+            [
+              6,
+              2
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              6,
+              4
+            ],
+            [
+              6,
+              5
+            ],
+            [
+              6,
+              6
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-21",
+          "path": [
+            [
+              5,
+              4
+            ],
+            [
+              5,
+              3
+            ]
+          ]
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-16",
+          "path": [
+            [
+              4,
+              5
+            ],
+            [
+              4,
+              6
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-17",
+          "path": [
+            [
+              3,
+              5
+            ],
+            [
+              4,
+              5
+            ],
+            [
+              5,
+              5
+            ]
+          ]
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-20",
+          "path": [
+            [
+              2,
+              4
+            ],
+            [
+              2,
+              5
+            ],
+            [
+              3,
+              5
+            ],
+            [
+              4,
+              5
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-23",
+          "path": [
+            [
+              2,
+              4
+            ]
+          ]
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-17",
+          "path": [
+            [
+              4,
+              5
+            ],
+            [
+              3,
+              5
+            ],
+            [
+              2,
+              5
+            ]
+          ]
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-1",
+          "path": [
+            [
+              3,
+              3
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              5
+            ],
+            [
+              5,
+              5
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-12",
+          "path": [
+            [
+              3,
+              1
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              3,
+              5
+            ],
+            [
+              4,
+              5
+            ],
+            [
+              5,
+              5
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-14",
+          "path": [],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-26",
+          "path": [],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-22",
+          "path": [
+            [
+              5,
+              1
+            ],
+            [
+              5,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-21",
+          "path": [
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              5,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-17",
+          "path": [
+            [
+              3,
+              5
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              5,
+              1
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-2",
+          "path": [
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              4,
+              0
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-2",
+          "path": [
+            [
+              3,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-13",
+          "path": [
+            [
+              2,
+              3
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-3",
+          "path": [
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              4,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-11",
+          "path": [
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              4,
+              2
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-3",
+          "path": [
+            [
+              3,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              1,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-8",
+          "path": [
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              4,
+              2
+            ],
+            [
+              5,
+              2
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-23",
+          "path": [
+            [
+              1,
+              4
+            ],
+            [
+              0,
+              4
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-24",
+          "path": [
+            [
+              1,
+              5
+            ],
+            [
+              2,
+              5
+            ],
+            [
+              3,
+              5
+            ],
+            [
+              4,
+              5
+            ],
+            [
+              5,
+              5
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l205-continuation-c205-r171-124-24",
+          "path": [
+            [
+              5,
+              4
+            ],
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              5,
+              0
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              1,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        }
+      ],
+      "lowerBound": 5,
+      "upperBound": 7,
+      "totalDrags": 36,
+      "starTargets": {
+        "moveTarget": 36,
+        "timeTargetSeconds": 86
+      }
+    },
+    "206": {
+      "route": [
+        {
+          "blockId": "l206-continuation-l206-q21-11-11",
+          "path": [],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-4-4",
+          "path": [
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              6
+            ]
+          ]
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-5-5",
+          "path": [
+            [
+              0,
+              4
+            ]
+          ]
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-9-9",
+          "path": [
+            [
+              3,
+              4
+            ]
+          ]
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-13-13",
+          "path": [
+            [
+              0,
+              8
+            ]
+          ]
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-12-12",
+          "path": [
+            [
+              3,
+              7
+            ]
+          ]
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-10-10",
+          "path": [
+            [
+              5,
+              6
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-2-2",
+          "path": [
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              4
+            ],
+            [
+              5,
+              5
+            ],
+            [
+              5,
+              6
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-6-6",
+          "path": [
+            [
+              5,
+              4
+            ],
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-12-12",
+          "path": [
+            [
+              4,
+              7
+            ],
+            [
+              4,
+              6
+            ]
+          ]
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-13-13",
+          "path": [
+            [
+              1,
+              8
+            ],
+            [
+              2,
+              8
+            ],
+            [
+              3,
+              8
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-8-8",
+          "path": [
+            [
+              2,
+              6
+            ]
+          ]
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-9-9",
+          "path": [
+            [
+              3,
+              5
+            ],
+            [
+              3,
+              6
+            ]
+          ]
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-5-5",
+          "path": [
+            [
+              1,
+              4
+            ],
+            [
+              2,
+              4
+            ],
+            [
+              2,
+              5
+            ],
+            [
+              3,
+              5
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-3-3",
+          "path": [
+            [
+              0,
+              4
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              2,
+              4
+            ]
+          ]
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-0-0",
+          "path": [
+            [
+              0,
+              3
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-hidden-0-14",
+          "path": [
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ]
+          ]
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-7-7",
+          "path": [
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-8-8",
+          "path": [
+            [
+              2,
+              5
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-9-9",
+          "path": [
+            [
+              2,
+              6
+            ],
+            [
+              2,
+              5
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              1,
+              4
+            ]
+          ]
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-12-12",
+          "path": [
+            [
+              4,
+              7
+            ],
+            [
+              3,
+              7
+            ],
+            [
+              2,
+              7
+            ],
+            [
+              1,
+              7
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-9-9",
+          "path": [
+            [
+              1,
+              5
+            ],
+            [
+              2,
+              5
+            ],
+            [
+              2,
+              6
+            ],
+            [
+              3,
+              6
+            ],
+            [
+              4,
+              6
+            ],
+            [
+              5,
+              6
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-4-4",
+          "path": [
+            [
+              1,
+              6
+            ],
+            [
+              2,
+              6
+            ],
+            [
+              3,
+              6
+            ],
+            [
+              3,
+              7
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-3-3",
+          "path": [
+            [
+              1,
+              4
+            ],
+            [
+              0,
+              4
+            ],
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              6
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-hidden-0-14",
+          "path": [
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              1,
+              6
+            ],
+            [
+              1,
+              7
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-hidden-1-15",
+          "path": [
+            [
+              2,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              1,
+              6
+            ],
+            [
+              2,
+              6
+            ],
+            [
+              3,
+              6
+            ],
+            [
+              3,
+              7
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-1-1",
+          "path": [
+            [
+              3,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              1,
+              6
+            ],
+            [
+              2,
+              6
+            ],
+            [
+              3,
+              6
+            ],
+            [
+              4,
+              6
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-1-1",
+          "path": [
+            [
+              4,
+              7
+            ],
+            [
+              3,
+              7
+            ],
+            [
+              2,
+              7
+            ],
+            [
+              1,
+              7
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-5-5",
+          "path": [
+            [
+              3,
+              6
+            ],
+            [
+              2,
+              6
+            ],
+            [
+              1,
+              6
+            ],
+            [
+              0,
+              6
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-6-6",
+          "path": [
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              4
+            ],
+            [
+              5,
+              5
+            ],
+            [
+              5,
+              6
+            ],
+            [
+              4,
+              6
+            ],
+            [
+              3,
+              6
+            ],
+            [
+              2,
+              6
+            ],
+            [
+              1,
+              6
+            ],
+            [
+              0,
+              6
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l206-continuation-l206-q21-7-7",
+          "path": [
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              5,
+              0
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              4
+            ],
+            [
+              5,
+              5
+            ],
+            [
+              5,
+              6
+            ]
+          ],
+          "exitSide": "right"
+        }
+      ],
+      "lowerBound": 12,
+      "upperBound": 13,
+      "totalDrags": 31,
+      "starTargets": {
+        "moveTarget": 31,
+        "timeTargetSeconds": 86
+      }
+    },
+    "207": {
+      "route": [
+        {
+          "blockId": "l207-continuation-l204-lv28-b06-5",
+          "path": [],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b09-8",
+          "path": [
+            [
+              3,
+              5
+            ]
+          ]
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b02-1",
+          "path": [
+            [
+              2,
+              5
+            ]
+          ]
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b08-7",
+          "path": [
+            [
+              2,
+              6
+            ]
+          ]
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b03-2",
+          "path": [
+            [
+              1,
+              8
+            ]
+          ]
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b07-6",
+          "path": [
+            [
+              0,
+              6
+            ]
+          ]
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b01-0",
+          "path": [
+            [
+              0,
+              3
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b07-6",
+          "path": [
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              4
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b13-12",
+          "path": [
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              6
+            ]
+          ]
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b02-1",
+          "path": [
+            [
+              1,
+              5
+            ],
+            [
+              1,
+              6
+            ],
+            [
+              1,
+              7
+            ]
+          ]
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b09-8",
+          "path": [
+            [
+              2,
+              5
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              0,
+              5
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b10-9",
+          "path": [
+            [
+              1,
+              5
+            ],
+            [
+              2,
+              5
+            ],
+            [
+              3,
+              5
+            ]
+          ]
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b07-6",
+          "path": [
+            [
+              0,
+              3
+            ]
+          ]
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b04-3",
+          "path": [
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ]
+          ]
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b12-11",
+          "path": [
+            [
+              2,
+              2
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b14-13",
+          "path": [
+            [
+              3,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b11-10",
+          "path": [
+            [
+              4,
+              3
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              1,
+              3
+            ]
+          ]
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b14-13",
+          "path": [
+            [
+              3,
+              3
+            ],
+            [
+              3,
+              4
+            ]
+          ]
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b12-11",
+          "path": [
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              3
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b11-10",
+          "path": [
+            [
+              2,
+              3
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              4,
+              3
+            ]
+          ]
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b04-3",
+          "path": [
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b02-1",
+          "path": [
+            [
+              1,
+              6
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b07-6",
+          "path": [
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              5
+            ]
+          ]
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b14-13",
+          "path": [
+            [
+              2,
+              4
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              0,
+              4
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b14-13",
+          "path": [
+            [
+              1,
+              4
+            ],
+            [
+              2,
+              4
+            ],
+            [
+              3,
+              4
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l207-continuation-l204-bay8-red-15",
+          "path": [
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l207-continuation-l204-bay8-green-14",
+          "path": [],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b07-6",
+          "path": [
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              0,
+              1
+            ]
+          ]
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b13-12",
+          "path": [
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              4
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b03-2",
+          "path": [
+            [
+              0,
+              8
+            ],
+            [
+              0,
+              7
+            ],
+            [
+              0,
+              6
+            ],
+            [
+              0,
+              5
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b08-7",
+          "path": [
+            [
+              2,
+              7
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b10-9",
+          "path": [
+            [
+              2,
+              5
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              6
+            ],
+            [
+              0,
+              7
+            ],
+            [
+              0,
+              8
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b05-4",
+          "path": [],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b11-10",
+          "path": [
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              5
+            ],
+            [
+              4,
+              6
+            ],
+            [
+              4,
+              7
+            ],
+            [
+              4,
+              8
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b07-6",
+          "path": [
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              4
+            ],
+            [
+              0,
+              5
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              2,
+              5
+            ],
+            [
+              3,
+              5
+            ],
+            [
+              3,
+              6
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b13-12",
+          "path": [
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              2,
+              4
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              5,
+              3
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b13-12",
+          "path": [
+            [
+              5,
+              4
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              2,
+              4
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l207-continuation-l204-bay11-blue-16",
+          "path": [
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              2,
+              4
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              5,
+              4
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l207-continuation-l204-bay11-yellow-17",
+          "path": [
+            [
+              2,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              1,
+              6
+            ],
+            [
+              1,
+              7
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l207-continuation-l204-bay15-purple-18",
+          "path": [
+            [
+              4,
+              1
+            ],
+            [
+              4,
+              2
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              5
+            ],
+            [
+              4,
+              6
+            ],
+            [
+              4,
+              7
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l207-continuation-l204-lv28-b04-3",
+          "path": [
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              3,
+              5
+            ],
+            [
+              3,
+              6
+            ],
+            [
+              3,
+              7
+            ]
+          ],
+          "exitSide": "bottom"
+        }
+      ],
+      "lowerBound": 17,
+      "upperBound": 19,
+      "totalDrags": 41,
+      "starTargets": {
+        "moveTarget": 41,
+        "timeTargetSeconds": 129
+      }
+    },
+    "208": {
+      "route": [
+        {
+          "blockId": "l208-continuation-c201-r171-121-o14",
+          "path": [],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o8",
+          "path": [],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o6",
+          "path": [
+            [
+              3,
+              0
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o16",
+          "path": [
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              4,
+              0
+            ]
+          ]
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o15",
+          "path": [
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o2",
+          "path": [
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o23",
+          "path": [
+            [
+              3,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              0,
+              1
+            ]
+          ]
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o7",
+          "path": [
+            [
+              5,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              3,
+              0
+            ]
+          ]
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o0",
+          "path": [
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o5",
+          "path": [
+            [
+              1,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o13",
+          "path": [
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o4",
+          "path": [
+            [
+              4,
+              3
+            ],
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o1",
+          "path": [],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o5",
+          "path": [
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o13",
+          "path": [
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o7",
+          "path": [
+            [
+              3,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o3",
+          "path": [
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o9",
+          "path": [
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o12",
+          "path": [
+            [
+              5,
+              4
+            ],
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o10",
+          "path": [
+            [
+              4,
+              5
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o11",
+          "path": [
+            [
+              5,
+              5
+            ],
+            [
+              5,
+              4
+            ],
+            [
+              5,
+              3
+            ],
+            [
+              5,
+              2
+            ],
+            [
+              5,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-h0",
+          "path": [
+            [
+              3,
+              3
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o22",
+          "path": [
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              5
+            ]
+          ]
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o23",
+          "path": [
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o21",
+          "path": [
+            [
+              1,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o18",
+          "path": [
+            [
+              0,
+              3
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o17",
+          "path": [
+            [
+              0,
+              4
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o20",
+          "path": [
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              4
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o19",
+          "path": [
+            [
+              4,
+              2
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o22",
+          "path": [
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              2
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-h2",
+          "path": [
+            [
+              3,
+              6
+            ],
+            [
+              4,
+              6
+            ],
+            [
+              4,
+              5
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              2
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o16",
+          "path": [],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o16",
+          "path": [
+            [
+              4,
+              1
+            ],
+            [
+              4,
+              2
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              4
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o17",
+          "path": [
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              4,
+              2
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-o17",
+          "path": [
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              5
+            ],
+            [
+              4,
+              6
+            ],
+            [
+              3,
+              6
+            ],
+            [
+              2,
+              6
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-h1",
+          "path": [
+            [
+              1,
+              4
+            ],
+            [
+              0,
+              4
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l208-continuation-c201-r171-121-h1",
+          "path": [
+            [
+              1,
+              4
+            ],
+            [
+              2,
+              4
+            ],
+            [
+              2,
+              5
+            ]
+          ],
+          "exitSide": "bottom"
+        }
+      ],
+      "lowerBound": 5,
+      "upperBound": 7,
+      "totalDrags": 37,
+      "starTargets": {
+        "moveTarget": 37,
+        "timeTargetSeconds": 86
+      }
+    },
+    "209": {
+      "route": [
+        {
+          "blockId": "l209-continuation-l203-s40-o-11-1",
+          "path": [],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-o-1-2",
+          "path": [
+            [
+              2,
+              0
+            ]
+          ]
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-o-6-3",
+          "path": [
+            [
+              3,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-o-5-7",
+          "path": [],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-o-3-6",
+          "path": [
+            [
+              0,
+              3
+            ]
+          ]
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-o-4-4",
+          "path": [
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-o-3-6",
+          "path": [
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              1
+            ]
+          ]
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-c1-6-17",
+          "path": [
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-o-2-9",
+          "path": [
+            [
+              1,
+              4
+            ],
+            [
+              0,
+              4
+            ]
+          ]
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-o-7-10",
+          "path": [
+            [
+              2,
+              5
+            ],
+            [
+              1,
+              5
+            ]
+          ]
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-c1-7-18",
+          "path": [
+            [
+              4,
+              5
+            ],
+            [
+              3,
+              5
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-o-1-2",
+          "path": [
+            [
+              3,
+              0
+            ],
+            [
+              4,
+              0
+            ]
+          ]
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-c1-1-12",
+          "path": [
+            [
+              2,
+              0
+            ]
+          ]
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-c1-2-15",
+          "path": [
+            [
+              3,
+              1
+            ]
+          ]
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-o-7-10",
+          "path": [
+            [
+              2,
+              5
+            ],
+            [
+              2,
+              4
+            ],
+            [
+              3,
+              4
+            ]
+          ]
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-o-2-9",
+          "path": [
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              2,
+              5
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-o-7-10",
+          "path": [
+            [
+              2,
+              4
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              0,
+              4
+            ]
+          ]
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-c1-4-16",
+          "path": [
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              2,
+              4
+            ]
+          ]
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-c1-8-13",
+          "path": [
+            [
+              4,
+              2
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              5
+            ],
+            [
+              3,
+              5
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-o-8-8",
+          "path": [
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ]
+          ]
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-o-1-2",
+          "path": [
+            [
+              4,
+              1
+            ],
+            [
+              4,
+              2
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              5,
+              3
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-c1-2-15",
+          "path": [
+            [
+              4,
+              1
+            ],
+            [
+              4,
+              0
+            ]
+          ]
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-c1-3-14",
+          "path": [
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              3,
+              4
+            ]
+          ]
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-c1-1-12",
+          "path": [
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              4,
+              3
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-o-10-0",
+          "path": [
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              5,
+              3
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-c1-5-11",
+          "path": [
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-c1-6-17",
+          "path": [
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-o-7-10",
+          "path": [
+            [
+              0,
+              3
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              4,
+              3
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-c1-2-15",
+          "path": [
+            [
+              4,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-o-9-5",
+          "path": [
+            [
+              4,
+              1
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              3,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-c1-4-16",
+          "path": [
+            [
+              2,
+              3
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              5,
+              1
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-o-3-6",
+          "path": [
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              5,
+              1
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-o-8-8",
+          "path": [
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              2
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l209-continuation-l203-s40-c1-3-14",
+          "path": [
+            [
+              3,
+              3
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              5,
+              1
+            ]
+          ],
+          "exitSide": "right"
+        }
+      ],
+      "lowerBound": 11,
+      "upperBound": 15,
+      "totalDrags": 34,
+      "starTargets": {
+        "moveTarget": 34,
+        "timeTargetSeconds": 108
+      }
+    },
+    "210": {
+      "route": [
+        {
+          "blockId": "l210-continuation-l210-r108-198-b5-17",
+          "path": [],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b9-14",
+          "path": [
+            [
+              0,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b25-15",
+          "path": [
+            [
+              0,
+              1
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b12-22",
+          "path": [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b9-14",
+          "path": [
+            [
+              0,
+              1
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b10-20",
+          "path": [
+            [
+              0,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b27-24",
+          "path": [
+            [
+              3,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b18-12",
+          "path": [
+            [
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b22-16",
+          "path": [
+            [
+              3,
+              1
+            ],
+            [
+              3,
+              0
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b27-24",
+          "path": [
+            [
+              3,
+              1
+            ],
+            [
+              2,
+              1
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b10-20",
+          "path": [
+            [
+              1,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b9-14",
+          "path": [
+            [
+              0,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b22-16",
+          "path": [
+            [
+              3,
+              1
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b18-12",
+          "path": [
+            [
+              1,
+              0
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b12-22",
+          "path": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b27-24",
+          "path": [
+            [
+              1,
+              1
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b22-16",
+          "path": [
+            [
+              2,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              0,
+              1
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b10-20",
+          "path": [
+            [
+              1,
+              1
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b9-14",
+          "path": [
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b23-11",
+          "path": [
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b9-14",
+          "path": [
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b0-19",
+          "path": [
+            [
+              3,
+              2
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b22-16",
+          "path": [
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              3,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b12-22",
+          "path": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              2,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b9-14",
+          "path": [
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b11-23",
+          "path": [
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b22-16",
+          "path": [
+            [
+              3,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b12-22",
+          "path": [
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b10-20",
+          "path": [
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              3
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b18-12",
+          "path": [
+            [
+              1,
+              1
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b24-13",
+          "path": [
+            [
+              3,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b14-6",
+          "path": [
+            [
+              5,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b14-6",
+          "path": [
+            [
+              5,
+              1
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b18-12",
+          "path": [
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b10-20",
+          "path": [
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              0
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b16-18",
+          "path": [
+            [
+              3,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              1,
+              1
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b14-6",
+          "path": [
+            [
+              4,
+              1
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              2,
+              1
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b18-12",
+          "path": [
+            [
+              3,
+              1
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b10-20",
+          "path": [
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b16-18",
+          "path": [
+            [
+              1,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b12-22",
+          "path": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ]
+          ]
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b6-21",
+          "path": [
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b14-6",
+          "path": [
+            [
+              1,
+              1
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b18-12",
+          "path": [
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              0,
+              3
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b12-22",
+          "path": [
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              5,
+              0
+            ],
+            [
+              6,
+              0
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b28-25",
+          "path": [
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b26-26",
+          "path": [
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b19-27",
+          "path": [
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              4
+            ],
+            [
+              0,
+              3
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b17-7",
+          "path": [
+            [
+              0,
+              6
+            ],
+            [
+              0,
+              5
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b17-7",
+          "path": [
+            [
+              0,
+              6
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b15-29",
+          "path": [
+            [
+              1,
+              7
+            ],
+            [
+              1,
+              6
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b4-2",
+          "path": [
+            [
+              0,
+              7
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b4-2",
+          "path": [
+            [
+              0,
+              6
+            ],
+            [
+              0,
+              5
+            ],
+            [
+              0,
+              4
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b13-5",
+          "path": [
+            [
+              3,
+              4
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b13-5",
+          "path": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              3,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b3-1",
+          "path": [
+            [
+              3,
+              5
+            ],
+            [
+              2,
+              5
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              0,
+              5
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b2-28",
+          "path": [
+            [
+              4,
+              5
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              2
+            ],
+            [
+              4,
+              1
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b21-9",
+          "path": [
+            [
+              0,
+              9
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b21-9",
+          "path": [
+            [
+              0,
+              8
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b3-1",
+          "path": [
+            [
+              0,
+              6
+            ],
+            [
+              0,
+              7
+            ],
+            [
+              0,
+              8
+            ],
+            [
+              0,
+              9
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b7-3",
+          "path": [
+            [
+              6,
+              0
+            ],
+            [
+              5,
+              0
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              2,
+              0
+            ]
+          ],
+          "exitSide": "top"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b7-3",
+          "path": [
+            [
+              3,
+              0
+            ],
+            [
+              4,
+              0
+            ],
+            [
+              5,
+              0
+            ],
+            [
+              6,
+              0
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b8-4",
+          "path": [
+            [
+              3,
+              7
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b8-4",
+          "path": [
+            [
+              2,
+              7
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b20-8",
+          "path": [
+            [
+              6,
+              5
+            ],
+            [
+              6,
+              4
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              6,
+              2
+            ],
+            [
+              6,
+              1
+            ],
+            [
+              6,
+              0
+            ]
+          ],
+          "exitSide": "right"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b20-8",
+          "path": [
+            [
+              6,
+              1
+            ],
+            [
+              6,
+              2
+            ],
+            [
+              6,
+              3
+            ],
+            [
+              5,
+              3
+            ],
+            [
+              4,
+              3
+            ],
+            [
+              4,
+              4
+            ],
+            [
+              4,
+              5
+            ],
+            [
+              4,
+              6
+            ],
+            [
+              3,
+              6
+            ],
+            [
+              2,
+              6
+            ],
+            [
+              1,
+              6
+            ],
+            [
+              0,
+              6
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b29-10",
+          "path": [
+            [
+              4,
+              6
+            ],
+            [
+              3,
+              6
+            ],
+            [
+              3,
+              7
+            ]
+          ],
+          "exitSide": "bottom"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b29-10",
+          "path": [
+            [
+              3,
+              6
+            ],
+            [
+              3,
+              5
+            ],
+            [
+              3,
+              4
+            ],
+            [
+              3,
+              3
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              3,
+              1
+            ],
+            [
+              3,
+              0
+            ],
+            [
+              2,
+              0
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b1-0",
+          "path": [
+            [
+              4,
+              8
+            ],
+            [
+              4,
+              7
+            ],
+            [
+              4,
+              6
+            ],
+            [
+              4,
+              5
+            ],
+            [
+              3,
+              5
+            ],
+            [
+              2,
+              5
+            ],
+            [
+              1,
+              5
+            ],
+            [
+              0,
+              5
+            ]
+          ],
+          "exitSide": "left"
+        },
+        {
+          "blockId": "l210-continuation-l210-r108-198-b1-0",
+          "path": [
+            [
+              1,
+              5
+            ],
+            [
+              2,
+              5
+            ],
+            [
+              3,
+              5
+            ],
+            [
+              3,
+              6
+            ],
+            [
+              3,
+              7
+            ],
+            [
+              3,
+              8
+            ],
+            [
+              3,
+              9
+            ]
+          ],
+          "exitSide": "bottom"
+        }
+      ],
+      "lowerBound": 21,
+      "upperBound": 29,
+      "totalDrags": 70,
+      "starTargets": {
+        "moveTarget": 70,
+        "timeTargetSeconds": 151
+      }
+    }
+  }
+}

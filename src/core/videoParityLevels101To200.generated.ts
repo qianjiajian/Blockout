@@ -109,7 +109,7 @@ const inflate = (input: Uint8Array): Uint8Array => {
         if (value <= 15) lengths.push(value);
         else {
           const repeat = value === 16 ? read(2) + 3 : value === 17 ? read(3) + 3 : read(7) + 11;
-          const repeated = value === 16 ? lengths.at(-1)! : 0;
+          const repeated = value === 16 ? lengths[lengths.length - 1]! : 0;
           for (let index = 0; index < repeat; index += 1) lengths.push(repeated);
         }
       }

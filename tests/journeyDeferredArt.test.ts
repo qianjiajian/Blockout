@@ -56,6 +56,113 @@ function createStore(overrides: Partial<ConstructorParameters<typeof JourneyDefe
 }
 
 describe("JourneyDeferredArt", () => {
+  it("leaves the optional destination unloaded until requested and supports callers without one", async () => {
+    const { store, loader } = createStore();
+    await store.requestDestination();
+    await store.requestDestination(true);
+    expect(store.destination).toBeUndefined();
+    expect(store.destinationLoading).toBe(false);
+    expect(store.destinationError).toBeUndefined();
+    expect(loader.loadImage).not.toHaveBeenCalled();
+    store.dispose();
+    await store.requestDestination();
+    expect(loader.loadImage).not.toHaveBeenCalled();
+
+    const configured = createStore({ destinationPath: "destination" });
+    expect(configured.store.destination).toBeUndefined();
+    expect(configured.store.destinationLoading).toBe(false);
+    expect(configured.loader.loadImage).not.toHaveBeenCalled();
+    configured.store.dispose();
+  });
+
+  it("queues the destination behind active chapters under the shared six-image limit", async () => {
+    const { store, loader, onChange } = createStore({ destinationPath: "destination" });
+    const chapters = store.requestEpisodes([0, 1, 2, 3, 4, 5]);
+    const destination = store.requestDestination();
+    const duplicate = store.requestDestination();
+    const popup = store.requestPresentation();
+    expect(store.destinationLoading).toBe(true);
+    expect(store.destination).toBeUndefined();
+    expect(loader.loadImage).toHaveBeenCalledTimes(6);
+    expect(loader.pending.has("destination")).toBe(false);
+    loader.resolve("episode/0");
+    await flush();
+    expect(loader.loadImage).toHaveBeenCalledTimes(7);
+    expect(loader.pending.has("destination")).toBe(true);
+    const destinationImage = loader.resolve("destination");
+    await Promise.all([destination, duplicate]);
+    expect(store.destination).toBe(destinationImage);
+    expect(store.destinationLoading).toBe(false);
+    await loader.completeAll();
+    await Promise.all([chapters, popup]);
+    expect(loader.maximumActive).toBe(6);
+    expect(loader.loadImage).toHaveBeenCalledTimes(18);
+    expect(loader.loadImage.mock.calls.filter(([path]) => path === "destination")).toHaveLength(1);
+    expect(store.images).toHaveLength(18);
+    expect(onChange).toHaveBeenCalledTimes(18);
+  });
+
+  it("requires an explicit destination retry and preserves loaded chapters after its failure", async () => {
+    const { store, loader, onChange } = createStore({ destinationPath: "destination" });
+    const chapter = store.requestEpisodes([0]);
+    const retained = loader.resolve("episode/0");
+    await chapter;
+    const request = store.requestDestination();
+    const failed = expect(request).rejects.toThrow("destination unavailable");
+    loader.pending.get("destination")!.reject(new Error("destination unavailable"));
+    await failed;
+    expect(store.destination).toBeUndefined();
+    expect(store.destinationError).toBe("destination unavailable");
+    expect(store.destinationLoading).toBe(false);
+    expect(store.episode(0)).toBe(retained);
+    await expect(store.requestDestination()).rejects.toThrow("destination unavailable");
+    expect(loader.loadImage).toHaveBeenCalledTimes(2);
+    const retry = store.requestDestination(true);
+    expect(store.destinationError).toBeUndefined();
+    expect(store.destinationLoading).toBe(true);
+    const destination = loader.resolve("destination");
+    await retry;
+    expect(store.destination).toBe(destination);
+    expect(store.episode(0)).toBe(retained);
+    expect(loader.loadImage).toHaveBeenCalledTimes(3);
+    expect(onChange).toHaveBeenCalledTimes(3);
+  });
+
+  it("releases a destination that arrives after disposal without notifying or retaining it", async () => {
+    const { store, loader, releaseImage, onChange } = createStore({ destinationPath: "destination" });
+    const requested = store.requestDestination();
+    const cancelled = expect(requested).rejects.toThrow("disposed");
+    store.dispose();
+    await cancelled;
+    expect(store.destinationLoading).toBe(false);
+    expect(store.destinationError).toBeUndefined();
+    const late = loader.resolve("destination");
+    await flush();
+    expect(releaseImage).toHaveBeenCalledExactlyOnceWith(late);
+    expect(onChange).not.toHaveBeenCalled();
+    expect(store.destination).toBeUndefined();
+    expect(store.images).toEqual([]);
+    store.dispose();
+    expect(releaseImage).toHaveBeenCalledTimes(1);
+    await expect(store.requestDestination(true)).rejects.toThrow("disposed");
+  });
+
+  it("deduplicates a destination shared with a chapter and popup across loading and disposal", async () => {
+    const { store, loader, releaseImage } = createStore({
+      episodePaths: [presentationPaths.panel], destinationPath: presentationPaths.panel,
+    });
+    const requested = Promise.all([
+      store.requestEpisodes([0]), store.requestDestination(), store.requestPresentation(),
+    ]);
+    await loader.completeAll();
+    await requested;
+    expect(loader.loadImage).toHaveBeenCalledTimes(11);
+    expect(store.destination).toBe(store.episode(0));
+    expect(store.destination).toBe(store.presentation?.panel);
+    store.dispose();
+    expect(releaseImage).toHaveBeenCalledTimes(11);
+  });
+
   it("takes ownership of initial visible chapters without loading other art", async () => {
     const first = image("first-visible");
     const { store, loader, releaseImage, onChange } = createStore({ initialEpisodes: [{ index: 4, image: first }] });

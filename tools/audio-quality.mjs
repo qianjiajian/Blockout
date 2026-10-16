@@ -3,9 +3,11 @@ import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
 import path from "node:path";
 
-export const ORIGINAL_SFX_KINDS = Object.freeze([
+// Retain the historical masters; replaced effects use supplied MP3s at runtime.
+export const ORIGINAL_SFX_MASTER_KINDS = Object.freeze([
   "blocked", "ice", "booster", "time", "rocket", "pulse", "mechanic", "reward", "unlock", "win", "fail",
 ]);
+export const ORIGINAL_SFX_KINDS = Object.freeze(ORIGINAL_SFX_MASTER_KINDS.filter((kind) => !["time", "rocket", "pulse", "fail", "win"].includes(kind)));
 
 // Regression bounds from the isolated, unchanged-master 96 kbps stereo trial
 // (.codex-temp/size-audio-options-20260923), not perceptual/phone certification.
@@ -176,12 +178,13 @@ export async function verifyOriginalSfx(root, ffmpeg) {
   for (const record of [manifest, sourceManifest]) {
     assert(record.composition === "Original sound design created for this project", "SFX originality metadata is missing");
     assert(record.sampleRate === 44_100 && record.channels === 2, "SFX manifest must specify stereo 44.1 kHz");
-    assert(JSON.stringify(Object.keys(record.sounds)) === JSON.stringify(ORIGINAL_SFX_KINDS), "Original SFX manifest does not match runtime kinds");
+    const expectedKinds = record === sourceManifest ? ORIGINAL_SFX_MASTER_KINDS : ORIGINAL_SFX_KINDS;
+    assert(JSON.stringify(Object.keys(record.sounds)) === JSON.stringify(expectedKinds), "Original SFX manifest does not match its source/runtime kinds");
   }
   const encoding = manifest.encoding;
   assert(encoding?.codec === "mp3" && encoding.encoder === "libmp3lame" && encoding.bitrateKbps === 96
     && encoding.sampleRate === 44_100 && encoding.channels === 2 && encoding.writeXing === true, "SFX encoding contract changed");
-  const expectedFiles = ["manifest.json", ...ORIGINAL_SFX_KINDS.map((kind) => `${kind}.mp3`), "button.mp3", "exit.mp3", "putdown.mp3", "thaw.mp3", "shell.mp3", "shutter.mp3"].sort();
+  const expectedFiles = ["manifest.json", ...ORIGINAL_SFX_KINDS.map((kind) => `${kind}.mp3`), "button.mp3", "exit.mp3", "putdown.mp3", "thaw.mp3", "shell.mp3", "shutter.mp3", "timeover.mp3", "time.mp3", "rocket.mp3", "pulse.mp3", "fail.mp3", "win.mp3", "gold.mp3", "itemArrival.mp3"].sort();
   const actualFiles = (await readdir(sfxRoot)).sort();
   assert(JSON.stringify(actualFiles) === JSON.stringify(expectedFiles),
     `Runtime SFX inventory differs (old WAV/unregistered/missing files): ${actualFiles.filter((name) => !expectedFiles.includes(name)).join(", ") || "missing expected file"}`);

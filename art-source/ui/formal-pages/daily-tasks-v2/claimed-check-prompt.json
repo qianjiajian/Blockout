@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-07",
+  "tool": "image_gen.imagegen",
+  "prompt": "Use case: stylized-concept. Asset type: one independent mobile puzzle game daily-task reward claimed status icon. Generate a SINGLE GREEN CHECK MARK / TICK shape, standing alone on a genuinely transparent background. Match the supplied game's green button color and glossy casual-game finish, but ONLY create the tick itself, no button, no square, no circle, no shield, no badge. Thick clean readable check silhouette with rounded bevel edges, saturated emerald green body, bright lime highlights along the upper edge, slightly darker green lower edge, restrained soft shadow. Friendly polished toy-like 2.5D UI rendering, front view, readable at 72 pixels. Short down-right stroke joins long up-right stroke; conventional check mark orientation. Center the complete tick with small even transparent margins. No words, no numbers, no particles, no stars, no additional symbols, no background or checkerboard. The existing button image is style/color reference only, NOT an edit target.",
+  "source": "C:\\Users\\Administrator\\.codex\\generated_images\\01a0d940-cac2-7f91-8b1a-a758bfea2c2a\\exec-cdcce73a-cf65-4d6d-9500-e9fbba2b0abc.png",
+  "styleReference": "art-source/ui/formal-pages/daily-tasks-v2/button-green.png",
+  "runtime": "public/assets/art/ui/formal-pages/daily-tasks-v2/claimed-check.png",
+  "preparation": {
+    "crop": {
+      "left": 231,
+      "top": 111,
+      "width": 1104,
+      "height": 828
+    },
+    "width": 160,
+    "height": 120,
+    "operation": "alpha-bound trim and uniform resize, preserved generated alpha"
+  }
+}

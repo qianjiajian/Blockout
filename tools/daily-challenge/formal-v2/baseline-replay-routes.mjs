@@ -1,0 +1,22 @@
+import path from 'node:path';import {OUT,read,write,sha,saveSummary} from './baseline-common.mjs';
+const rt=await import(path.resolve(`${OUT}/baseline-runtime.mjs`).replaceAll('\\','/').replace(/^([A-Z]):/i,'file:///$1:'));
+const manifest=read(`${OUT}/manifest.json`);const data=read(`${OUT}/source-route-candidates.json`);const bySource=new Map();const trials=[];
+for(const candidate of data.candidates){let list=bySource.get(candidate.sourceLevelId);if(!list)bySource.set(candidate.sourceLevelId,list=[]);if(!list.some(x=>x.routeSha256===sha(candidate.drags)))list.push({...candidate,routeSha256:sha(candidate.drags)});}
+const validSourceRoutes=new Map();
+for(const [id,candidates]of bySource){const source=rt.LEVELS.find(l=>l.id===id);const successful=[];
+ for(const candidate of candidates){const replay=rt.replayRevisedRoute(source,candidate.drags);trials.push({sourceLevelId:id,file:candidate.file,key:candidate.key,routeSha256:candidate.routeSha256,replay:{...replay,finalStateKey:undefined}});if(replay.valid&&replay.complete)successful.push({...candidate,replay});}
+ if(successful.length){successful.sort((a,b)=>a.replay.nonClearingDrags-b.replay.nonClearingDrags);validSourceRoutes.set(id,successful.slice(0,3));}
+}
+write(`${OUT}/source-route-replay-audit.json`,{uniqueRoutes:trials.length,successfulSources:[...validSourceRoutes.keys()],trials});
+const point=(x,y,w,h,t)=>t==='mirror-x'?[w-1-x,y]:t==='mirror-y'?[x,h-1-y]:t==='rotate-180'?[w-1-x,h-1-y]:t==='rotate-90'?[h-1-y,x]:t==='rotate-270'?[y,w-1-x]:t==='transpose'?[y,x]:[x,y];
+const maps={identity:{top:'top',right:'right',bottom:'bottom',left:'left'},'mirror-x':{top:'top',right:'left',bottom:'bottom',left:'right'},'mirror-y':{top:'bottom',right:'right',bottom:'top',left:'left'},'rotate-180':{top:'bottom',right:'left',bottom:'top',left:'right'},'rotate-90':{top:'right',right:'bottom',bottom:'left',left:'top'},'rotate-270':{top:'left',right:'top',bottom:'right',left:'bottom'},transpose:{top:'left',right:'bottom',bottom:'right',left:'top'}};
+const rows=manifest.rows;let done=0;
+for(const row of rows){const packet=read(row.levelFile);const source=rt.LEVELS.find(l=>l.id===row.sourceLevelId);const candidates=validSourceRoutes.get(source.id)??[];const attempted=[];
+ for(const candidate of candidates){const t=row.identity.transform;const drags=candidate.drags.map(d=>{const block=source.blocks.find(b=>b.id===d.blockId);return {blockId:`${row.formalId}-${d.blockId}`,path:d.path.map(([x,y])=>{const points=block.shape.map(([dx,dy])=>point(x+dx,y+dy,source.width,source.height,t));return [Math.min(...points.map(p=>p[0])),Math.min(...points.map(p=>p[1]))];}),...(d.exitSide?{exitSide:maps[t][d.exitSide]}:{})};});
+  const replay=rt.replayRevisedRoute(packet.level,drags);attempted.push({sourceRouteFile:candidate.file,sourceRouteKey:candidate.key,sourceRouteSha256:candidate.routeSha256,routeSha256:sha(drags),replay:{...replay,finalStateKey:undefined}});
+  if(replay.valid&&replay.complete){const floor=row.difficulty===1?16:row.difficulty===2?21:31;const upper=row.difficulty===1?20:row.difficulty===2?30:null;row.status=replay.nonClearingDrags<floor?'COUNTEREXAMPLE':'ROUTE_VERIFIED_PENDING_LOWER_BOUND';row.routeStatus='FRESH_COMPLETE';row.routeUpperBound=replay.nonClearingDrags;row.effectiveDrags=replay.effectiveDrags;row.routeWithinUpperBand=upper===null||replay.nonClearingDrags<=upper;row.lowerBoundStatus=replay.nonClearingDrags<floor?'DISPROVEN_BY_COMPLETE_ROUTE':'PENDING';row.routeArtifact=`${OUT}/routes/${row.formalId}.json`;write(row.routeArtifact,{formalId:row.formalId,levelSha256:row.levelSha256,sourceRouteFile:candidate.file,sourceRouteKey:candidate.key,sourceRouteSha256:candidate.routeSha256,drags,routeSha256:sha(drags),replay:{...replay,finalStateKey:undefined},freshModel:true,boosterUse:[],timeValidated:false,pointerValidated:false,minimumNotProven:true});done++;break;}
+ }
+ if(!candidates.length)row.routeStatus=packet.level.mechanismRules?'PENDING_NO_CURRENT_SOURCE_ROUTE':'PENDING_LEGACY_ROUTE_ADAPTER';else if(row.routeStatus!=='FRESH_COMPLETE')row.routeStatus='PENDING_TRANSFORMED_ROUTE_REJECTED';
+ packet.status=row.status;packet.routeStatus=row.routeStatus;packet.routeUpperBound=row.routeUpperBound;packet.lowerBoundStatus=row.lowerBoundStatus;packet.routeArtifact=row.routeArtifact;packet.routeAttempts=attempted;write(row.levelFile,packet);
+}
+console.log({sourceCount:validSourceRoutes.size,uniqueRoutes:trials.length,completedSlots:done,counts:saveSummary(rows)});

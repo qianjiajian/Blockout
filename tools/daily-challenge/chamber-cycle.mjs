@@ -1,0 +1,7 @@
+import {validateLevel} from './tmp-runtime.mjs'; import {searchRevisedLevel,replayRevisedRoute} from './tmp-runtime.mjs'; import {checkRevisedRepositionFloor} from './tmp-runtime.mjs';
+for(const variant of [0,1,2]){
+const lv={mechanismRules:'revised-2026-09-23-v1.4',id:999,name:'x',difficulty:'super',timeSeconds:300,reward:0,width:3,height:2,gates:[{id:'r0',side:'right',offset:0,size:1,color:'red'},{id:'l0',side:'left',offset:0,size:1,color:'blue'},{id:'r1',side:'right',offset:1,size:1,color:'green'},{id:'l1',side:'left',offset:1,size:1,color:'yellow'}],blocks:[{id:'a',x:0,y:0,shape:[[0,0]],color:'red'},{id:'b',x:1,y:0,shape:[[0,0]],color:'blue'},{id:'c',x:1,y:1,shape:[[0,0]],color:'green'},{id:'d',x:2,y:1,shape:[[0,0]],color:'yellow'}]};
+if(variant===1){lv.blocks[2].x=2;lv.blocks[3].x=1;} if(variant===2){lv.blocks[0].x=0;lv.blocks[1].x=2;lv.blocks[2].x=1;lv.blocks[3].x=0;}
+try{validateLevel(lv)}catch(e){console.log('invalid',variant,e.message);continue}
+const s=searchRevisedLevel(lv,{maxStates:200000,maxDragStates:200,maxTransitions:2000000,maxMilliseconds:3000});console.log('v',variant,s.status,s.termination,s.exploredStates,s.drags);if(s.witnessFound) {const r=replayRevisedRoute(lv,s.drags);console.log('replay',r)} const lo=checkRevisedRepositionFloor(lv,{floor:2,maxStates:200000,maxDragStates:1000,maxTransitions:2000000,maxMilliseconds:5000});console.log('lower',lo.status,lo.termination,lo.relaxedNonClearingDrags,lo.exploredStates)
+}

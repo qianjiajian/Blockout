@@ -14,6 +14,7 @@ export type JourneyPresentationPaths = JourneyPresentationResources<string>;
 interface JourneyDeferredArtOptions {
   episodePaths: readonly string[];
   presentationPaths: JourneyPresentationPaths;
+  destinationPath?: string;
   initialEpisodes?: readonly { index: number; image: HTMLImageElement }[];
   loadImage: (path: string) => Promise<HTMLImageElement>;
   releaseImage: (image: HTMLImageElement) => void;
@@ -33,12 +34,13 @@ interface ArtEntry {
 const MAX_CONCURRENT_IMAGES = 6;
 const disposedError = (): Error => new Error("Journey artwork has been disposed");
 
-/** Owns only the chapter and popup images transferred to or requested from it. */
+/** Owns only the chapter, popup and destination images transferred to or requested from it. */
 export class JourneyDeferredArt {
   private readonly entries = new Map<string, ArtEntry>();
   private readonly episodes: ArtEntry[];
   private readonly popup: JourneyPresentationResources<ArtEntry>;
   private readonly popupEntries: ArtEntry[];
+  private readonly destinationEntry?: ArtEntry;
   private readonly queue: ArtEntry[] = [];
   private readonly releasedImages = new Set<HTMLImageElement>();
   private activeLoads = 0;
@@ -54,6 +56,7 @@ export class JourneyDeferredArt {
       return resource;
     };
     this.episodes = options.episodePaths.map(entry);
+    this.destinationEntry = options.destinationPath === undefined ? undefined : entry(options.destinationPath);
     const paths = options.presentationPaths;
     this.popup = {
       panel: entry(paths.panel),
@@ -88,6 +91,18 @@ export class JourneyDeferredArt {
 
   episode(index: number): HTMLImageElement | undefined {
     return this.disposed ? undefined : this.episodes[index]?.image;
+  }
+
+  get destination(): HTMLImageElement | undefined {
+    return this.disposed ? undefined : this.destinationEntry?.image;
+  }
+
+  get destinationLoading(): boolean {
+    return !this.disposed && (this.destinationEntry?.state === "queued" || this.destinationEntry?.state === "loading");
+  }
+
+  get destinationError(): string | undefined {
+    return this.disposed || this.destinationEntry?.state !== "failed" ? undefined : this.destinationEntry.error?.message;
   }
 
   get presentation(): JourneyPresentationArt | undefined {
@@ -141,6 +156,10 @@ export class JourneyDeferredArt {
 
   requestPresentation(retry = false): Promise<void> {
     return this.request(this.popupEntries, retry);
+  }
+
+  requestDestination(retry = false): Promise<void> {
+    return this.destinationEntry ? this.request([this.destinationEntry], retry) : Promise.resolve();
   }
 
   dispose(): void {

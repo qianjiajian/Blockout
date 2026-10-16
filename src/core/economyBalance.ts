@@ -3,7 +3,7 @@ import { FIRST_CLEAR_COIN_REWARD } from "./completionRewards";
 import { JOURNEY_MILESTONE_REWARDS } from "./journeyProgress";
 import { SUPPLY_ITEMS, SUPPLY_ORDER, type SupplyKind } from "./supply";
 
-export const INITIAL_COINS = 1_000;
+export const INITIAL_COINS = 0;
 export const INITIAL_STOCK_PER_BOOSTER = 3;
 
 export interface EconomyChapterSummary {

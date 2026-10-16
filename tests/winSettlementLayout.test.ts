@@ -2,18 +2,16 @@ import { describe, expect, it } from "vitest";
 import { WIN_CRITERION_KINDS, WIN_SETTLEMENT_LAYOUT } from "../src/game/winSettlementLayout";
 
 describe("dynamic win settlement layout", () => {
-  it("shrinks only the reward coin stack by 20% around its existing centre", () => {
+  it("uses the replacement's native coin cutout above the dynamic reward pill", () => {
     const { coinPile, rewardPill } = WIN_SETTLEMENT_LAYOUT;
-    expect(coinPile.width).toBeCloseTo(218 * 0.8);
-    expect(coinPile.height).toBeCloseTo(182 * 0.8);
-    expect(coinPile.x + coinPile.width / 2).toBeCloseTo(266);
-    expect(coinPile.y + coinPile.height / 2).toBeCloseTo(841);
-    expect(rewardPill).toEqual({ x: 444, y: 806, width: 178, height: 69 });
+    expect(coinPile).toEqual({ x: 251, y: 792, width: 223, height: 143 });
+    expect(rewardPill).toEqual({ x: 277, y: 944, width: 166, height: 58 });
+    expect(coinPile.y + coinPile.height).toBeLessThan(rewardPill.y);
   });
 
   it("keeps the replaceable art placements and dynamic result rows separate", () => {
-    expect(WIN_SETTLEMENT_LAYOUT.panel).toEqual({ x: 25, y: 287, width: 671, height: 867 });
-    expect(WIN_SETTLEMENT_LAYOUT.continueButton).toEqual({ x: 199, y: 964, width: 322, height: 125 });
+    expect(WIN_SETTLEMENT_LAYOUT.panel).toEqual({ x: 63, y: 283, width: 594, height: 939 });
+    expect(WIN_SETTLEMENT_LAYOUT.continueButton).toEqual({ x: 199, y: 1036, width: 322, height: 125 });
     expect(WIN_SETTLEMENT_LAYOUT.stars).toHaveLength(3);
     expect(WIN_SETTLEMENT_LAYOUT.criteriaRows).toHaveLength(3);
     expect(WIN_CRITERION_KINDS).toEqual(["clear", "moves", "time"]);

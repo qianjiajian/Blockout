@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-07",
+  "purpose": "Achievement claimed state: replace reward amount and claimed button with the same green check used by Daily Tasks.",
+  "reusedFrom": "../daily-tasks-v2/claimed-check.png",
+  "generationPrompt": "../daily-tasks-v2/claimed-check-prompt.json",
+  "sha256": "a1ae0e90dbd342a90f3b0e9a7ce79b086e588a61e602d68e8e1dd1d2d0349cd1",
+  "width": 160,
+  "height": 120,
+  "drawing": "contain in an 80 by 80 box; no stretching"
+}

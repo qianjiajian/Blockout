@@ -99,7 +99,7 @@ describe("standalone collection catalogue", () => {
       expect(card.provenance).toBe("original");
       expect(card.visualTheme).toBe("gallery");
       expect(card.chapter).toBe(Math.floor((card.unlockLevel - 1) / 10) + 1);
-      expect(card.inspirationCost).toBeGreaterThanOrEqual(0);
+      expect(card.inspirationCost).toBe(50);
       expect(card.defaultTitleZh.length).toBeGreaterThan(2);
       expect(card.defaultArtistZh.length).toBeGreaterThan(1);
       expect(card.defaultEraZh.length).toBeGreaterThan(3);
@@ -112,8 +112,8 @@ describe("standalone collection catalogue", () => {
       MASTERPIECE_COLLECTION_CATALOG.filter((card) => card.rarity === rarity).length,
     ]));
     expect(rarityCounts).toEqual({ common: 16, rare: 12, epic: 8, legendary: 4 });
-    expect(MASTERPIECE_COLLECTION_CATALOG[0]?.inspirationCost).toBe(0);
-    expect(MASTERPIECE_COLLECTION_CATALOG.reduce((sum, card) => sum + card.inspirationCost, 0)).toBe(604);
+    expect(MASTERPIECE_COLLECTION_CATALOG[0]?.inspirationCost).toBe(50);
+    expect(MASTERPIECE_COLLECTION_CATALOG.reduce((sum, card) => sum + card.inspirationCost, 0)).toBe(2000);
   });
 
   it("keeps the new catalogues independent from the existing mechanic guide", () => {

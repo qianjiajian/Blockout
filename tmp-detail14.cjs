@@ -1,0 +1,1 @@
+const r=require('./deliverables/league-regeneration-20261004/formal/early-targeted-latest.json');const x=r.rows.find(a=>a.index===14&&a.attempt===68);console.log(Object.keys(x));console.log(x.level?.id,x.route?.length,x.replay,x.lowerProof,x.lower);console.log(JSON.stringify(x,null,2).slice(0,7000));

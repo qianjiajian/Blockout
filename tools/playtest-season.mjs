@@ -136,7 +136,7 @@ await solve(99);
 await page.waitForTimeout(1500);
 state = await debug();
 if (state.screen !== "win" || state.progression.highestLevel !== 100) throw new Error("Season E2E: level 99 did not unlock level 100");
-if (state.progression.bestStars["99"] !== 3 || state.settlement.coinReward !== 20 || state.economy.coins !== 5020) throw new Error("Season E2E: level 99 settlement is incorrect");
+if (state.progression.bestStars["99"] !== 3 || state.settlement.coinReward !== 40 || state.economy.coins !== 5040) throw new Error("Season E2E: level 99 settlement is incorrect");
 if (state.winAction !== "返回主页" || state.winSecondaryAction !== "关闭") {
   throw new Error(`Season E2E: incorrect level-99 result actions: ${state.winAction}/${state.winSecondaryAction}`);
 }
@@ -148,8 +148,8 @@ await page.waitForFunction(() => {
     && Boolean(current.completionFlow?.coinFlight);
 });
 state = await debug();
-if (state.journey.presentation || state.economy.coins !== 5020
-  || state.completionFlow.coinFlight.endCoins !== 5020
+if (state.journey.presentation || state.economy.coins !== 5040
+  || state.completionFlow.coinFlight.endCoins !== 5040
   || JSON.stringify(state.journey.progress) !== JSON.stringify(journeyLedgerBeforeFinalLevels)
   || state.activeRun) {
   throw new Error("Season E2E: level 99 Continue did not return Home with its committed coin flight");
@@ -174,7 +174,7 @@ await page.waitForTimeout(1500);
 state = await debug();
 const totalStars = Object.values(state.progression.bestStars).reduce((sum, value) => sum + value, 0);
 if (state.screen !== "win" || totalStars !== 300) throw new Error(`Season E2E: expected 300 stars, got ${totalStars}`);
-  if (!state.economy.rewardedLevels.includes(100) || state.settlement.coinReward !== 20 || state.economy.coins !== 5040) throw new Error("Season E2E: final reward or badge prerequisite missing");
+  if (!state.economy.rewardedLevels.includes(100) || state.settlement.coinReward !== 40 || state.economy.coins !== 5080) throw new Error("Season E2E: final reward or badge prerequisite missing");
   if (state.winAction !== "返回主页" || state.winSecondaryAction !== "关闭") {
     throw new Error(`Season E2E: incorrect final result actions: ${state.winAction}/${state.winSecondaryAction}`);
   }

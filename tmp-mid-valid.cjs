@@ -1,0 +1,1 @@
+const r=require('./deliverables/league-regeneration-20261004/formal/mid-20-64.json'); for(const x of r.rows){for(const a of x.attempts||[]){const rep=a.replay||a.routeReplay;if(rep?.valid&&rep.complete)console.log(JSON.stringify({i:x.index,m:a.mutationIndex,U:rep.nonClearingDrags,status:a.status,L:a.lowerProof||a.lower,reason:a.reason||a.failureReasons}));}}

@@ -39,7 +39,7 @@ interface RecordedMusic {
   loopDuration: number;
 }
 
-export const SOUND_RECIPES: Record<SoundKind, readonly ToneLayer[]> = {
+export const SOUND_RECIPES: Record<Exclude<SoundKind, "timeover">, readonly ToneLayer[]> = {
   blocked: [
     { type: "sawtooth", frequency: 140, duration: 0.16, gain: 0.11 },
     { type: "square", frequency: 82, endFrequency: 62, duration: 0.11, gain: 0.035, offset: 0.012 },
@@ -91,6 +91,17 @@ export const SOUND_RECIPES: Record<SoundKind, readonly ToneLayer[]> = {
     { type: "sine", frequency: midiFrequency(84), duration: 0.25, gain: 0.085, offset: 0.09 },
     { type: "triangle", frequency: midiFrequency(88), duration: 0.38, gain: 0.075, offset: 0.19 },
   ],
+  // Reward claims share the supplied gold recording; retain the generic reward decode fallback.
+  gold: [
+    { type: "sine", frequency: midiFrequency(79), duration: 0.2, gain: 0.08 },
+    { type: "sine", frequency: midiFrequency(84), duration: 0.25, gain: 0.085, offset: 0.09 },
+    { type: "triangle", frequency: midiFrequency(88), duration: 0.38, gain: 0.075, offset: 0.19 },
+  ],
+  // Each arriving reward particle gets its own short supplied recording.
+  itemArrival: [
+    { type: "sine", frequency: midiFrequency(84), duration: 0.1, gain: 0.05 },
+    { type: "triangle", frequency: midiFrequency(88), duration: 0.14, gain: 0.035, offset: 0.025 },
+  ],
   booster: [
     { type: "sawtooth", frequency: 180, endFrequency: 520, duration: 0.22, gain: 0.055 },
     { type: "triangle", frequency: 480, endFrequency: 1_040, duration: 0.28, gain: 0.08, offset: 0.025 },
@@ -139,6 +150,9 @@ const SOUND_PLAYBACK_GAINS: Record<SoundKind, number> = {
   win: 0.8,
   fail: 0.74,
   reward: 0.76,
+  gold: 0.76,
+  // Match the supplied clip to button/putdown loudness, retaining headroom for five arrivals.
+  itemArrival: 1.2,
   booster: 0.7,
   unlock: 0.78,
   time: 0.68,
@@ -146,6 +160,7 @@ const SOUND_PLAYBACK_GAINS: Record<SoundKind, number> = {
   pulse: 0.72,
   mechanic: 0.58,
   shutter: 0.58,
+  timeover: 0.68,
 };
 
 export const MUSIC_PATTERNS: Record<Exclude<MusicScene, "silent">, MusicPattern> = {
@@ -205,6 +220,12 @@ export class ProceduralSoundscape {
   private enabled = false;
   private suspended = false;
   private selectedMusicTrack?: MusicTrack;
+  /** Tracks selected by the player. The active track may move within this list
+   * when a recorded source reaches its natural end. */
+  private musicPlaylist: MusicTrack[] = [];
+  private activeMusicTrack?: MusicTrack;
+  private musicGeneration = 0;
+  private musicEndTimer?: ReturnType<typeof setTimeout>;
   private readonly pendingMusic = new Set<MusicTrack>();
   private readonly musicBuffers: Partial<Record<MusicTrack, RecordedMusic>> = {};
   private musicSource?: AudioBufferSourceNode;
@@ -213,6 +234,7 @@ export class ProceduralSoundscape {
   private musicPositionStartedAt?: number;
   private musicPaused = false;
   private readonly soundBuffers: Partial<Record<SoundKind, AudioBuffer>> = {};
+  private timeoverSound?: { source: AudioBufferSourceNode; level: GainNode };
   private readonly musicVoices = new Set<OscillatorNode>();
 
   constructor(private readonly context: AudioContext) {
@@ -227,13 +249,17 @@ export class ProceduralSoundscape {
     master.connect(context.destination);
   }
 
-  setMusic(scene: MusicScene, enabled: boolean, selectedTrack?: MusicTrack): void {
+  setMusic(scene: MusicScene, enabled: boolean, selectedTrack?: MusicTrack, playlist?: readonly MusicTrack[]): void {
     const changed = scene !== this.scene;
     const enabledChanged = enabled !== this.enabled;
     const trackChanged = selectedTrack !== this.selectedMusicTrack;
+    const nextPlaylist = this.normalizePlaylist(playlist);
+    const playlistChanged = !this.samePlaylist(nextPlaylist, this.musicPlaylist);
+    const playlistModeChanged = (nextPlaylist.length > 1) !== (this.musicPlaylist.length > 1);
     const previousTrack = musicTrackForScene(this.scene, this.selectedMusicTrack);
     const nextTrack = musicTrackForScene(scene, selectedTrack);
-    if (!changed && !enabledChanged && !trackChanged) {
+    const previousActiveTrack = this.activeMusicTrack;
+    if (!changed && !enabledChanged && !trackChanged && !playlistChanged) {
       if (!enabled || scene === "silent" || this.suspended || (nextTrack && this.pendingMusic.has(nextTrack))
         || this.musicSource || this.musicTimer !== undefined) return;
     }
@@ -241,21 +267,39 @@ export class ProceduralSoundscape {
     this.enabled = enabled;
     if (!enabled || scene === "silent") this.musicPaused = false;
     this.selectedMusicTrack = selectedTrack;
-    if (!enabled || scene === "silent" || this.suspended) {
-      this.stopMusic();
-      return;
-    }
-    if (this.musicPaused) return;
-    if (previousTrack && nextTrack && previousTrack !== nextTrack) {
+    this.musicPlaylist = nextPlaylist;
+    const requestedTrack = this.playlistStartTrack(nextTrack);
+    const activeStillValid = previousActiveTrack !== undefined
+      && (this.musicPlaylist.length === 0 || this.musicPlaylist.includes(previousActiveTrack));
+    const mustSwitchTrack = Boolean(
+      (previousTrack && nextTrack && previousTrack !== nextTrack)
+      || trackChanged
+      || (changed && previousTrack !== nextTrack)
+      || (playlistChanged && playlistModeChanged)
+      || (playlistChanged && !activeStillValid),
+    );
+    if (mustSwitchTrack) {
       this.stopMusicSource();
       this.musicPosition = 0;
       this.musicPositionStartedAt = undefined;
+      this.activeMusicTrack = requestedTrack;
+    } else if (!this.activeMusicTrack) {
+      this.activeMusicTrack = requestedTrack;
     }
-    if (changed || this.musicTimer === undefined) this.startMusic();
+    // Reconcile the requested track even while muted, hidden or paused. A
+    // later resume otherwise sees an unchanged scene and restarts the old
+    // active track left over from the menu.
+    if (!enabled || scene === "silent" || this.suspended) {
+      this.stopMusic();
+      this.stopMusicSource();
+      return;
+    }
+    if (this.musicPaused) return;
+    if (mustSwitchTrack || changed || this.musicTimer === undefined || !this.musicSource) this.startMusic();
   }
 
   musicTransport(): MusicTransport {
-    const track = musicTrackForScene(this.scene, this.selectedMusicTrack);
+    const track = this.activeMusicTrack ?? musicTrackForScene(this.scene, this.selectedMusicTrack);
     const duration = track ? (this.musicBuffers[track]?.loopDuration ?? RECORDED_MUSIC_LOOP_DURATIONS[track] ?? 0) : 0;
     const elapsed = this.musicPositionStartedAt === undefined || this.musicPaused
       ? 0 : Math.max(0, this.context.currentTime - this.musicPositionStartedAt);
@@ -268,7 +312,14 @@ export class ProceduralSoundscape {
     const state = this.musicTransport();
     this.musicPosition = state.positionSeconds;
     this.musicPaused = paused;
-    if (paused) { this.stopMusic(); } else if (this.enabled && !this.suspended) { this.startMusic(); }
+    if (paused) {
+      this.stopMusic();
+      // A source cannot be paused by WebAudio. Stop it and restart from the
+      // saved transport position on resume so it cannot keep running muted.
+      this.stopMusicSource();
+    } else if (this.enabled && !this.suspended) {
+      this.startMusic();
+    }
   }
 
   seekMusic(positionSeconds: number): void {
@@ -276,26 +327,41 @@ export class ProceduralSoundscape {
     this.musicPosition = state.durationSeconds > 0
       ? Math.min(state.durationSeconds, Math.max(0, Number(positionSeconds) || 0)) : 0;
     this.musicPositionStartedAt = undefined;
-    if (state.playing) { this.stopMusic(); this.startMusic(); }
+    if (state.playing) {
+      this.stopMusic();
+      this.stopMusicSource();
+      this.startMusic();
+    }
   }
 
   expectMusicBuffer(track: MusicTrack): void {
     this.pendingMusic.add(track);
-    if (musicTrackForScene(this.scene, this.selectedMusicTrack) === track) this.stopMusic();
+    if (this.activeMusicTrack === track || musicTrackForScene(this.scene, this.selectedMusicTrack) === track) {
+      this.stopMusic();
+      this.stopMusicSource();
+    }
   }
 
   setMusicBuffer(track: MusicTrack, buffer: AudioBuffer, loopDuration = RECORDED_MUSIC_LOOP_DURATIONS[track] ?? musicCatalogEntry(track).loopEndSeconds): void {
     this.pendingMusic.delete(track);
     this.musicBuffers[track] = { buffer, loopDuration };
-    if (musicTrackForScene(this.scene, this.selectedMusicTrack) === track) {
+    if (this.activeMusicTrack === track || musicTrackForScene(this.scene, this.selectedMusicTrack) === track) {
       if (this.musicSourceTrack === track) this.stopMusicSource();
-      if (this.enabled && !this.suspended) this.startMusic();
+      if (this.enabled && !this.suspended) {
+        this.activeMusicTrack = track;
+        this.startMusic();
+      }
     }
   }
 
   useSynthMusicFallback(track: MusicTrack): void {
     this.pendingMusic.delete(track);
-    if (musicTrackForScene(this.scene, this.selectedMusicTrack) === track && this.enabled && !this.suspended) this.startMusic();
+    if ((this.activeMusicTrack === track || musicTrackForScene(this.scene, this.selectedMusicTrack) === track)
+      && this.enabled && !this.suspended) {
+      this.stopMusicSource();
+      this.activeMusicTrack = track;
+      this.startMusic();
+    }
   }
 
   releaseMusicBuffer(track: MusicTrack): void {
@@ -310,13 +376,22 @@ export class ProceduralSoundscape {
 
   play(kind: SoundKind): void {
     if (this.suspended) return;
+    if (kind === "timeover") this.stopSound(kind);
     this.resumeContext();
     const buffer = this.soundBuffers[kind];
     let recorded = false;
     if (buffer && typeof this.context.createBufferSource === "function") {
+      let source: AudioBufferSourceNode | undefined;
+      let level: GainNode | undefined;
       try {
-        const source = this.context.createBufferSource();
-        const level = this.context.createGain();
+        source = this.context.createBufferSource();
+        level = this.context.createGain();
+        const ownedSource = source;
+        const ownedLevel = level;
+        source.onended = () => this.releaseSoundSource(ownedSource, ownedLevel);
+        if (kind === "timeover") {
+          this.timeoverSound = { source, level };
+        }
         source.buffer = buffer;
         level.gain.value = SOUND_PLAYBACK_GAINS[kind];
         // WeChat's AudioNode.connect() is void on some real-device base
@@ -325,18 +400,45 @@ export class ProceduralSoundscape {
         level.connect(this.effectsBus);
         source.start(this.context.currentTime + 0.004);
         recorded = true;
-      } catch { /* fall through to the oscillator recipe */ }
+      } catch {
+        if (source) {
+          try { source.stop(); } catch { /* playback may not have started */ }
+          this.releaseSoundSource(source, level);
+        } else if (level) {
+          try { level.disconnect(); } catch { /* optional on older WeChat runtimes */ }
+        }
+        // Other effects retain their oscillator recipe if recording playback fails.
+      }
     }
-    if (!recorded) {
+    // The supplied countdown recording is never synthesized or queued for later.
+    if (!recorded && kind !== "timeover") {
       const start = this.context.currentTime + 0.006;
       for (const layer of SOUND_RECIPES[kind]) this.tone(layer, start, this.effectsBus);
     }
     if (this.enabled && this.scene !== "silent" && !this.musicSource && this.musicTimer === undefined) this.startMusic();
   }
 
+  stopSound(kind: SoundKind): void {
+    if (kind !== "timeover" || !this.timeoverSound) return;
+    const { source, level } = this.timeoverSound;
+    source.onended = null;
+    try { source.stop(); } catch { /* source may already have ended */ }
+    this.releaseSoundSource(source, level);
+  }
+
+  private releaseSoundSource(source: AudioBufferSourceNode, level?: GainNode): void {
+    if (this.timeoverSound?.source === source) this.timeoverSound = undefined;
+    source.onended = null;
+    try { source.disconnect(); } catch { /* optional on older WeChat runtimes */ }
+    try { source.buffer = null; } catch { /* optional on older WeChat runtimes */ }
+    try { level?.disconnect(); } catch { /* optional on older WeChat runtimes */ }
+  }
+
   suspend(): void {
     this.suspended = true;
+    this.stopSound("timeover");
     this.stopMusic();
+    this.stopMusicSource();
     try { void this.context.suspend(); } catch { /* optional on older WeChat runtimes */ }
   }
 
@@ -352,11 +454,65 @@ export class ProceduralSoundscape {
     } catch { /* audio remains a progressive enhancement */ }
   }
 
+  private normalizePlaylist(playlist?: readonly MusicTrack[]): MusicTrack[] {
+    if (!playlist || playlist.length === 0) return [];
+    const normalized: MusicTrack[] = [];
+    for (const track of playlist) {
+      if (!MUSIC_CATALOG.some((entry) => entry.id === track) || normalized.includes(track)) continue;
+      normalized.push(track);
+    }
+    return normalized;
+  }
+
+  private samePlaylist(left: readonly MusicTrack[], right: readonly MusicTrack[]): boolean {
+    return left.length === right.length && left.every((track, index) => track === right[index]);
+  }
+
+  private playlistStartTrack(requested?: MusicTrack): MusicTrack | undefined {
+    if (this.musicPlaylist.length === 0) return requested;
+    return requested && this.musicPlaylist.includes(requested)
+      ? requested
+      : this.musicPlaylist[0];
+  }
+
+  private scheduleMusicEnd(track: MusicTrack, positionSeconds: number, generation: number): void {
+    if (this.musicPlaylist.length <= 1) return;
+    if (this.musicEndTimer !== undefined) clearTimeout(this.musicEndTimer);
+    const duration = this.musicBuffers[track]?.loopDuration
+      ?? RECORDED_MUSIC_LOOP_DURATIONS[track]
+      ?? musicCatalogEntry(track).loopEndSeconds;
+    const remaining = Math.max(0.05, duration - Math.max(0, positionSeconds));
+    this.musicEndTimer = setTimeout(() => {
+      this.musicEndTimer = undefined;
+      this.advancePlaylist(track, generation);
+    }, Math.max(50, Math.round((remaining + 0.04) * 1_000)));
+  }
+
+  private advancePlaylist(track: MusicTrack, generation: number): void {
+    if (generation !== this.musicGeneration
+      || this.musicPaused || this.suspended || !this.enabled || this.scene === "silent"
+      || this.activeMusicTrack !== track || this.musicPlaylist.length <= 1) return;
+    const index = this.musicPlaylist.indexOf(track);
+    if (index < 0) return;
+    this.stopMusicSource();
+    this.musicPosition = 0;
+    this.musicPositionStartedAt = undefined;
+    this.activeMusicTrack = this.musicPlaylist[(index + 1) % this.musicPlaylist.length];
+    this.startMusic();
+  }
+
   private startMusic(): void {
-    this.stopMusic();
     if (!this.enabled || this.scene === "silent" || this.suspended || this.musicPaused) return;
-    const track = musicTrackForScene(this.scene, this.selectedMusicTrack);
+    const track = this.activeMusicTrack
+      ?? this.playlistStartTrack(musicTrackForScene(this.scene, this.selectedMusicTrack));
     if (!track) return;
+    this.activeMusicTrack = track;
+    // A single soundscape owns both the default background and the music
+    // library. Asset-loading callbacks can request a restart while the same
+    // source is already playing; keep that request idempotent so two copies
+    // of the background track can never overlap.
+    if (this.musicSource && this.musicSourceTrack === track) return;
+    this.stopMusic();
     this.musicPositionStartedAt = this.context.currentTime;
     const recorded = this.musicBuffers[track];
     if (this.musicSource && this.musicSourceTrack !== track) this.stopMusicSource();
@@ -375,26 +531,41 @@ export class ProceduralSoundscape {
     }
     if (recorded && typeof this.context.createBufferSource === "function") {
       if (!this.musicSource) {
+        let source: AudioBufferSourceNode | undefined;
         try {
-          const source = this.context.createBufferSource();
+          source = this.context.createBufferSource();
           source.buffer = recorded.buffer;
-          source.loop = true;
+          const usePlaylist = this.musicPlaylist.length > 1;
+          source.loop = !usePlaylist;
           source.loopStart = Math.min(RECORDED_MUSIC_LOOP_STARTS[track] ?? 0, recorded.buffer.duration);
           source.loopEnd = Math.min(
             source.loopStart + recorded.loopDuration,
             recorded.buffer.duration,
           );
           source.connect(this.musicBus);
-          source.start(now + 0.025);
+          const offset = Math.min(
+            Math.max(0, this.musicPosition),
+            Math.max(0, recorded.loopDuration - 0.001),
+          );
+          source.start(now + 0.025, usePlaylist ? offset : Math.max(source.loopStart, offset));
+          const generation = ++this.musicGeneration;
+          const ownedSource = source;
           source.onended = () => {
-            if (this.musicSource === source) {
+            this.releaseSoundSource(ownedSource);
+            if (this.musicSource === ownedSource) {
               this.musicSource = undefined;
               this.musicSourceTrack = undefined;
+              if (usePlaylist) this.advancePlaylist(track, generation);
             }
           };
           this.musicSource = source;
           this.musicSourceTrack = track;
+          this.scheduleMusicEnd(track, offset, generation);
         } catch {
+          if (source) {
+            try { source.stop(); } catch { /* playback may not have started */ }
+            this.releaseSoundSource(source);
+          }
           delete this.musicBuffers[track];
           this.useSynthMusicFallback(track);
         }
@@ -402,12 +573,17 @@ export class ProceduralSoundscape {
       return;
     }
     this.scheduleMusicStep();
+    this.scheduleMusicEnd(track, this.musicPosition, ++this.musicGeneration);
   }
 
   private stopMusic(): void {
     if (this.musicTimer !== undefined) {
       clearTimeout(this.musicTimer);
       this.musicTimer = undefined;
+    }
+    if (this.musicEndTimer !== undefined) {
+      clearTimeout(this.musicEndTimer);
+      this.musicEndTimer = undefined;
     }
     const now = this.context.currentTime;
     try {
@@ -424,8 +600,16 @@ export class ProceduralSoundscape {
   }
 
   private stopMusicSource(): void {
+    if (this.musicEndTimer !== undefined) {
+      clearTimeout(this.musicEndTimer);
+      this.musicEndTimer = undefined;
+    }
+    this.musicGeneration += 1;
     if (!this.musicSource) return;
-    try { this.musicSource.stop(); } catch { /* source may already have stopped */ }
+    const source = this.musicSource;
+    source.onended = null;
+    try { source.stop(); } catch { /* source may already have stopped */ }
+    this.releaseSoundSource(source);
     this.musicSource = undefined;
     this.musicSourceTrack = undefined;
   }
@@ -475,9 +659,20 @@ export class ProceduralSoundscape {
   }
 
   private tone(layer: ToneLayer, baseStart: number, destination: AudioNode, music = false): void {
+    let oscillator: OscillatorNode | undefined;
+    let envelope: GainNode | undefined;
+    const release = () => {
+      if (oscillator) {
+        oscillator.onended = null;
+        this.musicVoices.delete(oscillator);
+        try { oscillator.disconnect(); } catch { /* optional on older WeChat runtimes */ }
+      }
+      try { envelope?.disconnect(); } catch { /* optional on older WeChat runtimes */ }
+    };
     try {
-      const oscillator = this.context.createOscillator();
-      const envelope = this.context.createGain();
+      oscillator = this.context.createOscillator();
+      envelope = this.context.createGain();
+      oscillator.onended = release;
       const start = baseStart + (layer.offset ?? 0);
       const attack = Math.min(layer.duration * 0.35, layer.attack ?? 0.008);
       const end = start + layer.duration;
@@ -494,10 +689,12 @@ export class ProceduralSoundscape {
       envelope.connect(destination);
       if (music) {
         this.musicVoices.add(oscillator);
-        oscillator.onended = () => this.musicVoices.delete(oscillator);
       }
       oscillator.start(start);
       oscillator.stop(end + 0.02);
-    } catch { /* a missing oscillator feature must never interrupt gameplay */ }
+    } catch {
+      try { oscillator?.stop(); } catch { /* playback may not have started */ }
+      release();
+    }
   }
 }

@@ -1,0 +1,7 @@
+import {readFile,writeFile} from 'node:fs/promises';
+let code=await readFile('tools/playtest-league-prototype.mjs','utf8');
+code=code.replace('deliverables/league-step4-20261001/test-level-proof.json','deliverables/league-full-20261001/levels/001.json').replace('"playtest-results/league-prototype"','"playtest-results/league-full-flow"').replace('crossPeriod?0:90','crossPeriod?0:proof.specials.length*10');
+code=code.replace('if(!crossPeriod){await click("league.challenge");assert.deepEqual(await page.evaluate(()=>window.__COLOR_ESCAPE__.leagueTargets().map(([k])=>k)),["league.dismiss"]);await click("league.dismiss");}', 'if(!crossPeriod){await click("league.challenge");assert.deepEqual(await page.evaluate(()=>window.__COLOR_ESCAPE__.leagueTargets().map(([k])=>k)),["league.start","league.dismiss"]);await click("league.start");await stable();assert.equal((await state()).puzzle.levelId,900002);await click("pause");await click("pauseHome");}');
+code=code.replace('"9 actual special removals"','`${proof.specials.length} actual special removals`').replace('"unknown candidate retry keeps success timestamp and duplicate blocked"','"unknown candidate retry keeps timestamp, next independent level starts"').replace('no physical device/100 levels/publication','flow regression on first two real league levels; no physical device/publication');
+await writeFile('tools/playtest-league-full-flow.mjs',code);
+console.log('Prepared independent full-league flow regression; historical prototype tool unchanged');

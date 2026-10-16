@@ -1,0 +1,4 @@
+import {build} from 'esbuild';
+const b=await build({entryPoints:['src/core/formal201to210Data.ts'],bundle:true,format:'esm',platform:'node',write:false,logLevel:'silent'});const m=await import('data:text/javascript;base64,'+Buffer.from(b.outputFiles[0].text).toString('base64'));
+const outer=b=>b.layers?.[0]??b.color;const cells=b=>b.shape.map(([dx,dy])=>[b.x+dx,b.y+dy]);
+for(const l of m.CANDIDATE_201_210_LEVELS){const occ=new Map();for(const b of l.blocks){for(const [x,y] of cells(b)){const k=`${x},${y}`;if(!occ.has(k))occ.set(k,[]);occ.get(k).push(b)}}const pairs=new Set;for(const b of l.blocks)for(const [x,y] of cells(b))for(const [dx,dy] of [[1,0],[0,1]])for(const n of occ.get(`${x+dx},${y+dy}`)||[]){if(n.id!==b.id&&outer(n)===outer(b))pairs.add([b.id,n.id].sort().join('|'))}console.log(l.id,[...pairs]);}

@@ -1,0 +1,1 @@
+import fs from 'node:fs';const x=JSON.parse(fs.readFileSync('deliverables/league-regeneration-20261004/formal/mid-20-64.json','utf8'));for(const r of x.rows){const a=r.attempts?.at(-1)||r;console.log(r.index??r.sourceIndex,r.status??r.formalEligibility,a.status,a.U,a.L,a.replay?.nonClearingDrags,a.lower?.status,a.lower?.thresholdProven)}

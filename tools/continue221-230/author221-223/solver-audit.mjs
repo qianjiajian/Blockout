@@ -1,0 +1,5 @@
+import fs from 'node:fs'; import {build} from 'esbuild';
+const d=JSON.parse(fs.readFileSync('deliverables/continue221-230-20260929/rebuild221-223/candidate-levels.json'));
+const b=await build({stdin:{resolveDir:process.cwd(),contents:"export {solveLevelForValidation} from './src/core/levelSolver.ts';",loader:'ts'},bundle:true,write:false,platform:'node',format:'esm',logLevel:'silent'}); const m=await import('data:text/javascript;base64,'+Buffer.from(b.outputFiles[0].text).toString('base64'));
+const out=[]; for(const level of d.levels){let r;try{r=m.solveLevelForValidation(level,50000);}catch(e){r={error:String(e)}} out.push({id:level.id,solved:r.solved,termination:r.termination,minimumDrags:r.minimumDrags,repositionOverhead:r.repositionOverhead,unsupportedReasons:r.unsupportedReasons});}
+fs.writeFileSync('deliverables/continue221-230-20260929/rebuild221-223/solver-audit.json',JSON.stringify({status:'SOLVER_ATTEMPT',maxStates:50000,results:out},null,2)+'\n',{flag:'wx'}); console.log(JSON.stringify(out));

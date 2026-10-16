@@ -1,0 +1,1 @@
+const fs=require('fs');for(const i of [65,66,85,96,100]){const x=require(`./deliverables/league-regeneration-20261004/late-experiments/candidate-${i}.json`); console.log('LEVEL',i,JSON.stringify({status:x.status,attempts:x.attempts?.map(a=>({m:a.mutationIndex,status:a.status,lower:a.lower,upper:a.upper,replay:a.replay,fail:a.failureReasons}))},null,2).slice(0,7000));}

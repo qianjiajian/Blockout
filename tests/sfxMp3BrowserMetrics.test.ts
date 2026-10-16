@@ -5,9 +5,23 @@ import { assertConversionMetrics, CONVERTED_KINDS, measurePcm, SFX_KINDS } from 
 const stereo = () => [Float32Array.from([0, 0, 0.2, -0.3, 0.1]), Float32Array.from([0, 0, 0.1, -0.2, 0.2])];
 
 describe("MP3 browser technical regression metrics", () => {
-  it("covers 17 runtime sounds and exactly 11 converted originals", () => {
-    expect(new Set(SFX_KINDS).size).toBe(17);
-    expect(new Set(CONVERTED_KINDS).size).toBe(11);
+  it("covers 19 runtime sounds and exactly 6 converted originals", () => {
+    expect(new Set(SFX_KINDS).size).toBe(19);
+    expect(new Set(CONVERTED_KINDS).size).toBe(6);
+    expect(SFX_KINDS).toContain("itemArrival");
+    expect(CONVERTED_KINDS).not.toContain("itemArrival");
+    expect(SFX_KINDS).toContain("gold");
+    expect(CONVERTED_KINDS).not.toContain("gold");
+    expect(SFX_KINDS).toContain("win");
+    expect(CONVERTED_KINDS).not.toContain("win");
+    expect(SFX_KINDS).toContain("fail");
+    expect(CONVERTED_KINDS).not.toContain("fail");
+    expect(SFX_KINDS).toContain("pulse");
+    expect(CONVERTED_KINDS).not.toContain("pulse");
+    expect(SFX_KINDS).toContain("rocket");
+    expect(CONVERTED_KINDS).not.toContain("rocket");
+    expect(SFX_KINDS).toContain("time");
+    expect(CONVERTED_KINDS).not.toContain("time");
     expect(CONVERTED_KINDS).not.toContain("button");
     expect(SFX_KINDS).toContain("shell");
     expect(CONVERTED_KINDS).not.toContain("shell");

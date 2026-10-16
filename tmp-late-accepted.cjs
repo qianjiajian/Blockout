@@ -1,0 +1,1 @@
+const r=require('./deliverables/league-regeneration-20261004/formal/late-65-100.json'); for(const a of r.accepted||[])console.log(JSON.stringify({i:a.index,U:a.upperBound?.value||a.replay?.nonClearingDrags,L:a.lowerBound?.value||a.lower}));

@@ -1,0 +1,1 @@
+import fs from 'node:fs';const x=JSON.parse(fs.readFileSync('deliverables/league-regeneration-20261004/formal/early-1-19.json','utf8')).acceptedRows.find(a=>a.index===7);for(const id of ['strategy-guard-16','strategy-guard-09','cc-piece-14']) console.log(id,x.drags.filter(d=>d.blockId===id));

@@ -1,7 +1,11 @@
 import { readFile, readdir, stat } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { relative, resolve } from "node:path";
-import { snapshotWechatAssetSource } from "../scripts/wechat-image-formats.mjs";
+import { snapshotWechatAssetSource, WECHAT_EVENT_IMAGE_ENCODING } from "../scripts/wechat-image-formats.mjs";
+import { createWechatEventLevelModules } from '../scripts/wechat-event-level-data.mjs';
+import { EVENT_ART_PACKAGES, wechatEventArtPath } from '../scripts/wechat-event-assets.mjs';
+import { encodeWechatBackgroundAudio, snapshotWechatBackgroundAudio } from '../scripts/wechat-background-audio.mjs';
+import { WECHAT_JOURNEY_HOME_THEME_NAMES } from '../scripts/wechat-journey-assets.mjs';
 import {createIdenticalArtPlan, deduplicatedArtSnapshot} from '../scripts/wechat-identical-art.mjs';
 import {
   assertWechatResourcesExcluded,
@@ -23,7 +27,7 @@ const outputLabel = relative(projectRoot, output).replaceAll("\\", "/");
 const expectedIdentity = {
   description: "方块出逃 - 竖屏颜色滑块益智微信小游戏",
   compileType: "game",
-  appid: "wx51654dfc10c64035",
+  appid: "wx8d67feab4925babb",
   projectname: "color-escape",
 };
 const mainPackageLimitBytes = 4 * 1024 * 1024;
@@ -106,10 +110,18 @@ const menuMusicPackage = builtGameConfig.subpackages?.find((entry) => entry?.nam
 if (menuMusicPackage?.root !== "menu-music") {
   throw new Error("dist-wechat/game.json must declare the on-demand menu-music subpackage");
 }
+for (const name of EVENT_ART_PACKAGES) {
+  const entry = builtGameConfig.subpackages?.find(item => item?.name === name);
+  if (entry?.root !== name || entry?.independent !== true) throw new Error('Missing independent event art package: ' + name);
+}
 
 const privateConfig = await readJson(`${outputLabel}/project.private.config.json`);
-if (privateConfig.projectname !== expectedIdentity.projectname) {
-  throw new Error(`${outputLabel}/project.private.config.json has a different project name`);
+// project.private.config.json is owned by the local DevTools installation and
+// may use a user-facing display name different from the release identity. It
+// must still carry a meaningful name; the release project.config.json files
+// above remain the exact appid/projectname contract used for packaging.
+if (typeof privateConfig.projectname !== "string" || !privateConfig.projectname.trim()) {
+  throw new Error(`${outputLabel}/project.private.config.json must contain a non-empty project name`);
 }
 
 for (const relativePath of [
@@ -133,6 +145,9 @@ for (const relativePath of [
 
 const manifest = JSON.parse(await readFile(wechatBuildManifestPath(output), "utf8"));
 if (manifest.schemaVersion !== 1) throw new Error(`${outputLabel}/${WECHAT_BUILD_MANIFEST} has an unsupported schema`);
+const currentEventCompilation = await createWechatEventLevelModules(projectRoot);
+if (JSON.stringify(manifest.eventLevelCompilation) !== JSON.stringify(currentEventCompilation.report)) throw new Error('WeChat league/daily packed data proof is stale');
+if (JSON.stringify(manifest.eventImageEncoding) !== JSON.stringify(WECHAT_EVENT_IMAGE_ENCODING)) throw new Error('WeChat event image encoding policy is stale');
 const currentOutputSnapshot = await snapshotWechatOutput(output);
 assertWechatResourcesExcluded(currentOutputSnapshot);
 if (JSON.stringify(manifest.resourceExclusions) !== JSON.stringify(WECHAT_RESOURCE_EXCLUSIONS)) {
@@ -146,20 +161,14 @@ if (manifest.sourceFingerprint !== currentSourceFingerprint) {
   throw new Error(`${outputLabel} is stale: its source fingerprint does not match the current source/assets/build inputs`);
 }
 
-const journeyThemePaths = new Set([
-  ...Array.from({ length: 10 }, (_, index) => `journey/episode-${String(index + 1).padStart(2, "0")}.png`),
-  "journey/episode-locked-shade.png",
-  "journey/episode-range-panel.png",
-  "journey/episode-selected-button.png",
-  "journey/episode-action-button.png",
-  ...Array.from({ length: 9 }, (_, index) => `journey/home-${String(index + 2).padStart(2, "0")}.jpg`),
-]);
+const journeyThemePaths = new Set(WECHAT_JOURNEY_HOME_THEME_NAMES.map(name => `journey/${name}`));
 const collectionArtPrefix = "collection-card-atlases-v1/";
 const formalSourceSnapshot = await snapshotWechatAssetSource(resolve(projectRoot, "public/assets/art/ui/formal-pages"));
 const identicalArt = await createIdenticalArtPlan(projectRoot);
 if (JSON.stringify(manifest.identicalArt) !== JSON.stringify(identicalArt)) throw new Error('WeChat identical-art plan is stale');
-const formalSource = deduplicatedArtSnapshot(formalSourceSnapshot, identicalArt).filter((file) => (
+const formalSource = deduplicatedArtSnapshot(filterWechatAssetSnapshot(formalSourceSnapshot, 'art/ui/formal-pages'), identicalArt).filter((file) => (
   !journeyThemePaths.has(file.path) && !file.path.startsWith(collectionArtPrefix)
+    && !wechatEventArtPath(`art/ui/formal-pages/${file.path}`)
 ));
 const formalBuilt = await snapshotDirectory(resolve(output, "meta-ui/formal-pages"));
 if (JSON.stringify(formalSource) !== JSON.stringify(formalBuilt)) {
@@ -185,7 +194,7 @@ const journeyThemeSource = formalSourceSnapshot
 const journeyThemeBuilt = (await snapshotDirectory(resolve(output, "journey-themes")))
   .filter((file) => file.path !== "game.js");
 if (JSON.stringify(journeyThemeSource) !== JSON.stringify(journeyThemeBuilt)) {
-  throw new Error("journey-themes does not match the verified native-image encoding of Journey chapter and Home theme art");
+  throw new Error("journey-themes does not match the verified native-image encoding of Home theme art");
 }
 if (await readFile(resolve(projectRoot, "wechat/journey-themes/game.js"), "utf8")
   !== await readFile(resolve(output, "journey-themes/game.js"), "utf8")) {
@@ -216,9 +225,9 @@ if (JSON.stringify(formalBlockSource) !== JSON.stringify(formalBlockBuilt)) {
   throw new Error("gameplay-art/formal-v1 does not match the verified RGBA-exact PNG encoding of the formal block source assets");
 }
 const gameplayFxSource = await snapshotWechatAssetSource(resolve(projectRoot, "public/assets/art/fx"));
-const gameplayFxBuilt = await snapshotDirectory(resolve(output, "gameplay-art/fx"));
+const gameplayFxBuilt = await snapshotDirectory(resolve(output, "assets/art/fx"));
 if (JSON.stringify(gameplayFxSource) !== JSON.stringify(gameplayFxBuilt)) {
-  throw new Error("gameplay-art/fx does not match the verified RGBA-exact PNG encoding of the gameplay FX source assets");
+  throw new Error("assets/art/fx does not match the verified RGBA-exact PNG encoding of the gameplay FX source assets");
 }
 if (await readFile(resolve(projectRoot, "wechat/gameplay-art/game.js"), "utf8")
   !== await readFile(resolve(output, "gameplay-art/game.js"), "utf8")) {
@@ -247,10 +256,10 @@ try {
   if (error instanceof Error && error.message === "formal block art was duplicated into the main package") throw error;
 }
 try {
-  await stat(resolve(output, "assets/art/fx"));
-  throw new Error("gameplay FX art was duplicated into the main package");
+  await stat(resolve(output, "gameplay-art/fx"));
+  throw new Error("gameplay FX art was duplicated into the gameplay-art subpackage");
 } catch (error) {
-  if (error instanceof Error && error.message === "gameplay FX art was duplicated into the main package") throw error;
+  if (error instanceof Error && error.message === "gameplay FX art was duplicated into the gameplay-art subpackage") throw error;
 }
 try {
   await stat(resolve(output, "assets/art/gameplay/mechanics/revised-reference-v1"));
@@ -265,13 +274,21 @@ try {
   if (error?.code !== "ENOENT") throw error;
 }
 
-const publicAssets = filterWechatAssetSnapshot(await snapshotWechatAssetSource(resolve(projectRoot, "public/assets")))
+const allPublicAssets = deduplicatedArtSnapshot(filterWechatAssetSnapshot(await snapshotWechatAssetSource(resolve(projectRoot, "public/assets"))), identicalArt, '');
+for (const name of EVENT_ART_PACKAGES) {
+  const expected = allPublicAssets.filter(file => wechatEventArtPath(file.path)?.startsWith(name + '/'))
+    .map(file => ({ ...file, path: wechatEventArtPath(file.path).slice(name.length + 1) }))
+    .sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0);
+  const actual = (await snapshotDirectory(resolve(output, name))).filter(file => file.path !== 'game.js');
+  if (!expected.length || JSON.stringify(expected) !== JSON.stringify(actual)) throw new Error('Event art missing, stale or changed: ' + name);
+  if (await readFile(resolve(projectRoot, 'wechat', name, 'game.js'), 'utf8') !== await readFile(resolve(output, name, 'game.js'), 'utf8')) throw new Error('Event package entry changed: ' + name);
+}
+const publicAssets = allPublicAssets
   .filter((file) => !file.path.startsWith("art/ui/formal-pages/")
     && !file.path.startsWith("art/gameplay/blocks/formal-v1/")
     && !file.path.startsWith("art/gameplay/mechanics/revised-reference-v1/")
     && !file.path.startsWith("art/gameplay/mechanics/shutter-nine-slice-v1/")
-    && !file.path.startsWith("art/fx/")
-    && !file.path.startsWith("audio/"));
+    && !file.path.startsWith("audio/") && !wechatEventArtPath(file.path));
 const mainAssets = await snapshotDirectory(resolve(output, "assets"));
 if (JSON.stringify(publicAssets) !== JSON.stringify(mainAssets)) {
   throw new Error("main-package assets are stale, missing, or different from public/assets");
@@ -290,12 +307,14 @@ if (await readFile(resolve(projectRoot, "wechat/audio/game.js"), "utf8")
   !== await readFile(resolve(output, "audio/game.js"), "utf8")) {
   throw new Error("audio/game.js does not match its source entry");
 }
-const menuMusicSourceSnapshot = allAudioSourceSnapshot.filter((file) => file.path === menuMusicFile);
+const menuMusicSourceSnapshot = await snapshotWechatBackgroundAudio(resolve(projectRoot, 'public/assets/audio'));
+const backgroundAudioProof = (await encodeWechatBackgroundAudio(resolve(projectRoot, 'public/assets/audio', menuMusicFile))).record;
+if (JSON.stringify(manifest.backgroundAudio) !== JSON.stringify(backgroundAudioProof)) throw new Error('Menu music encoding proof is stale');
 const menuMusicBuiltSnapshot = (await snapshotDirectory(resolve(output, "menu-music")))
-  .filter((file) => file.path !== "game.js");
+  .filter((file) => file.path === menuMusicFile);
 if (menuMusicSourceSnapshot.length !== 1
   || JSON.stringify(menuMusicSourceSnapshot) !== JSON.stringify(menuMusicBuiltSnapshot)) {
-  throw new Error("menu-music subpackage is not an exact byte-for-byte mirror of the provided menu soundtrack");
+  throw new Error("menu-music subpackage does not match the verified complete-duration menu soundtrack encoding");
 }
 if (await readFile(resolve(projectRoot, "wechat/menu-music/game.js"), "utf8")
   !== await readFile(resolve(output, "menu-music/game.js"), "utf8")) {
@@ -342,7 +361,16 @@ const mainReleaseFiles = releaseFiles.filter((file) => !relativeReleasePath(file
   && !relativeReleasePath(file).startsWith("journey-themes/")
   && !relativeReleasePath(file).startsWith("collection-art/")
   && !relativeReleasePath(file).startsWith("audio/")
-  && !relativeReleasePath(file).startsWith("menu-music/"));
+  && !relativeReleasePath(file).startsWith("menu-music/")
+  && !EVENT_ART_PACKAGES.some(name => relativeReleasePath(file).startsWith(name + '/')));
+const eventPackageSizes = EVENT_ART_PACKAGES.map(name => {
+  const files = releaseFiles.filter(file => relativeReleasePath(file).startsWith(name + '/'));
+  const bytes = files.reduce((sum, file) => sum + file.bytes, 0);
+  const headroomBytes = independentSubpackageLimitBytes - bytes;
+  if (!files.length || headroomBytes < minimumSubpackageHeadroomBytes) throw new Error(`Event package ${name} is missing or over guarded budget: ${bytes}`);
+  return { name, files: files.length, bytes, headroomBytes };
+});
+console.log('Verified event packages and exact league100/daily450 data: ' + JSON.stringify(eventPackageSizes));
 const releaseBytes = mainReleaseFiles.reduce((sum, file) => sum + file.bytes, 0);
 const metaUiBytes = metaUiFiles.reduce((sum, file) => sum + file.bytes, 0);
 const totalReleaseBytes = releaseFiles.reduce((sum, file) => sum + file.bytes, 0);

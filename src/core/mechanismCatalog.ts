@@ -19,63 +19,63 @@ export interface MechanismGuideEntry {
 const MECHANISM_GUIDE_ENTRIES: readonly MechanismGuideEntry[] = [
   {
     id: "generator", title: "色块生成器", unlockLevel: 35, atlasIndex: 0, group: "device",
-    effect: "按固定队列投放；预定落点全部腾空即生成下一块，不按时间投放。",
+    effect: "固定落点全空时，按顺序生成下一块；被挡住时等待。",
   },
   {
     id: "axis-block", title: "轴向块", unlockLevel: 50, atlasIndex: 1, group: "constraint",
-    effect: "横向块只能左右移动，纵向块只能上下移动，出口方向也受限制。",
+    effect: "沿箭头横向或纵向来回移动，出门方向也受限制。",
   },
   {
     id: "key-lock", title: "钥匙与锁", unlockLevel: 59, atlasIndex: 2, group: "constraint",
-    effect: "钥匙块完全消除，同组锁各减1；剥壳不解锁，归零才能移动。",
+    effect: "消除整个钥匙块，同组锁各减1；归零可移动，剥壳不算。",
   },
   {
     id: "star", title: "星标块、星门", unlockLevel: 100, atlasIndex: 3, group: "constraint",
-    effect: "星标块只能走同色星门；普通块也能使用同色星门。",
+    effect: "星标块只走同色星门；普通块也能走同色星门。",
   },
   {
     id: "flip-door", title: "翻转门", unlockLevel: 150, atlasIndex: 4, group: "device",
-    effect: "每次整块消除或剥层的离场动画结束后，所有翻转门切换一次开关，包括本次出块的门。",
+    effect: "消除或剥壳动画结束，未冰冻的门翻转一次；刚解冻的门下次才翻。",
   },
   {
     id: "colored-grid", title: "彩色地格", unlockLevel: 200, atlasIndex: 5, group: "constraint",
-    effect: "只有同色块可以进入，异色块不能进入；地格不会消除或改变色块颜色。",
+    effect: "只允许同色块进入，不会消除或改变色块颜色。",
   },
   {
     id: "bomb", title: "炸弹", unlockLevel: 120, atlasIndex: 6, group: "constraint",
-    effect: "色块可操作后开始倒计时，归零前未解除则失败；消除本体或剥掉炸弹外壳可解除。",
+    effect: "可操作即计时，暂停停表；归零前消除本体或剥掉炸弹外壳，否则失败。",
   },
   {
     id: "shutter", title: "卷帘门", unlockLevel: 20, atlasIndex: 7, group: "device",
-    effect: "每次整块消除或剥层，数字减1；归零后打开卷帘，露出覆盖区内所有色块。",
+    effect: "帘下色块不可移动；每消除或剥壳一次减1，归零揭开。",
   },
   {
     id: "layered-lift", title: "升降台", unlockLevel: 65, atlasIndex: 8, group: "device",
-    effect: "将升降台区域上的所有色块移出，区域完全腾空后露出下一层；无需消除色块。",
+    effect: "移走台上所有色块，区域全空后露出下一层；不必消除。",
   },
   {
     id: "color-exit", title: "普通出口", unlockLevel: 1, atlasIndex: 9, group: "foundation",
-    effect: "匹配色块当前外层颜色，朝出口方向的完整横截面须被单个门口覆盖。",
+    effect: "对齐外层同色出口，整块须能通过同一门口。",
   },
   {
     id: "irregular-block", title: "异形色块", unlockLevel: 5, atlasIndex: 10, group: "foundation",
-    effect: "保持原有形状整体平移，不能旋转或拆开。",
+    effect: "可上下左右整体移动，不能旋转或拆开。",
   },
   {
     id: "irregular-board", title: "异形棋盘", unlockLevel: 8, atlasIndex: 11, group: "foundation",
-    effect: "色块的所有占格必须位于可玩区域，不能穿越棋盘缺口。",
+    effect: "整块只能在棋盘内移动，不能跨越缺口或分隔缝。",
   },
   {
     id: "frozen-exit", title: "冰冻出口", unlockLevel: 6, atlasIndex: 12, group: "constraint",
-    effect: "数字大于0时不可使用；每次整块消除或剥层，数字减1。",
+    effect: "每消除或剥壳一次，数字减1；归零后出口解冻。",
   },
   {
     id: "numeric-ice", title: "数字冰块", unlockLevel: 10, atlasIndex: 13, group: "constraint",
-    effect: "数字大于0时不能移动或消除；显示后，其他块消除或剥层使数字减1，隐藏时不减。",
+    effect: "露出后，其他块每消除或剥壳一次减1；归零才能移动或消除。",
   },
   {
     id: "multilayer-shell", title: "外壳块", unlockLevel: 15, atlasIndex: 14, group: "constraint",
-    effect: "最多外壳和本体两层；剥壳后保留位置与形状，换成本体颜色。",
+    effect: "先剥壳、再消除本体，各走同色出口；剥壳后位置形状不变。",
   },
 ] as const;
 

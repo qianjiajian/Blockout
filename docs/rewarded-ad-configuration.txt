@@ -1,0 +1,47 @@
+微信福利站激励广告配置
+
+配置位置：src/platform/rewardedAdConfig.ts 的 WECHAT_REWARDED_AD_UNIT_ID。
+当前配置为本项目微信激励视频广告位 `adunit-0b7e02db402edd80`。
+不使用演示广告位，不在 WebHost 中模拟成功，不在此模块保存或授予奖励。
+
+GameHost 可选接口：
+  isRewardedAdAvailable?(): boolean
+  showRewardedAd?(requestId: string): Promise<{ status, requestId }>
+status 为 completed / cancelled / unavailable / error。
+availability 只表示已配置、API 支持且当前空闲，不保证广告库存。
+
+调用端仅在玩家点击后传入非空、唯一请求 ID；当前请求未结束时禁止重复操作。
+adapter 使用 multiton 独立广告实例，注册原生事件后 load→show。
+仅 show 已请求且 onClose 的 isEnded 严格等于 true 才返回 completed。
+load/show Promise 成功、时间流逝、回到前台或缺失 isEnded 都不能证明完整观看。
+无填充错误 1004 返回 unavailable；其他错误返回 error；未看完返回 cancelled。
+所有终态尝试注销精确回调并销毁实例；重复/迟到回调无效。
+并发请求与本 adapter 已完成过的同一请求 ID 返回 unavailable，不重复打开广告。
+调用端仍负责候选保存确认及持久幂等；保存未知时重试原奖励候选，不再次请求广告。
+
+体力不足弹窗的“领取 +1”使用独立的 lifeRefillAd 持久账本，不占用福利站的
+每日领取次数。只有微信广告 onClose 的 isEnded 严格为 true，且准备、完成凭证、
+体力到账三次保存均确认后才增加 1 点体力；提前关闭、无填充、异常和保存失败均不加，
+保存未知时沿用原候选重试，重启会把 watching 请求取消或把 completed 凭证结算一次。
+
+关卡内道具库存为 0 时，冻结、火箭、脉冲购买弹窗会显示“领取 +1”广告按钮。
+该按钮使用独立的 boosterRewardAd 持久账本，不扣金币；完整观看后只增加当前道具
+1 个，取消、失败、无填充和保存失败不发放。广告事务期间禁止金币购买和关闭正在结算的
+凭证，重启或切后台会恢复同一道具的候选，不重复请求广告；奖励到账后返回关卡。
+
+每日挑战次数耗尽时，挑战页显示“看广告 +1”入口，继续复用同一激励广告位。奖励次数
+单独记录在 dailyChallengeRewardAd 中，不改变每日挑战固定 5 次的存档字段；完整观看且
+准备、完成凭证、奖励到账三次保存均确认后增加 1 次额外挑战。额外次数按北京时间日键
+隔离，跨日清理未使用余额；提前关闭、无填充、异常、重复点击或保存失败均不增加，重启
+会取消 watching 凭证或结算 completed 凭证而不重复请求。额外次数优先在基础次数耗尽后
+消费，成功进入挑战后仍不改变主线进度和体力。
+
+当前已配置真实广告位 ID，但验证仍只使用隔离 wx stub，尚未完成微信真机验收。
+接入后需用本项目广告位在微信真机核对完整观看、提前关闭、无填充与网络失败，
+再核对后台返回、重复点击及奖励保存失败/未知的业务流程；本次不自动打包发布。
+
+接口核对：腾讯官方小游戏 API 类型声明
+https://github.com/wechat-miniprogram/minigame-api-typings/blob/master/types/wx/lib.wx.api.d.ts
+官方 API 页面（本次浏览工具未能打开，已核对上述腾讯声明）：
+https://developers.weixin.qq.com/minigame/dev/api/ad/wx.createRewardedVideoAd.html
+https://developers.weixin.qq.com/minigame/dev/api/ad/RewardedVideoAd.onClose.html

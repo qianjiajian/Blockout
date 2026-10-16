@@ -1,0 +1,31 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
+import {loadContinuationRuntime,sha256} from '../../continuation211-runtime.mjs';
+import {loadApi,replay} from '../../remake191-200/replay.mjs';
+import {auditOpeningCoverage} from '../../revised-opening-coverage.mjs';
+import {auditHiddenCoverage} from '../../revised-hidden-coverage.mjs';
+import {auditGeneratorQueueColors} from '../../revised-generator-queue-colors.mjs';
+import {auditGateSpanLimits} from '../../revised-gate-span-limits.mjs';
+const read=f=>JSON.parse(fs.readFileSync(f)),raw=f=>createHash('sha256').update(fs.readFileSync(f)).digest('hex');
+const file='deliverables/continue211-220-20260930/design-new/qualified214.json',r=read(file),l=r.level,source=read(r.sourceFile),sl=source.sourceLevel;
+assert.equal(sha256(l),r.levelSha256);assert.equal(raw(r.sourceFile),r.sourceRawSha256);
+const core=await loadContinuationRuntime(),{api}=await loadApi();api.validateLevel(l);
+const model=new api.PuzzleModel(l),opening=auditOpeningCoverage(model.snapshot()),hidden=auditHiddenCoverage(l),queue=auditGeneratorQueueColors(l),gates=auditGateSpanLimits(l),art=api.auditCandidateBlockArt(l),mechanism=core.auditRevisedMechanismContract(l),audit=core.auditRevisedCandidate(l,r.sourceContract);
+for(const a of[opening,hidden,queue,gates,art])assert(a.passed);assert.deepEqual(mechanism,[]);
+assert.deepEqual(audit.issues.map(i=>i.code).sort(),['full-count-mismatch','opening-count-mismatch','wrong-rule-profile']);
+const qids=new Set(l.generators.flatMap(g=>g.queueBlockIds)),sources=new Map(sl.blocks.map(b=>[b.id,b]));
+assert.equal(l.blocks.length,29);assert.equal(sl.blocks.length,23);assert.equal(l.blocks.filter(b=>!qids.has(b.id)&&!b.shutterId).length,15);assert.equal(audit.measurements.openingBlockCount,17);
+assert.deepEqual(l.generators,sl.generators);assert.deepEqual(l.shutters,sl.shutters);
+const preserved=[];for(const b of l.blocks){const s=sources.get(b.id);if(!s)continue;for(const key of ['layers','frozen','movementAxis','shutterId'])assert.deepEqual(b[key],s[key],b.id+':'+key);if(qids.has(b.id)){assert.equal(b.color,s.color);assert.equal(b.shape.length,s.shape.length);preserved.push({id:b.id,color:b.color,cells:b.shape.length});}}
+assert.equal(l.blocks.filter(b=>b.layers?.length===2).length,3);
+assert.deepEqual(l.blocks.filter(b=>b.frozen).map(b=>b.frozen).sort((a,b)=>a-b),[2,8]);
+assert(l.blocks.every(b=>core.matchFormalBlockShape(b.shape,'native-only')?.quarterTurns===0));
+const mask=new Set(l.playable.map(p=>p.join(','))),steps=[[1,0],[-1,0],[0,1],[0,-1]];
+const flood=(start,allowed)=>{const q=[start],seen=new Set([start.join(',')]);for(let i=0;i<q.length;i++)for(const[dx,dy]of steps){const p=[q[i][0]+dx,q[i][1]+dy],k=p.join(',');if(!seen.has(k)&&allowed(...p)){seen.add(k);q.push(p);}}return seen.size;};
+assert.equal(mask.size,50);assert.equal(sl.playable.length,66);assert.equal(flood(l.playable[0],(x,y)=>mask.has([x,y].join(','))),50);assert.equal(flood([-1,-1],(x,y)=>x>=-1&&x<=7&&y>=-1&&y<=10&&!mask.has([x,y].join(','))),108-50);assert(l.playable.every(([x,y])=>mask.has([6-x,y].join(','))));
+const faces=[],faceKeys=new Set();for(const g of l.gates){const sg=sl.gates.find(a=>a.id===g.id);assert.equal(g.color,sg.color);assert.equal(g.size,sg.size);assert.equal(g.side,sg.side);assert(!g.frozen&&!g.star);for(const p of g.portals?.length?g.portals:[g]){const o=p.origin??(p.side==='left'?[0,p.offset]:p.side==='right'?[l.width-1,p.offset]:p.side==='top'?[p.offset,0]:[p.offset,l.height-1]),horizontal=p.side==='top'||p.side==='bottom',d=p.side==='left'?[-1,0]:p.side==='right'?[1,0]:p.side==='top'?[0,-1]:[0,1];for(let i=0;i<p.size;i++){const cell=[o[0]+(horizontal?i:0),o[1]+(horizontal?0:i)],outside=[cell[0]+d[0],cell[1]+d[1]],key=cell+':'+p.side;assert(mask.has(cell.join(',')));assert(!mask.has(outside.join(',')));assert(!faceKeys.has(key));faceKeys.add(key);faces.push({gate:g.id,cell,side:p.side});}}}
+const replayResult=replay(l,r.drags,api,{timed:true,complete:true,requirePointerCompatible:true});assert.equal(replayResult.nonClearingDrags,19);assert.equal(replayResult.effectiveDrags,51);assert.equal(replayResult.clearEvents,32);assert.deepEqual(api.levelStarTargets(l),{moveTarget:51,timeTargetSeconds:75});assert.equal(l.timeSeconds,105);
+const codeDrift=[];for(const[f,h]of Object.entries(r.lower.codeSha256)){if(raw(f)!==h)codeDrift.push(f);}assert.deepEqual(codeDrift,[]);assert(r.lower.thresholdProven&&r.lower.floor===16);
+const report={status:'PASS_INDEPENDENT_SOURCE_STATIC_AND_STRICT_ROUTE',activeRuleVersion:'1.127.0',taskRuleVersion:'1.125.0',file,fileRawSha256:raw(file),levelSha256:sha256(l),sourceFile:r.sourceFile,sourceFileRawSha256:raw(r.sourceFile),sourceFramesVisuallyReviewed:[source.openingFrame,'.codex-temp/video211220/frame-0220-0440.00s.png'],sourceReview:'346s first opening confirms two FIFO counters3, one vertical red cross, two shells, ice2/8 and eight ordinary gates; 440s first revealed lift confirms eight bodies covering20 cells, including green-shell/blue-core Q2. Source empty upper chamber is documented; candidate full opening intentionally adds six ordinary authored bodies and dispatches the two first cargoes. Source 66-cell contour versus candidate50 is a genuine original contour, not a mirror.',sourceKnownMechanismsPreserved:{queueLengths:[3,3],queueColorsAreas:preserved,shells:3,shellPairs:['cyan/yellow','purple/orange','green/blue'],ice:[2,8],axisVertical:1,lift:{count:1,width:5,height:4,hiddenBodies:8},ordinaryGates:8},explicitAdaptations:r.level.mechanismAdaptation,opening,hidden,queue,gates,art,mechanism,audit,geometry:{sourceCells:66,designCells:50,width:7,height:10,leftRightSymmetric:true,connected:true,noInteriorHole:true,nonIsometricToSource:true},gateBoundaryFaces:faces,replay:replayResult,lowerCertificateChecked:{thresholdProven:true,floor:16,codeDrift},lowerSearchRepeated:false,pointerNaturalClockPendingParent:true};
+fs.writeFileSync('deliverables/continue211-220-20260930/design220-new/aux214/independent-review214-final.json',JSON.stringify(report,null,2),{flag:'wx'});console.log({status:report.status,levelSha256:report.levelSha256,opening:opening.passed,hidden:hidden.passed,U:19,drags:51});

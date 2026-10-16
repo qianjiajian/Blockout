@@ -35,34 +35,41 @@ const clickTarget = async (targetPage, name) => {
   });
   await targetPage.mouse.click(point.x, point.y);
 };
-const assertDirectExitGuide = (guide, openingDrag, label) => {
+const assertOpeningGuide = (guide, openingDrag, label) => {
   if (!guide?.points?.[1] || guide.blockId !== openingDrag.blockId) {
     throw new Error(`Onboarding E2E: ${label} guide does not target the verified opening block`);
   }
-  if (openingDrag.path.length !== 0 || !openingDrag.exitSide) {
-    throw new Error("Onboarding E2E: verified Level 1 opening is no longer the approved direct exit");
+  if (guide.origins.length !== openingDrag.path.length + 1
+    || guide.points.length !== openingDrag.path.length + 1
+    || JSON.stringify(guide.origins.slice(1)) !== JSON.stringify(openingDrag.path)) {
+    throw new Error(`Onboarding E2E: ${label} guide path does not match the verified opening route`);
   }
-  if (guide.exitSide !== openingDrag.exitSide || guide.origins.length !== 2 || guide.points.length !== 2) {
-    throw new Error(`Onboarding E2E: ${label} direct-exit guide contract is incomplete`);
+  if (openingDrag.exitSide && openingDrag.exitSide !== "right") {
+    throw new Error(`Onboarding E2E: ${label} opening exit changed unexpectedly`);
   }
-  const dx = guide.end.x - guide.start.x;
-  const dy = guide.end.y - guide.start.y;
-  const pointsOutward = guide.exitSide === "top"
-    ? dy < 0 && Math.abs(dy) > Math.abs(dx)
-    : guide.exitSide === "bottom"
-      ? dy > 0 && Math.abs(dy) > Math.abs(dx)
-      : guide.exitSide === "left"
-        ? dx < 0 && Math.abs(dx) > Math.abs(dy)
-        : dx > 0 && Math.abs(dx) > Math.abs(dy);
-  if (!pointsOutward) throw new Error(`Onboarding E2E: ${label} guide does not travel through its exit`);
+};
+const performOpeningGesture = async (targetPage, guide, openingDrag) => {
+  const start = await logicalToPage(targetPage, guide.start);
+  if (openingDrag.path.length === 0) {
+    await targetPage.mouse.click(start.x, start.y);
+    return;
+  }
+  await targetPage.mouse.move(start.x, start.y);
+  await targetPage.mouse.down();
+  for (const point of guide.points.slice(1)) {
+    const pagePoint = await logicalToPage(targetPage, point);
+    await targetPage.mouse.move(pagePoint.x, pagePoint.y, { steps: 3 });
+  }
+  await targetPage.mouse.up();
 };
 const openFreshLevelOne = async () => {
   await page.goto(playtestUrl, { waitUntil: "networkidle" });
   await page.evaluate(() => localStorage.clear());
   await page.reload({ waitUntil: "networkidle" });
-  await page.waitForTimeout(250);
-  await clickTarget(page, "homePlay");
-  await page.waitForTimeout(120);
+  await page.waitForFunction(() => {
+    const current = window.__COLOR_ESCAPE__?.getDebugState();
+    return current?.art.ready && current.screen === "playing";
+  });
 };
 
 await openFreshLevelOne();
@@ -73,8 +80,8 @@ if (current.screen !== "playing" || current.onboarding.basicsSeen || current.puz
 await page.screenshot({ path: shot("round14-onboarding-idle.png") });
 
 // Follow the first verified route instead of assuming a color or grid cell.
-// Level 1 deliberately begins with a zero-reposition exit, so the renderer
-// synthesizes the final outward segment through the matching gate.
+// The renderer exposes the authored origin path, so the browser can replay
+// either a direct exit or a short opening reposition without guessing cells.
 const openingDrag = await page.evaluate(async () => {
   const [{ LEVELS }, { solveLevelForValidation }] = await Promise.all([
     import("/src/core/levels.ts"),
@@ -85,26 +92,25 @@ const openingDrag = await page.evaluate(async () => {
 if (!openingDrag) throw new Error("Onboarding E2E: level one has no verified opening action");
 
 const guide = current.onboarding.guide;
-assertDirectExitGuide(guide, openingDrag, "496x1078");
+assertOpeningGuide(guide, openingDrag, "496x1078");
 const openingBlockCount = current.puzzle.blocks.length;
-const start = await logicalToPage(page, guide.start);
 
-// Touching the already-aligned guided block performs the verified direct exit.
-await page.mouse.click(start.x, start.y);
+await performOpeningGesture(page, guide, openingDrag);
 await page.waitForTimeout(100);
 current = await state();
 if (!current.onboarding.basicsSeen || !current.puzzle.started || current.onboarding.guide
   || current.puzzle.moves !== 1 || current.puzzle.blocks.length !== openingBlockCount - 1
   || current.puzzle.blocks.some((block) => block.id === openingDrag.blockId)
   || current.activePointer != null || current.selectedId != null) {
-  throw new Error("Onboarding E2E: guided direct exit did not complete and persist the tutorial");
+  throw new Error("Onboarding E2E: guided opening did not complete and persist the tutorial");
 }
-await page.screenshot({ path: shot("round14-onboarding-after-direct-exit.png") });
+await page.screenshot({ path: shot("round14-onboarding-after-opening.png") });
 
 await page.reload({ waitUntil: "networkidle" });
-await page.waitForTimeout(200);
-await clickTarget(page, "homePlay");
-await page.waitForTimeout(120);
+await page.waitForFunction(() => {
+  const current = window.__COLOR_ESCAPE__?.getDebugState();
+  return current?.art.ready && current.screen === "playing";
+});
 current = await state();
 if (current.screen !== "playing" || !current.onboarding.basicsSeen || current.onboarding.guide) {
   throw new Error("Onboarding E2E: tutorial completion did not persist cleanly across reload");
@@ -116,29 +122,29 @@ const small = await browser.newPage({ viewport: { width: 320, height: 568 } });
 await small.goto(playtestUrl, { waitUntil: "networkidle" });
 await small.evaluate(() => localStorage.clear());
 await small.reload({ waitUntil: "networkidle" });
-await small.waitForTimeout(220);
-await clickTarget(small, "homePlay");
-await small.waitForTimeout(120);
+await small.waitForFunction(() => {
+  const current = window.__COLOR_ESCAPE__?.getDebugState();
+  return current?.art.ready && current.screen === "playing";
+});
 const smallState = await small.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
 const smallBlock = smallState.puzzle.blocks.find((block) => block.id === openingDrag.blockId);
 if (!smallBlock) throw new Error(`Onboarding E2E: 320x568 is missing ${openingDrag.blockId}`);
 const smallGuide = smallState.onboarding.guide;
-assertDirectExitGuide(smallGuide, openingDrag, "320x568");
+assertOpeningGuide(smallGuide, openingDrag, "320x568");
 await small.screenshot({ path: shot("round14-onboarding-idle-320x568.png") });
 const smallOpeningBlockCount = smallState.puzzle.blocks.length;
-const smallStart = await logicalToPage(small, smallGuide.start);
-await small.mouse.click(smallStart.x, smallStart.y);
+await performOpeningGesture(small, smallGuide, openingDrag);
 await small.waitForTimeout(100);
 const smallAfterExit = await small.evaluate(() => window.__COLOR_ESCAPE__.getDebugState());
 if (!smallAfterExit.onboarding.basicsSeen || !smallAfterExit.puzzle.started || smallAfterExit.onboarding.guide
   || smallAfterExit.puzzle.moves !== 1 || smallAfterExit.puzzle.blocks.length !== smallOpeningBlockCount - 1
   || smallAfterExit.puzzle.blocks.some((block) => block.id === openingDrag.blockId)) {
-  throw new Error("Onboarding E2E: 320x568 guided direct exit did not complete the tutorial");
+  throw new Error("Onboarding E2E: 320x568 guided opening did not complete the tutorial");
 }
-await small.screenshot({ path: shot("round14-onboarding-after-direct-exit-320x568.png") });
+await small.screenshot({ path: shot("round14-onboarding-after-opening-320x568.png") });
 await small.close();
 
 await context.close();
 await browser.close();
 if (errors.length) throw new Error(`Onboarding browser errors:\n${errors.join("\n")}`);
-console.log("Direct-exit gesture, completion persistence, reload behavior, and 320x568 onboarding passed.");
+console.log("Guided opening gesture, completion persistence, reload behavior, and 320x568 onboarding passed.");

@@ -1,0 +1,17 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';import {createHash} from 'node:crypto';
+import {loadSpatialApi} from './continuation211-colored-witness.mjs';import {searchSpatial,each,key} from './continuation211-optional-lift-domain.mjs';import {normalizeFast} from './continuation211-fast-normalize.mjs';import {liftPayload,runNativeLift} from './continuation211-native-lift.mjs';
+const api=await loadSpatialApi(),rows=[];
+for(let mode=0;mode<34;mode++){
+ const wide=mode>=32,positions=wide?Array.from({length:40},(_,p)=>[p%8,Math.floor(p/8)]):[[0,0],[1,0],[0,1],[0,2],[1,2]],W=wide?8:2,H=wide?9:3,region=wide?[0,0]:[0,1];
+ const level={id:97200+mode,name:'native-lift-qualification',mechanismRules:'revised-2026-09-27-v1.5',difficulty:'normal',width:W,height:H,timeSeconds:120,reward:0,gates:[{id:'gate-r',color:'red',side:'top',offset:0,size:wide?8:1},{id:'gate-b',color:'blue',side:'bottom',offset:wide?0:1,size:wide?8:1}],shutters:[{id:'lift',x:region[0],y:region[1],width:1,height:1,count:0,skin:'lift'}],blocks:[...positions.map(([x,y],i)=>({id:'b'+i,x,y,shape:[[0,0]],color:(mode&(1<<(i%5)))?'blue':'red',...(wide&&i===35?{frozen:2}:{})})),{id:'hidden',x:region[0],y:region[1],color:'red',shape:[[0,0]],shutterId:'lift',...(mode&4?{layers:['blue','red']}:{})}]};
+ const {p,c}=liftPayload(level,api,{floor:6,maxMilliseconds:5000,maxStates:150000});
+ const raw=searchSpatial(level,api,{floor:6,prove:true,maxMilliseconds:5000,maxStates:150000,maxTransitions:2000000}),native=runNativeLift(p);
+ if(!wide){assert(['relaxed-shortcut','threshold-proven'].includes(raw.status));assert.equal(native.status,raw.status);if(raw.cost!==undefined)assert.equal(native.relaxedNonClearingDrags,raw.cost);}
+ const states=[c.initial],seen=new Set([key(c.initial)]);for(let i=0;i<states.length&&states.length<128;i++)each(c,states[i],s=>{const sk=key(s);if(!seen.has(sk)){seen.add(sk);states.push(s);}if(states.length>=128)return false;});
+ const canonical=s=>{const out=s.slice();for(const g of p.groups){const v=g.map(i=>s[i]).sort((a,b)=>a-b);g.forEach((i,j)=>out[i]=v[j]);}return [...out].join(',');};
+ const successors=runNativeLift({...p,successorsOnly:true,states:states.map(s=>[...s])});
+ for(let i=0;i<states.length;i++){const expected=new Set();each(c,states[i],(raw,cost)=>expected.add(cost+':'+canonical(normalizeFast(c,raw).s)));assert.equal(successors.rows[i].normalized,canonical(normalizeFast(c,states[i]).s));assert.deepEqual(new Set(successors.rows[i].successors),expected);}
+ rows.push({mode,wide,originalReferenceStatus:raw.status,relaxedMinimum:raw.cost,nativeStatus:native.status,nativeMinimum:native.relaxedNonClearingDrags,statesCompared:states.length,status:'PASS'});
+}
+const report={status:'PASS',rows,source:'tools/continuation211-native-lift.cs',scope:'32 dense complete relaxed minima plus every normalized zero/one-cost successor of128 states per graph; 2 additional41-body graphs exercise64-slot packing and >64-cell occupancy. Original-to-relaxed and normalization theorem is separately qualified.',codeSha256:Object.fromEntries(['tools/continuation211-native-lift.cs','tools/continuation211-native-lift.mjs','tools/qualify-native-lift.mjs','tools/continuation211-fast-normalize.mjs','tools/continuation211-optional-lift-domain.mjs'].map(f=>[f,createHash('sha256').update(fs.readFileSync(f)).digest('hex')]))};
+fs.writeFileSync('deliverables/continue211-220-20260930/native-lift-qualification.json',JSON.stringify(report,null,2));console.log({status:'PASS',cases:rows.length,states:rows.reduce((n,r)=>n+r.statesCompared,0)});

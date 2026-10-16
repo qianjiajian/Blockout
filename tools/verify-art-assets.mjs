@@ -63,7 +63,8 @@ const MAX_SHELL_DECODED_BYTES = 9 * MEBIBYTE;
 // Journey and Leaderboard now use the supplied, independently replaceable
 // 720-artboard slices. Keep those slices at their authored pixel size: raising
 // this measured ceiling is preferable to silently downscaling formal artwork.
-// Only one formal-page group is resident at a time (checked separately below).
+// The inherited estimate uses one page group at a time. The retained Home rank
+// banner is accounted for separately in the explicit combinations below.
 // Five video-parity gameplay overlays add 2.17 MiB of fixed decoded RGBA at
 // their required 192/512 runtime sizes. The direction-specific formal-border
 // V2 adds about 0.54 MiB. Sixteen dedicated whole-piece sprites replace the
@@ -116,15 +117,23 @@ const SHELL_ASSET_KEYS = new Set([
   "ui.home.navigationSelected",
   "ui.home.navigationDivider",
   "ui.home.shopIcon",
+  "ui.home.shopIconLocked",
+  "ui.home.featureLock",
   "ui.home.leaderboardIcon",
+  "ui.home.leaderboardIconLocked",
   "ui.home.homeIcon",
   "ui.home.journeyIcon",
+  "ui.home.journeyIconLocked",
   "ui.home.collectionIcon",
   "ui.home.collectionAlbumEntry",
   "ui.home.dailyTaskEntry",
+  "ui.home.sideEntryBase",
+  "ui.home.leagueEntry",
+  "ui.home.dailyChallengeEntry",
   "ui.home.achievementEntry",
   "ui.onboardingDaily",
   "ui.universalPanel",
+  "ui.suppliedPopups.scene.locked-hint-panel",
 ]);
 
 const sha256 = async (path) => createHash("sha256").update(await readFile(path)).digest("hex");
@@ -304,8 +313,31 @@ for (const asset of [...manifest.assets, ...independentRevisedArt.assets, ...shu
   if (SHELL_ASSET_KEYS.has(asset.key)) shellDecodedBytes += decodedBytes;
 }
 
-const [peakLoadGroup = "none", peakLoadGroupDecodedBytes = 0] = [...loadGroupDecodedBytes.entries()]
+// Rank art can survive Home -> another page -> Home while its animation pauses.
+// requestCollectionAlbumArt clears that presentation and releases its five
+// images before requesting the full album. Artwork-only unlock previews do not
+// load the full album group. Preserve the inherited page-group estimate and add
+// rank to every other page; this does not certify other historical overlaps.
+const retainedRankGroup = "supplied-popup-rank";
+const fullAlbumGroup = "formal-collection-album";
+for (const group of [retainedRankGroup, fullAlbumGroup]) {
+  if (!loadGroupDecodedBytes.has(group)) throw new Error(`Missing lifetime-accounted art group: ${group}`);
+}
+const retainedRankDecodedBytes = loadGroupDecodedBytes.get(retainedRankGroup);
+const pageLoadGroups = [...loadGroupDecodedBytes.entries()]
+  .filter(([group]) => group !== retainedRankGroup);
+const [largestOtherPageGroup = "none", largestOtherPageDecodedBytes = 0] = pageLoadGroups
+  .filter(([group]) => group !== fullAlbumGroup)
   .sort((left, right) => right[1] - left[1])[0] ?? [];
+const loadGroupCombinations = [
+  { groups: [fullAlbumGroup], decodedBytes: loadGroupDecodedBytes.get(fullAlbumGroup) },
+  { groups: [retainedRankGroup, largestOtherPageGroup],
+    decodedBytes: retainedRankDecodedBytes + largestOtherPageDecodedBytes },
+];
+const peakLoadCombination = [...loadGroupCombinations]
+  .sort((left, right) => right.decodedBytes - left.decodedBytes)[0];
+const peakLoadGroup = peakLoadCombination.groups.join(" + ");
+const peakLoadGroupDecodedBytes = peakLoadCombination.decodedBytes;
 const fullDecodedBytes = residentDecodedBytes + peakLoadGroupDecodedBytes;
 
 if ([...SHELL_ASSET_KEYS].some((key) => !seenKeys.has(key))) {
@@ -373,7 +405,17 @@ await writeFile(memoryReportPath, `${JSON.stringify({
     decodedMiB: fullDecodedBytes / MEBIBYTE,
     budgetBytes: MAX_FULL_DECODED_BYTES,
     residentDecodedBytes,
-    mutuallyExclusiveLoadGroups: Object.fromEntries(loadGroupDecodedBytes),
+    loadGroups: Object.fromEntries(loadGroupDecodedBytes),
+    mutuallyExclusiveLoadGroups: Object.fromEntries(pageLoadGroups),
+    retainedRank: {
+      group: retainedRankGroup,
+      decodedBytes: retainedRankDecodedBytes,
+      excludedPageGroup: fullAlbumGroup,
+      releaseBeforeFullAlbum: "ColorEscapeGame.requestCollectionAlbumArt calls clearMainlineRankChange before requesting full album art; all five retained rank images must be released and not revived by late loads.",
+    },
+    loadGroupCombinations,
+    combinationFormula: "max(formal-collection-album, supplied-popup-rank + max(other page groups excluding formal-collection-album))",
+    lifetimeScope: "Accounts for retained rank art only; other page-group exclusivity is inherited, not newly certified by this static estimate.",
     peakLoadGroup,
     peakLoadGroupDecodedBytes,
     allDeclaredDecodedBytes: declaredDecodedBytes,
@@ -393,4 +435,4 @@ await writeFile(memoryReportPath, `${JSON.stringify({
   scope: "Static project-owned decoded image and primary canvas estimate; engine, audio, GPU copies and platform overhead are not included.",
 }, null, 2)}\n`, "utf8");
 
-console.log(`Verified ${seenKeys.size} runtime art assets (${runtimeBytes} bytes), with dimensions, alpha, atlas grids, manifest coverage, release density, exclusive page-group lifetime accounting, and ${((graphicsWorkingSetBytes) / MEBIBYTE).toFixed(2)} MiB decoded-art + DPR2-canvas budget.`);
+console.log(`Verified ${seenKeys.size} runtime art assets (${runtimeBytes} bytes), with dimensions, alpha, atlas grids, manifest coverage, release density, explicit retained-rank/page-group accounting, and ${((graphicsWorkingSetBytes) / MEBIBYTE).toFixed(2)} MiB decoded-art + DPR2-canvas budget.`);

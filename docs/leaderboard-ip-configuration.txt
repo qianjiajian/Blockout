@@ -1,0 +1,58 @@
+主线省榜：真实 IP 识别配置
+核验日期：2026-10-10；活动规则 v1.188.0。
+
+当前状态
+客户端的 Web / 微信请求、省份解析、2.2 秒超时、随机回退和保存已经完成。
+LEADERBOARD_IP_LOOKUP_URL 尚为空；真实服务尚未启用。
+用户确认尚未申请服务；仓库没有可用的服务凭据或后端部署配置。
+本轮没有注册账号、购买服务、部署后端、微信打包或修改真实存档。
+
+先申请腾讯位置服务
+1. 登录腾讯位置服务控制台：https://lbs.qq.com/dev/console/application/mine
+2. 为 Block Out! 创建应用，添加 Key，启用 WebServiceAPI。
+3. 在控制台确认 IP 定位权限与可用配额；以账号实际显示为准。
+4. 后端使用授权 IP 或签名校验。采用签名时同时保存 SecretKey(SK)，只放后端。
+5. 将凭据放在本地私有配置或后端环境变量中，提供文件路径供接入，不写入游戏源码。
+
+正式连接还需要
+一个项目可管理的 HTTPS 后端地址，用于返回玩家省份。
+没有现成后端时，下一步需确定部署环境及域名，不能只填腾讯 URL 就宣称双端接入完成。
+后端 Key、安全设置、域名配置和配额均需对应真实账号，不能使用文档示例 Key。
+
+待部署接口合同（这是接入规范，当前仓库没有部署该服务）
+GET https://<项目真实域名>/api/leaderboard/province
+成功：HTTP 200，JSON {"province":"广东省"} 或 {"province":"44"}
+无法定位：HTTP 200，JSON {}；服务异常可返回非 200，客户端进入随机兜底。
+浏览器请求须允许游戏 Web 域名的 CORS；不得用全局共享缓存把一个人的省份返回给所有玩家。
+后端从连接/受信代理读取玩家来源 IP，并明确传给腾讯的 ip 参数。
+若后端调用省略 ip，腾讯识别的是后端服务器地址，不能当作玩家所在地。
+后端只向游戏返回省份，不回传 Key、IP、坐标或详细地址。
+
+客户端启用
+服务部署并验证后，将 src/platform/leaderboardRegionConfig.ts 的
+LEADERBOARD_IP_LOOKUP_URL 设为上述真实 HTTPS 地址。
+微信公众平台中还需把实际请求域名加入 request 合法域名，再做真机验证。
+更新 Web 使用 pnpm run build:web；不自动构建或发布微信包。
+
+验收要求
+在隔离新账号中验证真实请求能得到省份并保存；失败、超时或无法识别仍随机一次。
+切换榜单、退出重进、重载均不重新随机，不重复查询已保存地区。
+现有已保存随机省份按 v1.188 合同保持，启用服务不会擅自替换这些账号的省份。
+要验证真实 IP 请使用隔离的新测试账号，不删除或重置玩家存档。
+
+本轮真实网络检查
+官方免 Key 服务 ipwho.is 文档允许免费商用及 CORS，注明 1000 次/日、无可用性保证。
+本机带 Origin 的一次请求实测 HTTP 429 / Rate limit exceeded，因此未将它设置为默认服务，
+也未把“可以访问服务”或受控 mock 当作成功识别真实省份。未更换来源绕过限流。
+请求仅要求 success、country_code、region、region_code，未记录本机 IP 或坐标。
+
+官方资料
+腾讯 IP 定位（Key 必填，ip 缺省使用请求端 IP）：
+https://lbs.qq.com/service/webService/webServiceGuide/position/webServiceIp
+腾讯 WebServiceAPI Key、安全设置与签名：
+https://lbs.qq.com/faq/serverFaq/webServiceKey
+微信小游戏网络说明：
+https://developers.weixin.qq.com/minigame/dev/guide/base-ability/network.html
+ipwho.is 官方文档与配额：
+https://ipwhois.io/documentation
+https://ipwhois.io/pricing

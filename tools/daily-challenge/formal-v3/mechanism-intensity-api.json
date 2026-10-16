@@ -1,0 +1,53 @@
+{
+  "version": "daily-mechanism-intensity-v3.2",
+  "module": "tools/daily-challenge/formal-v3/mechanism-intensity.mjs",
+  "exports": {
+    "intensityTargets": "(stage, difficulty=1, overrides={}) => disclosed design targets",
+    "mechanismInventory": "(level) => instances and applicable counters by mechanism",
+    "intensify": "async (level, drags, stage, options={}) => result",
+    "intensifyBatch": "async (inputs, options={}) => finite batch; maxCandidates<=450",
+    "auditMechanismParticipation": "(level, drags, replay, stage, targets) => per-instance action evidence"
+  },
+  "options": {
+    "runtime": "optional loaded runtime; reuse for a batch",
+    "difficulty": "1/2/3",
+    "sourceLevelId": "exact normal mainline board source",
+    "formalId": "caller-owned unique slot ID",
+    "idPrefix": "unique mechanism block/cover IDs",
+    "priorLevel": "optional exact old slot object; returns hash-bound priorComparison",
+    "maxAttempts": "default12, bounded to24 route-compatible adaptation plans",
+    "targets": "optional explicit per-mechanism capacity policy; record any adjustment publicly",
+    "microBudget": "maxReachable default512 (<=10000), maxTransitions default4096 (<=100000); single-held reachability only",
+    "onResult": "batch async callback receiving {index,inputId,basePath,result}"
+  },
+  "successFields": [
+    "ok",
+    "level",
+    "drags",
+    "timeSchedule",
+    "levelSha256",
+    "routeSha256",
+    "participation",
+    "priorComparison",
+    "staticAudit",
+    "replay",
+    "searchAccounting",
+    "failedAttempts"
+  ],
+  "qualificationBoundary": {
+    "doesNotProveLowerBound": true,
+    "doesNotAllocateUniqueGeometry": true,
+    "doesNotApproveFormalSlots": true,
+    "requiresFreshBoundedProof": true,
+    "requiresDiversityGate": true,
+    "requiresFinalPointerAndNaturalTime": true
+  },
+  "limitations": [
+    "Foundation geometry stages must use the global layout factory, not this decorator.",
+    "Generator needs 2/3/4 real nonoverlapping three-rail rim mounts; no outboard workaround.",
+    "Counter-bearing instances must have at least two distinct release events.",
+    "Single-layer lifts retain count1 metadata because revised lifts trigger on vacancy, not that counter. Intensity comes from actual independent lift regions and hidden inventory.",
+    "Bomb fuse increases are time relaxation; activity/number and real deadline traces are recorded without claiming a lower bound.",
+    "Failure never silently downgrades instance or count targets; select a suitable different base."
+  ]
+}

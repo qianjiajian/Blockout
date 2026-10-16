@@ -120,6 +120,7 @@ const globalDeclared = new Map(manifest.assets.map(a => [a.runtime.replace('../p
 const editorCss = await readFile(resolve(root, 'src/editor/boardEditor.css'), 'utf8');
 const route = p => {
   if (p === 'assets/audio/happy-carnival.mp3') return 'menu-music/happy-carnival.mp3';
+  if (p.startsWith('assets/art/ui/music-player-v1/')) return p.replace('assets/art/ui/music-player-v1/', 'menu-music/music-player-v1/');
   if (p === 'assets/audio/happy-foods.mp3') return 'audio/happy-foods.mp3';
   if (p.startsWith('assets/audio/sfx/')) return p.replace('assets/audio/', 'audio/');
   for (const [from, to] of [

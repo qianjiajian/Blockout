@@ -27,7 +27,7 @@ window.__REMAKE_FORMAL__={
   load(id){
     if(id<181||id>190)throw Error('Only this batch is in scope');
     const level=getLevelStrict(id);
-    if(level.mechanismRules!=='revised-2026-09-23-v1.4')throw Error('Wrong runtime');
+    if(level.mechanismRules!=='revised-2026-09-23-v1.4'&&level.mechanismRules!=='revised-2026-09-27-v1.5')throw Error('Wrong runtime');
     load(id,true);game.updateToastVisible=false;
     if(game.model.level!==level)throw Error('Actual entry must use the exact formal LEVELS object');
     return {level:structuredClone(level),formalObjectIdentity:true};

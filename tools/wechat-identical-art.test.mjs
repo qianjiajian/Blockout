@@ -3,13 +3,20 @@ import assert from 'node:assert/strict';
 import {readFile, mkdir, mkdtemp, writeFile, rm, access, symlink} from 'node:fs/promises';
 import {resolve, relative} from 'node:path';
 import {createIdenticalArtPlan, validateArtAliasPairs, rewriteIdenticalArtSource,
-  deduplicatedArtSnapshot, removeGeneratedArtAliases} from '../scripts/wechat-identical-art.mjs';
+  deduplicatedArtSnapshot, removeGeneratedArtAliases, generatedArtAliasPath, assertOriginalArtPixelsMatch} from '../scripts/wechat-identical-art.mjs';
+import sharp from 'sharp';
 
-const root = process.cwd(), prefix = 'assets/art/ui/formal-pages/';
-const one = {rows:[{from:'page/a.png',to:'page/b.png'}]};
-test('current six aliases have identical source bytes and only manifest URL references', async()=>{
+const root = process.cwd(), prefix = 'assets/';
+const formal = 'art/ui/formal-pages/';
+const one = {rows:[{from:formal+'page/a.png',to:formal+'page/b.png'}]};
+test('eighteen aliases preserve exact source RGBA and only rewrite manifest URL references', async()=>{
   const plan = await createIdenticalArtPlan(root);
-  assert.equal(plan.rows.length,6);
+  assert.equal(plan.rows.length,18);
+  assert.equal(plan.schemaVersion,2);
+  assert(plan.rows.every(row=>row.rgbaSha256.length===64&&row.width>0&&row.height>0));
+  const differentEncoding=plan.rows.find(row=>row.from.endsWith('journey/presentation-close.png'));
+  assert.equal(differentEncoding.originalBytesEqual,false);
+  assert.notEqual(differentEncoding.sourceSha256,differentEncoding.targetSourceSha256);
   const original = await readFile('src/game/artManifest.ts','utf8');
   const rewritten = rewriteIdenticalArtSource(original,plan);
   for(const {from,to}of plan.rows){assert(!rewritten.includes(prefix+from));assert(rewritten.includes(prefix+to));}
@@ -22,7 +29,7 @@ test('rejects unsafe, duplicate, self and chained aliases',()=>{
 });
 test('unknown or nonliteral runtime reference does not silently disappear',()=>{
   assert.throws(()=>rewriteIdenticalArtSource('const p="other.png"',one),/Missing literal/);
-  const source='const a="'+prefix+'page/a.png",b="'+prefix+'page/b.png";';
+  const source='const a="'+prefix+formal+'page/a.png",b="'+prefix+formal+'page/b.png";';
   assert.equal(rewriteIdenticalArtSource(source,one),source.replace('page/a.png','page/b.png'));
 });
 test('native snapshot cannot omit changed, missing or non-identical images',()=>{
@@ -50,6 +57,44 @@ test('symlink/junction aliases cannot delete canonical files',async()=>fixture(a
   // Directory junctions do not require Windows symlink elevation.
   const linked=resolve(dir,'meta-ui/formal-pages/link');
   await symlink(page,linked,process.platform==='win32'?'junction':'dir');
-  await assert.rejects(removeGeneratedArtAliases(root,dir,{rows:[{from:'link/a.png',to:'page/b.png'}]}),/Symlinked/);
+  await assert.rejects(removeGeneratedArtAliases(root,dir,{rows:[{from:formal+'link/a.png',to:formal+'page/b.png'}]}),/Symlinked/);
   await access(resolve(page,'a.png'));await access(resolve(page,'b.png'));
+}));
+
+test('source encoding may differ but one changed pixel or dimension rejects the alias',async()=>{
+  const pixels=Buffer.from([255,0,0,255,0,255,0,255]);
+  const a=await sharp(pixels,{raw:{width:2,height:1,channels:4}}).png({compressionLevel:0}).toBuffer();
+  const b=await sharp(pixels,{raw:{width:2,height:1,channels:4}}).png({compressionLevel:9}).toBuffer();
+  assert(!a.equals(b));
+  await assertOriginalArtPixelsMatch(a,b,'same pixels');
+  const changed=Buffer.from(pixels);changed[0]=254;
+  const c=await sharp(changed,{raw:{width:2,height:1,channels:4}}).png().toBuffer();
+  await assert.rejects(assertOriginalArtPixelsMatch(a,c,'changed'),/pixels differ/);
+  const resized=await sharp(a).resize(1,2).png().toBuffer();
+  await assert.rejects(assertOriginalArtPixelsMatch(a,resized,'size'),/pixels differ/);
+});
+
+test('cross-package paths resolve through the existing native host package families',()=>{
+  assert.equal(generatedArtAliasPath('art/ui/home-v3/top-header.png'),'assets/art/ui/home-v3/top-header.png');
+  assert.equal(generatedArtAliasPath('art/ui/league-supplied-v1/top-header.png'),'league-ui/league-supplied-v1/top-header.png');
+  assert.equal(generatedArtAliasPath(formal+'collection/top-header.png'),'meta-ui/formal-pages/collection/top-header.png');
+  const plan={rows:[{from:'art/ui/home-v3/top-header.png',to:formal+'collection/top-header.png'}]};
+  const rows=plan.rows.flatMap(({from,to})=>[{path:from,bytes:12,sha256:'equal'},{path:to,bytes:12,sha256:'equal'}]);
+  assert.deepEqual(deduplicatedArtSnapshot(rows,plan,''),[rows[1]]);
+  assert.throws(()=>deduplicatedArtSnapshot([{...rows[0],sha256:'different'},rows[1]],plan,''),/mismatch/);
+});
+
+test('cross-package deletion waits until every generated pair is checked',async()=>fixture(async(dir,page)=>{
+  const main=resolve(dir,'assets/art/ui/home-v3');await mkdir(main,{recursive:true});
+  await writeFile(resolve(main,'top-header.png'),'same');
+  const cross={from:'art/ui/home-v3/top-header.png',to:formal+'page/b.png'};
+  const plan={rows:[cross,...one.rows]};
+  await writeFile(resolve(page,'a.png'),'different');
+  await assert.rejects(removeGeneratedArtAliases(root,dir,plan),/bytes differ/);
+  await access(resolve(main,'top-header.png'));
+  await writeFile(resolve(page,'a.png'),'same');
+  await removeGeneratedArtAliases(root,dir,plan);
+  await assert.rejects(access(resolve(main,'top-header.png')));
+  await assert.rejects(access(resolve(page,'a.png')));
+  assert.equal(await readFile(resolve(page,'b.png'),'utf8'),'same');
 }));

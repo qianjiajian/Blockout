@@ -1,0 +1,1 @@
+const r=JSON.parse(require('fs').readFileSync('deliverables/league-regeneration-20261004/mid-experiments/candidates-20-64.json'));console.log(r.rows.filter(x=>x.routeStatus==='BLOCKED_MECHANISM_TRANSFORM').map(x=>x.index).join(','));

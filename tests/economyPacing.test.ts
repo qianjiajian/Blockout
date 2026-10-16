@@ -15,38 +15,38 @@ describe("campaign economy pacing", () => {
     expect(new Set(SUPPLY_ORDER.map((kind) => SUPPLY_ITEMS[kind].unlockLevel)).size).toBe(3);
   });
 
-  it("awards a fixed 20 coins per first clear across Lv1-Lv100", () => {
+  it("awards a fixed 40 coins per first clear across Lv1-Lv100", () => {
     const summary = buildEconomyBalance(VIDEO_PARITY_LEVELS_1_TO_100);
-    expect(summary.campaignReward).toBe(2_000);
-    expect(summary.averagePricePurchases).toBe(14);
+    expect(summary.campaignReward).toBe(4_000);
+    expect(summary.averagePricePurchases).toBe(11);
   });
 
   it("keeps chapter income fixed regardless of historical level reward metadata", () => {
     const summary = buildEconomyBalance(VIDEO_PARITY_LEVELS_1_TO_100);
-    expect(summary.chapters.map((chapter) => chapter.reward)).toEqual(Array(10).fill(200));
+    expect(summary.chapters.map((chapter) => chapter.reward)).toEqual(Array(10).fill(400));
     expect(buildEconomyBalance(LEVELS.map((level) => ({ ...level, reward: 9999 }))))
       .toEqual(buildEconomyBalance(LEVELS));
   });
 
   it("builds one reproducible first-clear-only 100-level economy contract", () => {
     const summary = buildEconomyBalance(VIDEO_PARITY_LEVELS_1_TO_100);
-    expect(summary.campaignReward).toBe(2_000);
-    expect(summary.firstClearWallet).toBe(3_000);
+    expect(summary.campaignReward).toBe(4_000);
+    expect(summary.firstClearWallet).toBe(4_000);
     expect(summary.journeyCoinReward).toBe(50);
     expect(summary.journeyFreeStock).toBe(8);
     expect(summary.journeyFreeStockByKind).toEqual({ time: 3, rocket: 2, pulse: 3 });
     expect(summary.journeyFreeLives).toBe(0);
     expect(summary.journeyUnlimitedLivesGrants).toBe(4);
     expect(summary.journeyUnlimitedLivesSeconds).toBe(10_800);
-    expect(summary.totalWallet).toBe(3_050);
-    expect(summary.averagePrice).toBe(210);
-    expect(summary.averagePricePurchases).toBe(14);
-    expect(summary.purchasesByKind).toEqual({ time: 16, rocket: 12, pulse: 14 });
-    expect(summary.levelsPerAveragePurchase).toBe(7.14);
-    expect(summary.theoreticalBoosterAssists).toBe(31);
+    expect(summary.totalWallet).toBe(4_050);
+    expect(summary.averagePrice).toBe((300 + 400 + 400) / 3);
+    expect(summary.averagePricePurchases).toBe(11);
+    expect(summary.purchasesByKind).toEqual({ time: 13, rocket: 10, pulse: 10 });
+    expect(summary.levelsPerAveragePurchase).toBe(9.09);
+    expect(summary.theoreticalBoosterAssists).toBe(28);
     expect(summary.unlocks.map((item) => item.level)).toEqual([4, 7, 10]);
     expect(summary.chapters.map((chapter) => chapter.reward)).toEqual([
-      200, 200, 200, 200, 200, 200, 200, 200, 200, 200,
+      400, 400, 400, 400, 400, 400, 400, 400, 400, 400,
     ]);
     expect(summary.chapters.map((chapter) => chapter.journeyCoinReward)).toEqual([
       50, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -61,7 +61,7 @@ describe("campaign economy pacing", () => {
       0, 1_800, 3_600, 0, 1_800, 0, 0, 0, 3_600, 0,
     ]);
     expect(summary.chapters.map((chapter) => chapter.cumulativeWallet)).toEqual([
-      1_250, 1_450, 1_650, 1_850, 2_050, 2_250, 2_450, 2_650, 2_850, 3_050,
+      450, 850, 1_250, 1_650, 2_050, 2_450, 2_850, 3_250, 3_650, 4_050,
     ]);
     expect(summary.chapters.at(-1)?.cumulativeReward).toBe(summary.campaignReward);
     expect(summary.chapters.at(-1)?.cumulativeJourneyCoinReward).toBe(summary.journeyCoinReward);
@@ -104,9 +104,9 @@ describe("campaign economy pacing", () => {
     expect(LEVELS).toHaveLength(200);
     const summary = buildEconomyBalance(LEVELS);
     expect(summary.chapters).toHaveLength(20);
-    expect(summary.campaignReward).toBe(4_000);
-    expect(summary.firstClearWallet).toBe(5_000);
-    expect(summary.totalWallet).toBe(5_100);
+    expect(summary.campaignReward).toBe(8_000);
+    expect(summary.firstClearWallet).toBe(8_000);
+    expect(summary.totalWallet).toBe(8_100);
     expect(summary.chapters.at(-1)?.cumulativeReward).toBe(summary.campaignReward);
     expect(summary.chapters.at(-1)?.cumulativeJourneyCoinReward).toBe(summary.journeyCoinReward);
   });
@@ -123,16 +123,16 @@ describe("campaign economy pacing", () => {
     });
     expect(markdown).toContain("不替代真实玩家失败率");
     expect(markdown).toContain("Lv 4、火箭在 Lv 7、脉冲在 Lv 10");
-    expect(markdown).toContain("100 关各完成一次的基准金币共 2,000");
-    expect(markdown).toContain("每关首次通关固定发 20 基础金币");
+    expect(markdown).toContain("100 关各完成一次的基准金币共 4,000");
+    expect(markdown).toContain("每关首次通关固定发 40 基础金币");
     expect(markdown).toContain("重复通关（包括提高星级）不发金币");
     expect(markdown).toContain("Journey 金币里程碑另发 50 金币");
-    expect(markdown).toContain("合计钱包为 3,050");
+    expect(markdown).toContain("合计钱包为 4,050");
     expect(markdown).toContain("免费道具不折算为金币或购买力");
     expect(markdown).toContain("避免满仓时才能全部兑现");
     expect(markdown).toContain("0 次免费体力，以及 4 次无限体力（共 10,800 秒 / 180 分钟）");
-    expect(markdown).toContain("也不与 31 次道具辅助相加");
-    expect(markdown).toContain("| 2 | 200 | 0 | — | — | 30 分钟（1 次） | 1450 | 6 |");
+    expect(markdown).toContain("也不与 28 次道具辅助相加");
+    expect(markdown).toContain("| 2 | 400 | 0 | — | — | 30 分钟（1 次） | 850 | 2 |");
     expect(markdown).toContain("最紧关卡为 Lv 68、Lv 100，均余 71.00 秒");
   });
 });

@@ -35,6 +35,32 @@ try {
   await stat(resolve(output, "project.private.config.json"));
   await invoke("tools/verify-wechat-project.mjs");
 
+  // The DevTools-private display name is intentionally independent from the
+  // release identity. Keep this probe isolated in .codex-temp and restore the
+  // generated output with a clean rebuild before the integrity probes below.
+  const privateConfigPath = resolve(output, "project.private.config.json");
+  const privateConfig = JSON.parse(await readFile(privateConfigPath, "utf8"));
+  privateConfig.projectname = "Local DevTools Display Name";
+  await writeFile(privateConfigPath, `${JSON.stringify(privateConfig, null, 2)}\n`);
+  await invoke("tools/verify-wechat-project.mjs");
+
+  privateConfig.projectname = "   ";
+  await writeFile(privateConfigPath, `${JSON.stringify(privateConfig, null, 2)}\n`);
+  await expectVerifyFailure("project.private.config.json must contain a non-empty project name");
+
+  privateConfig.projectname = "Local DevTools Display Name";
+  await writeFile(privateConfigPath, `${JSON.stringify(privateConfig, null, 2)}\n`);
+  await invoke("tools/verify-wechat-project.mjs");
+
+  const releaseConfigPath = resolve(output, "project.config.json");
+  const releaseConfig = JSON.parse(await readFile(releaseConfigPath, "utf8"));
+  releaseConfig.projectname = "wrong-release-name";
+  await writeFile(releaseConfigPath, `${JSON.stringify(releaseConfig, null, 2)}\n`);
+  await expectVerifyFailure(`${outputRelative}/project.config.json: projectname`);
+
+  await invoke("scripts/build-wechat.mjs");
+  await invoke("tools/verify-wechat-project.mjs");
+
   await appendFile(resolve(output, "game.js"), "\n// tamper probe\n");
   await expectVerifyFailure("was changed after build");
 

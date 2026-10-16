@@ -1,0 +1,15 @@
+import fs from'node:fs';import assert from'node:assert/strict';import{createHash}from'node:crypto';import{loadSpatialApi}from'./fifo-witness214.mjs';import{staticFloor}from'./native-static219.mjs';import{fifoPayload,runNativeFifo}from'./native-fifo214-memo.mjs';import{runNativeFifo as runReference}from'./native-fifo214-dominance.mjs';
+const OUT='deliverables/continue211-220-20260930/design-new',api=await loadSpatialApi(),rows=[];
+const base=JSON.parse(fs.readFileSync(`${OUT}/candidate214-hidden-colors-v2-170.json`)).level;
+for(let mode=0;mode<8;mode++){
+ const level=structuredClone(base);delete level.generators;level.blocks=level.blocks.filter(b=>b.shutterId);
+ if(mode&1)level.blocks.find(b=>b.id==='l214-hidden-pink').color='red';if(mode&2)level.blocks.find(b=>b.id==='l214-hidden-blue-h2').color='cyan';if(mode&4)level.blocks.find(b=>b.id==='l214-hidden-yellow').color='pink';
+ const reduced=structuredClone(level);delete reduced.shutters;reduced.blocks.forEach(b=>delete b.shutterId);reduced.mechanismRules='revised-2026-09-23-v1.4';
+ let h=0;const lowerTests=[];for(let floor=1;floor<=3;floor++){const r=staticFloor(reduced,api,{floor,maxMilliseconds:3000,maxStates:300000});assert.notEqual(r.status,'unknown');lowerTests.push({floor,status:r.status,output:r.output});if(r.thresholdProven)h=floor;}
+ const {p}=fifoPayload(level,api,{maxMilliseconds:5000,maxStates:300000});const tests=[];
+ for(let floor=1;floor<=5;floor++){const ref=runReference({...p,floor}),actual=runNativeFifo({...p,floor,coverLowerBounds:[h]});assert.notEqual(ref.status,'unknown');assert.notEqual(actual.status,'unknown');assert.equal(actual.thresholdProven,ref.thresholdProven);tests.push({floor,reference:ref.output,potential:actual.output,status:actual.status});}
+ rows.push({mode,certifiedPotential:h,lowerTests,tests});console.log('PASS',mode,h);
+}
+const files=['tools/regeneration211-design/native-fifo214-memo.cs','tools/regeneration211-design/native-fifo214-memo.mjs','tools/regeneration211-design/qualify-fifo214-memo.mjs'];
+fs.writeFileSync(`${OUT}/fifo214-memo-qualification.json`,JSON.stringify({status:'PASS',rows,theorem:'A still-hidden cohort has not moved or peeled. Its independently certified isolated necessary-parking lower bound remains a lower bound on future full-graph parking cost, since deleting every other body only removes obstacles and there are no hidden ice, locked keys, flip gates or colored grids. A state with paidCost + this bound >= requestedFloor cannot be a counterexample below the floor. Pruning occurs after the existing legal full-body normalization, never removes inventory from the searched graph, and is disabled for successorsOnly diagnostics. Revealed cohorts contribute zero, so no aging/location assumptions are applied after activation. Multiple hints use max, never an unqualified sum. Full-domain graph and other dominance qualifications remain separate dependencies.',codeSha256:Object.fromEntries(files.map(f=>[f,createHash('sha256').update(fs.readFileSync(f)).digest('hex')]))},null,2));
+

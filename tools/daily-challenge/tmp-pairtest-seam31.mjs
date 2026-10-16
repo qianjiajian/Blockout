@@ -1,0 +1,10 @@
+import { build } from "esbuild";
+const b=await build({stdin:{resolveDir:process.cwd(),loader:"ts",contents:`export { validateLevel, PuzzleModel } from "./src/core/PuzzleModel.ts"; export { searchRevisedLevel,replayRevisedRoute } from "./src/core/revisedLevelSearch.ts"; export {checkRevisedRepositionFloor} from "./src/core/revisedRepositionFloor.ts";`},bundle:true,write:false,platform:"node",format:"esm",logLevel:"silent"});
+const runtime=await import(`data:text/javascript;base64,${Buffer.from(b.outputFiles[0].text).toString("base64")}`);
+const {validateLevel,searchRevisedLevel,checkRevisedRepositionFloor}=runtime;
+const N=31,h=N*2,w=2,gates=[],blocks=[];
+for(let i=0;i<N;i++){const y=i*2; gates.push({id:`rg-${i}`,side:"right",offset:y,size:1,color:"red"},{id:`bg-${i}`,side:"left",offset:y,size:1,color:"blue"});blocks.push({id:`a-${i}`,x:0,y,shape:[[0,0]],color:"red"},{id:`b-${i}`,x:1,y,shape:[[0,0]],color:"blue"});}
+const seams=Array.from({length:N-1},(_,j)=>({orientation:"horizontal",offset:2*j+2,start:0,size:w})); const level={mechanismRules:"revised-2026-09-23-v1.4",id:9001,name:"chain",difficulty:"super",timeSeconds:999,reward:0,width:w,height:h,gates,blocks,seams};
+try{validateLevel(level); console.log("validate ok");const s=searchRevisedLevel(level,{maxStates:1000,maxDragStates:1000,maxTransitions:500000,maxMilliseconds:10000}); console.log("search",s.status,s.termination,s.exploredStates,s.discoveredStates,s.attemptedTransitions,s.replay?.complete,s.drags.length); const f=checkRevisedRepositionFloor(level,{floor:31,maxStates:1000000,maxDragStates:500,maxTransitions:500000,maxMilliseconds:180000}); console.log("floor",f.status,f.termination,f.exploredStates,f.discoveredStates,f.attemptedTransitions,f.relaxedNonClearingDrags); if(s.drags.length) console.log(JSON.stringify(s.drags.slice(0,10)));}catch(e){console.log("ERR",e.message);}
+
+

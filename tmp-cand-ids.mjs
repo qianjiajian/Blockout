@@ -1,0 +1,1 @@
+import fs from 'node:fs';for(const f of ['leagueCandidate-071.json','leagueCandidate-081.json']){const x=JSON.parse(fs.readFileSync('deliverables/league-regeneration-20261004/formal/'+f));console.log(f,x.index,x.level.id,x.level.difficulty,x.specials)}

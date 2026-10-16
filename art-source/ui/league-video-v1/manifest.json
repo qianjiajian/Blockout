@@ -1,0 +1,239 @@
+{
+  "generator": "built-in image_gen",
+  "purpose": "User-authorized video league UI",
+  "runtimeBase": "/assets/art/ui/league-video-v1/",
+  "entries": [
+    {
+      "name": "bronze.png",
+      "width": 279,
+      "height": 428,
+      "hasAlpha": true,
+      "sha256": "020066447ef545b2a9ca75c072f08b60f81288ba176159205ed949de8fce174c",
+      "crop": {
+        "left": 0,
+        "top": 0,
+        "width": 443,
+        "height": 443
+      },
+      "atlas": "trophies-source.png"
+    },
+    {
+      "name": "silver.png",
+      "width": 281,
+      "height": 428,
+      "hasAlpha": true,
+      "sha256": "de798d44daf9f31a4df03eedae51e9e9dd9f175f9478e67770d344c0102f047f",
+      "crop": {
+        "left": 443,
+        "top": 0,
+        "width": 444,
+        "height": 443
+      },
+      "atlas": "trophies-source.png"
+    },
+    {
+      "name": "gold.png",
+      "width": 278,
+      "height": 427,
+      "hasAlpha": true,
+      "sha256": "6e5bcdfacbe6dba65c35afdd99fba5357d08bad088848fb3f9ca8522ad1c5f7e",
+      "crop": {
+        "left": 887,
+        "top": 0,
+        "width": 443,
+        "height": 443
+      },
+      "atlas": "trophies-source.png"
+    },
+    {
+      "name": "platinum.png",
+      "width": 285,
+      "height": 433,
+      "hasAlpha": true,
+      "sha256": "787d81cc32d16b448b1ad9933a0b6e7a414e0530754d40207da5d3a1d1d3e403",
+      "crop": {
+        "left": 1330,
+        "top": 0,
+        "width": 444,
+        "height": 443
+      },
+      "atlas": "trophies-source.png"
+    },
+    {
+      "name": "emerald.png",
+      "width": 284,
+      "height": 426,
+      "hasAlpha": true,
+      "sha256": "b37a8a7de538c16ea2fea9e93bef0823179fdb8637f3b5bfbbbaf9d2e682b880",
+      "crop": {
+        "left": 0,
+        "top": 443,
+        "width": 443,
+        "height": 444
+      },
+      "atlas": "trophies-source.png"
+    },
+    {
+      "name": "diamond.png",
+      "width": 285,
+      "height": 426,
+      "hasAlpha": true,
+      "sha256": "41d06e3ea41881e7e070e8d267d11523885723265642ecef0a39974c4891a5fe",
+      "crop": {
+        "left": 443,
+        "top": 443,
+        "width": 444,
+        "height": 444
+      },
+      "atlas": "trophies-source.png"
+    },
+    {
+      "name": "master.png",
+      "width": 288,
+      "height": 427,
+      "hasAlpha": true,
+      "sha256": "3e02c345d96665911209d0a8576b8bcd78f7f59dfb0a745ae6d3e7427055e09e",
+      "crop": {
+        "left": 887,
+        "top": 443,
+        "width": 443,
+        "height": 444
+      },
+      "atlas": "trophies-source.png"
+    },
+    {
+      "name": "glory.png",
+      "width": 348,
+      "height": 433,
+      "hasAlpha": true,
+      "sha256": "d9ebb7eaa833536f6ccfbb49de99f9128250bee2781a5f67bf77494c8f98df5f",
+      "crop": {
+        "left": 1330,
+        "top": 443,
+        "width": 444,
+        "height": 444
+      },
+      "atlas": "trophies-source.png"
+    },
+    {
+      "name": "row.png",
+      "width": 517,
+      "height": 126,
+      "hasAlpha": true,
+      "sha256": "bb202ba777854b76897df946ca4e8d5461675fad04ebbb3187053f4fe564cc53",
+      "crop": {
+        "left": 0,
+        "top": 80,
+        "width": 585,
+        "height": 330
+      },
+      "atlas": "chrome-source.png"
+    },
+    {
+      "name": "round-button.png",
+      "width": 259,
+      "height": 255,
+      "hasAlpha": true,
+      "sha256": "ddfc33ed5b82fb80cdf3293de3e7763fe8327a779fbd4c5e37c8b92d0d033713",
+      "crop": {
+        "left": 590,
+        "top": 70,
+        "width": 345,
+        "height": 360
+      },
+      "atlas": "chrome-source.png"
+    },
+    {
+      "name": "score-token.png",
+      "width": 199,
+      "height": 212,
+      "hasAlpha": true,
+      "sha256": "c588dd24ca33893147ccaaf9157bee56c739e105c2dcc5f480db2218402c19be",
+      "crop": {
+        "left": 950,
+        "top": 90,
+        "width": 280,
+        "height": 320
+      },
+      "atlas": "chrome-source.png"
+    },
+    {
+      "name": "continue-button.png",
+      "width": 463,
+      "height": 181,
+      "hasAlpha": true,
+      "sha256": "6b0eacbe291d0a9e9d23c9c3563b1281168f309dde7bd1a40a9a352c18fcac55",
+      "crop": {
+        "left": 1240,
+        "top": 90,
+        "width": 534,
+        "height": 320
+      },
+      "atlas": "chrome-source.png"
+    },
+    {
+      "name": "self-row.png",
+      "width": 517,
+      "height": 130,
+      "hasAlpha": true,
+      "sha256": "5efa3149bdd7b96376bc6f841822e378769d7930fa469ffb87c1218a7e4c58ac",
+      "crop": {
+        "left": 0,
+        "top": 440,
+        "width": 585,
+        "height": 370
+      },
+      "atlas": "chrome-source.png"
+    },
+    {
+      "name": "parchment.png",
+      "width": 296,
+      "height": 313,
+      "hasAlpha": true,
+      "sha256": "03270d15da6e69333142ce2d1d52f18fe8b51ae0bf0f01339c307554994da4ab",
+      "crop": {
+        "left": 590,
+        "top": 440,
+        "width": 335,
+        "height": 400
+      },
+      "atlas": "chrome-source.png"
+    },
+    {
+      "name": "coin-reward.png",
+      "width": 271,
+      "height": 228,
+      "hasAlpha": true,
+      "sha256": "698ee527d70473da0ee3a3b8ddffe942aa6c7429c5b66dc877b639d97db99e75",
+      "crop": {
+        "left": 935,
+        "top": 450,
+        "width": 400,
+        "height": 365
+      },
+      "atlas": "chrome-source.png"
+    },
+    {
+      "name": "glory-star.png",
+      "width": 263,
+      "height": 255,
+      "hasAlpha": true,
+      "sha256": "408af3214fcbbcd78d282ad3dcbbb8679fa2891d5f49ffab3f1801f58ed4ce11",
+      "crop": {
+        "left": 1370,
+        "top": 450,
+        "width": 370,
+        "height": 365
+      },
+      "atlas": "chrome-source.png"
+    },
+    {
+      "name": "background.png",
+      "width": 992,
+      "height": 2156,
+      "hasAlpha": false,
+      "sha256": "7be2668edb2c8d166e54929c6b6a2163f65d74cab661da052bcef1e9e61a2fd4",
+      "atlas": "background-source.png"
+    }
+  ]
+}

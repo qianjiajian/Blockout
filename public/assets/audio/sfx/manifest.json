@@ -67,60 +67,6 @@
         "frames": 27342
       }
     },
-    "time": {
-      "file": "time.mp3",
-      "durationSeconds": 0.58,
-      "peak": 0.78,
-      "rms": 0.1705320384359471,
-      "bytes": 7880,
-      "sha256": "4a6a3fcd4c8535f100cda2b89c2c3b6cabdabac12e075c69d7f0af1bc881e832",
-      "source": {
-        "file": "art-source/audio/sfx/time.wav",
-        "bytes": 102356,
-        "sha256": "37a984d75ec160765edb142dbca638417ebf82ee2f104c036838c5d3e0a0d9fd",
-        "durationSeconds": 0.58,
-        "sampleRate": 44100,
-        "channels": 2,
-        "bitsPerSample": 16,
-        "frames": 25578
-      }
-    },
-    "rocket": {
-      "file": "rocket.mp3",
-      "durationSeconds": 0.72,
-      "peak": 0.78,
-      "rms": 0.15423101124147515,
-      "bytes": 9448,
-      "sha256": "c3df41e547dc7c5b6972c9db16ff7df1b49d23cca81652ded1d5db9797ebe7aa",
-      "source": {
-        "file": "art-source/audio/sfx/rocket.wav",
-        "bytes": 127052,
-        "sha256": "874bf483950dce3e6f5423d048343f6b86dd293e355f5873f24b76de407d28cd",
-        "durationSeconds": 0.72,
-        "sampleRate": 44100,
-        "channels": 2,
-        "bitsPerSample": 16,
-        "frames": 31752
-      }
-    },
-    "pulse": {
-      "file": "pulse.mp3",
-      "durationSeconds": 0.7,
-      "peak": 0.78,
-      "rms": 0.1495398937736037,
-      "bytes": 9134,
-      "sha256": "38cc1bc60e00cd33c6eb9ad263cf8be5802b1ec42da6e994394153527a46a233",
-      "source": {
-        "file": "art-source/audio/sfx/pulse.wav",
-        "bytes": 123524,
-        "sha256": "bd8f457a282c7b10dc4029bd2cad4fa62755626d3f697e525589ebb4699c1729",
-        "durationSeconds": 0.7,
-        "sampleRate": 44100,
-        "channels": 2,
-        "bitsPerSample": 16,
-        "frames": 30870
-      }
-    },
     "mechanic": {
       "file": "mechanic.mp3",
       "durationSeconds": 0.38,
@@ -174,42 +120,6 @@
         "bitsPerSample": 16,
         "frames": 44982
       }
-    },
-    "win": {
-      "file": "win.mp3",
-      "durationSeconds": 1.48,
-      "peak": 0.78,
-      "rms": 0.18508535894954728,
-      "bytes": 18538,
-      "sha256": "4dcb305d942e12f50069f476c707a66c193eed3ad4f65ee11d826e61dea417de",
-      "source": {
-        "file": "art-source/audio/sfx/win.wav",
-        "bytes": 261116,
-        "sha256": "04642cecf8e0decf2bdab85b4ea90d99d38404db74b9e7fa0ffdad185385288b",
-        "durationSeconds": 1.48,
-        "sampleRate": 44100,
-        "channels": 2,
-        "bitsPerSample": 16,
-        "frames": 65268
-      }
-    },
-    "fail": {
-      "file": "fail.mp3",
-      "durationSeconds": 0.96,
-      "peak": 0.7799999999999999,
-      "rms": 0.21424575705905424,
-      "bytes": 12269,
-      "sha256": "17b23538bf1ee4172225b5c6828cb4e1844c0b85b4cfe7f94821ca3a685c72c2",
-      "source": {
-        "file": "art-source/audio/sfx/fail.wav",
-        "bytes": 169388,
-        "sha256": "4d3bc162deaebcd5419dc81f3233ea78d99fd02a6103285305f70c51825a4da2",
-        "durationSeconds": 0.96,
-        "sampleRate": 44100,
-        "channels": 2,
-        "bitsPerSample": 16,
-        "frames": 42336
-      }
     }
   },
   "providedSounds": {
@@ -246,6 +156,126 @@
       "usage": "Real curtain opening only; not counter decrements, lifts or generators",
       "bytes": 20739,
       "sha256": "0EAFC4F46DABAF0487A611C97A1466AF2AD7222A4A1EA4499076C157C2995D6B"
+    },
+    "timeover": {
+      "file": "timeover.mp3",
+      "source": "User-provided timeover.mp3",
+      "usage": "One warning on each displayed countdown second from 10 through 1 during active gameplay; stop on pause, freeze, background or round end",
+      "archivedSource": "art-source/audio/provided-sfx/timeover.mp3",
+      "audioReencoded": false,
+      "bytes": 25754,
+      "sha256": "9CC4DA401C5F24859DF9FB00360B8998DD4D92D12A9620BEFBFC36357270BD5A",
+      "codec": "mp3",
+      "bitrateKbps": 192,
+      "sampleRate": 44100,
+      "channels": 2,
+      "frames": 47232,
+      "durationSeconds": 1.0710204081632653
+    },
+    "time": {
+      "file": "time.mp3",
+      "source": "User-provided item_time.mp3",
+      "usage": "One shot after successfully using the time-freeze booster; respects the sound-effects setting",
+      "archivedSource": "art-source/audio/provided-sfx/item_time.mp3",
+      "audioReencoded": false,
+      "bytes": 50205,
+      "sha256": "AF5742E170ABC70B75D6823E548CE5C3768A75C14F7FA6246F1CE2B280C62B32",
+      "codec": "mp3",
+      "bitrateKbps": 192,
+      "sampleRate": 44100,
+      "channels": 2,
+      "frames": 92160,
+      "durationSeconds": 2.089795918367347
+    },
+    "rocket": {
+      "file": "rocket.mp3",
+      "source": "User-provided item_daodan.mp3",
+      "usage": "One shot when a valid target block click successfully launches the rocket; not on booster selection/cancellation or again at impact; respects the sound-effects setting",
+      "archivedSource": "art-source/audio/provided-sfx/item_daodan.mp3",
+      "audioReencoded": false,
+      "bytes": 25754,
+      "sha256": "FBA70D63DEBA1A09DF03F99FABF11A1608CCCA6B59BFA92D460951E86CD58D68",
+      "codec": "mp3",
+      "bitrateKbps": 192,
+      "sampleRate": 44100,
+      "channels": 2,
+      "frames": 47232,
+      "durationSeconds": 1.0710204081632653
+    },
+    "pulse": {
+      "file": "pulse.mp3",
+      "source": "User-provided item_maichong.mp3",
+      "usage": "One shot after a committed, effective pulse booster use; respects the sound-effects setting",
+      "archivedSource": "art-source/audio/provided-sfx/item_maichong.mp3",
+      "audioReencoded": false,
+      "bytes": 53966,
+      "sha256": "DA7D5CB3D3D57C4C6192EFF30E7CC992A533DB7888D7E55B1EC9321BDFFE14D9",
+      "codec": "mp3",
+      "bitrateKbps": 192,
+      "sampleRate": 44100,
+      "channels": 2,
+      "frames": 99072,
+      "durationSeconds": 2.246530612244898
+    },
+    "fail": {
+      "file": "fail.mp3",
+      "source": "User-provided loss.mp3",
+      "usage": "One shot when a failed puzzle transitions from gameplay to the failure screen; respects the sound-effects setting",
+      "archivedSource": "art-source/audio/provided-sfx/loss.mp3",
+      "audioReencoded": false,
+      "bytes": 116033,
+      "sha256": "EDEECFFBCD385E471A5972D49CAC0D7E900368A369754134F442F686D06D93A4",
+      "codec": "mp3",
+      "bitrateKbps": 192,
+      "sampleRate": 44100,
+      "channels": 2,
+      "frames": 213120,
+      "durationSeconds": 4.83265306122449
+    },
+    "win": {
+      "file": "win.mp3",
+      "source": "User-provided win.mp3",
+      "usage": "One shot when a completed challenge successfully commits its result; respects the sound-effects setting",
+      "archivedSource": "art-source/audio/provided-sfx/win.mp3",
+      "audioReencoded": false,
+      "bytes": 87821,
+      "sha256": "1565C6EB3658D17AE751872E8AA259EE4EB88141230582D6B0A0C7110973308B",
+      "codec": "mp3",
+      "bitrateKbps": 192,
+      "sampleRate": 44100,
+      "channels": 2,
+      "frames": 161280,
+      "durationSeconds": 3.657142857142857
+    },
+    "gold": {
+      "file": "gold.mp3",
+      "source": "User-provided gold.mp3",
+      "usage": "One shared shot after any reward claim is successfully saved, including coins, inspiration, boosters and lives; respects the sound-effects setting",
+      "archivedSource": "art-source/audio/provided-sfx/gold.mp3",
+      "audioReencoded": false,
+      "bytes": 25754,
+      "sha256": "13C05764AE3A8BAC950ADB349F29ED281BCC8E8E1333186C92FE52EA309FC149",
+      "codec": "mp3",
+      "bitrateKbps": 192,
+      "sampleRate": 44100,
+      "channels": 2,
+      "frames": 47232,
+      "durationSeconds": 1.0710204081632653
+    },
+    "itemArrival": {
+      "file": "itemArrival.mp3",
+      "source": "User-provided item_huoqu.mp3",
+      "usage": "One independent shot for each reward-flight particle reaching its destination; respects the sound-effects setting",
+      "archivedSource": "art-source/audio/provided-sfx/item_huoqu.mp3",
+      "audioReencoded": false,
+      "bytes": 7573,
+      "sha256": "845ACFAE8925338E44ED976EBB3D57C0A093B77CA2B2301DD1976FE2C318F5D4",
+      "codec": "mp3",
+      "bitrateKbps": 192,
+      "sampleRate": 44100,
+      "channels": 2,
+      "frames": 13824,
+      "durationSeconds": 0.313469387755102
     }
   }
 }

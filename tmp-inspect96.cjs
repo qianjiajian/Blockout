@@ -1,0 +1,1 @@
+const x=require('./deliverables/league-regeneration-20261004/late-experiments/candidate-96.json');console.log(Object.keys(x));console.log(Object.keys(x.attempts[0]));console.log(x.attempts[0].level?.id,x.attempts[0].route?.length,x.attempts[0].replay);

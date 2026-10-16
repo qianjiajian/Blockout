@@ -1,0 +1,22 @@
+import fs from 'node:fs';
+import {loadSpatialApi} from '../continuation211-optional-lift-domain.mjs';
+import {loadApi,replay} from '../remake191-200/replay.mjs';
+import {loadContinuationRuntime,sha256} from '../continuation211-runtime.mjs';
+import {nativeWitness64} from '../regeneration212-design/native-witness212-guided.mjs';
+import {prefixPayload,runPrefix} from '../regeneration212-design/native-prefix212.mjs';
+import {liftPayload,runNativeLift} from '../continuation211-native-lift.mjs';
+import {auditOpeningCoverage} from '../revised-opening-coverage.mjs';
+import {auditHiddenCoverage} from '../revised-hidden-coverage.mjs';
+import {adjacency} from '../regeneration212-design/design212.mjs';
+const out='deliverables/continue211-220-20260930/design220-new/aux212-mixed-hidden';fs.mkdirSync(out,{recursive:true});const api={...await loadSpatialApi(),...(await loadApi()).api},core=await loadContinuationRuntime(),history=[];
+for(const p of[2,34,20])for(let variant=0;variant<4;variant++){
+ const parent='deliverables/continue211-220-20260930/design220-new/aux212-mixed-packing-legal/candidate-'+p+'.json',base=JSON.parse(fs.readFileSync(parent)),level=structuredClone(base.level),get=id=>level.blocks.find(b=>b.id==='l212-'+id),file=out+'/parent'+p+'-hidden'+variant+'.json';if(fs.existsSync(file))throw Error('Already attempted');
+ if(variant<2){get('top-bomb40').y=1;get('top-f').y=0;get('top-a').color='green';if(variant===1){get('top-f').color='red';get('top-c').color='yellow';}}
+ else{Object.assign(get('top-c'),{x:4,y:0,shape:[[0,0],[1,0],[2,0]]});Object.assign(get('top-d'),{x:4,y:1});get('top-f').color=variant===2?'yellow':'green';level.coloredGrids[0].cells=[[4,1],[5,1]];}
+ level.mechanismAdaptation.change+=' New true top14cell hidden layout variant '+variant+': bluebombH2 andordinaryH2 rearranged, ororiginalL3retiledasnativeH3 withblueH2at4,1; two bluefloorcells tracktheactualbluehiddenbody. Source counts10/1, ice11 andbomb40 unchanged. Hidden seven bodies remainfull14cells.';
+ const audit={opening:auditOpeningCoverage(new api.PuzzleModel(level).snapshot()),hidden:auditHiddenCoverage(level),adjacency:[undefined,'l212-cover10','l212-cover1'].flatMap(id=>adjacency(level.blocks.filter(b=>b.shutterId===id))),mechanism:core.auditRevisedMechanismContract(level)};
+ const packet={level,parent,variant,levelSha256:sha256(level),audit,formalAccepted:false};
+ if(audit.opening.passed&&audit.hidden.passed&&!audit.adjacency.length&&!audit.mechanism.length){try{let prefix=[];for(const d of base.upper.partialDrags){prefix.push(d);const r=replay(level,prefix,api,{timed:true,requirePointerCompatible:true});if(r.clearEvents>=10)break;}const pr=replay(level,prefix,api,{timed:true,requirePointerCompatible:true});packet.prefix={drags:prefix,nonClearing:pr.nonClearingDrags,clears:pr.clearEvents};const plan=structuredClone(level);plan.blocks.forEach(b=>delete b.timedBombSeconds);packet.projection=plan;packet.upper=nativeWitness64(plan,api,{prefixDrags:prefix,floor:16-pr.nonClearingDrags,maxMilliseconds:3000,maxStates:350000});if(packet.upper.drags){packet.drags=packet.upper.drags;packet.replay=replay(level,packet.drags,api,{timed:true,complete:true,requirePointerCompatible:true});if(packet.replay.nonClearingDrags>=11&&packet.replay.nonClearingDrags<=15){level.preservedMoveTarget=packet.replay.effectiveDrags;plan.preservedMoveTarget=packet.replay.effectiveDrags;packet.levelSha256=sha256(level);if(pr.nonClearingDrags>=11){packet.lower=runPrefix(prefixPayload(plan,api,{goalClears:10,floor:11,maxMilliseconds:6000,maxStates:2000000,mergeCold:true}).p);packet.lowerScope='Every complete route must first attain10 real clears; certified cold-color prefix quotient only until goal10.';}else{packet.lower=runNativeLift(liftPayload(plan,api,{floor:11,maxMilliseconds:6000,maxStates:2000000}).p);packet.lowerScope='Full inventory, only bomb deadline deleted.';}}}}catch(e){packet.error=e.stack;}}
+ fs.writeFileSync(file,JSON.stringify(packet,null,2),{flag:'wx'});const row={p,variant,N:level.blocks.length,adj:audit.adjacency,pre:packet.prefix?.nonClearing,U:packet.replay?.nonClearingDrags,max:packet.upper?.maxClearsSeen,L:packet.lower?.status,frontier:packet.lower?.frontierCost,shortcut:packet.lower?.relaxedNonClearingDrags,error:packet.error};history.push(row);console.log(JSON.stringify(row));if(packet.lower?.thresholdProven){fs.writeFileSync(out+'/history.json',JSON.stringify(history,null,2),{flag:'wx'});process.exit(0);}
+}
+fs.writeFileSync(out+'/history.json',JSON.stringify(history,null,2),{flag:'wx'});

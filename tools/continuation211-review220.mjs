@@ -1,0 +1,54 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
+import { sha256, modelBinding, loadContinuationRuntime } from './continuation211-runtime.mjs';
+import { loadApi, replay } from './remake191-200/replay.mjs';
+import { loadSpatialApi } from './remake201to210-v123-floor.mjs';
+import { prefixPayload } from './regeneration220-design/native-prefix220.mjs';
+import { auditOpeningCoverage } from './revised-opening-coverage.mjs';
+import { auditHiddenCoverage } from './revised-hidden-coverage.mjs';
+import { adjacency } from './regeneration212-design/design212.mjs';
+
+const root='deliverables/continue211-220-20260930',file=root+'/design220-new/qualified220-final.json';
+const read=f=>JSON.parse(fs.readFileSync(f,'utf8')),raw=f=>createHash('sha256').update(fs.readFileSync(f)).digest('hex');
+const p=read(file),level=p.level,cert=read(p.lowerCertificate.file),lower=p.lower;
+assert.equal(sha256(level),p.levelSha256);
+assert.equal(raw(p.lowerCertificate.file),p.lowerCertificate.fileSha256);
+assert.deepEqual(cert.level,level);assert.deepEqual(cert.lower,lower);
+assert.equal(cert.modelBinding,modelBinding());
+assert.equal(raw(p.sourceFile),p.sourceFileSha256);
+const source=read(p.sourceFile);assert.equal(raw(source.sourceAudit),source.sourceAuditFileSha256);
+assert.equal(source.observed.openingCount,19);
+assert.equal(source.observed.shutters[0].hiddenBlocks.length,9);
+assert.deepEqual(level.gates.map(g=>[g.side,g.offset,g.size,g.color,g.frozen??0]),source.observed.gates.map(g=>[g.side,g.offset,g.span,g.color==='gold'?'orange':g.color,g.ice??0]));
+assert.equal(level.shutters.length,1);assert.equal(level.shutters[0].count,9);
+assert.equal(level.blocks.filter(b=>b.shutterId).length,9);
+assert.deepEqual(level.blocks.filter(b=>b.layers).map(b=>b.layers),[['orange','red']]);
+assert.equal(level.timeSeconds,120);assert.equal(level.preservedMoveTarget,59);
+assert.equal(lower.status,'threshold-proven');assert.equal(lower.floor,21);assert.equal(lower.goalClears,30);
+assert.equal(lower.sourceLevelSha256,p.levelSha256);
+const payload=prefixPayload(level,await loadSpatialApi(),{goalClears:30,mergeCold:false,floor:21,maxMilliseconds:6000,maxStates:2000000}).p;
+assert.deepEqual(payload,read(lower.input));assert.equal(sha256(payload),lower.inputSha256);
+assert.equal(raw(lower.input),lower.proofInputFileSha256);assert.equal(raw(lower.output),lower.proofOutputFileSha256);
+const output=read(lower.output);for(const [k,v]of Object.entries(output))assert.deepEqual(lower[k],v);
+assert.equal(sha256(fs.readFileSync(lower.source)),lower.sourceHash);
+assert.equal(sha256(fs.readFileSync('tools/regeneration220-design/native-prefix220.mjs')),lower.adapterSha256);
+for(const binding of p.lowerCertificate.qualifications){
+  const q=read(binding.file);assert.equal(q.status,'PASS');assert.equal(raw(binding.file),binding.fileSha256);assert.equal(sha256(q),binding.sha256);
+  for(const [f,h]of Object.entries(q.codeSha256??{}))assert.equal(raw(f),h);
+  if(q.nativeSource){assert.equal(sha256(fs.readFileSync(q.nativeSource)),q.nativeSha256);assert.equal(q.nativeSha256,lower.sourceHash);assert.equal(q.adapterSha256,lower.adapterSha256);assert.equal(q.mode,'FULL_GOAL_WITHOUT_COLD_COLOR_MERGING');}
+}
+for(const f of ['tools/remake201to210-v123-floor.mjs','tools/regeneration220-design/native-prefix220.mjs','tools/regeneration220-design/native-prefix220.cs','src/core/PuzzleModel.ts','src/core/blockExitFrontier.ts'])assert.equal(raw(f),cert.codeSha256[f]);
+const core=await loadContinuationRuntime(),{api}=await loadApi(),audit=core.auditRevisedCandidate(level,p.source);
+assert.deepEqual(audit.issues.filter(i=>!['wrong-rule-profile','opening-count-mismatch','full-count-mismatch'].includes(i.code)),[]);
+assert.deepEqual(core.auditRevisedMechanismContract(level),[]);
+assert(auditOpeningCoverage(new api.PuzzleModel(level).snapshot()).passed);assert(auditHiddenCoverage(level).passed);
+assert.deepEqual(adjacency(level.blocks),[]);assert(api.auditCandidateBlockArt(level).passed);
+assert(level.blocks.every(b=>core.matchFormalBlockShape(b.shape,'native-only')?.quarterTurns===0));
+assert.equal(p.source.originalMask.length,66);assert.equal(level.playable.length,64);
+assert.equal(core.timeTargetForLevel(level),86);
+const route=replay(level,p.drags,api,{timed:true,complete:true,requirePointerCompatible:true});
+assert(route.valid&&route.complete);assert.equal(route.nonClearingDrags,29);assert.equal(route.effectiveDrags,59);
+const report={status:'PASS_INDEPENDENT_PREFLIGHT',levelSha256:p.levelSha256,sourceEvidence:file,sourceEvidenceSha256:raw(file),L:21,U:29,starMoves:59,starTimeSeconds:86,totalSeconds:120,proofRecompiledWithoutSearch:true,route,codeSha256:cert.codeSha256,productionCampaignIntegrated:false};
+fs.writeFileSync(root+'/design220-new/independent-review220.json',JSON.stringify(report,null,2),{flag:'wx'});
+console.log({status:report.status,levelSha256:p.levelSha256,L:21,U:29,drags:59});

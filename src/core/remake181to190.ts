@@ -1,6 +1,6 @@
-// Reviewed batch data: original eight under v1.47; 182/185 additions under v1.107.
+// Reviewed batch data: 181/187 score repairs and user-authorized 185 formal source adaptation under active v1.123 continuity.
 import type {LevelSpec} from './types';
-export const REMADE_181_190_IDS: readonly number[] = [181,182,183,184,186,187,188,189,190];
+export const REMADE_181_190_IDS: readonly number[] = [181,182,183,184,185,186,187,188,189,190];
 const reviewed: Record<number, LevelSpec> = {
   "181": {
     "mechanismRules": "revised-2026-09-23-v1.4",
@@ -88,7 +88,7 @@ const reviewed: Record<number, LevelSpec> = {
       },
       {
         "id": "r147-181-open-blue-v2",
-        "color": "blue",
+        "color": "cyan",
         "shape": [
           [
             0,
@@ -104,7 +104,7 @@ const reviewed: Record<number, LevelSpec> = {
       },
       {
         "id": "r147-181-open-cyan-s2",
-        "color": "cyan",
+        "color": "yellow",
         "shape": [
           [
             0,
@@ -128,7 +128,7 @@ const reviewed: Record<number, LevelSpec> = {
       },
       {
         "id": "r147-181-open-red-v2",
-        "color": "red",
+        "color": "blue",
         "shape": [
           [
             0,
@@ -208,7 +208,7 @@ const reviewed: Record<number, LevelSpec> = {
       },
       {
         "id": "r147-181-open-pink-v3",
-        "color": "pink",
+        "color": "purple",
         "shape": [
           [
             0,
@@ -270,7 +270,7 @@ const reviewed: Record<number, LevelSpec> = {
       },
       {
         "id": "r147-181-open-red-s",
-        "color": "red",
+        "color": "blue",
         "shape": [
           [
             0,
@@ -294,7 +294,7 @@ const reviewed: Record<number, LevelSpec> = {
       },
       {
         "id": "r147-181-open-pink-s1",
-        "color": "pink",
+        "color": "purple",
         "shape": [
           [
             0,
@@ -558,7 +558,7 @@ const reviewed: Record<number, LevelSpec> = {
     "timeSeconds": 110,
     "reward": 200,
     "parMoves": 49,
-    "preservedMoveTarget": 49,
+    "preservedMoveTarget": 43,
     "elevators": [],
     "conveyors": [],
     "coloredGrids": []
@@ -3317,6 +3317,515 @@ const reviewed: Record<number, LevelSpec> = {
     "elevators": [],
     "conveyors": []
   },
+  "185": {
+    "mechanismRules": "revised-2026-09-27-v1.5",
+    "width": 6,
+    "height": 6,
+    "gates": [
+      {
+        "id": "assist185-red",
+        "color": "red",
+        "side": "bottom",
+        "offset": 2,
+        "size": 1
+      },
+      {
+        "id": "adapt185-mint-purple",
+        "color": "purple",
+        "side": "right",
+        "offset": 0,
+        "size": 2,
+        "frozen": 14
+      },
+      {
+        "id": "adapt185-pink",
+        "color": "pink",
+        "side": "left",
+        "size": 1,
+        "offset": 5
+      }
+    ],
+    "blocks": [
+      {
+        "x": 0,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "red",
+        "id": "a0"
+      },
+      {
+        "x": 1,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "color": "cyan",
+        "id": "a1"
+      },
+      {
+        "x": 2,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "red",
+        "id": "a2"
+      },
+      {
+        "x": 0,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "yellow",
+        "id": "a3"
+      },
+      {
+        "x": 0,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "red",
+        "id": "a4"
+      },
+      {
+        "x": 1,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "green",
+        "id": "a5"
+      },
+      {
+        "x": 2,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "red",
+        "id": "a6"
+      },
+      {
+        "x": 0,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "pink",
+        "id": "a7"
+      },
+      {
+        "x": 1,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "red",
+        "id": "a8"
+      },
+      {
+        "x": 2,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "color": "green",
+        "id": "a9"
+      },
+      {
+        "x": 0,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "red",
+        "id": "a10"
+      },
+      {
+        "x": 1,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "cyan",
+        "id": "a11"
+      },
+      {
+        "x": 0,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "color": "green",
+        "id": "a12"
+      },
+      {
+        "x": 2,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "color": "red",
+        "id": "a13"
+      },
+      {
+        "color": "purple",
+        "x": 5,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "id": "h0",
+        "shutterId": "assist185-c14"
+      },
+      {
+        "color": "purple",
+        "x": 5,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "id": "h1",
+        "shutterId": "assist185-c14"
+      },
+      {
+        "color": "purple",
+        "x": 4,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "id": "h2",
+        "shutterId": "assist185-c14"
+      },
+      {
+        "color": "blue",
+        "x": 4,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "id": "h3",
+        "shutterId": "assist185-c14"
+      },
+      {
+        "color": "blue",
+        "x": 3,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "id": "h4",
+        "shutterId": "assist185-c14"
+      },
+      {
+        "color": "blue",
+        "x": 5,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "id": "h5",
+        "shutterId": "assist185-c14"
+      },
+      {
+        "color": "purple",
+        "x": 4,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "id": "h6",
+        "shutterId": "assist185-c14"
+      },
+      {
+        "color": "orange",
+        "x": 5,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "id": "h7",
+        "shutterId": "assist185-c14"
+      },
+      {
+        "color": "orange",
+        "x": 3,
+        "y": 2,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "id": "h8",
+        "shutterId": "assist185-c14"
+      },
+      {
+        "color": "purple",
+        "x": 4,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "id": "h9",
+        "shutterId": "assist185-c14"
+      },
+      {
+        "color": "orange",
+        "x": 3,
+        "y": 5,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "id": "h10",
+        "shutterId": "assist185-c14"
+      },
+      {
+        "color": "blue",
+        "x": 3,
+        "y": 3,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "id": "h11",
+        "shutterId": "assist185-c14"
+      },
+      {
+        "color": "purple",
+        "x": 3,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "id": "h12",
+        "shutterId": "assist185-c14"
+      },
+      {
+        "color": "orange",
+        "x": 3,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "id": "h13",
+        "shutterId": "assist185-c14"
+      },
+      {
+        "color": "purple",
+        "x": 5,
+        "y": 1,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "id": "h14",
+        "shutterId": "assist185-c14"
+      },
+      {
+        "color": "purple",
+        "x": 5,
+        "y": 4,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "id": "h15",
+        "shutterId": "assist185-c14"
+      },
+      {
+        "color": "purple",
+        "x": 4,
+        "y": 0,
+        "shape": [
+          [
+            0,
+            0
+          ]
+        ],
+        "id": "h16",
+        "shutterId": "assist185-c14"
+      }
+    ],
+    "shutters": [
+      {
+        "id": "assist185-c14",
+        "x": 3,
+        "y": 0,
+        "width": 3,
+        "height": 6,
+        "count": 14
+      }
+    ],
+    "generators": [],
+    "id": 185,
+    "name": "竞品映射 Lv185",
+    "difficulty": "hard",
+    "timeSeconds": 130,
+    "reward": 200,
+    "parMoves": 31,
+    "flipDoors": [
+      {
+        "id": "assist185-green",
+        "color": "green",
+        "side": "top",
+        "offset": 0,
+        "size": 2,
+        "initiallyOpen": true
+      },
+      {
+        "id": "assist185-yellow",
+        "color": "yellow",
+        "side": "bottom",
+        "offset": 0,
+        "size": 1,
+        "initiallyOpen": true
+      },
+      {
+        "id": "assist185-cyan",
+        "color": "cyan",
+        "side": "left",
+        "offset": 0,
+        "size": 2,
+        "initiallyOpen": true
+      },
+      {
+        "id": "assist185-orange",
+        "color": "orange",
+        "side": "right",
+        "offset": 2,
+        "size": 1,
+        "frozen": 14,
+        "initiallyOpen": false
+      },
+      {
+        "id": "assist185-blue",
+        "color": "blue",
+        "side": "right",
+        "offset": 3,
+        "size": 1,
+        "frozen": 14,
+        "initiallyOpen": false
+      }
+    ],
+    "preservedMoveTarget": 50,
+    "mechanismAdaptation": {
+      "userAuthorized": "USER_ACCEPTED_AUTHORED_SOURCE_FIELDS",
+      "change": "185正式接入：保留6x6/C14/31体与现有机关；橙、蓝14翻门initiallyOpen=false为用户授权的原创字段，竞品初相位仍UNKNOWN；紫色来源口因固定8色/棋盘容量适配移除，差异单列。",
+      "preservedShutterIds": [
+        "assist185-c14"
+      ]
+    }
+  },
   "186": {
     "mechanismRules": "revised-2026-09-23-v1.4",
     "width": 7,
@@ -4564,15 +5073,11 @@ const reviewed: Record<number, LevelSpec> = {
     ],
     "blocks": [
       {
-        "x": 5,
+        "x": 6,
         "y": 0,
         "shape": [
           [
             0,
-            0
-          ],
-          [
-            1,
             0
           ]
         ],
@@ -4666,6 +5171,10 @@ const reviewed: Record<number, LevelSpec> = {
           [
             0,
             1
+          ],
+          [
+            1,
+            0
           ],
           [
             1,
@@ -4962,7 +5471,11 @@ const reviewed: Record<number, LevelSpec> = {
     "timeSeconds": 120,
     "reward": 200,
     "parMoves": 31,
-    "preservedMoveTarget": 31,
+    "preservedMoveTarget": 36,
+    "mechanismAdaptation": {
+      "userAuthorized": "USER_ACCEPTED_MINIMAL_SHAPE_ADAPTATION",
+      "change": "为修复当前严格出口扫掠死锁，在不改变棋盘、颜色、机关种类、块ID和总色块面积的前提下，将cyanL3由3格L改为4格Q2，并将purpleH2由2格横块改为6,0单格；对应路线仅修正第3、11拖。来源状态和旧证据不改。"
+    },
     "shutters": [],
     "generators": [],
     "flipDoors": [],

@@ -1,0 +1,1 @@
+const fs=require('fs');const p='docs/rules/manifest.json';let s=fs.readFileSync(p,'utf8');s=s.replace('    }\n  ],\n    {\n      "version": "1.123.0"','    },\n    {\n      "version": "1.123.0"');fs.writeFileSync(p,s);

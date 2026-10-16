@@ -1,0 +1,110 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
+import { build } from 'esbuild';
+import { verifyRulesLock } from '../verify-rules-lock.mjs';
+import { digest } from '../revised-preview-validation-v160.mjs';
+import { loadApi, replay } from '../remake191-200/replay.mjs';
+import { verifySourceGeometry } from './source-geometry.mjs';
+import { runtimeNativeArtIssues } from './runtime-native-art.mjs';
+import { auditOpeningCoverage } from '../revised-opening-coverage.mjs';
+import { auditHiddenCoverage } from '../revised-hidden-coverage.mjs';
+import { auditGeneratorQueueColors } from '../revised-generator-queue-colors.mjs';
+import { inspectDisjoint211to220Data } from '../continue201-210/pointer/disjoint-data-audit.mjs';
+
+const lock = verifyRulesLock(); assert(lock.ok); assert.equal(lock.activeVersion, '1.127.0');
+const base = 'deliverables/continue221-230-20260930', out = base + '/formal-adoption';
+const read = file => JSON.parse(fs.readFileSync(file));
+const fileSha = file => createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+const reports = process.argv.slice(2).filter(a => a !== '--check' && !a.startsWith('--preflight='));
+const checkOnly = process.argv.includes('--check');
+assert.equal(reports.length, 2, 'Provide both new formal Pointer reports');
+const before = read(out + '/before.json'), status = read(base + '/status.json');
+const preflightFile = process.argv.find(a => a.startsWith('--preflight='))?.slice('--preflight='.length) ?? out + '/preflight.json', preflight = read(preflightFile);
+assert(preflight.passed, 'Independent final-object preflight must pass');
+assert.deepEqual(preflight.rows.map(r => r.id), Array.from({ length: 10 }, (_, i) => 221 + i));
+for (const ref of Object.values(preflight.references)) assert.equal(fileSha(ref.file), ref.sha256, `Preflight reference changed: ${ref.file}`);
+const qa = [...read(base + '/qa-nine.json').rows, ...read(base + '/qa-224.json').rows];
+const compiled = await build({ stdin: { resolveDir: process.cwd(), contents: "export {LEVELS,FORMAL_201_210_LEVELS,FORMAL_221_230_LEVELS,FORMAL_221_230_EVIDENCE,getFormal221to230LevelStrict,REMADE_221_230_LEVELS,getLevelStrict} from './src/core/levels'; export {auditRevisedMechanismContract} from './src/core/revisedMechanismContract';" }, platform: 'node', format: 'esm', bundle: true, write: false, logLevel: 'silent' });
+const formal = await import('data:text/javascript;base64,' + Buffer.from(compiled.outputFiles[0].text).toString('base64'));
+assert.deepEqual(formal.FORMAL_221_230_LEVELS.map(l => l.id), Array.from({ length: 10 }, (_, i) => 221 + i));
+assert.equal(digest(formal.LEVELS), before.productionSha256, 'Production maps changed');
+assert.equal(digest(formal.FORMAL_201_210_LEVELS), before.formal201to210Sha256, '201–210 data changed');
+assert.equal(digest(formal.REMADE_221_230_LEVELS), before.candidateSha256, 'Original candidates changed');
+const pointer = reports.map(file => ({ file, report: read(file), sha256: fileSha(file) }));
+const currentByteHashes = new Map();
+assert.deepEqual(pointer.map(p => `${p.report.viewport.width}x${p.report.viewport.height}`).sort(), ['320x568', '496x1078']);
+for (const p of pointer) {
+  const r = p.report;
+  assert.equal(r.status, 'PASS'); assert.equal(r.candidateOnly, false); assert.equal(r.formalDataValidated, true);
+  assert.equal(r.fullBatchValidated, true); assert.equal(r.testCampaignScaffold, true); assert.equal(r.productionCampaignValidated, false);
+  assert.equal(r.productionBoundary, 200); assert.equal(r.finalProductionBoundary, 200);
+  assert.equal(r.naturalClock, true); assert.equal(r.clockFrozen, false); assert.equal(r.playerSaveTouched, false);
+  assert.deepEqual(r.errors, []); assert.deepEqual(r.drift, []);
+  assert.deepEqual(r.sourceEvidenceDrift, []); assert.deepEqual(r.currentWorkspaceFileSetDrift, []);
+  assert.deepEqual(r.requestedIds, formal.FORMAL_221_230_LEVELS.map(l => l.id));
+  assert.equal(r.rows.length, 10);
+  p.currentConcurrentData = [];
+  for (const [file, expected] of Object.entries(r.bindings)) {
+    if (!currentByteHashes.has(file)) currentByteHashes.set(file, fileSha(file));
+    if (currentByteHashes.get(file) === expected) continue;
+    assert.equal(file, 'src/core/formal211to220Data.ts', `Formal runtime or evidence changed after Pointer: ${file}`);
+    const captured = fs.readFileSync(path.join(r.sourceSnapshot, file), 'utf8');
+    assert.equal(digest(captured), expected);
+    const review = inspectDisjoint211to220Data(file, captured);
+    assert(review.accepted && review.verifiedPureData && review.disjointScope);
+    p.currentConcurrentData.push(review);
+  }
+}
+const { api } = await loadApi();
+const records = [];
+for (const level of formal.FORMAL_221_230_LEVELS) {
+  const id = level.id, original = status.rows.find(r => r.id === id), prior = qa.find(r => r.id === id);
+  const entry = formal.FORMAL_221_230_EVIDENCE.find(r => r.id === id), packet = read(original.headlessPacket);
+  const reviewed = preflight.rows.find(r => r.id === id);
+  assert(reviewed.passed); assert.equal(reviewed.levelSha256, entry.levelSha256); assert.equal(reviewed.routeSha256, entry.routeSha256);
+  assert.equal(reviewed.packetSha256, fileSha(original.headlessPacket));
+  assert.equal(formal.getFormal221to230LevelStrict(id), level); assert.throws(() => formal.getLevelStrict(id), RangeError);
+  assert.deepEqual(level, packet.level); assert.equal(digest(level), entry.levelSha256);
+  assert.equal(digest(packet.drags), entry.routeSha256); assert.equal(prior.levelSha256, entry.levelSha256); assert(prior.passed);
+  assert(packet.proof.thresholdProven); assert.equal(packet.proof.floor, entry.L);
+  const geometry = verifySourceGeometry(level), nativeArt = runtimeNativeArtIssues(level);
+  assert.deepEqual(nativeArt, []); assert.deepEqual(formal.auditRevisedMechanismContract(level), []);
+  const opening = auditOpeningCoverage(new api.PuzzleModel(level).snapshot()), hidden = auditHiddenCoverage(level), queue = auditGeneratorQueueColors(level);
+  assert(opening.passed && hidden.passed && queue.passed);
+  const route = replay(level, packet.drags, api, { timed: true, complete: true, requirePointerCompatible: true });
+  const band = { easy: [5, 10], normal: [11, 15], hard: [16, 20], super: [21, 30] }[level.difficulty];
+  assert.equal(route.nonClearingDrags, entry.U); assert(entry.L >= band[0] && entry.L <= entry.U && entry.U <= band[1]);
+  const starTargets = api.levelStarTargets(level); assert.equal(route.effectiveDrags, starTargets.moveTarget); assert.equal(entry.starMoves, starTargets.moveTarget);
+  const pointerBindings = pointer.map(p => {
+    const row = p.report.rows.find(r => r.id === id); assert(row);
+    assert.equal(row.status, 'PASS'); assert.equal(row.formalObjectIdentity, true); assert.equal(row.registryObjectIdentity, true); assert.equal(row.candidateOverlay, false);
+    assert.equal(row.levelSha256, entry.levelSha256); assert.equal(row.routeSha256, entry.routeSha256);
+    assert.equal(row.nonClearingDrags, entry.U); assert.equal(row.final.moves, entry.starMoves);
+    assert(row.final.complete && !row.final.failed && row.final.remainingSeconds > 0);
+    assert(row.naturalClockProbe.after < row.naturalClockProbe.before);
+    assert(row.naturalTimingReplay.passed && row.naturalTimingReplay.wholeModelReplay && row.naturalTimingReplay.ticks > 0);
+    assert(row.nativeDrawAudit.calls > 0 && row.nativeDrawAudit.rotated === 0 && row.nativeDrawAudit.canvasRotationCalls === 0);
+    assert.equal(row.settlement.status, 'committed'); assert.equal(row.settlement.earnedStars, 3);
+    assert.equal(row.settlement.starConditions.moveTarget, starTargets.moveTarget);
+    assert.equal(row.settlement.starConditions.timeTargetSeconds, starTargets.timeTargetSeconds);
+    assert(row.settlement.starConditions.moveAchieved && row.settlement.starConditions.timeAchieved);
+    assert.equal(row.storage.backend, 'MemoryHost'); assert.equal(row.storage.save.bestStars[String(id)], 3);
+    assert.equal(row.storage.save.bestMoves[String(id)], entry.starMoves);
+    return { file: p.file, fileSha256: p.sha256, viewport: p.report.viewport, levelSha256: entry.levelSha256, routeSha256: entry.routeSha256, earnedStars: 3, elapsedSeconds: row.settlement.starConditions.elapsedSeconds, acceptedConcurrentData: p.currentConcurrentData };
+  });
+  records.push({ schemaVersion: 1, status: 'FORMAL_DATA_ACCEPTED', ruleVersion: lock.activeVersion, id, levelSha256: entry.levelSha256, routeSha256: entry.routeSha256, difficulty: level.difficulty, L: entry.L, U: entry.U, starMoves: entry.starMoves, starTargets, timeLimitSeconds: level.timeSeconds, sourceEvidence: original.headlessPacket, sourceEvidenceSha256: fileSha(original.headlessPacket), proofSha256: digest(packet.proof), sourceFactsAndAdaptationKeptSeparate: true, sourceNotes: prior.notes, eligibility: { eligible: true, geometry, opening, hidden, generatorQueue: queue, actualNativeAssets: true, sameObjectLowerBound: true, completePointerCompatibleRoute: true }, lowerBoundEvidence: { originalQualifiedPacket: original.headlessPacket, originalProof: packet.proof, projectionOrQualification: packet.proofQualification ?? packet.projection ?? packet.qualification, currentPreflight: preflightFile, currentPreflightSha256: fileSha(preflightFile), ...(id === 225 ? { freshCertificate: out + '/fresh225-floor.json', freshCertificateSha256: fileSha(out + '/fresh225-floor.json') } : {}) }, pointerEvidence: reports, pointerBindings, formalRegistry: 'src/core/formal221to230Data.ts', productionCampaignIntegrated: false, productionBoundary: 200, playerSaveTouched: false, humanBlindTested: false, releaseApproved: false });
+}
+const aggregate = { schemaVersion: 1, status: 'FORMAL_DATA_ACCEPTED', ruleVersion: lock.activeVersion, acceptedCount: records.length, acceptedIds: records.map(r => r.id), levels: records.map(({ id, levelSha256, routeSha256, difficulty, L, U, starMoves, starTargets }) => ({ id, levelSha256, routeSha256, difficulty, L, U, starMoves, starTargets, evidence: `${out}/level-${id}.json` })), pointerEvidence: pointer.map(p => ({ file: p.file, fileSha256: p.sha256, acceptedConcurrentData: p.currentConcurrentData })), preflight: { file: preflightFile, fileSha256: fileSha(preflightFile) }, preservation: { productionSha256: before.productionSha256, formal201to210Sha256: before.formal201to210Sha256, candidateSha256: before.candidateSha256 }, productionCampaignIntegrated: false, productionBoundary: 200, playerSaveTouched: false, humanBlindTested: false, releaseApproved: false };
+if (!checkOnly) {
+  const outputs = [...records.map(r => [`${out}/level-${r.id}.json`, r]), [out + '/aggregate.json', aggregate]].map(([f, data]) => [f, JSON.stringify(data, null, 2) + '\n']);
+  for (const [file, text] of outputs) if (fs.existsSync(file)) assert.equal(fs.readFileSync(file, 'utf8'), text, `Refusing changed acceptance record: ${file}`);
+  for (const [file, text] of outputs) if (!fs.existsSync(file)) fs.writeFileSync(file, text, { flag: 'wx' });
+  const names = { easy: '简单', normal: '普通', hard: '困难', super: '超难' };
+  const relative = f => path.relative(out, f).replaceAll('\\', '/');
+  const small = pointer.find(p => p.report.viewport.width === 320);
+  const html = `<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>221–230 正式数据接入</title><style>body{font:16px/1.7 system-ui,"Microsoft YaHei",sans-serif;color:#24304b;background:#f4f6fa;margin:0}main{max-width:1150px;margin:auto;padding:30px 20px}table{border-collapse:collapse;width:100%;background:white}th,td{text-align:left;padding:10px;border-bottom:1px solid #e1e5ee}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:24px}article{background:white;padding:14px;border-radius:12px}img{width:100%;max-width:240px}a{color:#3847c4}h2{font-size:19px;margin:0 0 8px}</style><main><h1>221–230 已接入正式数据</h1><p>十关已进入独立正式注册表，保持原验收布局、难度与三星条件。新验收从正式对象载入，双屏真实拖动、自然计时及三星结算全部通过。生产活动关序仍为1–200，未发布，未访问真实玩家存档。</p><p>必挪L–U表示已证下界到完整路线次数，不宣称精确最优。<a href="aggregate.json">正式接受记录</a> · <a href="${relative(preflightFile)}">同对象证明复核</a> · <a href="../index.html">原候选生成记录</a></p><table><thead><tr><th>关卡</th><th>难度</th><th>必挪L–U</th><th>三星总拖</th><th>时间星/总时限</th></tr></thead><tbody>${records.map(r => `<tr><td>${r.id}</td><td>${names[r.difficulty]}</td><td>${r.L}–${r.U}</td><td>${r.starMoves}</td><td>${r.starTargets.timeTargetSeconds}/${r.timeLimitSeconds}秒</td></tr>`).join('')}</tbody></table><section class="cards">${records.map(r => `<article><h2>${r.id} · ${names[r.difficulty]}</h2><img src="${relative(path.dirname(small.file) + `/lv${r.id}-opening.png`)}" alt="${r.id}正式开局"><p><a href="level-${r.id}.json">本关正式接受证据</a></p></article>`).join('')}</section></main></html>`;
+  fs.writeFileSync(out + '/index.html', html);
+}
+console.log(JSON.stringify({ status: aggregate.status, accepted: aggregate.acceptedIds, checkOnly, aggregate: out + '/aggregate.json', productionBoundary: 200 }));

@@ -257,6 +257,22 @@ export interface LevelSpec {
     calibratedDifficulty: number;
     minimumRepositionOverhead: number | null;
   };
+  /**
+   * Optional auditable composition certificate used by independently-authored
+   * daily layouts. It has no gameplay effect: it records a seam-separated
+   * partition whose component proofs can be checked and summed without
+   * claiming that a bounded monolithic search exhausted the full board.
+   */
+  dailyProof?: {
+    kind: "seam-chambers-v1" | "seam-component-v1";
+    componentWidth: number;
+    componentHeight: number;
+    componentCount: number;
+    componentFloor: number;
+    /** Optional isolated mechanism chamber; it is excluded from the sum but
+     * included in the exact route replay. */
+    marker?: { yStart: number; height: number; mechanism: string };
+  };
   /** Authored first-session gesture. Path entries are successive block origins. */
   onboardingHint?: {
     blockId: string;
@@ -274,6 +290,26 @@ export interface LevelSpec {
     blockId: string;
     afterMoves: number;
   };
+  /**
+   * Authorised level-specific rescue: once the board has no available exits,
+   * guide the player to remove the named block with the rocket booster.
+   */
+  rocketRescue?: {
+    trigger: "no-exit-deadlock";
+    targetBlockId: string;
+    deadlockBlockId: string;
+    deadlockPosition: Point;
+  };
+  /**
+   * Authorised Lv10 rescue: the named frozen block is held at one until the
+   * pulse booster is used, then the player is guided to move that block.
+   */
+  pulseRescue?: {
+    trigger: "frozen-one";
+    targetBlockId: string;
+    targetPosition: Point;
+    requiredFrozen: number;
+  };
   featureIntro?: {
     title: string;
     description: string;
@@ -283,6 +319,8 @@ export interface LevelSpec {
   mechanismAdaptation?: {
     userAuthorized: string;
     change: string;
+    /** Independent source observations supporting the authored differences. */
+    sourceFactsFile?: string;
     preservedShutterIds?: string[];
   };
 }
@@ -341,6 +379,8 @@ export interface PuzzleSnapshot {
   remainingSeconds: number;
   /** Remaining active-play freeze; pauses the level and bomb clocks, not spatial mechanisms. */
   timeFreezeSeconds: number;
+  /** Rescue levels only: an effective pulse in this run unlocks the final ice decrement. */
+  pulseRescueUsed?: boolean;
   /** Whether the level countdown is running. */
   started: boolean;
   /** Whether time-driven board mechanisms have been activated by player play. */

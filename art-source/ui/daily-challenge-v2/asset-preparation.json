@@ -1,0 +1,145 @@
+{
+  "panelFrame": {
+    "source": "C:\\Users\\Administrator\\.codex\\generated_images\\01a0d940-cac2-7f91-8b1a-a758bfea2c2a\\exec-71a63faa-87e7-4b07-b1f5-87904c6d48ce.png",
+    "crop": {
+      "left": 16,
+      "top": 13,
+      "width": 1054,
+      "height": 1424
+    },
+    "output": "panel-frame.png",
+    "width": 666,
+    "height": 900,
+    "operation": "alpha-bound crop with two-pixel margin and uniform resize only"
+  },
+  "headerBar": {
+    "source": "C:\\Users\\Administrator\\.codex\\generated_images\\01a0d940-cac2-7f91-8b1a-a758bfea2c2a\\exec-3905488b-57e3-43dc-a2de-6b8390cf2ae9.png",
+    "crop": {
+      "left": 1,
+      "top": 238,
+      "width": 2171,
+      "height": 222
+    },
+    "output": "header-bar.png",
+    "width": 672,
+    "height": 69,
+    "operation": "alpha-bound crop with two-pixel margin and uniform resize only"
+  },
+  "rewardBanner": {
+    "source": "C:\\Users\\Administrator\\.codex\\generated_images\\01a0d940-cac2-7f91-8b1a-a758bfea2c2a\\exec-86f9df3f-26bd-4e62-abd1-1235033ba4f8.png",
+    "crop": {
+      "left": 0,
+      "top": 0,
+      "width": 2120,
+      "height": 742
+    },
+    "output": "reward-banner.png",
+    "width": 611,
+    "height": 214,
+    "operation": "alpha-bound crop with two-pixel margin and uniform resize only"
+  },
+  "rowFrame": {
+    "source": "C:\\Users\\Administrator\\.codex\\generated_images\\01a0d940-cac2-7f91-8b1a-a758bfea2c2a\\exec-7ce5e092-5bb0-400c-bec5-eae01216e08f.png",
+    "crop": {
+      "left": 20,
+      "top": 175,
+      "width": 2082,
+      "height": 388
+    },
+    "output": "row-frame.png",
+    "width": 612,
+    "height": 114,
+    "operation": "alpha-bound crop with two-pixel margin and uniform resize only"
+  },
+  "rewardCard": {
+    "source": "C:\\Users\\Administrator\\.codex\\generated_images\\01a0d940-cac2-7f91-8b1a-a758bfea2c2a\\exec-016d5741-1ce5-4c64-91c8-ccc6460e99cf.png",
+    "crop": {
+      "left": 223,
+      "top": 229,
+      "width": 808,
+      "height": 793
+    },
+    "output": "reward-card.png",
+    "width": 168,
+    "height": 165,
+    "operation": "alpha-bound crop with two-pixel margin and uniform resize only"
+  },
+  "firstClearTag": {
+    "source": "C:\\Users\\Administrator\\.codex\\generated_images\\01a0d940-cac2-7f91-8b1a-a758bfea2c2a\\exec-ae941529-8ca8-4ab7-b796-b7f8f8beac60.png",
+    "crop": {
+      "left": 78,
+      "top": 188,
+      "width": 1658,
+      "height": 431
+    },
+    "output": "first-clear-tag.png",
+    "width": 160,
+    "height": 42,
+    "operation": "alpha-bound crop with two-pixel margin and uniform resize only"
+  },
+  "challengeButton": {
+    "source": "C:\\Users\\Administrator\\.codex\\generated_images\\01a0d940-cac2-7f91-8b1a-a758bfea2c2a\\exec-546ab4f3-9e6d-47bf-a17d-df2dc3adff20.png",
+    "crop": {
+      "left": 60,
+      "top": 118,
+      "width": 1821,
+      "height": 565
+    },
+    "output": "challenge-button.png",
+    "width": 308,
+    "height": 96,
+    "operation": "alpha-bound crop with two-pixel margin and uniform resize only"
+  },
+  "lockedButton": {
+    "source": "C:\\Users\\Administrator\\.codex\\generated_images\\01a0d940-cac2-7f91-8b1a-a758bfea2c2a\\exec-5f202bfd-e87e-44c5-ab37-34791893e55f.png",
+    "crop": {
+      "left": 47,
+      "top": 124,
+      "width": 1848,
+      "height": 559
+    },
+    "output": "locked-button.png",
+    "width": 308,
+    "height": 93,
+    "operation": "alpha-bound crop with two-pixel margin and uniform resize only"
+  },
+  "closeButton": {
+    "source": "C:\\Users\\Administrator\\.codex\\generated_images\\01a0d940-cac2-7f91-8b1a-a758bfea2c2a\\exec-635df1e6-fa7f-40da-9127-135f8432a8a0.png",
+    "crop": {
+      "left": 297,
+      "top": 326,
+      "width": 659,
+      "height": 645
+    },
+    "output": "close-button.png",
+    "width": 80,
+    "height": 78,
+    "operation": "alpha-bound crop with two-pixel margin and uniform resize only"
+  },
+  "attemptBadge": {
+    "source": "C:\\Users\\Administrator\\Documents\\ChatGPT\\Block Out!\\art-source\\ui\\daily-challenge-v1\\attempt-badge.png",
+    "crop": {
+      "left": 76,
+      "top": 20,
+      "width": 225,
+      "height": 78
+    },
+    "output": "attempt-badge.png",
+    "width": 202,
+    "height": 70,
+    "operation": "alpha-bound crop with two-pixel margin and uniform resize only"
+  },
+  "difficultyDiamond": {
+    "source": "art-source/ui/daily-challenge-v1/difficulty-diamond.png",
+    "crop": {
+      "left": 25,
+      "top": 40,
+      "width": 171,
+      "height": 171
+    },
+    "output": "difficulty-diamond.png",
+    "width": 216,
+    "height": 216,
+    "operation": "alpha-bound crop with two-pixel margin and uniform resize only"
+  }
+}

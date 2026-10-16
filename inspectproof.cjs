@@ -1,0 +1,1 @@
+const r=JSON.parse(require('fs').readFileSync('deliverables/league-regeneration-20261004/mid-experiments/proof-20-64.json'));for(const x of r.results){const a=(x.attempts??[]).find(y=>y.status==='ROUTE_ONLY_PENDING_LOWER_BOUND');if(a)console.log(x.sourceIndex,a.U,a.lower?.status,a.lower?.termination)}

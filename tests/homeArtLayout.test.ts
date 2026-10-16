@@ -44,9 +44,12 @@ const CUTOUTS = [
   { file: "navigation-selected.png", artProperty: "navigationSelected", placements: ["navigationSelected"] },
   { file: "navigation-divider.png", artProperty: "navigationDivider", placements: ["navigationDividerLeft", "navigationDividerRight"] },
   { file: "shop-icon.png", artProperty: "shopIcon", placements: ["shop"] },
+  { file: "shop-icon-locked.png", artProperty: "shopIconLocked", placements: ["shop"] },
   { file: "leaderboard-icon.png", artProperty: "leaderboardIcon", placements: ["leaderboard"] },
+  { file: "leaderboard-icon-locked.png", artProperty: "leaderboardIconLocked", placements: ["leaderboard"] },
   { file: "home-icon.png", artProperty: "homeIcon", placements: ["home"] },
   { file: "journey-icon.png", artProperty: "journeyIcon", placements: ["journey"] },
+  { file: "journey-icon-locked.png", artProperty: "journeyIconLocked", placements: ["journey"] },
   { file: "collection-icon.png", artProperty: "collectionIcon", placements: ["collection"] },
 ] as const;
 
@@ -90,7 +93,7 @@ const sha256 = (contents: Uint8Array): string => createHash("sha256").update(con
 describe("Home V3 native artwork layout", () => {
   it("keeps the authored 720x1584 coordinate system and native cutout dimensions", () => {
     expect(HOME_ARTBOARD).toEqual({ width: 720, height: 1584 });
-    expect(CUTOUTS).toHaveLength(26);
+    expect(CUTOUTS).toHaveLength(29);
 
     for (const cutout of CUTOUTS) {
       const sourceSize = pngSize(readFileSync(resolve(SOURCE_DIR, cutout.file)));
@@ -108,7 +111,7 @@ describe("Home V3 native artwork layout", () => {
 
   it("keeps every lossless cutout byte-identical between source and runtime", () => {
     const expectedFiles = CUTOUTS.map(({ file }) => file).sort();
-    const supplementalShortcuts = ["collection-album-entry.png"];
+    const supplementalShortcuts = ["collection-album-entry.png", "side-entry-base.png", "league-entry.png", "daily-challenge-entry.png"];
     const sourceFiles = readdirSync(SOURCE_DIR).filter((file: string) => file.endsWith(".png") && !["background.png", "reference-layout.png", ...supplementalShortcuts].includes(file)).sort();
     const runtimeFiles = readdirSync(RUNTIME_DIR).filter((file: string) => file.endsWith(".png") && !supplementalShortcuts.includes(file)).sort();
     expect(sourceFiles).toEqual(expectedFiles);
@@ -205,12 +208,11 @@ describe("Home V3 native artwork layout", () => {
     expect(homeMethodText).toContain("ctx.scale(placement.scale, placement.scale)");
   });
 
-  it("removes the Daily task entry without leaving a visual or hit target", () => {
+  it("keeps the retired generic Daily button removed alongside the distinct task and challenge entries", () => {
     expect("daily" in HOME_ART_LAYOUT).toBe(false);
 
     const gameSource = readFileSync(resolve(ROOT, "src/game/ColorEscapeGame.ts"), "utf8");
-    expect(gameSource).not.toContain("homeDaily");
+    expect(gameSource).not.toContain('"homeDaily"');
     expect(gameSource).not.toContain("drawDailyHomeButton");
-    expect(gameSource).not.toContain("startDailyChallenge");
   });
 });

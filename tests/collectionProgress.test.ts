@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { LEVEL_COLLECTION_CATALOG, MASTERPIECE_COLLECTION_CATALOG } from "../src/core/collectionCatalog";
 import {
   collectionInspirationForResult,
   DEFAULT_COLLECTION_PROGRESS,
@@ -35,6 +36,14 @@ const campaignThrough = (level: number, stars = 1) => ({
     Array.from({ length: level }, (_, index) => [String(index + 1), stars]),
   ),
 });
+
+// Read prices from the shipping catalogue, as the game's restoration adapter does.
+// Keep the varied-price fixture above to preserve the pure module's injected-catalog contract.
+const shippingCatalog: CollectionProgressCatalog = {
+  levelCards: LEVEL_COLLECTION_CATALOG.map(({ id, levelId }) => ({ id, level: levelId })),
+  masterpieces: MASTERPIECE_COLLECTION_CATALOG.map(({ id, inspirationCost }) => ({ id, cost: inspirationCost })),
+  milestoneIds: [],
+};
 
 describe("standalone collection progress", () => {
   it("derives owned level cards and one- to three-star frames from campaign records", () => {
@@ -227,5 +236,54 @@ describe("standalone collection progress", () => {
     expect(collectionInspirationForResult(10, 0, 3, true)).toBe(5);
     expect(collectionInspirationForResult(10, 3, 3, true)).toBe(2);
     expect(collectionInspirationForResult(10, 3, 2, false)).toBe(0);
+  });
+});
+
+describe("uniform shipping masterpiece inspiration price", () => {
+  it.each(MASTERPIECE_COLLECTION_CATALOG)("charges exactly 50 once for $id, with 49 insufficient", (card) => {
+    const campaign = campaignThrough(card.unlockLevel);
+    const insufficientSave = { ...DEFAULT_COLLECTION_PROGRESS, inspiration: 49 };
+    const insufficient = restoreCollectionMasterpiece(insufficientSave, card.id, campaign, shippingCatalog);
+    expect(insufficient).toMatchObject({ status: "insufficient-inspiration", cost: 50, shortfall: 1 });
+    expect(insufficient.save).toEqual(insufficientSave);
+    expect(insufficientSave.restoredMasterpieceIds).toEqual([]);
+
+    const funded = { ...DEFAULT_COLLECTION_PROGRESS, inspiration: 50 };
+    const restored = restoreCollectionMasterpiece(funded, card.id, campaign, shippingCatalog);
+    expect(restored).toMatchObject({ status: "restored", cost: 50, shortfall: 0 });
+    expect(restored.save).toEqual({ ...funded, inspiration: 0, restoredMasterpieceIds: [card.id] });
+    expect(funded.inspiration).toBe(50);
+    expect(funded.restoredMasterpieceIds).toEqual([]);
+
+    const repeated = restoreCollectionMasterpiece(restored.save, card.id, campaign, shippingCatalog);
+    expect(repeated).toMatchObject({ status: "already-restored", cost: 50, shortfall: 0 });
+    expect(repeated.save).toEqual(restored.save);
+  });
+
+  it("requires 50 for the first masterpiece even after its blueprint unlocks", () => {
+    const first = MASTERPIECE_COLLECTION_CATALOG[0]!;
+    const result = restoreCollectionMasterpiece(
+      DEFAULT_COLLECTION_PROGRESS, first.id, campaignThrough(first.unlockLevel), shippingCatalog,
+    );
+    expect(result).toEqual({
+      status: "insufficient-inspiration", cost: 50, shortfall: 50, save: DEFAULT_COLLECTION_PROGRESS,
+    });
+  });
+
+  it("preserves old collected paintings and inspiration without repricing or charging again", () => {
+    const historical = {
+      ...DEFAULT_COLLECTION_PROGRESS,
+      inspiration: 75,
+      restoredMasterpieceIds: ["masterpiece-01", "masterpiece-02", "masterpiece-40"],
+      seenItemIds: ["level-001", "masterpiece-01", "masterpiece-02", "masterpiece-40"],
+    };
+    expect(migrateCollectionProgress(historical, shippingCatalog)).toEqual(historical);
+    expect(sanitizeCollectionProgress(historical, shippingCatalog)).toEqual(historical);
+    for (const id of historical.restoredMasterpieceIds) {
+      // The saved collection remains authoritative with a stale campaign record.
+      const repeated = restoreCollectionMasterpiece(historical, id, campaignThrough(0), shippingCatalog);
+      expect(repeated).toMatchObject({ status: "already-restored", cost: 50, shortfall: 0 });
+      expect(repeated.save).toEqual(historical);
+    }
   });
 });

@@ -1,0 +1,16 @@
+import fs from 'node:fs';
+import {loadRuntime,verifyCandidate} from './contract.mjs';
+import {checkPlainFloor} from './proof-plain.mjs';
+import {independentPartitionSha256} from './geometry.mjs';
+const OUT='deliverables/daily-formal-v2-20261007/design-lab',runtime=await loadRuntime();
+const level=JSON.parse(fs.readFileSync(`${OUT}/compact-interlock-12.json`)).level;
+for(const item of [...level.blocks,...level.gates])if(item.color==='green')item.color='blue';else if(item.color==='blue')item.color='green';
+level.name='每日挑战·基础·难10';level.id=2;level.reward=0;
+const budget={maxStates:120000,maxTransitions:900000,maxMilliseconds:5000};
+const exact=checkPlainFloor(level,runtime,{floor:16,searchUpper:20,...budget});
+if(!exact.drags)throw Error(`No complete exact witness: ${JSON.stringify(exact)}`);
+const result=await verifyCandidate(runtime,{formalId:'daily-mechanisms-color-exit-1-d1-10',stageKey:'mechanisms-color-exit-1',difficulty:1,sourceLevelId:2,level,drags:exact.drags},{lowerBudget:budget});
+result.exactSearch=exact;result.partitionSha256=independentPartitionSha256(level);
+result.provenance={ruleVersion:'1.153.0',sourceLevelId:2,adaptation:'Source normal 4x6 outline retained. Full rectangular inventory reorganized into a compact interacting layout. No seam or isolated repeating cells. Blue/green globally exchanged solely to use existing blue H4 art; exchange is not counted as distinct geometry.',removedMechanisms:[]};
+fs.writeFileSync(`${OUT}/stage1-d1-10-seed.json`,JSON.stringify(result,null,2)+'\n');
+console.log(JSON.stringify({status:result.status,L:result.L,U:result.U,minimumRelaxed:exact.cost,reasons:result.reasons}));

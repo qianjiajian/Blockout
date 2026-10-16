@@ -1,0 +1,1 @@
+import fs from 'node:fs';const x=JSON.parse(fs.readFileSync('deliverables/league-regeneration-20261004/formal/early-1-19.json','utf8')).acceptedRows.find(a=>a.index===7); console.log(x.level.gates);console.log(x.level.playable.length,x.level.blocks.map(b=>({id:b.id,x:b.x,y:b.y,shape:b.shape,color:b.color}))); 

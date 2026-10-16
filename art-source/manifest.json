@@ -276,6 +276,24 @@
       "transform": "copy"
     },
     {
+      "key": "ui.home.featureLock",
+      "source": "ui/home-v3/feature-lock.png",
+      "runtime": "../public/assets/art/ui/home-v3/feature-lock.png",
+      "width": 60,
+      "height": 74,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "provenance": {
+        "sourceFile": "C:/Users/Administrator/Desktop/block out/商城界面-未解锁/未解锁/锁.png",
+        "sourceSha256": "53013ad060259e30f1569123aedcd3d31fe7eaaddb2799b0ef23abff4ad88755",
+        "note": "User supplied official lock; byte-identical import, no image edits."
+      }
+    },
+    {
       "key": "ui.home.shopIcon",
       "source": "ui/home-v3/shop-icon.png",
       "runtime": "../public/assets/art/ui/home-v3/shop-icon.png",
@@ -289,6 +307,29 @@
       "transform": "copy"
     },
     {
+      "key": "ui.home.shopIconLocked",
+      "source": "ui/home-v3/shop-icon-locked.png",
+      "runtime": "../public/assets/art/ui/home-v3/shop-icon-locked.png",
+      "width": 96,
+      "height": 93,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "derivation": {
+        "source": "ui/home-v3/shop-icon.png",
+        "sourceSha256": "022c98796690bef897374b5f631397eb34807195ced5fa5be49090f09e154b9b",
+        "outputSha256": "c90e229f6bab51e7d8d6533172fa9193757ffe78f4e079dbb539626fd1b35b87",
+        "algorithm": "rgba8-gray-v1: Y=(77*R+150*G+29*B+128)>>8; alpha unchanged",
+        "tool": "tools/build-home-locked-icons.mjs",
+        "toolSha256": "66dc990f257e8e4963fc7b61af4cf99d07376504319e9e11af750ac1ee7ea99b",
+        "sharpVersion": "0.35.4",
+        "libvipsVersion": "8.18.6"
+      }
+    },
+    {
       "key": "ui.home.leaderboardIcon",
       "source": "ui/home-v3/leaderboard-icon.png",
       "runtime": "../public/assets/art/ui/home-v3/leaderboard-icon.png",
@@ -300,6 +341,29 @@
         1
       ],
       "transform": "copy"
+    },
+    {
+      "key": "ui.home.leaderboardIconLocked",
+      "source": "ui/home-v3/leaderboard-icon-locked.png",
+      "runtime": "../public/assets/art/ui/home-v3/leaderboard-icon-locked.png",
+      "width": 111,
+      "height": 104,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "derivation": {
+        "source": "ui/home-v3/leaderboard-icon.png",
+        "sourceSha256": "3ae76469ba4e65a73a639292b09361d6777248b06690abd00cdbcda454027702",
+        "outputSha256": "96487c57f7ca3c5356327a5b0e142f430ebbf2c97cef2521291f83affa5b04ed",
+        "algorithm": "rgba8-gray-v1: Y=(77*R+150*G+29*B+128)>>8; alpha unchanged",
+        "tool": "tools/build-home-locked-icons.mjs",
+        "toolSha256": "66dc990f257e8e4963fc7b61af4cf99d07376504319e9e11af750ac1ee7ea99b",
+        "sharpVersion": "0.35.4",
+        "libvipsVersion": "8.18.6"
+      }
     },
     {
       "key": "ui.home.homeIcon",
@@ -326,6 +390,29 @@
         1
       ],
       "transform": "copy"
+    },
+    {
+      "key": "ui.home.journeyIconLocked",
+      "source": "ui/home-v3/journey-icon-locked.png",
+      "runtime": "../public/assets/art/ui/home-v3/journey-icon-locked.png",
+      "width": 94,
+      "height": 97,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "derivation": {
+        "source": "ui/home-v3/journey-icon.png",
+        "sourceSha256": "9893f103c252c2f952903022d040f8a3d6cb4bb9bee8b2ee86d34e97c3907e91",
+        "outputSha256": "089b0449dc4ee2436546e40b017e3e8b86a641135f905207daa79743bf872c5f",
+        "algorithm": "rgba8-gray-v1: Y=(77*R+150*G+29*B+128)>>8; alpha unchanged",
+        "tool": "tools/build-home-locked-icons.mjs",
+        "toolSha256": "66dc990f257e8e4963fc7b61af4cf99d07376504319e9e11af750ac1ee7ea99b",
+        "sharpVersion": "0.35.4",
+        "libvipsVersion": "8.18.6"
+      }
     },
     {
       "key": "ui.home.collectionIcon",
@@ -2206,7 +2293,10 @@
       "width": 48,
       "height": 48,
       "alpha": true,
-      "grid": [1, 1],
+      "grid": [
+        1,
+        1
+      ],
       "transform": "webp-q72",
       "loadGroup": "formal-collection-album"
     },
@@ -3029,6 +3119,20 @@
       ]
     },
     {
+      "key": "ui.tutorialHand",
+      "source": "ui/icons/tutorial-hand-supplied-v2.png",
+      "runtime": "../public/assets/art/ui/icons/tutorial-hand-supplied-v2.png",
+      "width": 1280,
+      "height": 1229,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "png-lossless-no-resize",
+      "loadGroup": "gameplay"
+    },
+    {
       "key": "fx.mechanics",
       "source": "fx/mechanic-fx-v1.png",
       "runtime": "../public/assets/art/fx/mechanic-fx-v1.png",
@@ -3454,8 +3558,22 @@
       "key": "gameplay.formalBlock.blue-l-tetromino",
       "source": "gameplay/blocks/formal-v1/blue-l-tetromino.png",
       "runtime": "../public/assets/art/gameplay/blocks/formal-v1/blue-l-tetromino.png",
-      "width": 287,
-      "height": 191,
+      "width": 286,
+      "height": 197,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-gameplay-current-level"
+    },
+    {
+      "key": "gameplay.formalBlock.blue-mirrored-l-tetromino",
+      "source": "gameplay/blocks/formal-v1/blue-mirrored-l-tetromino.png",
+      "runtime": "../public/assets/art/gameplay/blocks/formal-v1/blue-mirrored-l-tetromino.png",
+      "width": 284,
+      "height": 199,
       "alpha": true,
       "grid": [
         1,
@@ -3482,7 +3600,7 @@
       "key": "gameplay.formalBlock.blue-rectangle-2x3",
       "source": "gameplay/blocks/formal-v1/blue-rectangle-2x3.png",
       "runtime": "../public/assets/art/gameplay/blocks/formal-v1/blue-rectangle-2x3.png",
-      "width": 192,
+      "width": 191,
       "height": 296,
       "alpha": true,
       "grid": [
@@ -3636,7 +3754,7 @@
       "key": "gameplay.formalBlock.blue-square-3x3",
       "source": "gameplay/blocks/formal-v1/blue-square-3x3.png",
       "runtime": "../public/assets/art/gameplay/blocks/formal-v1/blue-square-3x3.png",
-      "width": 286,
+      "width": 285,
       "height": 296,
       "alpha": true,
       "grid": [
@@ -3734,8 +3852,22 @@
       "key": "gameplay.formalBlock.cyan-l-tetromino",
       "source": "gameplay/blocks/formal-v1/cyan-l-tetromino.png",
       "runtime": "../public/assets/art/gameplay/blocks/formal-v1/cyan-l-tetromino.png",
-      "width": 287,
-      "height": 191,
+      "width": 286,
+      "height": 197,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-gameplay-current-level"
+    },
+    {
+      "key": "gameplay.formalBlock.cyan-mirrored-l-tetromino",
+      "source": "gameplay/blocks/formal-v1/cyan-mirrored-l-tetromino.png",
+      "runtime": "../public/assets/art/gameplay/blocks/formal-v1/cyan-mirrored-l-tetromino.png",
+      "width": 283,
+      "height": 199,
       "alpha": true,
       "grid": [
         1,
@@ -3762,7 +3894,7 @@
       "key": "gameplay.formalBlock.cyan-rectangle-2x3",
       "source": "gameplay/blocks/formal-v1/cyan-rectangle-2x3.png",
       "runtime": "../public/assets/art/gameplay/blocks/formal-v1/cyan-rectangle-2x3.png",
-      "width": 192,
+      "width": 191,
       "height": 296,
       "alpha": true,
       "grid": [
@@ -3916,7 +4048,7 @@
       "key": "gameplay.formalBlock.cyan-square-3x3",
       "source": "gameplay/blocks/formal-v1/cyan-square-3x3.png",
       "runtime": "../public/assets/art/gameplay/blocks/formal-v1/cyan-square-3x3.png",
-      "width": 286,
+      "width": 285,
       "height": 296,
       "alpha": true,
       "grid": [
@@ -4042,8 +4174,22 @@
       "key": "gameplay.formalBlock.green-l-tetromino",
       "source": "gameplay/blocks/formal-v1/green-l-tetromino.png",
       "runtime": "../public/assets/art/gameplay/blocks/formal-v1/green-l-tetromino.png",
-      "width": 287,
-      "height": 191,
+      "width": 286,
+      "height": 197,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-gameplay-current-level"
+    },
+    {
+      "key": "gameplay.formalBlock.green-mirrored-l-tetromino",
+      "source": "gameplay/blocks/formal-v1/green-mirrored-l-tetromino.png",
+      "runtime": "../public/assets/art/gameplay/blocks/formal-v1/green-mirrored-l-tetromino.png",
+      "width": 284,
+      "height": 199,
       "alpha": true,
       "grid": [
         1,
@@ -4084,7 +4230,7 @@
       "key": "gameplay.formalBlock.green-rectangle-2x3",
       "source": "gameplay/blocks/formal-v1/green-rectangle-2x3.png",
       "runtime": "../public/assets/art/gameplay/blocks/formal-v1/green-rectangle-2x3.png",
-      "width": 192,
+      "width": 191,
       "height": 296,
       "alpha": true,
       "grid": [
@@ -4238,7 +4384,7 @@
       "key": "gameplay.formalBlock.green-square-3x3",
       "source": "gameplay/blocks/formal-v1/green-square-3x3.png",
       "runtime": "../public/assets/art/gameplay/blocks/formal-v1/green-square-3x3.png",
-      "width": 286,
+      "width": 285,
       "height": 296,
       "alpha": true,
       "grid": [
@@ -4336,8 +4482,22 @@
       "key": "gameplay.formalBlock.orange-l-tetromino",
       "source": "gameplay/blocks/formal-v1/orange-l-tetromino.png",
       "runtime": "../public/assets/art/gameplay/blocks/formal-v1/orange-l-tetromino.png",
-      "width": 287,
-      "height": 191,
+      "width": 286,
+      "height": 197,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-gameplay-current-level"
+    },
+    {
+      "key": "gameplay.formalBlock.orange-mirrored-l-tetromino",
+      "source": "gameplay/blocks/formal-v1/orange-mirrored-l-tetromino.png",
+      "runtime": "../public/assets/art/gameplay/blocks/formal-v1/orange-mirrored-l-tetromino.png",
+      "width": 284,
+      "height": 199,
       "alpha": true,
       "grid": [
         1,
@@ -4350,7 +4510,7 @@
       "key": "gameplay.formalBlock.orange-rectangle-2x3",
       "source": "gameplay/blocks/formal-v1/orange-rectangle-2x3.png",
       "runtime": "../public/assets/art/gameplay/blocks/formal-v1/orange-rectangle-2x3.png",
-      "width": 192,
+      "width": 191,
       "height": 296,
       "alpha": true,
       "grid": [
@@ -4504,7 +4664,7 @@
       "key": "gameplay.formalBlock.orange-square-3x3",
       "source": "gameplay/blocks/formal-v1/orange-square-3x3.png",
       "runtime": "../public/assets/art/gameplay/blocks/formal-v1/orange-square-3x3.png",
-      "width": 286,
+      "width": 285,
       "height": 296,
       "alpha": true,
       "grid": [
@@ -4616,8 +4776,22 @@
       "key": "gameplay.formalBlock.pink-l-tetromino",
       "source": "gameplay/blocks/formal-v1/pink-l-tetromino.png",
       "runtime": "../public/assets/art/gameplay/blocks/formal-v1/pink-l-tetromino.png",
-      "width": 287,
-      "height": 191,
+      "width": 286,
+      "height": 197,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-gameplay-current-level"
+    },
+    {
+      "key": "gameplay.formalBlock.pink-mirrored-l-tetromino",
+      "source": "gameplay/blocks/formal-v1/pink-mirrored-l-tetromino.png",
+      "runtime": "../public/assets/art/gameplay/blocks/formal-v1/pink-mirrored-l-tetromino.png",
+      "width": 284,
+      "height": 199,
       "alpha": true,
       "grid": [
         1,
@@ -4644,7 +4818,7 @@
       "key": "gameplay.formalBlock.pink-rectangle-2x3",
       "source": "gameplay/blocks/formal-v1/pink-rectangle-2x3.png",
       "runtime": "../public/assets/art/gameplay/blocks/formal-v1/pink-rectangle-2x3.png",
-      "width": 192,
+      "width": 191,
       "height": 296,
       "alpha": true,
       "grid": [
@@ -4798,7 +4972,7 @@
       "key": "gameplay.formalBlock.pink-square-3x3",
       "source": "gameplay/blocks/formal-v1/pink-square-3x3.png",
       "runtime": "../public/assets/art/gameplay/blocks/formal-v1/pink-square-3x3.png",
-      "width": 286,
+      "width": 285,
       "height": 296,
       "alpha": true,
       "grid": [
@@ -4910,8 +5084,22 @@
       "key": "gameplay.formalBlock.purple-l-tetromino",
       "source": "gameplay/blocks/formal-v1/purple-l-tetromino.png",
       "runtime": "../public/assets/art/gameplay/blocks/formal-v1/purple-l-tetromino.png",
-      "width": 287,
-      "height": 191,
+      "width": 286,
+      "height": 197,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-gameplay-current-level"
+    },
+    {
+      "key": "gameplay.formalBlock.purple-mirrored-l-tetromino",
+      "source": "gameplay/blocks/formal-v1/purple-mirrored-l-tetromino.png",
+      "runtime": "../public/assets/art/gameplay/blocks/formal-v1/purple-mirrored-l-tetromino.png",
+      "width": 284,
+      "height": 199,
       "alpha": true,
       "grid": [
         1,
@@ -4938,7 +5126,7 @@
       "key": "gameplay.formalBlock.purple-rectangle-2x3",
       "source": "gameplay/blocks/formal-v1/purple-rectangle-2x3.png",
       "runtime": "../public/assets/art/gameplay/blocks/formal-v1/purple-rectangle-2x3.png",
-      "width": 192,
+      "width": 191,
       "height": 296,
       "alpha": true,
       "grid": [
@@ -5092,7 +5280,7 @@
       "key": "gameplay.formalBlock.purple-square-3x3",
       "source": "gameplay/blocks/formal-v1/purple-square-3x3.png",
       "runtime": "../public/assets/art/gameplay/blocks/formal-v1/purple-square-3x3.png",
-      "width": 286,
+      "width": 285,
       "height": 296,
       "alpha": true,
       "grid": [
@@ -5204,8 +5392,22 @@
       "key": "gameplay.formalBlock.red-l-tetromino",
       "source": "gameplay/blocks/formal-v1/red-l-tetromino.png",
       "runtime": "../public/assets/art/gameplay/blocks/formal-v1/red-l-tetromino.png",
-      "width": 287,
-      "height": 191,
+      "width": 286,
+      "height": 197,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-gameplay-current-level"
+    },
+    {
+      "key": "gameplay.formalBlock.red-mirrored-l-tetromino",
+      "source": "gameplay/blocks/formal-v1/red-mirrored-l-tetromino.png",
+      "runtime": "../public/assets/art/gameplay/blocks/formal-v1/red-mirrored-l-tetromino.png",
+      "width": 283,
+      "height": 199,
       "alpha": true,
       "grid": [
         1,
@@ -5232,7 +5434,7 @@
       "key": "gameplay.formalBlock.red-rectangle-2x3",
       "source": "gameplay/blocks/formal-v1/red-rectangle-2x3.png",
       "runtime": "../public/assets/art/gameplay/blocks/formal-v1/red-rectangle-2x3.png",
-      "width": 192,
+      "width": 191,
       "height": 296,
       "alpha": true,
       "grid": [
@@ -5400,7 +5602,7 @@
       "key": "gameplay.formalBlock.red-square-3x3",
       "source": "gameplay/blocks/formal-v1/red-square-3x3.png",
       "runtime": "../public/assets/art/gameplay/blocks/formal-v1/red-square-3x3.png",
-      "width": 286,
+      "width": 285,
       "height": 296,
       "alpha": true,
       "grid": [
@@ -5512,8 +5714,8 @@
       "key": "gameplay.formalBlock.yellow-l-tetromino",
       "source": "gameplay/blocks/formal-v1/yellow-l-tetromino.png",
       "runtime": "../public/assets/art/gameplay/blocks/formal-v1/yellow-l-tetromino.png",
-      "width": 287,
-      "height": 191,
+      "width": 286,
+      "height": 197,
       "alpha": true,
       "grid": [
         1,
@@ -5523,11 +5725,11 @@
       "loadGroup": "formal-gameplay-current-level"
     },
     {
-      "key": "gameplay.formalBlock.yellow-mirrored-l-tetromino-generated",
-      "source": "gameplay/blocks/formal-v1/yellow-mirrored-l-tetromino-generated.png",
-      "runtime": "../public/assets/art/gameplay/blocks/formal-v1/yellow-mirrored-l-tetromino-generated.png",
-      "width": 287,
-      "height": 191,
+      "key": "gameplay.formalBlock.yellow-mirrored-l-tetromino",
+      "source": "gameplay/blocks/formal-v1/yellow-mirrored-l-tetromino.png",
+      "runtime": "../public/assets/art/gameplay/blocks/formal-v1/yellow-mirrored-l-tetromino.png",
+      "width": 283,
+      "height": 199,
       "alpha": true,
       "grid": [
         1,
@@ -5540,7 +5742,7 @@
       "key": "gameplay.formalBlock.yellow-rectangle-2x3",
       "source": "gameplay/blocks/formal-v1/yellow-rectangle-2x3.png",
       "runtime": "../public/assets/art/gameplay/blocks/formal-v1/yellow-rectangle-2x3.png",
-      "width": 192,
+      "width": 191,
       "height": 296,
       "alpha": true,
       "grid": [
@@ -5694,7 +5896,7 @@
       "key": "gameplay.formalBlock.yellow-square-3x3",
       "source": "gameplay/blocks/formal-v1/yellow-square-3x3.png",
       "runtime": "../public/assets/art/gameplay/blocks/formal-v1/yellow-square-3x3.png",
-      "width": 286,
+      "width": 285,
       "height": 296,
       "alpha": true,
       "grid": [
@@ -7094,6 +7296,34 @@
       "loadGroup": "formal-star-overlays"
     },
     {
+      "key": "gameplay.starBlock.lTetromino",
+      "source": "gameplay/mechanics/formal-star-v1/star-block-l-tetromino.png",
+      "runtime": "../public/assets/art/gameplay/mechanics/formal-star-v1/star-block-l-tetromino.png",
+      "width": 286,
+      "height": 197,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "png-palette-256-q95",
+      "loadGroup": "formal-star-overlays"
+    },
+    {
+      "key": "gameplay.starBlock.mirroredLTetromino",
+      "source": "gameplay/mechanics/formal-star-v1/star-block-mirrored-l-tetromino.png",
+      "runtime": "../public/assets/art/gameplay/mechanics/formal-star-v1/star-block-mirrored-l-tetromino.png",
+      "width": 284,
+      "height": 199,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "png-palette-256-q95",
+      "loadGroup": "formal-star-overlays"
+    },
+    {
       "key": "gameplay.starBlock.sTetromino",
       "source": "gameplay/mechanics/formal-star-v1/star-block-s-tetromino.png",
       "runtime": "../public/assets/art/gameplay/mechanics/formal-star-v1/star-block-s-tetromino.png",
@@ -7280,323 +7510,3206 @@
       ]
     },
     {
-      "key": "ui.musicPlayer.background",
-      "source": "ui/music-player-v1/music-background.png",
-      "runtime": "../public/assets/art/ui/music-player-v1/music-background.png",
-      "width": 941,
-      "height": 1672,
+      "key": "ui.leagueVideo.bronze",
+      "source": "ui/league-video-v1/bronze.png",
+      "runtime": "../public/assets/art/ui/league-video-v1/bronze.png",
+      "width": 279,
+      "height": 428,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueVideo.silver",
+      "source": "ui/league-video-v1/silver.png",
+      "runtime": "../public/assets/art/ui/league-video-v1/silver.png",
+      "width": 281,
+      "height": 428,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueVideo.gold",
+      "source": "ui/league-video-v1/gold.png",
+      "runtime": "../public/assets/art/ui/league-video-v1/gold.png",
+      "width": 278,
+      "height": 427,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueVideo.platinum",
+      "source": "ui/league-video-v1/platinum.png",
+      "runtime": "../public/assets/art/ui/league-video-v1/platinum.png",
+      "width": 285,
+      "height": 433,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueVideo.emerald",
+      "source": "ui/league-video-v1/emerald.png",
+      "runtime": "../public/assets/art/ui/league-video-v1/emerald.png",
+      "width": 284,
+      "height": 426,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueVideo.diamond",
+      "source": "ui/league-video-v1/diamond.png",
+      "runtime": "../public/assets/art/ui/league-video-v1/diamond.png",
+      "width": 285,
+      "height": 426,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueVideo.master",
+      "source": "ui/league-video-v1/master.png",
+      "runtime": "../public/assets/art/ui/league-video-v1/master.png",
+      "width": 288,
+      "height": 427,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueVideo.glory",
+      "source": "ui/league-video-v1/glory.png",
+      "runtime": "../public/assets/art/ui/league-video-v1/glory.png",
+      "width": 348,
+      "height": 433,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueVideo.row",
+      "source": "ui/league-video-v1/row.png",
+      "runtime": "../public/assets/art/ui/league-video-v1/row.png",
+      "width": 517,
+      "height": 126,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueVideo.round-button",
+      "source": "ui/league-video-v1/round-button.png",
+      "runtime": "../public/assets/art/ui/league-video-v1/round-button.png",
+      "width": 259,
+      "height": 255,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueVideo.score-token",
+      "source": "ui/league-video-v1/score-token.png",
+      "runtime": "../public/assets/art/ui/league-video-v1/score-token.png",
+      "width": 199,
+      "height": 212,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueVideo.continue-button",
+      "source": "ui/league-video-v1/continue-button.png",
+      "runtime": "../public/assets/art/ui/league-video-v1/continue-button.png",
+      "width": 463,
+      "height": 181,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueVideo.self-row",
+      "source": "ui/league-video-v1/self-row.png",
+      "runtime": "../public/assets/art/ui/league-video-v1/self-row.png",
+      "width": 517,
+      "height": 130,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueVideo.parchment",
+      "source": "ui/league-video-v1/parchment.png",
+      "runtime": "../public/assets/art/ui/league-video-v1/parchment.png",
+      "width": 296,
+      "height": 313,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueVideo.coin-reward",
+      "source": "ui/league-video-v1/coin-reward.png",
+      "runtime": "../public/assets/art/ui/league-video-v1/coin-reward.png",
+      "width": 271,
+      "height": 228,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueVideo.glory-star",
+      "source": "ui/league-video-v1/glory-star.png",
+      "runtime": "../public/assets/art/ui/league-video-v1/glory-star.png",
+      "width": 263,
+      "height": 255,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueVideo.background",
+      "source": "ui/league-video-v1/background.png",
+      "runtime": "../public/assets/art/ui/league-video-v1/background.png",
+      "width": 992,
+      "height": 2156,
       "alpha": false,
-      "grid": [1, 1],
-      "transform": "png-lossless-no-resize",
-      "loadGroup": "music-player-background"
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
     },
     {
-      "key": "ui.musicPlayer.panel",
-      "source": "ui/music-player-v1/music-panel-frame.png",
-      "runtime": "../public/assets/art/ui/music-player-v1/music-panel-frame.png",
-      "width": 1024,
-      "height": 1536,
-      "alpha": true,
-      "grid": [1, 1],
-      "transform": "png-lossless-no-resize",
-      "loadGroup": "music-player-panel"
-    },
-    {
-      "key": "ui.musicPlayer.deck",
-      "source": "ui/music-player-v1/music-player-deck.png",
-      "runtime": "../public/assets/art/ui/music-player-v1/music-player-deck.png",
-      "width": 2172,
-      "height": 724,
+      "key": "ui.dailyChallenge.entryIcon",
+      "source": "ui/daily-challenge-v1/entry-icon.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-v1/entry-icon.png",
+      "width": 236,
+      "height": 236,
       "alpha": true,
       "grid": [
         1,
         1
       ],
-      "transform": "png-lossless-no-resize",
-      "loadGroup": "music-player-deck"
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
     },
     {
-      "key": "ui.musicPlayer.vinyl",
-      "source": "ui/music-player-v1/music-vinyl-overlay.png",
-      "runtime": "../public/assets/art/ui/music-player-v1/music-vinyl-overlay.png",
-      "width": 1254,
-      "height": 1254,
+      "key": "ui.dailyChallenge.lockIcon",
+      "source": "ui/daily-challenge-v1/lock-icon.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-v1/lock-icon.png",
+      "width": 96,
+      "height": 96,
       "alpha": true,
       "grid": [
         1,
         1
       ],
-      "transform": "png-lossless-no-resize",
-      "loadGroup": "music-player-vinyl"
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
     },
     {
-      "key": "ui.musicPlayer.vinylDisc",
-      "source": "ui/music-player-v1/music-vinyl-disc.png",
-      "runtime": "../public/assets/art/ui/music-player-v1/music-vinyl-disc.png",
-      "width": 1254,
-      "height": 1254,
-      "alpha": true,
-      "grid": [1, 1],
-      "transform": "png-lossless-no-resize",
-      "loadGroup": "music-player-vinyl"
-    },
-    {
-      "key": "ui.musicPlayer.tonearm",
-      "source": "ui/music-player-v1/music-vinyl-tonearm.png",
-      "runtime": "../public/assets/art/ui/music-player-v1/music-vinyl-tonearm.png",
-      "width": 1254,
-      "height": 1254,
-      "alpha": true,
-      "grid": [1, 1],
-      "transform": "png-lossless-no-resize",
-      "loadGroup": "music-player-vinyl"
-    },
-    {
-      "key": "ui.musicPlayer.progressTrack",
-      "source": "ui/music-player-v1/music-progress-track.png",
-      "runtime": "../public/assets/art/ui/music-player-v1/music-progress-track.png",
-      "width": 2172,
-      "height": 724,
+      "key": "ui.dailyChallenge.plusIcon",
+      "source": "ui/daily-challenge-v1/plus-icon.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-v1/plus-icon.png",
+      "width": 64,
+      "height": 64,
       "alpha": true,
       "grid": [
         1,
         1
       ],
-      "transform": "png-lossless-no-resize",
-      "loadGroup": "music-player-progress"
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
     },
     {
-      "key": "ui.musicPlayer.progressFill",
-      "source": "ui/music-player-v1/music-progress-fill.png",
-      "runtime": "../public/assets/art/ui/music-player-v1/music-progress-fill.png",
-      "width": 1774,
-      "height": 887,
+      "key": "ui.home.sideEntryBase",
+      "source": "ui/home-v3/side-entry-base.png",
+      "runtime": "../public/assets/art/ui/home-v3/side-entry-base.png",
+      "width": 118,
+      "height": 118,
       "alpha": true,
       "grid": [
         1,
         1
       ],
-      "transform": "png-lossless-no-resize",
-      "loadGroup": "music-player-progress"
+      "transform": "copy"
     },
     {
-      "key": "ui.musicPlayer.progressKnob",
-      "source": "ui/music-player-v1/music-progress-knob.png",
-      "runtime": "../public/assets/art/ui/music-player-v1/music-progress-knob.png",
-      "width": 1254,
-      "height": 1254,
+      "key": "ui.home.leagueEntry",
+      "source": "ui/home-v3/league-entry.png",
+      "runtime": "../public/assets/art/ui/home-v3/league-entry.png",
+      "width": 256,
+      "height": 256,
       "alpha": true,
       "grid": [
         1,
         1
       ],
-      "transform": "png-lossless-no-resize",
-      "loadGroup": "music-player-progress"
+      "transform": "copy"
     },
     {
-      "key": "ui.musicPlayer.rowSelected",
-      "source": "ui/music-player-v1/music-row-selected.png",
-      "runtime": "../public/assets/art/ui/music-player-v1/music-row-selected.png",
-      "width": 2172,
-      "height": 724,
+      "key": "ui.home.dailyChallengeEntry",
+      "source": "ui/home-v3/daily-challenge-entry.png",
+      "runtime": "../public/assets/art/ui/home-v3/daily-challenge-entry.png",
+      "width": 256,
+      "height": 256,
       "alpha": true,
       "grid": [
         1,
         1
       ],
-      "transform": "png-lossless-no-resize",
-      "loadGroup": "music-player-rows"
+      "transform": "copy"
     },
     {
-      "key": "ui.musicPlayer.rowLocked",
-      "source": "ui/music-player-v1/music-row-locked.png",
-      "runtime": "../public/assets/art/ui/music-player-v1/music-row-locked.png",
-      "width": 2172,
-      "height": 724,
+      "key": "ui.dailyChallengeV2.panelFrame",
+      "source": "ui/daily-challenge-v2/panel-frame.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-v2/panel-frame.png",
+      "width": 666,
+      "height": 900,
       "alpha": true,
       "grid": [
         1,
         1
       ],
-      "transform": "png-lossless-no-resize",
-      "loadGroup": "music-player-rows"
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
     },
     {
-      "key": "ui.musicPlayer.statusUnlocked",
-      "source": "ui/music-player-v1/music-status-unlocked.png",
-      "runtime": "../public/assets/art/ui/music-player-v1/music-status-unlocked.png",
-      "width": 2172,
-      "height": 724,
+      "key": "ui.dailyChallengeV2.headerBar",
+      "source": "ui/daily-challenge-v2/header-bar.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-v2/header-bar.png",
+      "width": 672,
+      "height": 69,
       "alpha": true,
       "grid": [
         1,
         1
       ],
-      "transform": "png-lossless-no-resize",
-      "loadGroup": "music-player-status"
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
     },
     {
-      "key": "ui.musicPlayer.statusLocked",
-      "source": "ui/music-player-v1/music-status-locked.png",
-      "runtime": "../public/assets/art/ui/music-player-v1/music-status-locked.png",
-      "width": 1774,
-      "height": 887,
+      "key": "ui.dailyChallengeV2.rewardBanner",
+      "source": "ui/daily-challenge-v2/reward-banner.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-v2/reward-banner.png",
+      "width": 611,
+      "height": 214,
       "alpha": true,
       "grid": [
         1,
         1
       ],
-      "transform": "png-lossless-no-resize",
-      "loadGroup": "music-player-status"
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
     },
     {
-      "key": "ui.musicPlayer.lock",
-      "source": "ui/music-player-v1/music-lock-icon.png",
-      "runtime": "../public/assets/art/ui/music-player-v1/music-lock-icon.png",
-      "width": 1271,
-      "height": 1238,
+      "key": "ui.dailyChallengeV2.rowFrame",
+      "source": "ui/daily-challenge-v2/row-frame.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-v2/row-frame.png",
+      "width": 612,
+      "height": 114,
       "alpha": true,
       "grid": [
         1,
         1
       ],
-      "transform": "png-lossless-no-resize",
-      "loadGroup": "music-player-status"
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
     },
     {
-      "key": "ui.musicPlayer.equalizer",
-      "source": "ui/music-player-v1/music-equalizer-icon.png",
-      "runtime": "../public/assets/art/ui/music-player-v1/music-equalizer-icon.png",
-      "width": 1254,
-      "height": 1254,
+      "key": "ui.dailyChallengeV2.rewardCard",
+      "source": "ui/daily-challenge-v2/reward-card.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-v2/reward-card.png",
+      "width": 168,
+      "height": 165,
       "alpha": true,
       "grid": [
         1,
         1
       ],
-      "transform": "png-lossless-no-resize",
-      "loadGroup": "music-player-status"
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
     },
     {
-      "key": "ui.musicPlayer.header",
-      "source": "ui/music-player-v1/music-header-banner.png",
-      "runtime": "../public/assets/art/ui/music-player-v1/music-header-banner.png",
-      "width": 2172,
-      "height": 724,
+      "key": "ui.dailyChallengeV2.firstClearTag",
+      "source": "ui/daily-challenge-v2/first-clear-tag.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-v2/first-clear-tag.png",
+      "width": 160,
+      "height": 42,
       "alpha": true,
-      "grid": [1, 1],
-      "transform": "png-lossless-no-resize",
-      "loadGroup": "music-player-header"
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
     },
     {
-      "key": "ui.musicPlayer.close",
-      "source": "ui/music-player-v1/music-close-button.png",
-      "runtime": "../public/assets/art/ui/music-player-v1/music-close-button.png",
-      "width": 1254,
-      "height": 1254,
+      "key": "ui.dailyChallengeV2.challengeButton",
+      "source": "ui/daily-challenge-v2/challenge-button.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-v2/challenge-button.png",
+      "width": 308,
+      "height": 96,
       "alpha": true,
-      "grid": [1, 1],
-      "transform": "png-lossless-no-resize",
-      "loadGroup": "music-player-close"
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
     },
     {
-      "key": "ui.musicPlayer.play",
-      "source": "ui/music-player-v1/music-play-button.png",
-      "runtime": "../public/assets/art/ui/music-player-v1/music-play-button.png",
-      "width": 1254,
-      "height": 1254,
+      "key": "ui.dailyChallengeV2.lockedButton",
+      "source": "ui/daily-challenge-v2/locked-button.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-v2/locked-button.png",
+      "width": 308,
+      "height": 93,
       "alpha": true,
-      "grid": [1, 1],
-      "transform": "png-lossless-no-resize",
-      "loadGroup": "music-player-play"
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
     },
     {
-      "key": "ui.musicPlayer.previous",
-      "source": "ui/music-player-v1/music-prev-button.png",
-      "runtime": "../public/assets/art/ui/music-player-v1/music-prev-button.png",
-      "width": 1254,
-      "height": 1254,
+      "key": "ui.dailyChallengeV2.closeButton",
+      "source": "ui/daily-challenge-v2/close-button.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-v2/close-button.png",
+      "width": 80,
+      "height": 78,
       "alpha": true,
-      "grid": [1, 1],
-      "transform": "png-lossless-no-resize",
-      "loadGroup": "music-player-previous"
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
     },
     {
-      "key": "ui.musicPlayer.next",
-      "source": "ui/music-player-v1/music-skip-button.png",
-      "runtime": "../public/assets/art/ui/music-player-v1/music-skip-button.png",
-      "width": 1254,
-      "height": 1254,
+      "key": "ui.dailyChallengeV2.attemptBadge",
+      "source": "ui/daily-challenge-v2/attempt-badge.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-v2/attempt-badge.png",
+      "width": 202,
+      "height": 70,
       "alpha": true,
-      "grid": [1, 1],
-      "transform": "png-lossless-no-resize",
-      "loadGroup": "music-player-next"
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
     },
     {
-      "key": "ui.musicPlayer.volume",
-      "source": "ui/music-player-v1/music-volume-icon.png",
-      "runtime": "../public/assets/art/ui/music-player-v1/music-volume-icon.png",
-      "width": 1254,
-      "height": 1254,
+      "key": "ui.dailyChallengeV2.difficultyDiamond",
+      "source": "ui/daily-challenge-v2/difficulty-diamond.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-v2/difficulty-diamond.png",
+      "width": 216,
+      "height": 216,
       "alpha": true,
-      "grid": [1, 1],
-      "transform": "png-lossless-no-resize",
-      "loadGroup": "music-player-volume"
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
     },
     {
-      "key": "ui.musicPlayer.entry",
-      "source": "ui/music-player-v1/music-entry-icon.png",
-      "runtime": "../public/assets/art/ui/music-player-v1/music-entry-icon.png",
-      "width": 1254,
-      "height": 1254,
+      "key": "ui.formal.dailyTasks.claimedCheck",
+      "source": "ui/formal-pages/daily-tasks-v2/claimed-check.png",
+      "runtime": "../public/assets/art/ui/formal-pages/daily-tasks-v2/claimed-check.png",
+      "width": 160,
+      "height": 120,
       "alpha": true,
-      "grid": [1, 1],
-      "transform": "png-lossless-no-resize",
-      "loadGroup": "music-player-entry"
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-daily-tasks"
     },
     {
-      "key": "ui.musicPlayer.albumDesert",
-      "source": "ui/music-player-v1/album-desert-dawn.png",
-      "runtime": "../public/assets/art/ui/music-player-v1/album-desert-dawn.png",
-      "width": 1254,
-      "height": 1254,
+      "key": "ui.formal.achievements.claimedCheck",
+      "source": "ui/formal-pages/achievements-v2/claimed-check.png",
+      "runtime": "../public/assets/art/ui/formal-pages/achievements-v2/claimed-check.png",
+      "width": 160,
+      "height": 120,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-achievements"
+    },
+    {
+      "key": "ui.lifeRefill.referencePanel",
+      "source": "ui/life-refill-reference-v1/panel.png",
+      "runtime": "../public/assets/art/ui/formal-pages/life-refill-reference-v1/panel.png",
+      "width": 534,
+      "height": 844,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "life-refill"
+    },
+    {
+      "key": "ui.boosterPurchase.referencePanel",
+      "source": "ui/booster-purchase-reference-v1/panel.png",
+      "runtime": "../public/assets/art/ui/formal-pages/booster-purchase-reference-v1/panel.png",
+      "width": 980,
+      "height": 1294,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "booster-purchase"
+    },
+    {
+      "key": "ui.profile.avatar-0",
+      "source": "ui/profile-reference-v1/avatar-0.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/avatar-0.png",
+      "width": 50,
+      "height": 50,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profile.avatar-1",
+      "source": "ui/profile-reference-v1/avatar-1.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/avatar-1.png",
+      "width": 50,
+      "height": 50,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profile.avatar-10",
+      "source": "ui/profile-reference-v1/avatar-10.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/avatar-10.png",
+      "width": 50,
+      "height": 50,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profile.avatar-11",
+      "source": "ui/profile-reference-v1/avatar-11.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/avatar-11.png",
+      "width": 50,
+      "height": 50,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profile.avatar-12",
+      "source": "ui/profile-reference-v1/avatar-12.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/avatar-12.png",
+      "width": 50,
+      "height": 50,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profile.avatar-13",
+      "source": "ui/profile-reference-v1/avatar-13.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/avatar-13.png",
+      "width": 50,
+      "height": 50,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profile.avatar-14",
+      "source": "ui/profile-reference-v1/avatar-14.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/avatar-14.png",
+      "width": 50,
+      "height": 50,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profile.avatar-2",
+      "source": "ui/profile-reference-v1/avatar-2.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/avatar-2.png",
+      "width": 50,
+      "height": 50,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profile.avatar-3",
+      "source": "ui/profile-reference-v1/avatar-3.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/avatar-3.png",
+      "width": 50,
+      "height": 50,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profile.avatar-4",
+      "source": "ui/profile-reference-v1/avatar-4.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/avatar-4.png",
+      "width": 50,
+      "height": 50,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profile.avatar-5",
+      "source": "ui/profile-reference-v1/avatar-5.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/avatar-5.png",
+      "width": 50,
+      "height": 50,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profile.avatar-6",
+      "source": "ui/profile-reference-v1/avatar-6.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/avatar-6.png",
+      "width": 50,
+      "height": 50,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profile.avatar-7",
+      "source": "ui/profile-reference-v1/avatar-7.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/avatar-7.png",
+      "width": 50,
+      "height": 50,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profile.avatar-8",
+      "source": "ui/profile-reference-v1/avatar-8.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/avatar-8.png",
+      "width": 50,
+      "height": 50,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profile.avatar-9",
+      "source": "ui/profile-reference-v1/avatar-9.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/avatar-9.png",
+      "width": 50,
+      "height": 50,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profile.coin",
+      "source": "ui/profile-reference-v1/coin.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/coin.png",
+      "width": 24,
+      "height": 25,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "player-profile"
+    },
+    {
+      "key": "ui.profile.edit",
+      "source": "ui/profile-reference-v1/edit.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/edit.png",
+      "width": 44,
+      "height": 44,
       "alpha": false,
-      "grid": [1, 1],
-      "transform": "png-lossless-no-resize",
-      "loadGroup": "music-player-albumDesert"
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "player-profile"
     },
     {
-      "key": "ui.musicPlayer.albumLighthouse",
-      "source": "ui/music-player-v1/album-lighthouse-bay.png",
-      "runtime": "../public/assets/art/ui/music-player-v1/album-lighthouse-bay.png",
-      "width": 1254,
-      "height": 1254,
-      "alpha": false,
-      "grid": [1, 1],
-      "transform": "png-lossless-no-resize",
-      "loadGroup": "music-player-albumLighthouse"
+      "key": "ui.profile.frame-0",
+      "source": "ui/profile-reference-v1/frame-0.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/frame-0.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
     },
     {
-      "key": "ui.musicPlayer.albumStarry",
-      "source": "ui/music-player-v1/album-starry-journey.png",
-      "runtime": "../public/assets/art/ui/music-player-v1/album-starry-journey.png",
-      "width": 1254,
-      "height": 1254,
-      "alpha": false,
-      "grid": [1, 1],
-      "transform": "png-lossless-no-resize",
-      "loadGroup": "music-player-albumStarry"
+      "key": "ui.profile.frame-1",
+      "source": "ui/profile-reference-v1/frame-1.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/frame-1.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
     },
     {
-      "key": "ui.musicPlayer.albumForest",
-      "source": "ui/music-player-v1/album-forest-stream.png",
-      "runtime": "../public/assets/art/ui/music-player-v1/album-forest-stream.png",
-      "width": 1254,
-      "height": 1254,
+      "key": "ui.profile.frame-2",
+      "source": "ui/profile-reference-v1/frame-2.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/frame-2.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profile.frame-3",
+      "source": "ui/profile-reference-v1/frame-3.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/frame-3.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profile.frame-4",
+      "source": "ui/profile-reference-v1/frame-4.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/frame-4.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profile.frame-5",
+      "source": "ui/profile-reference-v1/frame-5.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/frame-5.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profile.frame-6",
+      "source": "ui/profile-reference-v1/frame-6.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/frame-6.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profile.frame-7",
+      "source": "ui/profile-reference-v1/frame-7.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/frame-7.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profile.frame-8",
+      "source": "ui/profile-reference-v1/frame-8.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/frame-8.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profile.header",
+      "source": "ui/profile-reference-v1/header.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/header.png",
+      "width": 486,
+      "height": 105,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "player-profile"
+    },
+    {
+      "key": "ui.profile.panel",
+      "source": "ui/profile-reference-v1/panel.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/panel.png",
+      "width": 431,
+      "height": 569,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "player-profile"
+    },
+    {
+      "key": "ui.profile.save",
+      "source": "ui/profile-reference-v1/save.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/save.png",
+      "width": 177,
+      "height": 69,
       "alpha": false,
-      "grid": [1, 1],
-      "transform": "png-lossless-no-resize",
-      "loadGroup": "music-player-albumForest"
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "player-profile"
+    },
+    {
+      "key": "ui.profile.stat-0",
+      "source": "ui/profile-reference-v1/stat-0.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/stat-0.png",
+      "width": 46,
+      "height": 49,
+      "alpha": false,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "player-profile"
+    },
+    {
+      "key": "ui.profile.stat-1",
+      "source": "ui/profile-reference-v1/stat-1.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/stat-1.png",
+      "width": 46,
+      "height": 49,
+      "alpha": false,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "player-profile"
+    },
+    {
+      "key": "ui.profile.stat-2",
+      "source": "ui/profile-reference-v1/stat-2.png",
+      "runtime": "../public/assets/art/ui/profile-reference-v1/stat-2.png",
+      "width": 46,
+      "height": 49,
+      "alpha": false,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "player-profile"
+    },
+    {
+      "key": "ui.dailyChallengeSupplied.panelFrame",
+      "source": "ui/daily-challenge-supplied-v1/panel-frame.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-supplied-v1/panel-frame.png",
+      "width": 594,
+      "height": 937,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
+    },
+    {
+      "key": "ui.dailyChallengeSupplied.closeButton",
+      "source": "ui/daily-challenge-supplied-v1/close-button.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-supplied-v1/close-button.png",
+      "width": 94,
+      "height": 98,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
+    },
+    {
+      "key": "ui.dailyChallengeSupplied.rewardBanner",
+      "source": "ui/daily-challenge-supplied-v1/reward-banner.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-supplied-v1/reward-banner.png",
+      "width": 499,
+      "height": 235,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
+    },
+    {
+      "key": "ui.dailyChallengeSupplied.difficultyDiamond",
+      "source": "ui/daily-challenge-supplied-v1/difficulty-1.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-supplied-v1/difficulty-1.png",
+      "width": 83,
+      "height": 93,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
+    },
+    {
+      "key": "ui.dailyChallengeSupplied.difficultyDiamond2",
+      "source": "ui/daily-challenge-supplied-v1/difficulty-2.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-supplied-v1/difficulty-2.png",
+      "width": 83,
+      "height": 93,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
+    },
+    {
+      "key": "ui.dailyChallengeSupplied.difficultyDiamond3",
+      "source": "ui/daily-challenge-supplied-v1/difficulty-3.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-supplied-v1/difficulty-3.png",
+      "width": 83,
+      "height": 93,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
+    },
+    {
+      "key": "ui.dailyChallengeSupplied.rewardCard",
+      "source": "ui/daily-challenge-supplied-v1/reward-card.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-supplied-v1/reward-card.png",
+      "width": 84,
+      "height": 85,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
+    },
+    {
+      "key": "ui.dailyChallengeSupplied.firstClearTag",
+      "source": "ui/daily-challenge-supplied-v1/first-clear-tag.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-supplied-v1/first-clear-tag.png",
+      "width": 94,
+      "height": 36,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
+    },
+    {
+      "key": "ui.dailyChallengeSupplied.challengeButton",
+      "source": "ui/daily-challenge-supplied-v1/challenge-button.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-supplied-v1/challenge-button.png",
+      "width": 147,
+      "height": 72,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
+    },
+    {
+      "key": "ui.dailyChallengeSupplied.coinIcon",
+      "source": "ui/daily-challenge-supplied-v1/coin-icon.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-supplied-v1/coin-icon.png",
+      "width": 57,
+      "height": 59,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
+    },
+    {
+      "key": "ui.dailyChallengeSupplied.gemIcon",
+      "source": "ui/daily-challenge-supplied-v1/inspiration-icon.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-supplied-v1/inspiration-icon.png",
+      "width": 53,
+      "height": 45,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
+    },
+    {
+      "key": "ui.profileUnlock.avatar.15",
+      "source": "ui/profile-unlocks-v1/avatar-15.png",
+      "runtime": "../public/assets/art/ui/profile-unlocks-v1/avatar-15.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileUnlock.avatar.16",
+      "source": "ui/profile-unlocks-v1/avatar-16.png",
+      "runtime": "../public/assets/art/ui/profile-unlocks-v1/avatar-16.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileUnlock.avatar.17",
+      "source": "ui/profile-unlocks-v1/avatar-17.png",
+      "runtime": "../public/assets/art/ui/profile-unlocks-v1/avatar-17.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileUnlock.avatar.18",
+      "source": "ui/profile-unlocks-v1/avatar-18.png",
+      "runtime": "../public/assets/art/ui/profile-unlocks-v1/avatar-18.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileUnlock.avatar.19",
+      "source": "ui/profile-unlocks-v1/avatar-19.png",
+      "runtime": "../public/assets/art/ui/profile-unlocks-v1/avatar-19.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileUnlock.avatar.20",
+      "source": "ui/profile-unlocks-v1/avatar-20.png",
+      "runtime": "../public/assets/art/ui/profile-unlocks-v1/avatar-20.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileUnlock.avatar.21",
+      "source": "ui/profile-unlocks-v1/avatar-21.png",
+      "runtime": "../public/assets/art/ui/profile-unlocks-v1/avatar-21.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileUnlock.avatar.22",
+      "source": "ui/profile-unlocks-v1/avatar-22.png",
+      "runtime": "../public/assets/art/ui/profile-unlocks-v1/avatar-22.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileUnlock.avatar.23",
+      "source": "ui/profile-unlocks-v1/avatar-23.png",
+      "runtime": "../public/assets/art/ui/profile-unlocks-v1/avatar-23.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileUnlock.avatar.24",
+      "source": "ui/profile-unlocks-v1/avatar-24.png",
+      "runtime": "../public/assets/art/ui/profile-unlocks-v1/avatar-24.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileUnlock.frame.9",
+      "source": "ui/profile-unlocks-v1/frame-9.png",
+      "runtime": "../public/assets/art/ui/profile-unlocks-v1/frame-9.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileUnlock.frame.10",
+      "source": "ui/profile-unlocks-v1/frame-10.png",
+      "runtime": "../public/assets/art/ui/profile-unlocks-v1/frame-10.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileUnlock.frame.11",
+      "source": "ui/profile-unlocks-v1/frame-11.png",
+      "runtime": "../public/assets/art/ui/profile-unlocks-v1/frame-11.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileUnlock.frame.12",
+      "source": "ui/profile-unlocks-v1/frame-12.png",
+      "runtime": "../public/assets/art/ui/profile-unlocks-v1/frame-12.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileUnlock.frame.13",
+      "source": "ui/profile-unlocks-v1/frame-13.png",
+      "runtime": "../public/assets/art/ui/profile-unlocks-v1/frame-13.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileUnlock.frame.14",
+      "source": "ui/profile-unlocks-v1/frame-14.png",
+      "runtime": "../public/assets/art/ui/profile-unlocks-v1/frame-14.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileUnlock.frame.15",
+      "source": "ui/profile-unlocks-v1/frame-15.png",
+      "runtime": "../public/assets/art/ui/profile-unlocks-v1/frame-15.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileUnlock.frame.16",
+      "source": "ui/profile-unlocks-v1/frame-16.png",
+      "runtime": "../public/assets/art/ui/profile-unlocks-v1/frame-16.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileUnlock.frame.17",
+      "source": "ui/profile-unlocks-v1/frame-17.png",
+      "runtime": "../public/assets/art/ui/profile-unlocks-v1/frame-17.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileUnlock.frame.18",
+      "source": "ui/profile-unlocks-v1/frame-18.png",
+      "runtime": "../public/assets/art/ui/profile-unlocks-v1/frame-18.png",
+      "width": 64,
+      "height": 64,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.dailySuccessSupplied.panel",
+      "source": "ui/daily-success-supplied-v1/panel.png",
+      "runtime": "../public/assets/art/ui/daily-success-supplied-v1/panel.png",
+      "width": 640,
+      "height": 764,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "win"
+    },
+    {
+      "key": "ui.dailySuccessSupplied.continue",
+      "source": "ui/daily-success-supplied-v1/continue.png",
+      "runtime": "../public/assets/art/ui/daily-success-supplied-v1/continue.png",
+      "width": 322,
+      "height": 125,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "win"
+    },
+    {
+      "key": "ui.leagueRankV2.bronze",
+      "source": "ui/league-rank-badges-v2/bronze.png",
+      "runtime": "../public/assets/art/ui/league-rank-badges-v2/bronze.png",
+      "width": 220,
+      "height": 230,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueRankV2.silver",
+      "source": "ui/league-rank-badges-v2/silver.png",
+      "runtime": "../public/assets/art/ui/league-rank-badges-v2/silver.png",
+      "width": 222,
+      "height": 203,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueRankV2.gold",
+      "source": "ui/league-rank-badges-v2/gold.png",
+      "runtime": "../public/assets/art/ui/league-rank-badges-v2/gold.png",
+      "width": 245,
+      "height": 242,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueRankV2.platinum",
+      "source": "ui/league-rank-badges-v2/platinum.png",
+      "runtime": "../public/assets/art/ui/league-rank-badges-v2/platinum.png",
+      "width": 254,
+      "height": 267,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueRankV2.emerald",
+      "source": "ui/league-rank-badges-v2/emerald.png",
+      "runtime": "../public/assets/art/ui/league-rank-badges-v2/emerald.png",
+      "width": 253,
+      "height": 230,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueRankV2.diamond",
+      "source": "ui/league-rank-badges-v2/diamond.png",
+      "runtime": "../public/assets/art/ui/league-rank-badges-v2/diamond.png",
+      "width": 271,
+      "height": 252,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueRankV2.master",
+      "source": "ui/league-rank-badges-v2/master.png",
+      "runtime": "../public/assets/art/ui/league-rank-badges-v2/master.png",
+      "width": 261,
+      "height": 245,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueRankV2.glory",
+      "source": "ui/league-rank-badges-v2/glory.png",
+      "runtime": "../public/assets/art/ui/league-rank-badges-v2/glory.png",
+      "width": 265,
+      "height": 239,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueSupplied.row-first",
+      "source": "ui/league-supplied-v1/row-first.png",
+      "runtime": "../public/assets/art/ui/league-supplied-v1/row-first.png",
+      "width": 655,
+      "height": 118,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueSupplied.row-second",
+      "source": "ui/league-supplied-v1/row-second.png",
+      "runtime": "../public/assets/art/ui/league-supplied-v1/row-second.png",
+      "width": 655,
+      "height": 117,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueSupplied.row-third",
+      "source": "ui/league-supplied-v1/row-third.png",
+      "runtime": "../public/assets/art/ui/league-supplied-v1/row-third.png",
+      "width": 655,
+      "height": 118,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueSupplied.row-regular",
+      "source": "ui/league-supplied-v1/row-regular.png",
+      "runtime": "../public/assets/art/ui/league-supplied-v1/row-regular.png",
+      "width": 655,
+      "height": 115,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueSupplied.self-row",
+      "source": "ui/league-supplied-v1/self-row.png",
+      "runtime": "../public/assets/art/ui/league-supplied-v1/self-row.png",
+      "width": 715,
+      "height": 112,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueSupplied.top-header",
+      "source": "ui/league-supplied-v1/top-header.png",
+      "runtime": "../public/assets/art/ui/league-supplied-v1/top-header.png",
+      "width": 720,
+      "height": 201,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueSupplied.bottom-footer",
+      "source": "ui/league-supplied-v1/bottom-footer.png",
+      "runtime": "../public/assets/art/ui/league-supplied-v1/bottom-footer.png",
+      "width": 720,
+      "height": 124,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueSupplied.list-panel",
+      "source": "ui/league-supplied-v1/list-panel.png",
+      "runtime": "../public/assets/art/ui/league-supplied-v1/list-panel.png",
+      "width": 720,
+      "height": 956,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueSupplied.challenge-button",
+      "source": "ui/league-supplied-v1/challenge-button.png",
+      "runtime": "../public/assets/art/ui/league-supplied-v1/challenge-button.png",
+      "width": 103,
+      "height": 50,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueSupplied.back-button",
+      "source": "ui/league-supplied-v1/back-button.png",
+      "runtime": "../public/assets/art/ui/league-supplied-v1/back-button.png",
+      "width": 73,
+      "height": 74,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueSupplied.info-button",
+      "source": "ui/league-supplied-v1/info-button.png",
+      "runtime": "../public/assets/art/ui/league-supplied-v1/info-button.png",
+      "width": 73,
+      "height": 74,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueSupplied.tier-name-base",
+      "source": "ui/league-supplied-v1/tier-name-base.png",
+      "runtime": "../public/assets/art/ui/league-supplied-v1/tier-name-base.png",
+      "width": 322,
+      "height": 66,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueSupplied.timer-panel",
+      "source": "ui/league-supplied-v1/timer-panel.png",
+      "runtime": "../public/assets/art/ui/league-supplied-v1/timer-panel.png",
+      "width": 415,
+      "height": 89,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueSupplied.title-base",
+      "source": "ui/league-supplied-v1/title-base.png",
+      "runtime": "../public/assets/art/ui/league-supplied-v1/title-base.png",
+      "width": 235,
+      "height": 71,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueSupplied.stage-background",
+      "source": "ui/league-supplied-v1/stage-background.png",
+      "runtime": "../public/assets/art/ui/league-supplied-v1/stage-background.png",
+      "width": 720,
+      "height": 835,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueSupplied.level-star",
+      "source": "ui/league-supplied-v1/level-star.png",
+      "runtime": "../public/assets/art/ui/league-supplied-v1/level-star.png",
+      "width": 33,
+      "height": 34,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueSupplied.score-token",
+      "source": "ui/league-supplied-v1/score-token.png",
+      "runtime": "../public/assets/art/ui/league-supplied-v1/score-token.png",
+      "width": 49,
+      "height": 57,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueSupplied.coin-reward",
+      "source": "ui/league-supplied-v1/coin-reward.png",
+      "runtime": "../public/assets/art/ui/league-supplied-v1/coin-reward.png",
+      "width": 66,
+      "height": 50,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueSupplied.arrow-left",
+      "source": "ui/league-supplied-v1/arrow-left.png",
+      "runtime": "../public/assets/art/ui/league-supplied-v1/arrow-left.png",
+      "width": 48,
+      "height": 55,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueSupplied.arrow-right",
+      "source": "ui/league-supplied-v1/arrow-right.png",
+      "runtime": "../public/assets/art/ui/league-supplied-v1/arrow-right.png",
+      "width": 48,
+      "height": 55,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueSupplied.detail-panel",
+      "source": "ui/league-supplied-v1/detail-panel.png",
+      "runtime": "../public/assets/art/ui/league-supplied-v1/detail-panel.png",
+      "width": 594,
+      "height": 806,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueSupplied.close-button",
+      "source": "ui/league-supplied-v1/close-button.png",
+      "runtime": "../public/assets/art/ui/league-supplied-v1/close-button.png",
+      "width": 94,
+      "height": 98,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.suppliedPopups.booster.panel",
+      "source": "ui/supplied-popups-v1/originals/booster/底.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/booster/panel.png",
+      "width": 594,
+      "height": 889,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-booster"
+    },
+    {
+      "key": "ui.suppliedPopups.booster.ad-button",
+      "source": "ui/supplied-popups-v1/originals/booster/按钮1.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/booster/ad-button.png",
+      "width": 225,
+      "height": 84,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-booster"
+    },
+    {
+      "key": "ui.suppliedPopups.booster.buy-button",
+      "source": "ui/supplied-popups-v1/originals/booster/按钮2.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/booster/buy-button.png",
+      "width": 225,
+      "height": 84,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-booster"
+    },
+    {
+      "key": "ui.suppliedPopups.booster.close",
+      "source": "ui/supplied-popups-v1/originals/booster/关闭.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/booster/close.png",
+      "width": 94,
+      "height": 98,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-booster"
+    },
+    {
+      "key": "ui.suppliedPopups.booster.time",
+      "source": "ui/supplied-popups-v1/originals/booster/道具1.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/booster/time.png",
+      "width": 200,
+      "height": 215,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-booster"
+    },
+    {
+      "key": "ui.suppliedPopups.booster.pulse",
+      "source": "ui/supplied-popups-v1/originals/booster/道具2.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/booster/pulse.png",
+      "width": 216,
+      "height": 213,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-booster"
+    },
+    {
+      "key": "ui.suppliedPopups.booster.rocket",
+      "source": "ui/supplied-popups-v1/originals/booster/道具3.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/booster/rocket.png",
+      "width": 187,
+      "height": 213,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-booster"
+    },
+    {
+      "key": "ui.suppliedPopups.booster.coin-icon",
+      "source": "ui/supplied-popups-v1/originals/booster/金币图标.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/booster/coin-icon.png",
+      "width": 37,
+      "height": 38,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-booster"
+    },
+    {
+      "key": "ui.suppliedPopups.booster.video-icon",
+      "source": "ui/supplied-popups-v1/originals/booster/图标2.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/booster/video-icon.png",
+      "width": 61,
+      "height": 52,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-booster"
+    },
+    {
+      "key": "ui.suppliedPopups.painting.banner",
+      "source": "ui/supplied-popups-v1/originals/painting/底.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/painting/banner.png",
+      "width": 556,
+      "height": 208,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-painting"
+    },
+    {
+      "key": "ui.suppliedPopups.painting.title-zh",
+      "source": "ui/supplied-popups-v1/originals/painting/文字1.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/painting/title-zh.png",
+      "width": 355,
+      "height": 98,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-painting"
+    },
+    {
+      "key": "ui.suppliedPopups.painting.title-en",
+      "source": "ui/supplied-popups-v1/originals/painting/文字2.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/painting/title-en.png",
+      "width": 363,
+      "height": 104,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-painting"
+    },
+    {
+      "key": "ui.suppliedPopups.painting.continue-button",
+      "source": "ui/supplied-popups-v1/originals/painting/按钮.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/painting/continue-button.png",
+      "width": 322,
+      "height": 125,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-painting"
+    },
+    {
+      "key": "ui.suppliedPopups.painting.close",
+      "source": "ui/supplied-popups-v1/originals/painting/关闭.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/painting/close.png",
+      "width": 94,
+      "height": 98,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-painting"
+    },
+    {
+      "key": "ui.suppliedPopups.settlement.panel",
+      "source": "ui/supplied-popups-v1/originals/settlement/大底.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/panel.png",
+      "width": 594,
+      "height": 939,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-settlement"
+    },
+    {
+      "key": "ui.suppliedPopups.settlement.title-en",
+      "source": "ui/supplied-popups-v1/originals/settlement/文字1.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/title-en.png",
+      "width": 386,
+      "height": 91,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-settlement"
+    },
+    {
+      "key": "ui.suppliedPopups.settlement.title-zh",
+      "source": "ui/supplied-popups-v1/originals/settlement/文字2.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/title-zh.png",
+      "width": 263,
+      "height": 87,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-settlement"
+    },
+    {
+      "key": "ui.suppliedPopups.settlement.level-badge",
+      "source": "ui/supplied-popups-v1/originals/settlement/等级低.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/level-badge.png",
+      "width": 183,
+      "height": 49,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-settlement"
+    },
+    {
+      "key": "ui.suppliedPopups.settlement.star-center",
+      "source": "ui/supplied-popups-v1/originals/settlement/星1.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/star-center.png",
+      "width": 106,
+      "height": 108,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-settlement"
+    },
+    {
+      "key": "ui.suppliedPopups.settlement.star-side",
+      "source": "ui/supplied-popups-v1/originals/settlement/星2.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/star-side.png",
+      "width": 92,
+      "height": 93,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-settlement"
+    },
+    {
+      "key": "ui.suppliedPopups.settlement.star-empty",
+      "source": "ui/supplied-popups-v1/originals/settlement/星3.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/star-empty.png",
+      "width": 92,
+      "height": 93,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-settlement"
+    },
+    {
+      "key": "ui.suppliedPopups.settlement.criterion-row",
+      "source": "ui/supplied-popups-v1/originals/settlement/文字底.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/criterion-row.png",
+      "width": 442,
+      "height": 61,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-settlement"
+    },
+    {
+      "key": "ui.suppliedPopups.settlement.criterion-pass",
+      "source": "ui/supplied-popups-v1/originals/settlement/图标1.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/criterion-pass.png",
+      "width": 47,
+      "height": 46,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-settlement"
+    },
+    {
+      "key": "ui.suppliedPopups.settlement.criterion-idle",
+      "source": "ui/supplied-popups-v1/originals/settlement/图标2.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/criterion-idle.png",
+      "width": 47,
+      "height": 46,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-settlement"
+    },
+    {
+      "key": "ui.suppliedPopups.settlement.coin-pile",
+      "source": "ui/supplied-popups-v1/originals/settlement/金币.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/coin-pile.png",
+      "width": 223,
+      "height": 143,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-settlement"
+    },
+    {
+      "key": "ui.suppliedPopups.settlement.reward-pill",
+      "source": "ui/supplied-popups-v1/originals/settlement/数字底.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/reward-pill.png",
+      "width": 166,
+      "height": 58,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-settlement"
+    },
+    {
+      "key": "ui.suppliedPopups.settlement.coin-icon",
+      "source": "ui/supplied-popups-v1/originals/settlement/图标.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/coin-icon.png",
+      "width": 37,
+      "height": 38,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-settlement"
+    },
+    {
+      "key": "ui.suppliedPopups.settlement.continue-button",
+      "source": "ui/supplied-popups-v1/originals/settlement/按钮.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/continue-button.png",
+      "width": 322,
+      "height": 125,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-settlement"
+    },
+    {
+      "key": "ui.suppliedPopups.settlement.close",
+      "source": "ui/supplied-popups-v1/originals/settlement/关闭.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/close.png",
+      "width": 94,
+      "height": 98,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-settlement"
+    },
+    {
+      "key": "ui.suppliedPopups.settlement.unlock-panel",
+      "source": "ui/supplied-popups-v1/originals/settlement/解锁低.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/unlock-panel.png",
+      "width": 669,
+      "height": 219,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-settlement"
+    },
+    {
+      "key": "ui.suppliedPopups.settlement.progress-track",
+      "source": "ui/supplied-popups-v1/originals/settlement/进度块低.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/progress-track.png",
+      "width": 386,
+      "height": 51,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-settlement"
+    },
+    {
+      "key": "ui.suppliedPopups.settlement.progress-fill",
+      "source": "ui/supplied-popups-v1/originals/settlement/进度块.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/progress-fill.png",
+      "width": 73,
+      "height": 39,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-settlement"
+    },
+    {
+      "key": "ui.suppliedPopups.settlement.unlock-crown",
+      "source": "ui/supplied-popups-v1/originals/settlement/图标4.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/unlock-crown.png",
+      "width": 46,
+      "height": 48,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-settlement"
+    },
+    {
+      "key": "ui.suppliedPopups.settlement.unlock-check",
+      "source": "ui/supplied-popups-v1/originals/settlement/0.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/unlock-check.png",
+      "width": 72,
+      "height": 77,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-settlement"
+    },
+    {
+      "key": "ui.suppliedPopups.settlement.artwork-frame",
+      "source": "ui/supplied-popups-v1/originals/settlement/名画边框.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/artwork-frame.png",
+      "width": 164,
+      "height": 164,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-settlement"
+    },
+    {
+      "key": "ui.suppliedPopups.rank.panel",
+      "source": "ui/supplied-popups-v1/originals/rank/底.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/rank/panel.png",
+      "width": 669,
+      "height": 219,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-rank"
+    },
+    {
+      "key": "ui.suppliedPopups.rank.title-zh",
+      "source": "ui/supplied-popups-v1/originals/rank/文字1.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/rank/title-zh.png",
+      "width": 206,
+      "height": 51,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-rank"
+    },
+    {
+      "key": "ui.suppliedPopups.rank.title-en",
+      "source": "ui/supplied-popups-v1/originals/rank/文字2.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/rank/title-en.png",
+      "width": 215,
+      "height": 47,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-rank"
+    },
+    {
+      "key": "ui.suppliedPopups.rank.rank-arrow",
+      "source": "ui/supplied-popups-v1/originals/rank/箭头1.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/rank/rank-arrow.png",
+      "width": 106,
+      "height": 68,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-rank"
+    },
+    {
+      "key": "ui.suppliedPopups.rank.gain-arrow",
+      "source": "ui/supplied-popups-v1/originals/rank/箭头2.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/rank/gain-arrow.png",
+      "width": 20,
+      "height": 21,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-rank"
+    },
+    {
+      "key": "ui.suppliedPopups.scene.confirm-button",
+      "source": "ui/supplied-popups-v1/originals/scene/按钮.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/scene/confirm-button.png",
+      "width": 365,
+      "height": 134,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-scene"
+    },
+    {
+      "key": "ui.suppliedPopups.scene.range-panel",
+      "source": "ui/supplied-popups-v1/originals/scene/板.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/scene/range-panel.png",
+      "width": 257,
+      "height": 62,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-scene"
+    },
+    {
+      "key": "ui.suppliedPopups.scene.locked-hint-panel",
+      "source": "ui/supplied-popups-v1/originals/scene/提示底.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/scene/locked-hint-panel.png",
+      "width": 478,
+      "height": 57,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.suppliedPopups.scene.title-zh",
+      "source": "ui/supplied-popups-v1/originals/scene/文字1.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/scene/title-zh.png",
+      "width": 462,
+      "height": 100,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-scene"
+    },
+    {
+      "key": "ui.suppliedPopups.scene.title-en",
+      "source": "ui/supplied-popups-v1/originals/scene/文字2.png",
+      "runtime": "../public/assets/art/ui/formal-pages/supplied-popups-v1/scene/title-en.png",
+      "width": 619,
+      "height": 119,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "supplied-popup-scene"
+    },
+    {
+      "key": "ui.featureUnlockSupplied.panel",
+      "source": "ui/feature-unlock-supplied-v1/originals/底.png",
+      "runtime": "../public/assets/art/ui/formal-pages/feature-unlock-supplied-v1/panel.png",
+      "width": 594,
+      "height": 844,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "feature-unlock"
+    },
+    {
+      "key": "ui.featureUnlockSupplied.title-zh",
+      "source": "ui/feature-unlock-supplied-v1/originals/文字2.png",
+      "runtime": "../public/assets/art/ui/formal-pages/feature-unlock-supplied-v1/title-zh.png",
+      "width": 356,
+      "height": 94,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "feature-unlock"
+    },
+    {
+      "key": "ui.featureUnlockSupplied.title-en",
+      "source": "ui/feature-unlock-supplied-v1/originals/文字1.png",
+      "runtime": "../public/assets/art/ui/formal-pages/feature-unlock-supplied-v1/title-en.png",
+      "width": 381,
+      "height": 99,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "feature-unlock"
+    },
+    {
+      "key": "ui.featureUnlockSupplied.glow",
+      "source": "ui/feature-unlock-supplied-v1/originals/光.png",
+      "runtime": "../public/assets/art/ui/formal-pages/feature-unlock-supplied-v1/glow.png",
+      "width": 372,
+      "height": 372,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "feature-unlock"
+    },
+    {
+      "key": "ui.featureUnlockSupplied.sparkles",
+      "source": "ui/feature-unlock-supplied-v1/originals/星.png",
+      "runtime": "../public/assets/art/ui/formal-pages/feature-unlock-supplied-v1/sparkles.png",
+      "width": 345,
+      "height": 273,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "feature-unlock"
+    },
+    {
+      "key": "ui.featureUnlockSupplied.rank-icon",
+      "source": "ui/feature-unlock-supplied-v1/originals/图层 52.png",
+      "runtime": "../public/assets/art/ui/formal-pages/feature-unlock-supplied-v1/rank-icon.png",
+      "width": 235,
+      "height": 211,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "feature-unlock"
+    },
+    {
+      "key": "ui.featureUnlockSupplied.name-left",
+      "source": "ui/feature-unlock-supplied-v1/originals/排行装饰1.png",
+      "runtime": "../public/assets/art/ui/formal-pages/feature-unlock-supplied-v1/name-left.png",
+      "width": 54,
+      "height": 68,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "feature-unlock"
+    },
+    {
+      "key": "ui.featureUnlockSupplied.name-right",
+      "source": "ui/feature-unlock-supplied-v1/originals/排行装饰2.png",
+      "runtime": "../public/assets/art/ui/formal-pages/feature-unlock-supplied-v1/name-right.png",
+      "width": 55,
+      "height": 68,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "feature-unlock"
+    },
+    {
+      "key": "ui.featureUnlockSupplied.divider",
+      "source": "ui/feature-unlock-supplied-v1/originals/线.png",
+      "runtime": "../public/assets/art/ui/formal-pages/feature-unlock-supplied-v1/divider.png",
+      "width": 448,
+      "height": 26,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "feature-unlock"
+    },
+    {
+      "key": "ui.featureUnlockSupplied.button",
+      "source": "ui/feature-unlock-supplied-v1/originals/按钮.png",
+      "runtime": "../public/assets/art/ui/formal-pages/feature-unlock-supplied-v1/button.png",
+      "width": 305,
+      "height": 91,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "feature-unlock"
+    },
+    {
+      "key": "ui.featureUnlockSupplied.later-line",
+      "source": "ui/feature-unlock-supplied-v1/originals/稍后提示线.png",
+      "runtime": "../public/assets/art/ui/formal-pages/feature-unlock-supplied-v1/later-line.png",
+      "width": 521,
+      "height": 5,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "feature-unlock"
+    },
+    {
+      "key": "ui.leagueSettlement.back-button",
+      "source": "ui/league-settlement-supplied-v1/back-button.png",
+      "runtime": "../public/assets/art/ui/league-settlement-supplied-v1/back-button.png",
+      "width": 88,
+      "height": 88,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "league-settlement",
+      "sourceSha256": "e7df3953ac8fa606db56e4f1709cc5a1daf82c020787bbb3438a67423e4acbc5",
+      "originalName": "1.png",
+      "originalSha256": "e7df3953ac8fa606db56e4f1709cc5a1daf82c020787bbb3438a67423e4acbc5"
+    },
+    {
+      "key": "ui.leagueSettlement.glow",
+      "source": "ui/league-settlement-supplied-v1/glow.png",
+      "runtime": "../public/assets/art/ui/league-settlement-supplied-v1/glow.png",
+      "width": 485,
+      "height": 418,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "league-settlement",
+      "sourceSha256": "4ee28c369b6a1a02c4f497cbcbc0bdcf14289aaaec536d98ba87f1333a4cf5bd",
+      "originalName": "光.png",
+      "originalSha256": "4ee28c369b6a1a02c4f497cbcbc0bdcf14289aaaec536d98ba87f1333a4cf5bd"
+    },
+    {
+      "key": "ui.leagueSettlement.divider",
+      "source": "ui/league-settlement-supplied-v1/divider.png",
+      "runtime": "../public/assets/art/ui/league-settlement-supplied-v1/divider.png",
+      "width": 524,
+      "height": 3,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "league-settlement",
+      "sourceSha256": "c2a7d03a99e62957721cbae4890cf181e6b8c55440ed2a72a975b33e577a8e3c",
+      "originalName": "分界线.png",
+      "originalSha256": "c2a7d03a99e62957721cbae4890cf181e6b8c55440ed2a72a975b33e577a8e3c"
+    },
+    {
+      "key": "ui.leagueSettlement.bronze",
+      "source": "ui/league-settlement-supplied-v1/bronze.png",
+      "runtime": "../public/assets/art/ui/league-settlement-supplied-v1/bronze.png",
+      "width": 133,
+      "height": 140,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "league-settlement",
+      "sourceSha256": "ce7f4e4166f436ce1773c2195d54f5ea9a2d3ddbf3fe4d9b0c2622da42560381",
+      "originalName": "勋章1.png",
+      "originalSha256": "ce7f4e4166f436ce1773c2195d54f5ea9a2d3ddbf3fe4d9b0c2622da42560381"
+    },
+    {
+      "key": "ui.leagueSettlement.silver",
+      "source": "ui/league-settlement-supplied-v1/silver.png",
+      "runtime": "../public/assets/art/ui/league-settlement-supplied-v1/silver.png",
+      "width": 156,
+      "height": 140,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "league-settlement",
+      "sourceSha256": "462c021831f047cdd7706a13dccdc537f4e193fe3b09080f79b875fc4c7d537a",
+      "originalName": "勋章2-1.png",
+      "originalSha256": "462c021831f047cdd7706a13dccdc537f4e193fe3b09080f79b875fc4c7d537a"
+    },
+    {
+      "key": "ui.leagueSettlement.silver-hero",
+      "source": "ui/league-settlement-supplied-v1/silver-hero.png",
+      "runtime": "../public/assets/art/ui/league-settlement-supplied-v1/silver-hero.png",
+      "width": 296,
+      "height": 271,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "league-settlement",
+      "sourceSha256": "e17e2eee40e27058508f020e0557297bbd70cc711b111da5c7306c67e97c9cbe",
+      "originalName": "勋章2.png",
+      "originalSha256": "e17e2eee40e27058508f020e0557297bbd70cc711b111da5c7306c67e97c9cbe"
+    },
+    {
+      "key": "ui.leagueSettlement.gold",
+      "source": "ui/league-settlement-supplied-v1/gold.png",
+      "runtime": "../public/assets/art/ui/league-settlement-supplied-v1/gold.png",
+      "width": 149,
+      "height": 147,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "league-settlement",
+      "sourceSha256": "56a5661b412f2ca361eaac14906222d68b8c9d7643660345c3514789d96ae9fe",
+      "originalName": "勋章3.png",
+      "originalSha256": "56a5661b412f2ca361eaac14906222d68b8c9d7643660345c3514789d96ae9fe"
+    },
+    {
+      "key": "ui.leagueSettlement.platinum",
+      "source": "ui/league-settlement-supplied-v1/platinum.png",
+      "runtime": "../public/assets/art/ui/league-settlement-supplied-v1/platinum.png",
+      "width": 154,
+      "height": 161,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "league-settlement",
+      "sourceSha256": "27787e89ed84af8ab422339195f3ed69e0e9d0857b7ff7374a590c8e77148f4e",
+      "originalName": "勋章4.png",
+      "originalSha256": "27787e89ed84af8ab422339195f3ed69e0e9d0857b7ff7374a590c8e77148f4e"
+    },
+    {
+      "key": "ui.leagueSettlement.emerald",
+      "source": "ui/league-settlement-supplied-v1/emerald.png",
+      "runtime": "../public/assets/art/ui/league-settlement-supplied-v1/emerald.png",
+      "width": 153,
+      "height": 140,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "league-settlement",
+      "sourceSha256": "0702d84d9603a1d7d4e039b9131adce083b7e3b6e122bdeae27fa41b886d8e9c",
+      "originalName": "勋章5.png",
+      "originalSha256": "0702d84d9603a1d7d4e039b9131adce083b7e3b6e122bdeae27fa41b886d8e9c"
+    },
+    {
+      "key": "ui.leagueSettlement.diamond",
+      "source": "ui/league-settlement-supplied-v1/diamond.png",
+      "runtime": "../public/assets/art/ui/league-settlement-supplied-v1/diamond.png",
+      "width": 163,
+      "height": 152,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "league-settlement",
+      "sourceSha256": "f6b833a7750948d713a23c1e7ba546bd86913f427de8e2dc51eabaeeb1e4383f",
+      "originalName": "勋章6.png",
+      "originalSha256": "f6b833a7750948d713a23c1e7ba546bd86913f427de8e2dc51eabaeeb1e4383f"
+    },
+    {
+      "key": "ui.leagueSettlement.master",
+      "source": "ui/league-settlement-supplied-v1/master.png",
+      "runtime": "../public/assets/art/ui/league-settlement-supplied-v1/master.png",
+      "width": 158,
+      "height": 147,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "league-settlement",
+      "sourceSha256": "181b3df28c3055084b25c558027f7d08982f7a18dfecb47e0c3142aab24de185",
+      "originalName": "勋章7.png",
+      "originalSha256": "181b3df28c3055084b25c558027f7d08982f7a18dfecb47e0c3142aab24de185"
+    },
+    {
+      "key": "ui.leagueSettlement.glory",
+      "source": "ui/league-settlement-supplied-v1/glory.png",
+      "runtime": "../public/assets/art/ui/league-settlement-supplied-v1/glory.png",
+      "width": 160,
+      "height": 145,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "league-settlement",
+      "sourceSha256": "6d2a649ce6da684cecc94650019b50f2c8876ee2e27498beb8097a2b5bf95609",
+      "originalName": "勋章8.png",
+      "originalSha256": "6d2a649ce6da684cecc94650019b50f2c8876ee2e27498beb8097a2b5bf95609"
+    },
+    {
+      "key": "ui.leagueSettlement.stage-panel",
+      "source": "ui/league-settlement-supplied-v1/stage-panel.png",
+      "runtime": "../public/assets/art/ui/league-settlement-supplied-v1/stage-panel.png",
+      "width": 639,
+      "height": 456,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "league-settlement",
+      "sourceSha256": "2254140bcc4cd4c475c5929a3832a9f474368a0d96a8d058f87f548eda2aaca8",
+      "originalName": "底1.png",
+      "originalSha256": "2254140bcc4cd4c475c5929a3832a9f474368a0d96a8d058f87f548eda2aaca8"
+    },
+    {
+      "key": "ui.leagueSettlement.result-panel",
+      "source": "ui/league-settlement-supplied-v1/result-panel.png",
+      "runtime": "../public/assets/art/ui/league-settlement-supplied-v1/result-panel.png",
+      "width": 650,
+      "height": 856,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "league-settlement",
+      "sourceSha256": "713e5751d4038e7482791ce6b3aa1c5972ff0afa5e092206ae361429c135e7aa",
+      "originalName": "底2.png",
+      "originalSha256": "713e5751d4038e7482791ce6b3aa1c5972ff0afa5e092206ae361429c135e7aa"
+    },
+    {
+      "key": "ui.leagueSettlement.claim-button",
+      "source": "ui/league-settlement-supplied-v1/claim-button.png",
+      "runtime": "../public/assets/art/ui/league-settlement-supplied-v1/claim-button.png",
+      "width": 283,
+      "height": 95,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "league-settlement",
+      "sourceSha256": "ec8d3627670df83acf540930cf739165072c9329fdfe93b89f541755be5172a5",
+      "originalName": "按钮1.png",
+      "originalSha256": "ec8d3627670df83acf540930cf739165072c9329fdfe93b89f541755be5172a5"
+    },
+    {
+      "key": "ui.leagueSettlement.rank-icon",
+      "source": "ui/league-settlement-supplied-v1/rank-icon.png",
+      "runtime": "../public/assets/art/ui/league-settlement-supplied-v1/rank-icon.png",
+      "width": 66,
+      "height": 62,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "league-settlement",
+      "sourceSha256": "531c7b6fa86e6e9101fa96dee64218d91c531e64603b9a4956fbc9a94fe109ac",
+      "originalName": "排行.png",
+      "originalSha256": "531c7b6fa86e6e9101fa96dee64218d91c531e64603b9a4956fbc9a94fe109ac"
+    },
+    {
+      "key": "ui.leagueSettlement.star",
+      "source": "ui/league-settlement-supplied-v1/star.png",
+      "runtime": "../public/assets/art/ui/league-settlement-supplied-v1/star.png",
+      "width": 44,
+      "height": 52,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "league-settlement",
+      "sourceSha256": "e87ff5dd5aebee2e15072be42d8ca2412a25c63b4ba4da861c5cc4102cda4f7a",
+      "originalName": "星.png",
+      "originalSha256": "e87ff5dd5aebee2e15072be42d8ca2412a25c63b4ba4da861c5cc4102cda4f7a"
+    },
+    {
+      "key": "ui.leagueSettlement.sparkles",
+      "source": "ui/league-settlement-supplied-v1/sparkles.png",
+      "runtime": "../public/assets/art/ui/league-settlement-supplied-v1/sparkles.png",
+      "width": 402,
+      "height": 314,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "league-settlement",
+      "sourceSha256": "72afe5241b0b2cbc808c63fa475a9510788fbb9a31882bf4144b4d248a5c52ee",
+      "originalName": "星2.png",
+      "originalSha256": "72afe5241b0b2cbc808c63fa475a9510788fbb9a31882bf4144b4d248a5c52ee"
+    },
+    {
+      "key": "ui.leagueSettlement.score-icon",
+      "source": "ui/league-settlement-supplied-v1/score-icon.png",
+      "runtime": "../public/assets/art/ui/league-settlement-supplied-v1/score-icon.png",
+      "width": 59,
+      "height": 67,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "league-settlement",
+      "sourceSha256": "614b7f373bcecc552c47a40307b2987bdd47450bf5d49740232b3b8178c185eb",
+      "originalName": "积分.png",
+      "originalSha256": "614b7f373bcecc552c47a40307b2987bdd47450bf5d49740232b3b8178c185eb"
+    },
+    {
+      "key": "ui.leagueSettlement.arrow",
+      "source": "ui/league-settlement-supplied-v1/arrow.png",
+      "runtime": "../public/assets/art/ui/league-settlement-supplied-v1/arrow.png",
+      "width": 114,
+      "height": 73,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "league-settlement",
+      "sourceSha256": "f168e2546c0091deee0fcf688d0955c383ef00f52793359b6457de2907f3c854",
+      "originalName": "箭头1.png",
+      "originalSha256": "f168e2546c0091deee0fcf688d0955c383ef00f52793359b6457de2907f3c854"
+    },
+    {
+      "key": "ui.leagueSettlement.coin",
+      "source": "ui/league-settlement-supplied-v1/coin.png",
+      "runtime": "../public/assets/art/ui/league-settlement-supplied-v1/coin.png",
+      "width": 54,
+      "height": 56,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "league-settlement",
+      "sourceSha256": "b3395279211b23572e3bc1ed6fce96a7da1caab29d02533ef5447241352bd14c",
+      "originalName": "金币.png",
+      "originalSha256": "b3395279211b23572e3bc1ed6fce96a7da1caab29d02533ef5447241352bd14c"
+    },
+    {
+      "key": "ui.profileSuppliedFrame.0",
+      "source": "ui/profile-frames-supplied-v1/frame-0.png",
+      "runtime": "../public/assets/art/ui/profile-frames-supplied-v1/frame-0.png",
+      "width": 146,
+      "height": 146,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileSuppliedFrame.1",
+      "source": "ui/profile-frames-supplied-v1/frame-1.png",
+      "runtime": "../public/assets/art/ui/profile-frames-supplied-v1/frame-1.png",
+      "width": 146,
+      "height": 146,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileSuppliedFrame.2",
+      "source": "ui/profile-frames-supplied-v1/frame-2.png",
+      "runtime": "../public/assets/art/ui/profile-frames-supplied-v1/frame-2.png",
+      "width": 146,
+      "height": 146,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileSuppliedFrame.3",
+      "source": "ui/profile-frames-supplied-v1/frame-3.png",
+      "runtime": "../public/assets/art/ui/profile-frames-supplied-v1/frame-3.png",
+      "width": 146,
+      "height": 146,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileSuppliedFrame.4",
+      "source": "ui/profile-frames-supplied-v1/frame-4.png",
+      "runtime": "../public/assets/art/ui/profile-frames-supplied-v1/frame-4.png",
+      "width": 146,
+      "height": 146,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileSuppliedFrame.5",
+      "source": "ui/profile-frames-supplied-v1/frame-5.png",
+      "runtime": "../public/assets/art/ui/profile-frames-supplied-v1/frame-5.png",
+      "width": 146,
+      "height": 146,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileSuppliedFrame.6",
+      "source": "ui/profile-frames-supplied-v1/frame-6.png",
+      "runtime": "../public/assets/art/ui/profile-frames-supplied-v1/frame-6.png",
+      "width": 146,
+      "height": 146,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileSuppliedFrame.7",
+      "source": "ui/profile-frames-supplied-v1/frame-7.png",
+      "runtime": "../public/assets/art/ui/profile-frames-supplied-v1/frame-7.png",
+      "width": 146,
+      "height": 146,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileSuppliedFrame.8",
+      "source": "ui/profile-frames-supplied-v1/frame-8.png",
+      "runtime": "../public/assets/art/ui/profile-frames-supplied-v1/frame-8.png",
+      "width": 146,
+      "height": 146,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileSuppliedFrame.9",
+      "source": "ui/profile-frames-supplied-v1/frame-9.png",
+      "runtime": "../public/assets/art/ui/profile-frames-supplied-v1/frame-9.png",
+      "width": 146,
+      "height": 146,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileSuppliedFrame.10",
+      "source": "ui/profile-frames-supplied-v1/frame-10.png",
+      "runtime": "../public/assets/art/ui/profile-frames-supplied-v1/frame-10.png",
+      "width": 146,
+      "height": 146,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileSuppliedFrame.11",
+      "source": "ui/profile-frames-supplied-v1/frame-11.png",
+      "runtime": "../public/assets/art/ui/profile-frames-supplied-v1/frame-11.png",
+      "width": 146,
+      "height": 146,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileSuppliedFrame.12",
+      "source": "ui/profile-frames-supplied-v1/frame-12.png",
+      "runtime": "../public/assets/art/ui/profile-frames-supplied-v1/frame-12.png",
+      "width": 146,
+      "height": 146,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileSuppliedFrame.13",
+      "source": "ui/profile-frames-supplied-v1/frame-13.png",
+      "runtime": "../public/assets/art/ui/profile-frames-supplied-v1/frame-13.png",
+      "width": 146,
+      "height": 146,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileSuppliedFrame.14",
+      "source": "ui/profile-frames-supplied-v1/frame-14.png",
+      "runtime": "../public/assets/art/ui/profile-frames-supplied-v1/frame-14.png",
+      "width": 146,
+      "height": 146,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileSuppliedFrame.15",
+      "source": "ui/profile-frames-supplied-v1/frame-15.png",
+      "runtime": "../public/assets/art/ui/profile-frames-supplied-v1/frame-15.png",
+      "width": 146,
+      "height": 146,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileSuppliedFrame.16",
+      "source": "ui/profile-frames-supplied-v1/frame-16.png",
+      "runtime": "../public/assets/art/ui/profile-frames-supplied-v1/frame-16.png",
+      "width": 146,
+      "height": 146,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileSuppliedFrame.17",
+      "source": "ui/profile-frames-supplied-v1/frame-17.png",
+      "runtime": "../public/assets/art/ui/profile-frames-supplied-v1/frame-17.png",
+      "width": 146,
+      "height": 146,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
+    },
+    {
+      "key": "ui.profileSuppliedFrame.18",
+      "source": "ui/profile-frames-supplied-v1/frame-18.png",
+      "runtime": "../public/assets/art/ui/profile-frames-supplied-v1/frame-18.png",
+      "width": 146,
+      "height": 146,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy"
     }
   ]
 }

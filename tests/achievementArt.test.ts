@@ -20,6 +20,7 @@ const ASSETS = [
   { input: "11.png", file: "panel.png", key: "panel", width: 594, height: 889, sha256: "bc76f958332d5aed3c166267f2a485a1512ffcf42e3aebe2fc0a3cb68d70a327", shared: false },
   { input: "supplied row-active.png", file: "row-active.png", key: "rowActive", width: 519, height: 115, sha256: "796a9c11421c3ce038987281ecb37aabb4e42e6d4642a0dd374044b32bef2dd2", shared: false },
   { input: "supplied row-inactive.png", file: "row-inactive.png", key: "rowInactive", width: 517, height: 114, sha256: "c23339c141f3ecc8e5eb6a8d76cced3ea869cb59e4ae0fce94efd3a0d5a1172a", shared: false },
+  { input: "reused ImageGen claimed check", file: "claimed-check.png", key: "claimedCheck", width: 160, height: 120, sha256: "a1ae0e90dbd342a90f3b0e9a7ce79b086e588a61e602d68e8e1dd1d2d0349cd1", shared: false },
 ] as const;
 interface ArtRecord {
   key: string;
@@ -73,13 +74,13 @@ describe("supplied Achievements V2 formal art", () => {
     expect(ACHIEVEMENT_ART_URLS.buttonGreen).not.toBe(DAILY_TASK_ART_URLS.buttonGreen);
     expect(ACHIEVEMENT_ART_URLS.summaryPanel).not.toBe(DAILY_TASK_ART_URLS.summaryPanel);
     expect(ACHIEVEMENT_ART_URLS.rowActive).not.toBe(ACHIEVEMENT_ART_URLS.rowInactive);
-    expect(Object.keys(ACHIEVEMENT_ART_URLS)).toHaveLength(12);
-    expect(new Set(Object.values(ACHIEVEMENT_ART_URLS)).size).toBe(12);
-    expect(ASSETS.filter((asset) => !asset.shared)).toHaveLength(10);
+    expect(Object.keys(ACHIEVEMENT_ART_URLS)).toHaveLength(13);
+    expect(new Set(Object.values(ACHIEVEMENT_ART_URLS)).size).toBe(13);
+    expect(ASSETS.filter((asset) => !asset.shared)).toHaveLength(11);
     expect(readdirSync(RUNTIME).sort()).toEqual(ASSETS.filter((asset) => !asset.shared).map((asset) => asset.file).sort());
     expect(ASSETS.filter((asset) => !asset.shared).reduce((sum, asset) => (
       sum + (readFileSync(`${RUNTIME}/${asset.file}`) as Uint8Array).byteLength
-    ), 0)).toBe(103_918);
+    ), 0)).toBe(129_562);
     expect(["row-active.png", "row-inactive.png"].reduce((sum, file) => (
       sum + (readFileSync(`${RUNTIME}/${file}`) as Uint8Array).byteLength
     ), 0)).toBe(13_282);
@@ -90,7 +91,7 @@ describe("supplied Achievements V2 formal art", () => {
       "41d5028fdac076e9d8747faf9d716b23b6c702ee1d2ea7bed44d7c38b3326194",
     );
     const entries = manifest.assets.filter((row) => row.loadGroup === "formal-achievements");
-    expect(entries).toHaveLength(10);
+    expect(entries).toHaveLength(11);
     expect(entries.some((row) => row.source.includes("reference-layout"))).toBe(false);
     expect(manifest.assets.some((row) => row.key === "ui.achievementMedal")).toBe(false);
     expect(manifest.assets.some((row) => row.runtime.endsWith("/achievement-medal-blue-v1.png"))).toBe(false);
@@ -98,7 +99,7 @@ describe("supplied Achievements V2 formal art", () => {
     expect(existsSync("public/assets/art/ui/achievements/achievement-medal-blue-v1.png")).toBe(false);
   });
 
-  it("exports ten unique native PNGs without copying the annotated reference", () => {
+  it("exports eleven page-owned PNGs without copying the annotated reference", () => {
     const optimizer = readFileSync("tools/optimize-assets.mjs", "utf8") as string;
     const section = optimizer.slice(optimizer.indexOf("const achievementV2Assets ="), optimizer.indexOf("// Journey episode 1"));
     for (const asset of ASSETS.filter((row) => !row.shared)) expect(section).toContain(`"${asset.file}"`);

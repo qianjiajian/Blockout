@@ -1,0 +1,2 @@
+const fs=require('fs'),crypto=require('crypto');const p='deliverables/continue201-210-20260929/simple-candidates';const levels=JSON.parse(fs.readFileSync(`${p}/levels.json`));const ev=JSON.parse(fs.readFileSync(`${p}/evidence.json`));for(const l of levels){ev.records[l.id].levelSha256=crypto.createHash('sha256').update(JSON.stringify(l)).digest('hex');}
+fs.writeFileSync(`${p}/evidence.json`,JSON.stringify(ev,null,2));

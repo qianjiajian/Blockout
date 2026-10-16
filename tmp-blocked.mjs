@@ -1,0 +1,1 @@
+import fs from 'node:fs';const x=JSON.parse(fs.readFileSync('deliverables/league-regeneration-20261004/formal/late-65-100.json','utf8'));for(const b of x.blocked.slice(0,10))console.log(b.index,Object.keys(b),b.mutationAttempts,b.failureReasons?.length)

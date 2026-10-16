@@ -266,7 +266,7 @@ const applyProgressiveClearLoad = (
     const blockIndex = order[cursor % order.length];
     const block = level.blocks[blockIndex];
     const layers = block.layers ?? [block.color];
-    const candidates = reachableColors[blockIndex].filter((color) => color !== layers.at(-1));
+    const candidates = reachableColors[blockIndex].filter((color) => color !== layers[layers.length - 1]);
     if (layers.length < MAX_BLOCK_LAYERS && candidates.length) {
       const color = candidates[(level.id + blockIndex + layers.length) % candidates.length];
       level.blocks[blockIndex] = { ...block, layers: [...layers, color] };

@@ -1,0 +1,25 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
+import {loadContinuationRuntime,sha256} from '../continuation211-runtime.mjs';
+import {loadApi,replay} from '../remake191-200/replay.mjs';
+import {auditOpeningCoverage} from '../revised-opening-coverage.mjs';
+import {auditHiddenCoverage} from '../revised-hidden-coverage.mjs';
+import {auditGateSpanLimits} from '../revised-gate-span-limits.mjs';
+import {adjacency} from '../regeneration212-design/design212.mjs';
+const raw=f=>createHash('sha256').update(fs.readFileSync(f)).digest('hex');
+const file='deliverables/continue211-220-20260930/root212-combined35-yellow/candidate-0.json',r=JSON.parse(fs.readFileSync(file)),l=r.level;
+const core=await loadContinuationRuntime(),{api}=await loadApi();api.validateLevel(l);
+const opening=auditOpeningCoverage(new api.PuzzleModel(l).snapshot()),hidden=auditHiddenCoverage(l),gateSpan=auditGateSpanLimits(l),art=api.auditCandidateBlockArt(l),mechanism=core.auditRevisedMechanismContract(l);
+const adjacencyByCohort=[undefined,...l.shutters.map(s=>s.id)].map(id=>({cohort:id??'visible-opening',issues:adjacency(l.blocks.filter(b=>b.shutterId===id))}));
+for(const a of[opening,hidden,gateSpan,art])assert(a.passed);assert.deepEqual(mechanism,[]);assert(adjacencyByCohort.every(a=>!a.issues.length));
+const native=l.blocks.map(b=>({id:b.id,color:b.color,match:core.matchFormalBlockShape(b.shape,'native-only')}));assert(native.every(b=>b.match?.quarterTurns===0));
+const assetFiles=[...new Set(art.requirements.map(a=>a.path))].map(p=>{const file=path.resolve('public',p.replace(/^\//,''));assert(fs.existsSync(file),file);const bytes=fs.readFileSync(file);assert(bytes.length>32);return{path:p,file,bytes:bytes.length,rawSha256:raw(file),signature:bytes.subarray(0,8).toString('hex')};});
+const mask=new Set(l.playable.map(p=>p.join(','))),steps=[[1,0],[-1,0],[0,1],[0,-1]],flood=(start,allowed)=>{const q=[start],seen=new Set([start.join(',')]);for(let i=0;i<q.length;i++)for(const[dx,dy]of steps){const p=[q[i][0]+dx,q[i][1]+dy],k=p.join(',');if(!seen.has(k)&&allowed(...p)){seen.add(k);q.push(p);}}return seen.size;};
+assert.equal(mask.size,59);assert.equal(flood(l.playable[0],(x,y)=>mask.has([x,y].join(','))),59);assert.equal(flood([-1,-1],(x,y)=>x>=-1&&x<=7&&y>=-1&&y<=9&&!mask.has([x,y].join(','))),99-59);assert(l.playable.every(([x,y])=>mask.has([6-x,y].join(','))));assert(l.blocked.every(p=>!mask.has(p.join(','))));
+const faces=[],faceKeys=new Set();for(const g of l.gates){for(const p of g.portals?.length?g.portals:[g]){const side=p.side??g.side,o=p.origin??(side==='left'?[0,p.offset??g.offset]:side==='right'?[l.width-1,p.offset??g.offset]:side==='top'?[p.offset??g.offset,0]:[p.offset??g.offset,l.height-1]),horizontal=side==='top'||side==='bottom',d=side==='left'?[-1,0]:side==='right'?[1,0]:side==='top'?[0,-1]:[0,1];for(let i=0;i<(p.size??g.size);i++){const cell=[o[0]+(horizontal?i:0),o[1]+(horizontal?0:i)],outside=[cell[0]+d[0],cell[1]+d[1]],key=cell+':'+side;assert(mask.has(cell.join(',')));assert(!mask.has(outside.join(',')));assert(!faceKeys.has(key));faceKeys.add(key);faces.push({gate:g.id,cell,side});}}}
+assert.equal(l.blocks.length,36);assert.equal(l.blocks.filter(b=>!b.shutterId).length,19);assert.deepEqual(l.shutters.map(s=>({count:s.count,area:s.width*s.height,n:l.blocks.filter(b=>b.shutterId===s.id).length})),[{count:10,area:35,n:13},{count:1,area:4,n:4}]);
+const route=r.drags??r.compact?.drags;assert(route);const strict=replay(l,route,api,{timed:true,complete:true,requirePointerCompatible:true});assert.equal(strict.nonClearingDrags,14);assert.equal(strict.effectiveDrags,50);assert.equal(strict.clearEvents,36);
+const report={status:'PASS_RAW_SAME_OBJECT_STATIC_NATIVE_FILES_AND_STRICT_ROUTE',activeRuleVersion:'1.127.0',taskRuleVersion:'1.125.0',file,fileRawSha256:raw(file),levelSha256:sha256(l),opening,hidden,gateSpan,art,native,assetFiles,adjacencyByCohort,adjacencyRule:'v1.2.1 line88: visible opening bodies only; hidden cohorts independently, no overlay with external bodies.',mechanism,geometry:{width:7,height:9,designCells:59,sourceCells:56,leftRightSymmetric:true,connected:true,noInteriorHole:true,nonIsometricToSource:true,redundantBlockedOutsidePlayable:true},gateBoundaryFaces:faces,strictReplay:strict,metadataForParentToFinalize:['Actual full body count36, opening19, top hidden13, small hidden4 singletons. Existing change text incorrectly says33 and smallQ2.','Move target raw51; final desired verified route total50.'],scope:'No proof rerun, no gameplay edits, no formal registry edits. Other agents review source/proof; parent finalizes metadata and exact final-object binding, actual GUI, and adoption.'};
+const out='deliverables/continue211-220-20260930/design220-new/independent-review212-raw-native.json';fs.writeFileSync(out,JSON.stringify(report,null,2),{flag:'wx'});console.log(JSON.stringify({status:report.status,levelSha256:report.levelSha256,assets:assetFiles.length,allBlocksNative:native.length,opening:opening.passed,hidden:hidden.passed,U:strict.nonClearingDrags,drags:strict.effectiveDrags}));

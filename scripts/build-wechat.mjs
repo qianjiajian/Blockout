@@ -2,8 +2,12 @@ import { build } from "esbuild";
 import { cp, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { minify } from "terser";
-import { prepareWechatImages, wechatArtManifestSource } from "./wechat-image-formats.mjs";
+import { prepareWechatImages, wechatArtManifestSource, WECHAT_EVENT_IMAGE_ENCODING } from "./wechat-image-formats.mjs";
 import { createWechatLevelModule } from "./wechat-level-data.mjs";
+import { createWechatEventLevelModules } from './wechat-event-level-data.mjs';
+import { prepareWechatEventArt } from './wechat-event-assets.mjs';
+import { prepareWechatBackgroundAudio } from './wechat-background-audio.mjs';
+import { prepareWechatJourneyThemes } from './wechat-journey-assets.mjs';
 import {createIdenticalArtPlan, rewriteIdenticalArtSource, removeGeneratedArtAliases} from "./wechat-identical-art.mjs";
 import { removeGeneratedWechatExcludedResources } from "./wechat-resource-policy.mjs";
 import {
@@ -20,6 +24,7 @@ const sourceFingerprintBeforeBuild = await computeWechatSourceFingerprint(root);
 // Ship the exact final campaign, not every historical authoring overlay. The
 // materializer deep-compares all 200 levels before returning any replacement.
 const levelCompilation = await createWechatLevelModule(root);
+const eventCompilation = await createWechatEventLevelModules(root);
 const identicalArt = await createIdenticalArtPlan(root);
 
 // WeChat DevTools keeps the imported project directory open on Windows.
@@ -47,6 +52,18 @@ await build({
   plugins: [{
     name: "wechat-native-image-formats",
     setup(bundler) {
+      // Keep this filter deliberately narrow by filename rather than relying on
+      // path separators; esbuild normalizes Windows paths differently between
+      // the resolver and onLoad hooks.
+      bundler.onLoad({ filter: /buildTarget[.]ts$/ }, () => ({
+        contents: 'export const BUILD_TARGET = "wechat"; export const IS_WECHAT_BUILD = true;',
+        loader: "js",
+      }));
+      bundler.onLoad({ filter: /[\\/]src[\\/]core[\\/](?:leagueLevelData|formalDailyChallengeData|clonePlainData)\.ts$/ }, ({ path }) => {
+        const replacement = eventCompilation.replacements.get(resolve(path));
+        if (!replacement) throw new Error('Missing verified event data replacement: ' + path);
+        return replacement;
+      });
       bundler.onLoad({ filter: /[\\/]src[\\/]core[\\/]levels\.ts$/ }, () => ({
         contents: levelCompilation.source,
         loader: "js",
@@ -75,10 +92,6 @@ try {
   await cp(resolve(root, "wechat/project.private.config.json"), resolve(output, "project.private.config.json"));
 }
 await cp(resolve(root, "public/assets"), resolve(output, "assets"), { recursive: true });
-// The generated music-player artwork is intentionally Web/local-browser art.
-// Keeping this 16MB set in the WeChat main package would exceed the remaining
-// 20MB budget before the optional music library is provisioned remotely.
-await rm(resolve(output, "assets/art/ui/music-player-v1"), { recursive: true, force: true });
 const audioSource = resolve(root, "public/assets/audio");
 const audioMainCopy = resolve(output, "assets/audio");
 const audioSubpackage = resolve(output, "audio");
@@ -90,6 +103,7 @@ await cp(resolve(audioSource, "sfx"), resolve(audioSubpackage, "sfx"), { recursi
 await mkdir(menuMusicSubpackage, { recursive: true });
 await cp(resolve(root, "wechat/menu-music/game.js"), resolve(menuMusicSubpackage, "game.js"));
 await cp(resolve(audioSource, "happy-carnival.mp3"), resolve(menuMusicSubpackage, "happy-carnival.mp3"));
+const backgroundAudio = await prepareWechatBackgroundAudio(audioSource, menuMusicSubpackage);
 await rm(audioMainCopy, { recursive: true, force: true });
 const formalPageSource = resolve(root, "public/assets/art/ui/formal-pages");
 const formalPageMainCopy = resolve(output, "assets/art/ui/formal-pages");
@@ -97,20 +111,7 @@ const formalPageSubpackage = resolve(output, "meta-ui/formal-pages");
 await mkdir(resolve(output, "meta-ui"), { recursive: true });
 await cp(resolve(root, "wechat/meta-ui/game.js"), resolve(output, "meta-ui/game.js"));
 await cp(formalPageSource, formalPageSubpackage, { recursive: true });
-const journeyThemeNames = [
-  ...Array.from({ length: 10 }, (_, index) => `episode-${String(index + 1).padStart(2, "0")}.webp`),
-  "episode-locked-shade.png",
-  "episode-range-panel.png",
-  "episode-selected-button.png",
-  "episode-action-button.png",
-  ...Array.from({ length: 9 }, (_, index) => `home-${String(index + 2).padStart(2, "0")}.jpg`),
-];
-await mkdir(resolve(output, "journey-themes"), { recursive: true });
-await cp(resolve(root, "wechat/journey-themes/game.js"), resolve(output, "journey-themes/game.js"));
-for (const name of journeyThemeNames) {
-  await cp(resolve(formalPageSource, "journey", name), resolve(output, "journey-themes", name));
-  await rm(resolve(formalPageSubpackage, "journey", name), { force: true });
-}
+await prepareWechatJourneyThemes(root, output);
 const collectionArtSource = resolve(formalPageSource, "collection-card-atlases-v1");
 const collectionArtSubpackage = resolve(output, "collection-art");
 await mkdir(resolve(collectionArtSubpackage, "atlases"), { recursive: true });
@@ -125,11 +126,9 @@ await mkdir(resolve(output, "gameplay-art"), { recursive: true });
 await cp(resolve(root, "wechat/gameplay-art/game.js"), resolve(output, "gameplay-art/game.js"));
 await cp(formalBlockSource, formalBlockSubpackage, { recursive: true });
 await rm(formalBlockMainCopy, { recursive: true, force: true });
-const gameplayFxSource = resolve(root, "public/assets/art/fx");
-const gameplayFxMainCopy = resolve(output, "assets/art/fx");
-const gameplayFxSubpackage = resolve(output, "gameplay-art/fx");
-await cp(gameplayFxSource, gameplayFxSubpackage, { recursive: true });
-await rm(gameplayFxMainCopy, { recursive: true, force: true });
+// Keep the small FX group in the main package. The expanded formal block set
+// needs this headroom in gameplay-art; native encoding and image quality stay
+// identical, and the assets above have already been copied into assets/art/fx.
 const revisedMechanismSource = resolve(root, "public/assets/art/gameplay/mechanics/revised-reference-v1");
 const revisedMechanismMainCopy = resolve(output, "assets/art/gameplay/mechanics/revised-reference-v1");
 const revisedMechanismSubpackage = resolve(output, "gameplay-art/revised-mechanisms");
@@ -141,6 +140,7 @@ const shutterNineSliceSubpackage = resolve(output, "gameplay-art/shutter-nine-sl
 await cp(shutterNineSliceSource, shutterNineSliceSubpackage, { recursive: true });
 await rm(shutterNineSliceMainCopy, { recursive: true, force: true });
 const resourceExclusions = await removeGeneratedWechatExcludedResources(root, output);
+const eventArt = await prepareWechatEventArt(root, output);
 const nativeImages = await prepareWechatImages(output);
 await removeGeneratedArtAliases(root, output, identicalArt);
 console.log(`Prepared ${nativeImages.pngCount} native PNG images and ${nativeImages.compactedCount} same-size JPEG backgrounds for WeChat.`);
@@ -151,6 +151,10 @@ if (sourceFingerprintAfterBuild !== sourceFingerprintBeforeBuild) {
 await writeFile(wechatBuildManifestPath(output), `${JSON.stringify({
   schemaVersion: 1,
   levelCompilation: levelCompilation.report,
+  eventLevelCompilation: eventCompilation.report,
+  eventArt,
+  eventImageEncoding: WECHAT_EVENT_IMAGE_ENCODING,
+  backgroundAudio,
   identicalArt,
   resourceExclusions,
   sourceFingerprint: sourceFingerprintAfterBuild,

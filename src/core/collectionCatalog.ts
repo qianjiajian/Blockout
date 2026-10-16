@@ -282,11 +282,8 @@ const masterpieceRarity = (catalogNumber: number): CollectionRarity => {
   return "common";
 };
 
-const masterpieceInspirationCost = (catalogNumber: number, rarity: CollectionRarity): number => (
-  catalogNumber === 1
-    ? 0
-    : ({ common: 8, rare: 14, epic: 22, legendary: 35 } as const)[rarity]
-);
+/** Every restoration, including the first masterpiece, uses the same price. */
+export const MASTERPIECE_INSPIRATION_COST = 50;
 
 export const MASTERPIECE_COLLECTION_CATALOG: readonly MasterpieceCollectionCard[] = Object.freeze(
   MASTERPIECE_SEEDS.map((seed, index): MasterpieceCollectionCard => {
@@ -302,7 +299,7 @@ export const MASTERPIECE_COLLECTION_CATALOG: readonly MasterpieceCollectionCard[
       unlockLevel,
       rarity,
       visualTheme: "gallery",
-      inspirationCost: masterpieceInspirationCost(catalogNumber, rarity),
+      inspirationCost: MASTERPIECE_INSPIRATION_COST,
       titleKey: `collectionCatalog.masterpiece.${stableNumber}.title`,
       descriptionKey: `collectionCatalog.masterpiece.${stableNumber}.description`,
       defaultTitleZh: seed.title,

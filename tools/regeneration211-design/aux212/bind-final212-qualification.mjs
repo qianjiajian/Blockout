@@ -1,0 +1,30 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
+import {sha256} from '../../continuation211-runtime.mjs';
+import * as colored from '../../continuation211-colored-witness.mjs';
+import * as optional from '../../continuation211-optional-lift-domain.mjs';
+const base='deliverables/continue211-220-20260930/';
+const candidateFile=base+'final212/qualified212.json',candidate=JSON.parse(fs.readFileSync(candidateFile)),part=candidate.lower.partition212;
+const raw=f=>createHash('sha256').update(fs.readFileSync(f)).digest('hex');
+assert.equal(sha256(candidate.level),candidate.levelSha256);
+for(const [f,h]of Object.entries(part.codeSha256))assert.equal(raw(f),h);
+const files=[...part.qualifications.map(q=>q.file),base+'design216-new/colored-qualification.json',base+'fast-lift-qualification.json'];
+const qualifications=files.map(f=>{
+ const q=JSON.parse(fs.readFileSync(f));assert.equal(q.status,'PASS');
+ for(const [p,h]of Object.entries(q.codeSha256??{}))assert.equal(raw(p),h);
+ if(q.sourceSha256)assert.equal(sha256(fs.readFileSync(q.source)),q.sourceSha256);
+ const binding=part.qualifications.find(a=>a.file===f);if(binding){assert.equal(raw(f),binding.rawSha256);assert.equal(sha256(q),binding.canonicalSha256);}
+ return{file:f,rawSha256:raw(f),canonicalSha256:sha256(q),sourceHashAlgorithm:q.sourceSha256?'sha256(canonical-json(Buffer-numeric-keys))':'sha256(raw-bytes)',cases:q.cases??q.rows?.length??q.results?.length,states:(q.rows??q.results??[]).reduce((n,r)=>n+(r.states??r.statesCompared??0),0),codeSha256:q.codeSha256??{[q.source]:raw(q.source)}};
+});
+const identicalFunctions=['compileSpatial','occupied','visible','active','iceRemaining','lockRemaining','cleared'];
+for(const name of identicalFunctions)assert.equal(colored[name].toString(),optional[name].toString(),name);
+const liftGuard="if(c.covers.some(co=>co.skin==='lift'&&start[co.stateIndex]===NONE))return{s:start,drags:[]};";
+assert(colored.normalizeClears.toString().includes(liftGuard));
+assert.equal(colored.normalizeClears.toString().replace(liftGuard,'').replace(/\s/g,''),optional.normalizeClears.toString().replace(/\s/g,''));
+assert.equal(part.hiddenProjection.blocks.length,13);assert.equal(part.hiddenProjection.shutters.length,0);
+assert(part.hiddenProjection.blocks.every(b=>!b.layers&&!b.frozen&&!b.keyId&&!b.lockedBy&&!b.star&&!b.timedBombSeconds&&!b.shutterId));
+assert(part.hiddenProjection.gates.every(g=>!g.frozen));
+assert.deepEqual(part.hiddenProjection.coloredGrids,candidate.level.coloredGrids);
+const report={status:'PASS',candidateFile,candidateFileRawSha256:raw(candidateFile),levelSha256:candidate.levelSha256,lower:11,prefix:4,hidden:7,qualifications,bridge:{identicalFunctions,referenceNormalizationEqualExceptInertLiftGuard:true,compiledPoseFunctionSha256:createHash('sha256').update(colored.compileSpatial.toString()).digest('hex'),coloredCompiler:'tools/continuation211-colored-witness.mjs',currentCompiler:'tools/continuation211-optional-lift-domain.mjs',hiddenDomain:'13 fixed-color single-stage bodies; immutable two-blue-cell grid; no covers, ice, shells, keys, flips, generators, timers or dynamic terrain in the lower suffix projection.',normalizationArgument:'In this suffix domain a zero-cost full-body removal leaves every other body pose and grid unchanged and only removes collision occupancy. It can be commuted before any later actions of other bodies without increasing parking cost. A body that can already clear need not be parked or retained. No peel or dynamic reveal is normalized in this projection. The colored-graph qualification checks all reachable legal poses and gestures against PuzzleModel; the fast-closure qualification and native successor qualification bind the BFS and C# implementation to the same reference full-body closure.',scope:'The optional-lift compiler shares the identical static pose functions with the colored-qualified compiler. Reference normalization differs only by a no-unrevealed-lift guard, inert here. Lift-specific settle/each differences are inert because the hidden projection has no covers. This report adds qualification bindings only; it does not re-search the candidate.'},finalIndependentReview:{file:base+'design-new/aux212/independent-review212-final.json',rawSha256:raw(base+'design-new/aux212/independent-review212-final.json')},reviewTool:{file:'tools/regeneration211-design/aux212/bind-final212-qualification.mjs',rawSha256:raw('tools/regeneration211-design/aux212/bind-final212-qualification.mjs')},searchRepeated:false};
+const out=base+'design-new/aux212/qualification-chain212-final.json';fs.writeFileSync(out,JSON.stringify(report,null,2),{flag:'wx'});console.log(JSON.stringify({out,status:report.status,qualifications:qualifications.length}));

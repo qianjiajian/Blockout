@@ -7,6 +7,29 @@ import {decodeLayoutBytes, encodeLayoutBytes, layoutChecksum} from '../tools/wec
 
 const UNDEFINED = '\u0000blockout-undefined';
 const hash = text => createHash('sha256').update(text).digest('hex');
+const FORMAL_REGISTRIES = ['FORMAL_201_210_LEVELS', 'FORMAL_211_220_LEVELS', 'FORMAL_221_230_LEVELS'];
+
+// Do not serialize bundled functions with toString(): esbuild can rename their
+// closed-over LEVELS binding (for example LEVELS2). Keep this small runtime
+// adapter explicit and compare its return values and errors with the authored
+// exports below before accepting any generated module.
+const LOOKUPS = `
+export const getLevelStrict = (id) => {
+  const normalized = Number(id);
+  if (!Number.isInteger(normalized)) throw new RangeError(\`Unknown level id \${id}; expected an integer from 1-\${LEVELS.length}\`);
+  const level = LEVELS.find((candidate) => candidate.id === normalized);
+  if (!level) throw new RangeError(\`Unknown level id \${id}; expected 1-\${LEVELS.length}\`);
+  return level;
+};
+export const getLevel = (id) => getLevelStrict(
+  Math.max(1, Math.min(LEVELS.length, Math.floor(Number(id)) || 1)),
+);
+`;
+
+function lookupResult(lookup, value) {
+  try { return {level: lookup(value)}; }
+  catch (error) { return {error: error.constructor.name, message: error.message}; }
+}
 
 function toJson(value) {
   if (value === undefined) return UNDEFINED;
@@ -46,7 +69,7 @@ async function snapshotSources(directory, records = new Map()) {
 }
 
 /** Evaluate authored overlays at build time. No authored data is replaced;
- * production code imports only the final campaign and the same two lookups.
+ * ship the final campaign plus the three accepted temporary-test registries.
  * Every property, explicit undefined, array order, and level metadata is checked.
  */
 export async function createWechatLevelModule(root = process.cwd()) {
@@ -58,26 +81,47 @@ export async function createWechatLevelModule(root = process.cwd()) {
   const result = await build({entryPoints: [resolve(root, 'src/core/levels.ts')],
     bundle: true, write: false, format: 'esm', platform: 'node', metafile: true});
   const original = await import('data:text/javascript;base64,' + Buffer.from(result.outputFiles[0].text).toString('base64'));
-  const json = JSON.stringify(toJson(original.LEVELS));
+  const registries = Object.fromEntries(['LEVELS', ...FORMAL_REGISTRIES].map(name => [name, original[name]]));
+  const json = JSON.stringify(toJson(registries));
   const packed = encodeLayoutBytes(json);
   const restored = restoreLevelJson(JSON.parse(decodeLayoutBytes(packed.base64, packed.outputLength, packed.checksum)));
-  assert.deepEqual(restored, original.LEVELS, 'Build-time campaign materialization changed gameplay');
-  assert.equal(restored.length, 200);
-  assert.deepEqual(restored.map(level => level.id), Array.from({length: 200}, (_, i) => i + 1));
+  assert.deepEqual(restored, registries, 'Build-time level materialization changed gameplay');
+  assert.equal(restored.LEVELS.length, 200);
+  assert.deepEqual(restored.LEVELS.map(level => level.id), Array.from({length: 200}, (_, i) => i + 1));
+  for (const [index, name] of FORMAL_REGISTRIES.entries()) {
+    assert.deepEqual(restored[name].map(level => level.id), Array.from({length: 10}, (_, i) => 201 + index * 10 + i));
+  }
   const source = `${layoutChecksum.toString()}\n${decodeLayoutBytes.toString()}\n${restoreLevelJson.toString()}\n` +
-    `export const LEVELS=restoreLevelJson(JSON.parse(decodeLayoutBytes(${JSON.stringify(packed.base64)},${packed.outputLength},${packed.checksum})));\n` +
-    `export const getLevelStrict=${original.getLevelStrict.toString()};\nexport const getLevel=${original.getLevel.toString()};\n`;
+    `const registries=restoreLevelJson(JSON.parse(decodeLayoutBytes(${JSON.stringify(packed.base64)},${packed.outputLength},${packed.checksum})));\n` +
+    Object.keys(registries).map(name => `export const ${name}=${Object.isFrozen(original[name]) ? 'Object.freeze(' : ''}registries.${name}${Object.isFrozen(original[name]) ? ')' : ''};\n`).join('') +
+    LOOKUPS;
   // Test the exact generated module, not only the encoder's intermediate data.
   const compiled = await import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'));
-  assert.deepEqual(compiled.LEVELS, original.LEVELS);
+  for (const name of Object.keys(registries)) {
+    assert.deepEqual(compiled[name], original[name]);
+    assert.equal(Object.isFrozen(compiled[name]), Object.isFrozen(original[name]));
+  }
   for (const level of original.LEVELS) {
     assert.equal(compiled.getLevelStrict(level.id), compiled.LEVELS[level.id - 1]);
     assert.deepEqual(compiled.getLevel(level.id), level);
   }
+  const lookupInputs = [
+    ...Array.from({length: 234}, (_, i) => i - 2),
+    ...Array.from({length: 230}, (_, i) => String(i + 1)),
+    -Infinity, Infinity, NaN, -0, -1.5, 1.5, 199.9, 200.9, 201.5,
+    undefined, null, '', ' ', 'bad', true, false, [], [2], {}, Symbol('id'), 201n,
+  ];
+  for (const name of ['getLevel', 'getLevelStrict']) for (const value of lookupInputs) {
+    assert.deepEqual(lookupResult(compiled[name], value), lookupResult(original[name], value), `${name} semantics changed`);
+  }
   const sourceInputs = [...Object.keys(result.metafile.inputs).map(path => resolve(root, path)), ...helperPaths];
   const inputHashes = await Promise.all(sourceInputs.map(async path => ({path, before: inputSnapshot.get(path), after: hash(await readFile(path))})));
   assert(inputHashes.every(input => input.before && input.before === input.after), 'Campaign source changed during WeChat level materialization');
-  return {source, original, compiled, report: {levelCount: restored.length, exactDataEqual: true,
+  return {source, original, compiled, report: {levelCount: restored.LEVELS.length, exactDataEqual: true,
+    formalRegistries: FORMAL_REGISTRIES.map(name => ({name, count: compiled[name].length,
+      ids: compiled[name].map(level => level.id), sha256: hash(JSON.stringify(compiled[name]))})),
+    temporaryTestLevelCount: Object.values(registries).reduce((sum, levels) => sum + levels.length, 0),
+    lookupSemanticsEqual: true,
     levelJsonSha256: hash(JSON.stringify(original.LEVELS)), generatedModuleSha256: hash(source),
     jsonBytes: Buffer.byteLength(json), packedBytes: packed.encodedBytes,
     codec: 'ascii-lz77-base64-adler32-v1', asciiBytes: packed.outputLength,

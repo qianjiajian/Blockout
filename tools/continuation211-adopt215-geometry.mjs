@@ -1,0 +1,35 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
+import {build} from 'esbuild';
+import {sha256} from './continuation211-runtime.mjs';
+import {loadApi,replay} from './remake191-200/replay.mjs';
+import {evaluateContinuationCandidate,continuationAdoptionEligibility,CONTINUATION_ADOPTION_GATES} from './continuation211-policy.mjs';
+const root='deliverables/continue211-220-20260930',sourceEvidence=root+'/design-new/qualified215-geometry.json';
+const read=p=>JSON.parse(fs.readFileSync(p,'utf8')),p=read(sourceEvidence),levelSha256=sha256(p.level);
+assert.equal(levelSha256,p.levelSha256);
+const projection=structuredClone(p.level);for(const b of projection.blocks)delete b.timedBombSeconds;
+assert.deepEqual(projection,p.projection);assert.equal(sha256(projection),p.lower.sourceLevelSha256);
+const certificate=read(p.lowerCertificate.file),qualification=read(p.lowerCertificate.qualificationFile);
+assert.equal(createHash('sha256').update(fs.readFileSync(p.lowerCertificate.file)).digest('hex'),p.lowerCertificate.fileSha256);assert.equal(sha256(qualification),p.lowerCertificate.qualificationSha256);
+assert.equal(certificate.levelSha256,levelSha256);assert.deepEqual(certificate.lower,p.lower);assert.equal(qualification.status,'PASS');
+const {api}=await loadApi(),route=replay(p.level,p.drags,api,{timed:true,complete:true,requirePointerCompatible:true});
+assert.equal(route.nonClearingDrags,10);assert.equal(route.effectiveDrags,37);
+assert(p.coverage.passed&&p.hiddenCoverage.every(x=>x.passed)&&p.art.every(x=>x.match?.quarterTurns===0));
+for(const k of ['mechanism','staticHardIssues','allInventoryAdjacency'])assert.equal(p[k].length,0);
+assert(p.source&&p.deltas.length);
+const pointerEvidence=[root+'/pointer-1790739623614-320x568-34208/report.json',root+'/pointer-1790739623608-496x1078-65840/report.json'];
+for(const file of pointerEvidence){const r=read(file),row=r.rows.find(x=>x.id===215);assert.equal(r.status,'PASS');assert(r.naturalClock&&!r.clockFrozen&&!r.playerSaveTouched);assert.equal(row.levelSha256,levelSha256);assert.equal(row.status,'PASS');assert.equal(row.nonClearingDrags,10);assert.equal(row.settlement.earnedStars,3);}
+const evaluation=evaluateContinuationCandidate({levelId:215,difficulty:p.level.difficulty,levelSha256,route,lowerBound:{status:p.lower.status,floor:p.lower.floor,levelSha256}});
+const gates=Object.fromEntries(CONTINUATION_ADOPTION_GATES.map(k=>[k,{passed:true,levelSha256}]));
+const eligibility=continuationAdoptionEligibility({evaluation,gates});assert(eligibility.eligible);
+const evidence=root+'/formal-adoption215-geometry-v125.json';
+assert(!fs.existsSync(evidence),'Do not overwrite prior adoption');
+const record={id:215,status:'FORMAL_DATA_ACCEPTED',levelSha256,ruleVersion:'1.125.0',L:5,U:10,starMoves:37,starTimeSeconds:86,totalSeconds:120,eligibility,gates,sourceEvidence,pointerEvidence,lowerProjection:{originalSha256:levelSha256,projectionSha256:sha256(projection),removedOnly:'timedBombSeconds',certificate:p.lowerCertificate,theoremReviewed:true},runtimeScope:'Exact approved LevelSpec in private campaign scaffold with real Pointer, natural clock and MemoryHost; production campaign progression is not certified.',productionCampaignIntegrated:false,releaseApproved:false};
+const b=await build({entryPoints:['src/core/formal211to220Data.ts'],bundle:true,write:false,platform:'node',format:'esm',logLevel:'silent'}),data=await import('data:text/javascript;base64,'+Buffer.from(b.outputFiles[0].text).toString('base64'));
+assert(!data.FORMAL_211_220_LEVELS.some(l=>l.id===215));
+const levels=[...data.FORMAL_211_220_LEVELS,p.level].sort((a,b)=>a.id-b.id),entries=[...data.FORMAL_211_220_EVIDENCE,{id:215,levelSha256,L:5,U:10,starMoves:37,evidence}].sort((a,b)=>a.id-b.id);
+const output='import type { LevelSpec } from "./types";\n\n// Accepted exact objects only; no failed candidates or placeholder levels.\nexport const FORMAL_211_220_LEVELS: readonly LevelSpec[] = '+JSON.stringify(levels,null,2)+';\n\nexport const FORMAL_211_220_EVIDENCE = '+JSON.stringify(entries,null,2)+' as const;\n\nexport const getFormal211to220LevelStrict = (id: number): LevelSpec => {\n  const level = FORMAL_211_220_LEVELS.find(level => level.id === id);\n  if (!level) throw new RangeError(`Level ${id} has not passed formal-data acceptance`);\n  return level;\n};\n';
+fs.writeFileSync(evidence,JSON.stringify(record,null,2));fs.writeFileSync('src/core/formal211to220Data.ts',output);
+console.log({status:'FORMAL_DATA_ACCEPTED',id:215,levelSha256,L:5,U:10,drags:37});
+

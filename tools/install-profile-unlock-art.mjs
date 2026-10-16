@@ -1,0 +1,10 @@
+import sharp from 'sharp';
+import {mkdir,copyFile,readFile,writeFile} from 'node:fs/promises';
+const names=['ae6dfdcd-8011-4369-8acc-58401f73dcab','ba7fe97f-8a43-4646-abfe-4508dc26e745','31f59bc3-e35f-4dcc-9c23-e8df56c6a9a1','e97b3fc1-9192-4b47-81f2-4755d9a28de4','2679fc05-7c43-4064-98d6-4c04944070f8','05712366-1946-4d4a-86fa-c01587b656a1','fd8056fd-da89-472b-9526-d7564b09ac04','13806365-2e81-4b81-bade-e1e952b24c03','5e58f1be-3bf7-4668-93cb-6b061897dc59','9ba68b0f-04cd-411c-937e-6d7b2b1be4b5'];
+const src='art-source/ui/profile-unlocks-v1',out='public/assets/art/ui/profile-unlocks-v1';
+await mkdir(src+'/originals',{recursive:true});await mkdir(out,{recursive:true});
+for(let i=0;i<10;i++){const input='C:/Users/Administrator/.codex/generated_images/01a11b68-f730-76d3-9c19-b8f4127b6b9b/exec-'+names[i]+'.png';await copyFile(input,src+'/originals/avatar-'+(15+i)+'.png');await sharp(input).resize(64,64).png().toFile(out+'/avatar-'+(15+i)+'.png');}
+const m=JSON.parse(await readFile('art-source/manifest.json','utf8'));let ts=await readFile('src/game/artManifest.ts','utf8');
+for(const [kind,start] of [['avatar',15],['frame',9]])for(let i=start;i<start+10;i++){const name=kind+'-'+i+'.png',path='assets/art/ui/profile-unlocks-v1/'+name;await copyFile(out+'/'+name,src+'/'+name);if(!m.assets.some(a=>a.runtime==='../public/'+path))m.assets.push({key:'ui.profileUnlock.'+kind+'.'+i,source:'ui/profile-unlocks-v1/'+name,runtime:'../public/'+path,width:64,height:64,alpha:true,grid:[1,1],transform:'copy'});if(!ts.includes('"'+path+'"'))ts=ts.replace('] as const;',',\n  "'+path+'"\n] as const;');}
+await writeFile('art-source/manifest.json',JSON.stringify(m,null,2)+'\n');await writeFile('src/game/artManifest.ts',ts);
+const tiles=[];for(let i=0;i<10;i++){tiles.push({input:await sharp(out+'/avatar-'+(15+i)+'.png').resize(96,96).toBuffer(),left:i*100,top:0});tiles.push({input:await sharp(out+'/frame-'+(9+i)+'.png').resize(96,96).toBuffer(),left:i*100,top:110});}await sharp({create:{width:1000,height:210,channels:4,background:'#f8d6b4'}}).composite(tiles).png().toFile(src+'/preview.png');

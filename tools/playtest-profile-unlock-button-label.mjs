@@ -1,0 +1,53 @@
+import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
+import {mkdir,readFile,writeFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+import {createServer} from 'vite';
+import {chromium} from 'playwright';
+
+const output=resolve(`playtest-results/profile-unlock-button-label-20261009-${Date.now()}`);await mkdir(output,{recursive:true});
+const sha=v=>createHash('sha256').update(v).digest('hex');
+const paths=['src/game/playerProfileUi.ts','src/game/ColorEscapeGame.ts','src/core/playerProfile.ts','tools/playtest-profile-unlock-button-label.mjs'];
+const hashes=async()=>Object.fromEntries(await Promise.all(paths.map(async p=>[p,sha(await readFile(p))])));
+const report={status:'RUNNING',scope:'Synthetic MemoryHost progress after clearing Lv5. Real Pointer profile entry, scrolling, locked selections, disabled-save clicks and restored unlocked selection. No real player storage.',sources:await hashes(),cases:[],errors:[]};
+function html(language){return `<!doctype html><meta charset="utf-8"><link rel="icon" href="data:,"><style>html,body{margin:0;overflow:hidden}canvas{display:block;width:100vw;height:100vh;touch-action:none}</style><script type="module">
+import {ColorEscapeGame} from '/src/game/ColorEscapeGame.ts';import {WebHost} from '/src/platform/WebHost.ts';
+const initial={schemaVersion:1,currentLevel:6,highestLevel:6,coins:240,language:${JSON.stringify(language)},sound:false,music:false,haptic:false,reducedMotion:true,
+collectionIntroShown:true,collectionIntroPending:false,featureSeen:['basics'],boosterUnlockSeen:['time','rocket','pulse'],featureGuideProgress:{version:1,pending:[],seen:['leaderboard','supply','levels','dailyChallenge','league']},lifeState:{lives:5,nextLifeAtMs:0,unlimitedLivesUntilMs:0},bestStars:{1:3,2:3,3:3,4:3,5:3},rewardedLevels:[1,2,3,4,5],playerProfile:{id:'1482757',name:'Player#148221',avatar:1,frame:7,joinedAt:1785542400000,firstTryWins:3,longestStreak:3,currentStreak:0,attempts:{},lastAttemptWon:true}};
+const audit={phase:'startup',writes:[],frames:[],pointers:[]},key='color-escape-save-v1',images=new WeakMap();let game,frame;
+class MemoryHost extends WebHost{data=new Map([[key,structuredClone(initial)]]);storageRead(k){return this.data.has(k)?{status:'ok',value:structuredClone(this.data.get(k))}:{status:'missing'};}storageGet(k,f){const r=this.storageRead(k);return r.status==='ok'?r.value:f;}storageSet(k,v){audit.writes.push({phase:audit.phase,value:structuredClone(v)});this.data.set(k,structuredClone(v));return true;}music(){}sound(){}vibrate(){}async createImage(src){const img=await super.createImage(src);images.set(img,src);return img;}}
+const host=new MemoryHost();game=new ColorEscapeGame(host);const render=game.render;game.render=function(...args){frame={phase:audit.phase,page:game.profilePage,avatar:game.profileDraftAvatar,frame:game.profileDraftFrame,texts:[],buttons:[],images:[]};audit.frames.push(frame);return render.apply(this,args);};
+const fill=host.context.fillText;host.context.fillText=function(value,...args){if(frame&&game.profilePage)frame.texts.push({value:String(value),args,align:this.textAlign,baseline:this.textBaseline});return fill.call(this,value,...args);};
+const press=game.drawPressable;game.drawPressable=function(key,...args){if(frame&&game.profilePage)frame.buttons.push(key);return press.call(this,key,...args);};
+const draw=host.context.drawImage;host.context.drawImage=function(img,...args){const src=images.get(img);if(frame&&game.profilePage&&src?.includes('/profile-unlocks-v1/'))frame.images.push({src,args,alpha:this.globalAlpha});return draw.call(this,img,...args);};
+for(const type of ['pointerdown','pointerup'])host.canvas.addEventListener(type,e=>audit.pointers.push({type,x:e.clientX,y:e.clientY,phase:audit.phase}),true);
+window.__COLOR_ESCAPE__=game;window.__PLABEL__={game,host,audit};game.start();</script>`;}
+const server=await createServer({configFile:false,optimizeDeps:{noDiscovery:true,entries:[]},server:{host:'127.0.0.1',port:0,hmr:false,watch:null},logLevel:'error'});await server.listen();
+const origin=`http://127.0.0.1:${server.httpServer.address().port}`,browser=await chromium.launch({headless:true});
+const state=p=>p.evaluate(()=>{const g=window.__COLOR_ESCAPE__,d=g.getDebugState();return{page:g.profilePage,avatar:g.profileDraftAvatar,frame:g.profileDraftFrame,saveEnabled:g.profileView().saveEnabled,feedback:g.profileFeedback,profile:structuredClone(g.save.playerProfile),coins:g.save.coins,targets:d.interactionTargets.targets??d.interactionTargets,transform:d.viewportTransform,writes:window.__PLABEL__.audit.writes.length};});
+async function phase(p,value){await p.evaluate(v=>window.__PLABEL__.audit.phase=v,value);}
+async function click(p,key){const s=await state(p),r=s.targets[key]?.hit;assert(r,`Missing target ${key}`);await p.mouse.click(s.transform.offsetX+(r.x+r.width/2)*s.transform.scale,s.transform.offsetY+(r.y+r.height/2)*s.transform.scale,{delay:20});}
+async function point(p,x,y){const{transform:t}=await state(p),s=496/388;return{x:t.offsetX+x*s*t.scale,y:t.offsetY+(539-360*s+y*s)*t.scale};}
+async function swipe(p,up=true){const a=await point(p,150,up?500:345),b=await point(p,150,up?345:500);await p.mouse.move(a.x,a.y);await p.mouse.down();await p.mouse.move(b.x,b.y,{steps:8});await p.mouse.up();await p.waitForTimeout(60);}
+async function shot(p,row,label){const file=resolve(output,`${row.name}-${label}.png`);await p.screenshot({path:file});row.images.push({file,sha256:sha(await readFile(file))});}
+async function locked(p,row,label,level,kind,index,perform){await phase(p,label);await perform();const expected=row.language==='en'?`Complete level ${level} to unlock`:`通过${level}关解锁`;
+ await p.waitForFunction(({label,expected})=>{const{game:g,audit}=window.__PLABEL__,f=audit.frames.at(-1);return f?.phase===label&&f.page===g.profilePage&&f.avatar===g.profileDraftAvatar&&f.frame===g.profileDraftFrame&&f.texts.some(t=>t.value===expected);},{label,expected},{polling:'raf',timeout:10000});
+ const s=await state(p);assert.equal(s.saveEnabled,false);assert(!s.targets['profile.save']);const frames=await p.evaluate(label=>window.__PLABEL__.audit.frames.filter(f=>f.phase===label),label),f=frames.at(-1),txt=f.texts.find(t=>t.value===expected);assert(txt);assert.equal(txt.args[0],194.5);assert.equal(txt.args[1],560);assert.equal(txt.align,'center');assert.equal(txt.baseline,'middle');assert(!f.buttons.includes('profile.save'));assert(!f.texts.some(t=>t.value.startsWith('通关')||/^Clear [0-9]/.test(t.value)),'Thumbnail unlock labels absent');assert(f.texts.some(t=>t.value==='🔒'),'Lock corner remains');
+ if(kind){const preview=f.images.filter(x=>x.src.endsWith('/'+kind+'-'+index+'.png'));assert(preview.length>0);assert(preview.every(x=>x.alpha===1),'Locked icon remains full opacity');}
+ const c=await point(p,194.5,560);await p.mouse.click(c.x,c.y,{delay:20});const after=await state(p);assert.equal(after.writes,s.writes);assert.deepEqual(after.profile,s.profile);assert.equal(after.coins,240);await shot(p,row,label);row.checks.push({label,level,state:after,text:txt});
+}
+try{for(const viewport of[{width:320,height:568},{width:496,height:1078}])for(const language of['zh-CN','en']){
+ const row={name:`${viewport.width}x${viewport.height}-${language}`,language,status:'RUNNING',checks:[],images:[]};report.cases.push(row);const context=await browser.newContext({viewport,deviceScaleFactor:1});await context.addInitScript(()=>{window.__STORAGE_VIOLATIONS__=[];for(const n of['getItem','setItem','removeItem','clear'])Storage.prototype[n]=function(){window.__STORAGE_VIOLATIONS__.push(n);throw Error('Persistent storage forbidden');};for(const n of['open','deleteDatabase'])indexedDB[n]=function(){window.__STORAGE_VIOLATIONS__.push(n);throw Error('IndexedDB forbidden');};});const p=await context.newPage();p.on('pageerror',e=>report.errors.push(`${row.name}: ${e.message}`));p.on('console',e=>{if(e.type()==='error')report.errors.push(`${row.name}: ${e.text()}`);});await p.route('**/__profile_label_fixture__',r=>r.fulfill({contentType:'text/html',body:html(language)}));await p.goto(`${origin}/__profile_label_fixture__`,{waitUntil:'domcontentloaded'});await p.waitForFunction(()=>window.__COLOR_ESCAPE__?.artReady&&window.__COLOR_ESCAPE__.homeProfileArt);await click(p,'homeProfile');await p.waitForFunction(()=>Boolean(window.__COLOR_ESCAPE__.profileArt));await click(p,'profile.edit');row.baseline=await state(p);await swipe(p,true);
+ await locked(p,row,'avatar15',10,'avatar',15,()=>click(p,'profile.select.15'));
+ await locked(p,row,'frame9',20,'frame',9,async()=>{await click(p,'profile.frameTab');await click(p,'profile.select.9');});
+ await locked(p,row,'avatar-priority',10,'avatar',15,()=>click(p,'profile.avatarTab'));
+ await locked(p,row,'avatar24',190,'avatar',24,()=>click(p,'profile.select.24'));
+ await locked(p,row,'frame18',200,'frame',18,async()=>{await click(p,'profile.frameTab');await swipe(p,true);await click(p,'profile.select.18');});
+ await locked(p,row,'other-tab-fallback',200,'frame',18,async()=>{await click(p,'profile.avatarTab');await swipe(p,false);await click(p,'profile.select.1');});
+ await phase(p,'restored');await click(p,'profile.frameTab');await swipe(p,false);await click(p,'profile.select.7');await p.waitForFunction(()=>window.__COLOR_ESCAPE__.profileView().saveEnabled);row.restored=await state(p);assert(row.restored.targets['profile.save']);assert.equal(row.restored.avatar,1);assert.equal(row.restored.frame,7);assert.equal(row.restored.writes,row.baseline.writes);await shot(p,row,'restored-save');
+ row.audit=await p.evaluate(()=>({audit:structuredClone(window.__PLABEL__.audit),storage:window.__STORAGE_VIOLATIONS__,saved:structuredClone(window.__PLABEL__.host.data.get('color-escape-save-v1'))}));assert.deepEqual(row.audit.storage,[]);assert.equal(row.audit.saved.coins,240);assert.equal(row.audit.saved.playerProfile.avatar,1);assert.equal(row.audit.saved.playerProfile.frame,7);assert(row.audit.audit.frames.some(f=>f.phase==='restored'&&f.buttons.includes('profile.save')));row.status='PASS';await context.close();
+}
+assert.deepEqual(report.errors,[]);report.sourceAfter=await hashes();report.sourceChanges=paths.filter(p=>report.sources[p]!==report.sourceAfter[p]);assert.deepEqual(report.sourceChanges,[],'Bound source changed during playtest');report.status='PASS';
+}catch(error){report.status='FAIL';report.failure=error.stack;process.exitCode=1;}
+finally{await browser.close();await server.close();await writeFile(resolve(output,'report.json'),JSON.stringify(report,null,2)+'\n');}
+console.log(JSON.stringify({status:report.status,cases:report.cases.map(r=>({name:r.name,status:r.status})),failure:report.failure,output},null,2));

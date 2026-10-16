@@ -1,0 +1,1 @@
+const r=require('./deliverables/league-regeneration-20261004/formal/early-1-19.json'); console.log(JSON.stringify({accepted:r.acceptedRows?.map(x=>x.index),rows:r.rows?.length,unresolved:r.unresolved},null,2));

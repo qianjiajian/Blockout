@@ -1,0 +1,117 @@
+{
+  "generator": "user-provided-formal-assets",
+  "assets": [
+    {
+      "key": "ui.leagueRankV2.bronze",
+      "source": "ui/league-rank-badges-v2/bronze.png",
+      "runtime": "../public/assets/art/ui/league-rank-badges-v2/bronze.png",
+      "width": 220,
+      "height": 230,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueRankV2.silver",
+      "source": "ui/league-rank-badges-v2/silver.png",
+      "runtime": "../public/assets/art/ui/league-rank-badges-v2/silver.png",
+      "width": 222,
+      "height": 203,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueRankV2.gold",
+      "source": "ui/league-rank-badges-v2/gold.png",
+      "runtime": "../public/assets/art/ui/league-rank-badges-v2/gold.png",
+      "width": 245,
+      "height": 242,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueRankV2.platinum",
+      "source": "ui/league-rank-badges-v2/platinum.png",
+      "runtime": "../public/assets/art/ui/league-rank-badges-v2/platinum.png",
+      "width": 254,
+      "height": 267,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueRankV2.emerald",
+      "source": "ui/league-rank-badges-v2/emerald.png",
+      "runtime": "../public/assets/art/ui/league-rank-badges-v2/emerald.png",
+      "width": 253,
+      "height": 230,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueRankV2.diamond",
+      "source": "ui/league-rank-badges-v2/diamond.png",
+      "runtime": "../public/assets/art/ui/league-rank-badges-v2/diamond.png",
+      "width": 271,
+      "height": 252,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueRankV2.master",
+      "source": "ui/league-rank-badges-v2/master.png",
+      "runtime": "../public/assets/art/ui/league-rank-badges-v2/master.png",
+      "width": 261,
+      "height": 245,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    },
+    {
+      "key": "ui.leagueRankV2.glory",
+      "source": "ui/league-rank-badges-v2/glory.png",
+      "runtime": "../public/assets/art/ui/league-rank-badges-v2/glory.png",
+      "width": 265,
+      "height": 239,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "formal-leaderboard"
+    }
+  ]
+}

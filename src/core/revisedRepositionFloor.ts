@@ -1,5 +1,7 @@
 import { PuzzleModel } from "./PuzzleModel";
-import type { LevelSpec, Point, PuzzleSnapshot, Side } from "./types";
+import type { GatePortalSpec, GateSpec, LevelSpec, Point, PuzzleSnapshot, Side } from "./types";
+import { boardCellsSeparatedBySeam } from "./boardSeams";
+import { replayRevisedRoute, searchRevisedLevel } from "./revisedLevelSearch";
 
 export interface RevisedRepositionDrag {
   blockId: string;
@@ -21,7 +23,7 @@ export interface RevisedRepositionFloorResult {
     | "max-drag-states" | "max-transitions" | "deadline" | "unsupported" | "invalid";
   floor: number;
   thresholdProven: boolean;
-  abstraction: "optional-exit-unit-step-gesture-superset-v1";
+  abstraction: "optional-exit-unit-step-gesture-superset-v1" | "seam-chambers-composition-v1";
   /** This is not a portable certificate until the caller binds input/rule/tool hashes. */
   hashBindingRequired: true;
   solvabilityValidated: false;
@@ -34,6 +36,40 @@ export interface RevisedRepositionFloorResult {
   improvedStateCosts: number;
   relaxedNonClearingDrags?: number;
   relaxedRoute?: RevisedRepositionDrag[];
+  composition?: { componentCount: number; componentFloorSum: number; componentFloors: number[] };
+  reasons: string[];
+}
+
+/**
+ * A proof for a level made of physically disconnected, seam-separated
+ * chambers.  This is deliberately a separate certificate from the ordinary
+ * global 0-1 search: each chamber is solved on its own exact LevelSpec and
+ * the resulting lower bounds are summed only when no cross-chamber state can
+ * change (no counters, doors, queues or other global mechanisms).
+ */
+export interface RevisedIndependentComponentProof {
+  componentIndex: number;
+  bounds: { minX: number; minY: number; width: number; height: number };
+  blockIds: string[];
+  lowerBound: number;
+  atomic: RevisedRepositionFloorResult;
+}
+
+export interface RevisedIndependentFloorResult {
+  status: "threshold-proven" | "unknown" | "unsupported" | "invalid" | "not-applicable";
+  termination: RevisedRepositionFloorResult["termination"] | "not-applicable";
+  floor: number;
+  thresholdProven: boolean;
+  abstraction: "static-seam-component-sum-v1";
+  hashBindingRequired: true;
+  solvabilityValidated: false;
+  pointerReplayValidated: false;
+  timeValidated: false;
+  releaseApproved: false;
+  componentFloorSum: number;
+  components: RevisedIndependentComponentProof[];
+  route?: RevisedRepositionDrag[];
+  replay?: { valid: boolean; complete: boolean; effectiveDrags: number; nonClearingDrags: number; clearEvents: number; error?: string };
   reasons: string[];
 }
 
@@ -100,14 +136,49 @@ export const checkRevisedRepositionFloor = (
     timeValidated: false, releaseApproved: false, exploredStates: 0, discoveredStates: 0,
     attemptedTransitions: 0, improvedStateCosts: 0, reasons: [],
   };
+  if (level.dailyProof?.kind === "seam-chambers-v1") {
+    const composed = checkRevisedIndependentSeamFloor(level, options);
+    if (composed.status === "not-applicable") {
+      return { ...result, status: "unsupported", termination: "unsupported", abstraction: "seam-chambers-composition-v1", reasons: composed.reasons };
+    }
+    return {
+      ...result,
+      status: composed.status === "threshold-proven" ? "threshold-proven" : composed.status,
+      termination: composed.termination === "not-applicable" ? "unsupported" : composed.termination,
+      thresholdProven: composed.thresholdProven,
+      abstraction: "seam-chambers-composition-v1",
+      exploredStates: composed.components.reduce((sum, component) => sum + component.atomic.exploredStates, 0),
+      discoveredStates: composed.components.reduce((sum, component) => sum + component.atomic.discoveredStates, 0),
+      attemptedTransitions: composed.components.reduce((sum, component) => sum + component.atomic.attemptedTransitions, 0),
+      relaxedNonClearingDrags: composed.componentFloorSum,
+      relaxedRoute: composed.route,
+      composition: {
+        componentCount: composed.components.length,
+        componentFloorSum: composed.componentFloorSum,
+        componentFloors: composed.components.map((component) => component.lowerBound),
+      },
+      reasons: composed.reasons,
+    };
+  }
   const unsupported: string[] = [];
-  if (!["revised-2026-09-21-v1.1", "revised-2026-09-21-v1.2", "revised-2026-09-23-v1.4"].includes(level.mechanismRules ?? "")) {
-    unsupported.push("Only explicitly qualified v1.1/v1.2 and flip-free v1.4 profiles are supported.");
+  if (!["revised-2026-09-21-v1.1", "revised-2026-09-21-v1.2", "revised-2026-09-23-v1.4", "revised-2026-09-27-v1.5"].includes(level.mechanismRules ?? "")) {
+    unsupported.push("Only explicitly qualified revised profiles are supported.");
   }
-  if (level.mechanismRules === "revised-2026-09-23-v1.4" && level.flipDoors?.length) {
-    unsupported.push("v1.4 deferred flip-door animation interleavings are not qualified for this bound tool.");
+  // A daily marker may contain one already-open flip door in an otherwise
+  // isolated chamber.  Its route has no competing departure to interleave;
+  // closed/frozen doors remain outside this lower-bound qualification.
+  if (["revised-2026-09-23-v1.4", "revised-2026-09-27-v1.5"].includes(level.mechanismRules ?? "")
+    && level.flipDoors?.some((door) => !door.initiallyOpen || (door.frozen ?? 0) > 0)) {
+    unsupported.push("Closed or frozen flip-door animation interleavings are not qualified for this bound tool.");
   }
-  if (level.blocks.some((block) => block.timedBombSeconds !== undefined)) unsupported.push("Bomb clocks are not yet qualified for this bound tool.");
+  // A bomb marker with a deadline beyond the authored level clock cannot
+  // expire during any time-feasible run.  The bound/replay tools still do not
+  // validate elapsed time; they only avoid falsely rejecting this isolated,
+  // inert timer.  Shorter deadlines remain unsupported.
+  if (level.blocks.some((block) => block.timedBombSeconds !== undefined
+    && block.timedBombSeconds <= level.timeSeconds)) {
+    unsupported.push("Bomb clocks are not yet qualified for this bound tool.");
+  }
   if (level.generators?.some((generator) => generator.trigger === "time"
     || generator.intervalSeconds !== undefined || generator.initialDelaySeconds !== undefined)) unsupported.push("Clock-driven generators are unsupported.");
   if (level.elevators?.length || level.conveyors?.length) unsupported.push("Legacy autonomous platforms/conveyors are unsupported.");
@@ -231,4 +302,281 @@ export const checkRevisedRepositionFloor = (
     };
     return { ...result, status: "invalid", termination: "invalid", reasons: [error instanceof Error ? error.message : String(error)] };
   }
+};
+
+const componentKey = ([x, y]: Point): string => `${x},${y}`;
+
+const translatePoint = ([x, y]: Point, minX: number, minY: number): Point => [x - minX, y - minY];
+
+const gatePortals = (gate: GateSpec, width: number, height: number): GatePortalSpec[] => {
+  if (gate.portals?.length) return gate.portals.map((portal) => ({ ...portal, origin: [...portal.origin] as Point }));
+  const origin: Point = gate.side === "left" ? [0, gate.offset]
+    : gate.side === "right" ? [width - 1, gate.offset]
+      : gate.side === "top" ? [gate.offset, 0] : [gate.offset, height - 1];
+  return [{ side: gate.side, origin, size: gate.size }];
+};
+
+const translatedGate = (
+  gate: GateSpec,
+  width: number,
+  height: number,
+  minX: number,
+  minY: number,
+): GateSpec => {
+  const portals = gatePortals(gate, width, height).map((portal) => ({
+    ...portal,
+    origin: translatePoint(portal.origin, minX, minY),
+  }));
+  const first = portals[0];
+  return {
+    ...gate,
+    offset: first.side === "left" || first.side === "right" ? first.origin[1] : first.origin[0],
+    portals,
+  };
+};
+
+/** Translate a rectangular shutter into a component-local coordinate space. */
+const translatedShutter = (
+  shutter: NonNullable<LevelSpec["shutters"]>[number],
+  minX: number,
+  minY: number,
+): NonNullable<LevelSpec["shutters"]>[number] => ({
+  ...shutter,
+  x: shutter.x - minX,
+  y: shutter.y - minY,
+  // Block ids are intentionally preserved inside an atomic component.  The
+  // containing block records are copied below with the same ids, so hidden
+  // batches and exact trigger cohorts remain referentially intact.
+  triggerBlockIds: shutter.triggerBlockIds ? [...shutter.triggerBlockIds] : undefined,
+});
+
+/** Translate one generator while preserving side, queue order, and spawn. */
+const translatedGenerator = (
+  generator: NonNullable<LevelSpec["generators"]>[number],
+  minX: number,
+  minY: number,
+): NonNullable<LevelSpec["generators"]>[number] => ({
+  ...generator,
+  offset: generator.side === "top" || generator.side === "bottom"
+    ? generator.offset - minX : generator.offset - minY,
+  spawn: translatePoint(generator.spawn, minX, minY),
+  rimAnchor: generator.rimAnchor ? {
+    ...generator.rimAnchor,
+    x: generator.rimAnchor.x - minX,
+    y: generator.rimAnchor.y - minY,
+  } : undefined,
+  queueBlockIds: [...generator.queueBlockIds],
+});
+
+/** Translate a flip door without dropping its initial open/closed state. */
+const translatedFlipDoor = (
+  door: NonNullable<LevelSpec["flipDoors"]>[number],
+  width: number,
+  height: number,
+  minX: number,
+  minY: number,
+): NonNullable<LevelSpec["flipDoors"]>[number] => ({
+  ...translatedGate(door, width, height, minX, minY),
+  initiallyOpen: door.initiallyOpen,
+});
+
+const seamComponents = (level: LevelSpec): Point[][] => {
+  const playable = level.playable ?? Array.from({ length: level.height }, (_, y) => (
+    Array.from({ length: level.width }, (_, x) => [x, y] as Point)
+  )).flat();
+  const allowed = new Set(playable.map(componentKey));
+  const visited = new Set<string>();
+  const components: Point[][] = [];
+  for (const start of playable) {
+    const startKey = componentKey(start);
+    if (visited.has(startKey)) continue;
+    const component: Point[] = [];
+    const queue: Point[] = [start];
+    visited.add(startKey);
+    while (queue.length) {
+      const current = queue.shift()!;
+      component.push(current);
+      for (const next of [[current[0] + 1, current[1]], [current[0] - 1, current[1]],
+        [current[0], current[1] + 1], [current[0], current[1] - 1]] as Point[]) {
+        const key = componentKey(next);
+        if (!allowed.has(key) || visited.has(key) || boardCellsSeparatedBySeam(level, current, next)) continue;
+        visited.add(key);
+        queue.push(next);
+      }
+    }
+    components.push(component);
+  }
+  return components;
+};
+
+const hasIndependentGlobalMechanism = (level: LevelSpec): string | undefined => {
+  if (!level.seams?.length) return "No board seams were authored.";
+  const marker = level.dailyProof?.marker;
+  const inMarker = (x: number, y: number): boolean => Boolean(marker && y >= marker.yStart && y < marker.yStart + marker.height);
+  const markerOnlyPoints = (points: readonly Point[]): boolean => points.length > 0 && points.every(([x, y]) => inMarker(x, y));
+  if (level.flipDoors?.length && !marker) return "Flip doors toggle globally and are not component-separable.";
+  if (level.flipDoors?.some((door) => !markerOnlyPoints(gatePortals(door, level.width, level.height).flatMap((portal) => Array.from({ length: portal.size }, (_, index) => portal.side === "left" || portal.side === "right" ? [portal.origin[0], portal.origin[1] + index] as Point : [portal.origin[0] + index, portal.origin[1]] as Point))))) return "A flip door crosses outside the isolated marker chamber.";
+  if (level.coloredGrids?.length && level.coloredGrids.some((grid) => !markerOnlyPoints(grid.cells))) return "Colored grids cross the component proof boundary.";
+  if (level.shutters?.length && (!marker || level.shutters.some((shutter) => !inMarker(shutter.x, shutter.y) || !inMarker(shutter.x + shutter.width - 1, shutter.y + shutter.height - 1)))) return "Shutters have cross-clear/reveal state outside the isolated marker.";
+  if (level.generators?.length && (!marker || level.generators.some((generator) => !inMarker(generator.spawn[0], generator.spawn[1])))) return "Generators have cross-clear/reveal state outside the isolated marker.";
+  if (level.elevators?.length || level.conveyors?.length) return "Autonomous platforms are not component-separable.";
+  if (level.blocks.some((block) => (block.frozen !== undefined || block.keyId || block.lockedBy || block.timedBombSeconds !== undefined)
+    && (!marker || block.y < marker.yStart || block.y >= marker.yStart + marker.height))) return "Frozen, key-locked and timed blocks are excluded outside the isolated marker.";
+  if (level.gates.some((gate) => gate.frozen !== undefined && (!marker || gate.offset < marker.yStart || gate.offset >= marker.yStart + marker.height))) return "Frozen gates have global clear countdown semantics outside the isolated marker.";
+  if (level.rocketRescue || level.pulseRescue || level.strategyNudge || level.strategyFocus) {
+    return "Rescue/strategy triggers are excluded from the static component sum.";
+  }
+  return undefined;
+};
+
+/**
+ * Qualify a static seam-separated board by proving each chamber independently
+ * and adding the exact lower bounds.  The composition is sound only for the
+ * deliberately narrow static domain checked above; dynamic/global mechanics
+ * return `unsupported` instead of being approximated.
+ */
+export const checkRevisedIndependentSeamFloor = (
+  level: LevelSpec,
+  options: RevisedRepositionFloorOptions,
+): RevisedIndependentFloorResult => {
+  const base: RevisedIndependentFloorResult = {
+    status: "not-applicable", termination: "not-applicable", floor: options.floor,
+    thresholdProven: false, abstraction: "static-seam-component-sum-v1", hashBindingRequired: true,
+    solvabilityValidated: false, pointerReplayValidated: false, timeValidated: false, releaseApproved: false,
+    componentFloorSum: 0, components: [], reasons: [],
+  };
+  const unsupported = hasIndependentGlobalMechanism(level);
+  if (unsupported) return { ...base, status: level.seams?.length ? "unsupported" : "not-applicable", termination: level.seams?.length ? "unsupported" : "not-applicable", reasons: [unsupported] };
+  const components = seamComponents(level).filter((component) => {
+    const keys = new Set(component.map(componentKey));
+    return level.blocks.some((block) => block.shape.every(([dx, dy]) => keys.has(`${block.x + dx},${block.y + dy}`)));
+  });
+  if (components.length < 2) return { ...base, reasons: ["At least two non-empty seam-separated components are required."] };
+
+  const componentOfCell = new Map<string, number>();
+  components.forEach((component, index) => component.forEach((point) => componentOfCell.set(componentKey(point), index)));
+  const blockComponents = level.blocks.map((block) => new Set(block.shape.map(([dx, dy]) => componentOfCell.get(`${block.x + dx},${block.y + dy}`))));
+  if (blockComponents.some((owners) => owners.size !== 1 || owners.has(undefined))) {
+    return { ...base, status: "invalid", termination: "invalid", reasons: ["A block crosses a seam or lies outside the seam components."] };
+  }
+  // Flip doors are exits too.  Treat them as gate records for seam ownership
+  // so an isolated initially-open door can be proved in its own chamber rather
+  // than incorrectly reported as a component with no boundary gate.
+  const allGateRecords: Array<GateSpec & { initiallyOpen?: boolean }> = [
+    ...level.gates,
+    ...(level.flipDoors ?? []),
+  ];
+  const gateComponents = allGateRecords.map((gate) => new Set(gatePortals(gate, level.width, level.height).flatMap((portal) => {
+    const points: Point[] = [];
+    for (let index = 0; index < portal.size; index += 1) {
+      points.push(portal.side === "left" || portal.side === "right"
+        ? [portal.origin[0], portal.origin[1] + index]
+        : [portal.origin[0] + index, portal.origin[1]]);
+    }
+    return points.map((point) => componentOfCell.get(componentKey(point)));
+  })));
+  if (gateComponents.some((owners) => owners.size !== 1 || owners.has(undefined))) {
+    return { ...base, status: "invalid", termination: "invalid", reasons: ["A gate mouth crosses a seam or lies outside the seam components."] };
+  }
+
+  const proofs: RevisedIndependentComponentProof[] = [];
+  const combinedRoute: RevisedRepositionDrag[] = [];
+  try {
+    for (let componentIndex = 0; componentIndex < components.length; componentIndex += 1) {
+      const component = components[componentIndex];
+      const componentKeys = new Set(component.map(componentKey));
+      const minX = Math.min(...component.map(([x]) => x));
+      const minY = Math.min(...component.map(([, y]) => y));
+      const maxX = Math.max(...component.map(([x]) => x));
+      const maxY = Math.max(...component.map(([, y]) => y));
+      const width = maxX - minX + 1;
+      const height = maxY - minY + 1;
+      const blocks = level.blocks.filter((block) => block.shape.every(([dx, dy]) => componentKeys.has(`${block.x + dx},${block.y + dy}`)))
+        .map((block) => ({ ...block, x: block.x - minX, y: block.y - minY, shape: block.shape.map(([x, y]) => [x, y] as Point) }));
+      const gates = level.gates.filter((gate) => gatePortals(gate, level.width, level.height).every((portal) => {
+        const [px, py] = portal.origin;
+        for (let index = 0; index < portal.size; index += 1) {
+          const point: Point = portal.side === "left" || portal.side === "right" ? [px, py + index] : [px + index, py];
+          if (!componentKeys.has(componentKey(point))) return false;
+        }
+        return true;
+      })).map((gate) => translatedGate(gate, level.width, level.height, minX, minY));
+      const flipDoors = (level.flipDoors ?? []).filter((door) => gatePortals(door, level.width, level.height).every((portal) => {
+        const [px, py] = portal.origin;
+        for (let index = 0; index < portal.size; index += 1) {
+          const point: Point = portal.side === "left" || portal.side === "right" ? [px, py + index] : [px + index, py];
+          if (!componentKeys.has(componentKey(point))) return false;
+        }
+        return true;
+      })).map((door) => translatedFlipDoor(door, level.width, level.height, minX, minY));
+      if (!gates.length && !flipDoors.length) throw new Error(`Component ${componentIndex} has no complete boundary gate.`);
+      const playable = component.map((point) => translatePoint(point, minX, minY));
+      const blocked = (level.blocked ?? []).filter(([x, y]) => componentKeys.has(`${x},${y}`)).map((point) => translatePoint(point, minX, minY));
+      const coloredGrids = (level.coloredGrids ?? []).filter((grid) => grid.cells.every(([x, y]) => componentKeys.has(`${x},${y}`)))
+        .map((grid) => ({ ...grid, cells: grid.cells.map((point) => translatePoint(point, minX, minY)) }));
+      const shutters = (level.shutters ?? []).filter((shutter) => (
+        Array.from({ length: shutter.height }, (_, dy) => Array.from({ length: shutter.width }, (_, dx) => [shutter.x + dx, shutter.y + dy] as Point))
+          .flat().every((point) => componentKeys.has(componentKey(point)))
+      )).map((shutter) => translatedShutter(shutter, minX, minY));
+      const generators = (level.generators ?? []).filter((generator) => {
+        if (!componentKeys.has(componentKey(generator.spawn))) return false;
+        return generator.queueBlockIds.every((id) => {
+          const queued = level.blocks.find((block) => block.id === id);
+          return Boolean(queued && queued.shape.every(([dx, dy]) => componentKeys.has(`${generator.spawn[0] + dx},${generator.spawn[1] + dy}`)));
+        });
+      }).map((generator) => translatedGenerator(generator, minX, minY));
+      const hasBomb = blocks.some((block) => block.timedBombSeconds !== undefined);
+      const atomicLevel: LevelSpec = {
+        mechanismRules: level.mechanismRules, id: level.id * 1000 + componentIndex + 1,
+        name: `${level.name}·component-${componentIndex + 1}`, difficulty: level.difficulty,
+        timeSeconds: level.timeSeconds, reward: 0, width, height, playable, blocked, gates, blocks,
+        coloredGrids: coloredGrids.length ? coloredGrids : undefined,
+        flipDoors: flipDoors.length ? flipDoors : undefined,
+        shutters: shutters.length ? shutters : undefined,
+        generators: generators.length ? generators : undefined,
+        bombFailurePolicy: hasBomb ? level.bombFailurePolicy : undefined,
+      };
+      let lowerBound = 0;
+      let atomic: RevisedRepositionFloorResult | undefined;
+      const maxFloor = Math.max(1, options.floor);
+      for (let floor = 1; floor <= maxFloor + 1; floor += 1) {
+        const candidate = checkRevisedRepositionFloor(atomicLevel, { ...options, floor });
+        if (candidate.status === "threshold-proven") continue;
+        if (candidate.status === "relaxed-shortcut") { lowerBound = floor - 1; atomic = candidate; break; }
+        return { ...base, status: candidate.status === "unsupported" ? "unsupported" : "unknown", termination: candidate.termination, reasons: [`Component ${componentIndex} proof failed: ${candidate.reasons.join(" ")}`], components: proofs };
+      }
+      if (!atomic) return { ...base, status: "unknown", termination: "max-states", reasons: [`Component ${componentIndex} proof did not find a relaxed completion within the requested floor budget.`], components: proofs };
+      const witness = searchRevisedLevel(atomicLevel, {
+        maxStates: options.maxStates,
+        maxDragStates: options.maxDragStates,
+        maxTransitions: options.maxTransitions,
+        maxMilliseconds: options.maxMilliseconds,
+      });
+      if (!witness.witnessFound) {
+        const termination: RevisedIndependentFloorResult["termination"] = witness.termination === "unsupported"
+          ? "unsupported"
+          : witness.termination === "invalid" ? "invalid"
+            : witness.termination === "max-states" || witness.termination === "max-drag-states"
+              || witness.termination === "max-transitions" || witness.termination === "deadline"
+              ? witness.termination : "max-states";
+        return { ...base, status: witness.status === "unsupported" ? "unsupported" : "unknown", termination, reasons: [`Component ${componentIndex} route witness failed: ${witness.reasons.join(" ")}`], components: proofs };
+      }
+      combinedRoute.push(...witness.drags.map((drag) => ({
+        ...drag,
+        path: drag.path.map(([x, y]) => [x + minX, y + minY] as Point),
+      })));
+      proofs.push({ componentIndex, bounds: { minX, minY, width, height }, blockIds: blocks.map((block) => block.id), lowerBound, atomic });
+    }
+  } catch (error) {
+    return { ...base, status: "invalid", termination: "invalid", reasons: [error instanceof Error ? error.message : String(error)], components: proofs };
+  }
+  const componentFloorSum = proofs.reduce((sum, proof) => sum + proof.lowerBound, 0);
+  if (componentFloorSum < options.floor) return { ...base, status: "unknown", termination: "max-states", componentFloorSum, components: proofs, reasons: [`Independent component lower-bound sum ${componentFloorSum} is below requested floor ${options.floor}.`] };
+  const replay = replayRevisedRoute(level, combinedRoute);
+  if (!replay.valid || !replay.complete) {
+    return { ...base, status: "unknown", termination: "invalid", componentFloorSum, components: proofs, route: combinedRoute, replay,
+      reasons: [`Independent lower bounds sum to ${componentFloorSum}, but the concatenated fresh route did not complete.`, replay.error ?? "Route replay incomplete."] };
+  }
+  return { ...base, status: "threshold-proven", termination: "below-threshold-exhausted", thresholdProven: true, componentFloorSum, components: proofs, route: combinedRoute, replay,
+    reasons: [`${proofs.length} seam-separated static components proved independently; lower bounds sum to ${componentFloorSum}; concatenated route replay completed.`] };
 };

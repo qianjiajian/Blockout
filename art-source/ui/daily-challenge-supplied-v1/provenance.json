@@ -1,0 +1,101 @@
+[
+  {
+    "key": "panelFrame",
+    "source": "C:/Users/Administrator/Desktop/block out/每日挑战/低.png",
+    "file": "panel-frame.png",
+    "width": 594,
+    "height": 937,
+    "sha256": "583dbdbbde060e69c2889c03141455656c8fc3fbe9546b2c76c26909251eae92",
+    "transform": "original-byte-copy"
+  },
+  {
+    "key": "closeButton",
+    "source": "C:/Users/Administrator/Desktop/block out/每日挑战/关闭.png",
+    "file": "close-button.png",
+    "width": 94,
+    "height": 98,
+    "sha256": "828ecf0bd4f5f0073a7fb0b8e3dcfa05a9c06374e9c32c5bb8685c165486f7b1",
+    "transform": "original-byte-copy"
+  },
+  {
+    "key": "rewardBanner",
+    "source": "C:/Users/Administrator/Desktop/block out/每日挑战/每日挑战图.png",
+    "file": "reward-banner.png",
+    "width": 499,
+    "height": 235,
+    "sha256": "af44554dbe4e583483684ca9424e8c0765f357695481f184373186b056625635",
+    "transform": "original-byte-copy"
+  },
+  {
+    "key": "difficultyDiamond",
+    "source": "C:/Users/Administrator/Desktop/block out/每日挑战/1.png",
+    "file": "difficulty-1.png",
+    "width": 83,
+    "height": 93,
+    "sha256": "a1bc644bf5713573232615be05f7a40234d14b33e5bfe3d35c025f088c7c1606",
+    "transform": "original-byte-copy"
+  },
+  {
+    "key": "difficultyDiamond2",
+    "source": "C:/Users/Administrator/Desktop/block out/每日挑战/2.png",
+    "file": "difficulty-2.png",
+    "width": 83,
+    "height": 93,
+    "sha256": "516d0e9d34a381534a371e6205b54f49f86525795f7e36b14af4b300dcbb4bf6",
+    "transform": "original-byte-copy"
+  },
+  {
+    "key": "difficultyDiamond3",
+    "source": "C:/Users/Administrator/Desktop/block out/每日挑战/3.png",
+    "file": "difficulty-3.png",
+    "width": 83,
+    "height": 93,
+    "sha256": "b6935fe6b261491ff1cd4f1a9cf23fb675f8e6ed61ac5718a1ad3984db4349cc",
+    "transform": "original-byte-copy"
+  },
+  {
+    "key": "rewardCard",
+    "source": "C:/Users/Administrator/Desktop/block out/每日挑战/图标低.png",
+    "file": "reward-card.png",
+    "width": 84,
+    "height": 85,
+    "sha256": "d06108fe006edf3c5292a60225f9ee5b8ff75cbc752ea0c3541fce156b672fbc",
+    "transform": "original-byte-copy"
+  },
+  {
+    "key": "firstClearTag",
+    "source": "C:/Users/Administrator/Desktop/block out/每日挑战/首通.png",
+    "file": "first-clear-tag.png",
+    "width": 94,
+    "height": 36,
+    "sha256": "e9e12d0f7c5a53c539f7036c273e45c9795cab2edf54d185c740b7ee1ca9c12f",
+    "transform": "original-byte-copy"
+  },
+  {
+    "key": "challengeButton",
+    "source": "C:/Users/Administrator/Desktop/block out/每日挑战/按钮.png",
+    "file": "challenge-button.png",
+    "width": 147,
+    "height": 72,
+    "sha256": "fe3312c3b9b4aff5910b92ddce0b0634f0cc97d34cccb2530cb8bf8b29c04b53",
+    "transform": "original-byte-copy"
+  },
+  {
+    "key": "coinIcon",
+    "source": "C:/Users/Administrator/Desktop/block out/每日挑战/金币.png",
+    "file": "coin-icon.png",
+    "width": 57,
+    "height": 59,
+    "sha256": "200f66294014afa40e475c860a8f90b0e34f90e04f1ef1e250b52a4ed6feeadd",
+    "transform": "original-byte-copy"
+  },
+  {
+    "key": "gemIcon",
+    "source": "C:/Users/Administrator/Desktop/block out/每日挑战/解锁.png",
+    "file": "inspiration-icon.png",
+    "width": 53,
+    "height": 45,
+    "sha256": "b319190accaafb3f464666b6cd69aa7a4737f6fed39f1c638acd4fb12fdec4b4",
+    "transform": "original-byte-copy"
+  }
+]

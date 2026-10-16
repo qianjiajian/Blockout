@@ -99,6 +99,16 @@ const cellPoint = (page, state, block, shapeIndex = 0) => {
     y: state.board.innerY + (block.y + dy + 0.5) * state.board.cell,
   });
 };
+const performGuideGesture = async (page, guide) => {
+  const start = screenPoint(page, guide.start);
+  await page.mouse.move(start.x, start.y);
+  await page.mouse.down();
+  for (const point of guide.points?.slice(1) ?? []) {
+    const destination = screenPoint(page, point);
+    await page.mouse.move(destination.x, destination.y, { steps: 3 });
+  }
+  await page.mouse.up();
+};
 const seed = async (page, nextSave = save()) => {
   await page.goto(playtestUrl, { waitUntil: "networkidle" });
   await page.evaluate((value) => localStorage.setItem("color-escape-save-v1", JSON.stringify(value)), nextSave);
@@ -418,9 +428,7 @@ block = state.puzzle.blocks.find((candidate) => candidate.id === state.level.onb
 if (!block) throw new Error("Selection-feedback E2E: onboarding hint block missing");
 if (!state.onboarding.guide) throw new Error("Selection-feedback E2E: onboarding guide missing");
 const onboardingBlockCount = state.puzzle.blocks.length;
-start = screenPoint(onboarding, state.onboarding.guide.start);
-await onboarding.mouse.move(start.x, start.y);
-await onboarding.mouse.down();
+await performGuideGesture(onboarding, state.onboarding.guide);
 await onboarding.waitForTimeout(100);
 state = await debug(onboarding);
 const tutorialDirectExit = state.onboarding.basicsSeen

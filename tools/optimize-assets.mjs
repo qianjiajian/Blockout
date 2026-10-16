@@ -68,6 +68,7 @@ const homeV3Assets = [
   "start-button.png", "navigation-bar.png", "navigation-selected.png",
   "navigation-divider.png", "shop-icon.png", "leaderboard-icon.png", "home-icon.png",
   "journey-icon.png", "collection-icon.png", "daily-tasks-entry.png", "achievements-entry.png",
+  "shop-icon-locked.png", "leaderboard-icon-locked.png", "journey-icon-locked.png",
 ].map((name) => [`art-source/ui/home-v3/${name}`, `public/assets/art/ui/home-v3/${name}`]);
 for (const [source, output] of homeV3Assets) {
   const target = resolve(root, output);
@@ -189,12 +190,13 @@ for (const [page, names] of Object.entries(formalPageAssets)) {
   }
 }
 
-// The supplied Daily Tasks V2 cutouts are native-size, byte-for-byte PNGs.
+// The supplied Daily Tasks V2 cutouts and ImageGen claimed check are byte-for-byte PNGs.
 // Keep the annotated 1.png reference out of runtime output.
 const dailyTaskV2Assets = [
   "panel.png", "close.png", "task-booster.png", "task-trophy.png", "task-shield.png",
   "chest.png", "calendar.png", "summary-panel.png", "button-green.png", "button-grey.png",
   "button-yellow.png", "progress-track.png", "progress-fill.png", "bonus-panel.png", "task-row.png",
+  "claimed-check.png",
 ];
 for (const name of dailyTaskV2Assets) {
   const source = resolve(root, "art-source/ui/formal-pages/daily-tasks-v2", name);
@@ -205,12 +207,13 @@ for (const name of dailyTaskV2Assets) {
 }
 
 // Achievements V2 shares the exact Daily Tasks close/grey-button bytes above.
-// Export its ten unique native PNGs, including the supplied row frames;
+// Export its eleven page-owned PNGs, including the supplied row frames and reused ImageGen check;
 // the annotated reference stays source-only.
 const achievementV2Assets = [
   "medal-inactive.png", "medal-active.png", "summary-panel.png", "button-green.png",
   "progress-track.png", "progress-fill-green.png", "progress-fill-blue.png", "panel.png",
   "row-active.png", "row-inactive.png",
+  "claimed-check.png",
 ];
 for (const name of achievementV2Assets) {
   const source = resolve(root, "art-source/ui/formal-pages/achievements-v2", name);

@@ -36,10 +36,10 @@ async function mutateManifest(temp, mutation) {
   await writeFile(file, JSON.stringify(manifest));
 }
 
-test("all eleven real MP3 streams decode to their exact archived frame counts", async () => {
+test("all six generated runtime MP3 streams decode to their exact archived frame counts", async () => {
   const result = await verifyOriginalSfx(root, ffmpeg);
-  assert.equal(result.measurements.length, 11);
-  assert.equal(result.bytes, 103_925);
+  assert.equal(result.measurements.length, 6);
+  assert.equal(result.bytes, 46_656);
   assert.ok(result.measurements.every((row) => Math.abs(row.onsetDifferenceMs) < 1));
 });
 

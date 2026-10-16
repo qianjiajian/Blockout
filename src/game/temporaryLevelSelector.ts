@@ -121,18 +121,27 @@ const nonNegativeInteger = (value: number): number => (
   Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0
 );
 
-export const temporaryLevelSelectorPageCount = (totalLevels: number): number => (
-  Math.max(1, Math.ceil(nonNegativeInteger(totalLevels) / TEMPORARY_LEVEL_SELECTOR_PAGE_SIZE))
+export type TemporaryLevelSelectorSource = number | readonly number[];
+
+const levelCount = (levels: TemporaryLevelSelectorSource): number => (
+  typeof levels === "number" ? nonNegativeInteger(levels) : levels.length
 );
 
-export const clampTemporaryLevelSelectorPage = (page: number, totalLevels: number): number => {
+export const temporaryLevelSelectorPageCount = (totalLevels: TemporaryLevelSelectorSource): number => (
+  Math.max(1, Math.ceil(levelCount(totalLevels) / TEMPORARY_LEVEL_SELECTOR_PAGE_SIZE))
+);
+
+export const clampTemporaryLevelSelectorPage = (page: number, totalLevels: TemporaryLevelSelectorSource): number => {
   const lastPage = temporaryLevelSelectorPageCount(totalLevels) - 1;
   const normalized = Number.isFinite(page) ? Math.floor(page) : 0;
   return Math.max(0, Math.min(lastPage, normalized));
 };
 
-export const temporaryLevelSelectorPageForLevel = (levelId: number, totalLevels: number): number => {
-  const count = nonNegativeInteger(totalLevels);
+export const temporaryLevelSelectorPageForLevel = (levelId: number, totalLevels: TemporaryLevelSelectorSource): number => {
+  if (typeof totalLevels !== "number") {
+    return Math.floor(Math.max(0, totalLevels.indexOf(levelId)) / TEMPORARY_LEVEL_SELECTOR_PAGE_SIZE);
+  }
+  const count = levelCount(totalLevels);
   if (count === 0) return 0;
   const normalizedLevel = Math.max(1, Math.min(count, Math.floor(Number(levelId)) || 1));
   return Math.floor((normalizedLevel - 1) / TEMPORARY_LEVEL_SELECTOR_PAGE_SIZE);
@@ -141,20 +150,21 @@ export const temporaryLevelSelectorPageForLevel = (levelId: number, totalLevels:
 export const temporaryLevelSelectorLevelAt = (
   page: number,
   slotIndex: number,
-  totalLevels: number,
+  totalLevels: TemporaryLevelSelectorSource,
 ): number | undefined => {
-  const count = nonNegativeInteger(totalLevels);
+  const count = levelCount(totalLevels);
   const slot = Math.floor(slotIndex);
   if (!Number.isFinite(slotIndex) || slot < 0 || slot >= TEMPORARY_LEVEL_SELECTOR_PAGE_SIZE || count === 0) {
     return undefined;
   }
   const normalizedPage = clampTemporaryLevelSelectorPage(page, count);
-  const levelId = normalizedPage * TEMPORARY_LEVEL_SELECTOR_PAGE_SIZE + slot + 1;
-  return levelId <= count ? levelId : undefined;
+  const index = normalizedPage * TEMPORARY_LEVEL_SELECTOR_PAGE_SIZE + slot;
+  if (index >= count) return undefined;
+  return typeof totalLevels === "number" ? index + 1 : totalLevels[index];
 };
 
 export const temporaryLevelSelectorLevelCells = (
-  totalLevels: number,
+  totalLevels: TemporaryLevelSelectorSource,
   page: number,
   selectedLevel?: number,
 ): TemporaryLevelSelectorCell[] => {
@@ -183,7 +193,7 @@ export const temporaryLevelSelectorLevelCells = (
 };
 
 export const temporaryLevelSelectorLayout = (
-  totalLevels: number,
+  totalLevels: TemporaryLevelSelectorSource,
   page: number,
   selectedLevel?: number,
 ): TemporaryLevelSelectorLayout => {

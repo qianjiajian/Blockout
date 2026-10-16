@@ -68,7 +68,8 @@ export const revisedSpatialStateKey = (snapshot: PuzzleSnapshot): string => {
 const unsupportedReasons = (level: LevelSpec): string[] => {
   const reasons: string[] = [];
   if (!usesRevisedMechanisms(level)) reasons.push("Explicit revised mechanism profile required.");
-  if (level.blocks.some((block) => block.timedBombSeconds !== undefined)) {
+  if (level.blocks.some((block) => block.timedBombSeconds !== undefined
+    && block.timedBombSeconds <= level.timeSeconds)) {
     reasons.push("Bomb deadlines require a time-aware route verifier; this search does not disable or ignore them.");
   }
   if (level.generators?.some((machine) => machine.trigger === "time")) reasons.push("Timed generators are unsupported.");

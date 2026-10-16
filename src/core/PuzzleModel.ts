@@ -98,6 +98,20 @@ export interface PuzzleModelOptions {
   deferExitCompletion?: boolean;
 }
 
+/** Detached scalar state for presentation that does not need board geometry. */
+export interface PuzzleStatus {
+  readonly cleared: number;
+  readonly moves: number;
+  readonly remainingSeconds: number;
+  readonly timeFreezeSeconds: number;
+  readonly pulseRescueUsed?: boolean;
+  readonly started: boolean;
+  readonly autonomousStarted: boolean;
+  readonly complete: boolean;
+  readonly failed: boolean;
+  readonly pendingExitAnimationCount: number;
+}
+
 let nextExitAnimationNamespace = 1;
 
 export class PuzzleModel {
@@ -120,6 +134,8 @@ export class PuzzleModel {
   private moves = 0;
   private remainingSeconds: number;
   private timeFreezeSeconds = 0;
+  /** Run-scoped: an effective pulse has already satisfied the rescue lesson. */
+  private pulseRescueUsed = false;
   private started = false;
   private autonomousStarted = false;
   private complete = false;
@@ -198,6 +214,22 @@ export class PuzzleModel {
     if (this.revisedRules) this.settleRevisedSpace();
   }
 
+  /** Each read stays fixed across subsequent ticks, actions and undo. */
+  readStatus(): PuzzleStatus {
+    return {
+      cleared: this.cleared,
+      moves: this.moves,
+      remainingSeconds: this.remainingSeconds,
+      timeFreezeSeconds: this.timeFreezeSeconds,
+      ...(this.level.pulseRescue ? { pulseRescueUsed: this.pulseRescueUsed } : {}),
+      started: this.started,
+      autonomousStarted: this.autonomousStarted,
+      complete: this.complete,
+      failed: this.failed,
+      pendingExitAnimationCount: this.pendingExitAnimations.size,
+    };
+  }
+
   snapshot(): PuzzleSnapshot {
     return {
       ...(this.revisedRules ? { mechanismRules: this.level.mechanismRules } : {}),
@@ -231,6 +263,7 @@ export class PuzzleModel {
       moves: this.moves,
       remainingSeconds: this.remainingSeconds,
       timeFreezeSeconds: this.timeFreezeSeconds,
+      ...(this.level.pulseRescue ? { pulseRescueUsed: this.pulseRescueUsed } : {}),
       started: this.started,
       autonomousStarted: this.autonomousStarted,
       complete: this.complete,
@@ -281,6 +314,7 @@ export class PuzzleModel {
     this.moves = snapshot.moves;
     this.remainingSeconds = snapshot.remainingSeconds;
     this.timeFreezeSeconds = snapshot.complete || snapshot.failed ? 0 : (snapshot.timeFreezeSeconds ?? 0);
+    this.pulseRescueUsed = Boolean(this.level.pulseRescue && snapshot.pulseRescueUsed);
     this.started = snapshot.started;
     this.autonomousStarted = snapshot.autonomousStarted;
     this.complete = snapshot.complete;
@@ -821,6 +855,9 @@ export class PuzzleModel {
       if (block.frozen > 0) {
         const next = Math.max(0, block.frozen - amount);
         if (next !== block.frozen) changed = true;
+        if (block.id === this.level.pulseRescue?.targetBlockId && next < block.frozen) {
+          this.pulseRescueUsed = true;
+        }
         block.frozen = next;
       }
     }
@@ -845,9 +882,15 @@ export class PuzzleModel {
   private advanceCounters(clearedId: string, blockRemoved: boolean): boolean {
     for (const gate of this.gates) gate.frozen = Math.max(0, gate.frozen - 1);
     for (const door of this.flipDoors) door.frozen = Math.max(0, door.frozen - 1);
+    const pulseRescueTargetId = this.level.pulseRescue?.targetBlockId;
     for (const block of this.blocks) {
       if (this.revisedRules && !this.isBlockVisible(block)) continue;
-      if (block.id !== clearedId) block.frozen = Math.max(0, block.frozen - 1);
+      // Require one effective pulse, not a pulse specifically at count one.
+      // An early pulse must let later normal clears finish thawing the target.
+      if (block.id !== clearedId
+        && !(block.id === pulseRescueTargetId && block.frozen === 1 && !this.pulseRescueUsed)) {
+        block.frozen = Math.max(0, block.frozen - 1);
+      }
     }
     for (const shutter of this.shutters) {
       if (this.revisedRules && shutter.skin === "lift") continue;
@@ -1486,6 +1529,40 @@ export const validateLevel = (level: LevelSpec): void => {
     }
     if (afterMoves < 1 || !Number.isInteger(afterMoves)) {
       throw new Error(`Level ${level.id}: strategy focus must have a positive integer threshold`);
+    }
+  }
+
+  if (level.rocketRescue) {
+    if (level.rocketRescue.trigger !== "no-exit-deadlock") {
+      throw new Error(`Level ${level.id}: unsupported rocket rescue trigger`);
+    }
+    if (!level.blocks.some((candidate) => candidate.id === level.rocketRescue!.targetBlockId)) {
+      throw new Error(`Level ${level.id}: rocket rescue references missing block ${level.rocketRescue.targetBlockId}`);
+    }
+    if (!level.blocks.some((candidate) => candidate.id === level.rocketRescue!.deadlockBlockId)) {
+      throw new Error(`Level ${level.id}: rocket rescue deadlock references missing block ${level.rocketRescue.deadlockBlockId}`);
+    }
+    if (level.rocketRescue.deadlockPosition.length !== 2
+      || level.rocketRescue.deadlockPosition.some((value) => !Number.isInteger(value))) {
+      throw new Error(`Level ${level.id}: rocket rescue deadlock position must be an integer point`);
+    }
+  }
+
+  if (level.pulseRescue) {
+    if (level.pulseRescue.trigger !== "frozen-one") {
+      throw new Error(`Level ${level.id}: unsupported pulse rescue trigger`);
+    }
+    const target = level.blocks.find((candidate) => candidate.id === level.pulseRescue!.targetBlockId);
+    if (!target) {
+      throw new Error(`Level ${level.id}: pulse rescue references missing block ${level.pulseRescue.targetBlockId}`);
+    }
+    if (level.pulseRescue.targetPosition.length !== 2
+      || level.pulseRescue.targetPosition.some((value) => !Number.isInteger(value))) {
+      throw new Error(`Level ${level.id}: pulse rescue target position must be an integer point`);
+    }
+    if (!Number.isInteger(level.pulseRescue.requiredFrozen) || level.pulseRescue.requiredFrozen < 1
+      || target.frozen !== level.pulseRescue.requiredFrozen) {
+      throw new Error(`Level ${level.id}: pulse rescue requiredFrozen must match its target block`);
     }
   }
 

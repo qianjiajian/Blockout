@@ -1,0 +1,1 @@
+import fs from 'node:fs'; const x=JSON.parse(fs.readFileSync('deliverables/league-regeneration-20261004/formal/early-1-19.json','utf8')); console.dir(x.acceptedRows.map(a=>({index:a.index,id:a.level.id,specials:a.specials,specialEvidence:a.specialEvidence,replay:a.replay,lowerProof:a.lowerProof,proof:a.proof?.sourceLevelSha256,levelSha:a.levelSha256,old:a.idRemap})),{depth:4});

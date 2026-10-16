@@ -1,0 +1,130 @@
+{
+  "status": "PASS",
+  "assetSha256": "8bec027e694245c5ecff444fc4491999bcfcdd185ec3135b5d7e72fa34eeb816",
+  "sourceRuntimeIdentical": true,
+  "dimensions": {
+    "width": 980,
+    "height": 1294
+  },
+  "cornerAlpha": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "transparentPixels": 96284,
+  "uniformScale": true,
+  "layout": {
+    "panel": {
+      "x": 65.8153846153846,
+      "y": 298.4419466248038,
+      "width": 364.3692307692308,
+      "height": 481.1161067503925
+    },
+    "title": {
+      "x": 111.17563579277864,
+      "y": 302.16,
+      "width": 269.93067503924647,
+      "height": 71.75843014128729
+    },
+    "close": {
+      "x": 374.04200941915224,
+      "y": 345.6612244897959,
+      "width": 53.539968602825745,
+      "height": 53.16816326530613
+    },
+    "content": {
+      "x": 105.97036106750392,
+      "y": 385.072590266876,
+      "width": 281.08483516483517,
+      "height": 263.9817896389325
+    },
+    "buy": {
+      "x": 156.53588697017267,
+      "y": 666.9010361067504,
+      "width": 180.32558869701728,
+      "height": 78.45092621664051
+    },
+    "titleText": {
+      "x": 246,
+      "y": 333,
+      "size": 31,
+      "maxWidth": 258
+    },
+    "icon": {
+      "x": 179,
+      "y": 421,
+      "width": 134,
+      "height": 142
+    },
+    "quantityText": {
+      "x": 287,
+      "y": 540,
+      "size": 34,
+      "maxWidth": 72
+    },
+    "description": {
+      "x": 111,
+      "y": 579,
+      "width": 274,
+      "height": 53
+    },
+    "descriptionText": {
+      "x": 246,
+      "y": 595,
+      "size": 18,
+      "lineHeight": 21,
+      "maxWidth": 254
+    },
+    "buyText": {
+      "x": 202,
+      "y": 706,
+      "size": 26,
+      "maxWidth": 66
+    },
+    "coinIcon": {
+      "x": 238,
+      "y": 690,
+      "width": 31,
+      "height": 31
+    },
+    "priceText": {
+      "x": 296,
+      "y": 706,
+      "size": 24,
+      "maxWidth": 57
+    },
+    "feedbackText": {
+      "x": 246,
+      "y": 650,
+      "size": 14,
+      "maxWidth": 290
+    }
+  },
+  "frames": {
+    "title": {
+      "x": 122,
+      "y": 10,
+      "width": 726,
+      "height": 193
+    },
+    "close": {
+      "x": 829,
+      "y": 127,
+      "width": 144,
+      "height": 143
+    },
+    "content": {
+      "x": 108,
+      "y": 233,
+      "width": 756,
+      "height": 710
+    },
+    "buy": {
+      "x": 244,
+      "y": 991,
+      "width": 485,
+      "height": 211
+    }
+  }
+}

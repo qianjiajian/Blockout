@@ -1,0 +1,5 @@
+{
+  "prompt": "Precisely edit the supplied plain white modal panel. Preserve its exact shape, aspect ratio, thin dark rounded border, white paper interior, and all interior pixels. Remove ONLY the white background OUTSIDE the outer dark rounded border: make the exterior background and the corners OUTSIDE this panel fully transparent, like an isolated UI cutout. The LARGE WHITE CENTRAL INTERIOR MUST REMAIN SOLID WHITE AND FULLY OPAQUE. This is a filled white card, NEVER a hollow frame. Do not remove any white pixels inside the border. Do not add content, lighting, shadows, new outlines, or change proportions. Use transparent alpha outside, no checkerboard.",
+  "source": "C:\\Users\\Administrator\\.codex\\generated_images\\01a0d940-cac2-7f91-8b1a-a758bfea2c2a\\exec-71a63faa-87e7-4b07-b1f5-87904c6d48ce.png",
+  "previous": "generated-originals/panel-frame.png"
+}

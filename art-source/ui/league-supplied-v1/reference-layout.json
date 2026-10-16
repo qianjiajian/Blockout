@@ -1,0 +1,45 @@
+{
+  "reference": "reference-2.png",
+  "artboard": [720, 1584],
+  "method": "Native-size exact opaque-pixel template matches; title and tier-name translucent backdrops matched after alpha compositing with known underlying layers. Text and overlapping controls are excluded as occlusions.",
+  "layers": {
+    "stage-background": [0, 30, 720, 835],
+    "top-header": [0, 0, 720, 201],
+    "list-panel": [0, 628, 720, 956],
+    "bottom-footer": [0, 1460, 720, 124],
+    "title-base": [236, 86, 235, 71],
+    "tier-name-base": [196, 541, 322, 66],
+    "back-button": [27, 78, 73, 74],
+    "info-button": [629, 78, 73, 74],
+    "timer-panel": [153, 168, 415, 89],
+    "arrow-left": [19, 402, 48, 55],
+    "arrow-right": [646, 402, 48, 55],
+    "row-first": [33, 685, 655, 118],
+    "row-second": [33, 801, 655, 117],
+    "row-third": [33, 917, 655, 118],
+    "row-regular-4": [33, 1033, 655, 115],
+    "row-regular-5": [33, 1147, 655, 115],
+    "row-regular-6": [33, 1261, 655, 115],
+    "first-row-score-token": [411, 712, 49, 57],
+    "first-row-level-star": [211, 741, 33, 34],
+    "first-row-coin-reward": [592, 703, 66, 50],
+    "self-row": [4, 1350, 715, 112],
+    "challenge-button": [588, 1382, 103, 50]
+  },
+  "detailReference": "reference-4.png",
+  "detailLayers": {
+    "detail-panel": [63, 347, 594, 806],
+    "close-button": [566, 390, 94, 98]
+  },
+  "annotatedFontSizes": {
+    "titleAndCountdown": 44,
+    "tierName": 50,
+    "playerNameAndScore": 33,
+    "levelAndReward": 23,
+    "regularAndSelfRank": 47,
+    "challenge": 26,
+    "detailTitle": 60,
+    "detailBody": 40
+  },
+  "policy": "Coordinates describe reference artwork, not new account or gameplay rules. Keep live season time, names, ranks, scores, levels and reward configuration. The sample details X text is a placeholder. Existing profile avatars and eight tier badges supply the illustrated avatar and trophy slots. All supplied PNG files remain original-byte copies."
+}

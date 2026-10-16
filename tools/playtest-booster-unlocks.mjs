@@ -107,6 +107,19 @@ for (const [highestLevel, expected] of [
   await page.screenshot({ path: resolve(output, `03-level-${highestLevel}-unlock-state.png`) });
 }
 
+// The teaching booster must also be usable on the level that introduces it.
+// A legacy/in-flight save can still report level 6 while the player is
+// already in level 7; this is the state that previously rendered the rocket
+// as locked in the challenge HUD.
+await seed(page, 6);
+await page.evaluate(() => window.__COLOR_ESCAPE__.loadLevel(7, true));
+await page.waitForTimeout(80);
+state = await debug(page);
+if (state.screen !== "playing" || state.puzzle.levelId !== 7 || !state.controls.boosters.rocket) {
+  throw new Error(`Booster unlock E2E: teaching level did not unlock rocket ${JSON.stringify({ screen: state.screen, level: state.puzzle.levelId, controls: state.controls })}`);
+}
+await page.screenshot({ path: resolve(output, "04-level-7-teaching-rocket-unlocked.png") });
+
 const small = await browser.newPage({ viewport: { width: 320, height: 568 } });
 attachErrors(small);
 await seed(small, 1);
@@ -116,7 +129,7 @@ state = await debug(small);
 if (Object.values(state.controls.boosters).some(Boolean)) {
   throw new Error("Booster unlock E2E: 320x568 fresh controls were not locked");
 }
-await small.screenshot({ path: resolve(output, "04-level-1-three-locked-320x568.png") });
+await small.screenshot({ path: resolve(output, "05-level-1-three-locked-320x568.png") });
 
 await browser.close();
 if (errors.length) throw new Error(`Booster unlock browser errors:\n${errors.join("\n")}`);

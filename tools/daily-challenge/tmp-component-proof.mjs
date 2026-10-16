@@ -1,0 +1,5 @@
+import { build } from "esbuild";
+const b=await build({stdin:{resolveDir:process.cwd(),loader:"ts",contents:`export { validateLevel } from "./src/core/PuzzleModel.ts"; export { checkRevisedRepositionFloor } from "./src/core/revisedRepositionFloor.ts";`},bundle:true,write:false,platform:"node",format:"esm",logLevel:"silent"});
+const {validateLevel,checkRevisedRepositionFloor}=await import(`data:text/javascript;base64,${Buffer.from(b.outputFiles[0].text).toString("base64")}`);
+function one(i){return {mechanismRules:"revised-2026-09-23-v1.4",id:910000+i,name:`pair-${i}`,difficulty:"super",timeSeconds:999,reward:0,width:2,height:2,gates:[{id:"rg",side:"right",offset:0,size:1,color:"red"},{id:"bg",side:"left",offset:0,size:1,color:"blue"}],blocks:[{id:"a",x:0,y:0,shape:[[0,0]],color:"red"},{id:"b",x:1,y:0,shape:[[0,0]],color:"blue"}]};}
+for(const floor of [1,2]){const l=one(floor);validateLevel(l);const x=checkRevisedRepositionFloor(l,{floor,maxStates:5000,maxDragStates:100,maxTransitions:250000,maxMilliseconds:5000});console.log(floor,x.status,x.termination,x.exploredStates,x.discoveredStates,x.attemptedTransitions,x.relaxedNonClearingDrags);}

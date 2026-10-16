@@ -112,7 +112,7 @@ const restoreFrozenExit = (level: LevelSpec, source: LevelSpec): LevelSpec => {
   )) ?? sourceFrozen.find((gate) => exits.some((candidate) => candidate.color === gate.color));
   const target = sourceGate
     ? exits.find((gate) => gate.color === sourceGate.color)
-    : exits.find((gate) => !visibleColors.has(gate.color)) ?? exits.at(-1);
+    : exits.find((gate) => !visibleColors.has(gate.color)) ?? exits[exits.length - 1];
   if (!target) return level;
   const apply = <T extends GateSpec>(gate: T): T => gate.id === target.id ? { ...gate, frozen: 1 } : gate;
   return {

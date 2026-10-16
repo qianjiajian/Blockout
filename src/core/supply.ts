@@ -14,9 +14,9 @@ export interface SupplyItem {
 export const SUPPLY_ORDER: SupplyKind[] = ["time", "rocket", "pulse"];
 
 export const SUPPLY_ITEMS: Record<SupplyKind, SupplyItem> = {
-  time: { kind: "time", title: "冻结", effect: "总时间与炸弹暂停10秒", price: 180, maxStock: 9, unlockLevel: 4 },
-  rocket: { kind: "rocket", title: "火箭", effect: "移除一个活动方块", price: 240, maxStock: 9, unlockLevel: 7 },
-  pulse: { kind: "pulse", title: "脉冲", effect: "机关进度 -2", price: 210, maxStock: 9, unlockLevel: 10 },
+  time: { kind: "time", title: "冻结", effect: "总时间与炸弹暂停10秒", price: 300, maxStock: 9, unlockLevel: 4 },
+  rocket: { kind: "rocket", title: "火箭", effect: "移除一个活动方块", price: 400, maxStock: 9, unlockLevel: 7 },
+  pulse: { kind: "pulse", title: "脉冲", effect: "机关进度 -2", price: 400, maxStock: 9, unlockLevel: 10 },
 };
 
 export const unlockedSupplyKinds = (highestLevel: number): SupplyKind[] => {

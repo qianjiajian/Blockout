@@ -14,9 +14,9 @@ const COLORS = {
   purple: "紫", orange: "橙", pink: "粉", cyan: "浅蓝",
 } as const;
 const SHAPES = {
-  13: { suffix: "rectangle-2x3", original: "2X3", columns: 2, rows: 3, width: 192, height: 296 },
+  13: { suffix: "rectangle-2x3", original: "2X3", columns: 2, rows: 3, width: 191, height: 296 },
   21: { suffix: "rectangle-3x2", original: "3X2", columns: 3, rows: 2, width: 285, height: 201 },
-  14: { suffix: "square-3x3", original: "3X3", columns: 3, rows: 3, width: 286, height: 296 },
+  14: { suffix: "square-3x3", original: "3X3", columns: 3, rows: 3, width: 285, height: 296 },
 } as const;
 type Color = keyof typeof COLORS;
 type SupplementalShapeId = keyof typeof SHAPES;
@@ -67,7 +67,7 @@ describe("user-supplied supplemental whole-block art", () => {
     expect(supplemental.schemaVersion).toBe(1);
     expect(supplemental.transform).toBe("copy");
     expect(supplemental.sourceDirectory.replace(/\\/g, "/")).toBe(
-      "C:/Users/Administrator/Desktop/block out/方块补充1/方块补充1",
+      "C:/Users/Administrator/Desktop/block out/方块新/方块新",
     );
     const expected = Object.keys(COLORS).flatMap((color) => (
       Object.keys(SHAPES).map((shapeId) => `${color}:${shapeId}`)

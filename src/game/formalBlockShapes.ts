@@ -95,6 +95,36 @@ const rotatedSize = (
   ? [width, height]
   : [height, width];
 
+type ShapeTemplate = Readonly<Omit<FormalBlockShapeMatch, "minX" | "minY">>;
+
+// Only authored silhouettes enter this fixed-size index. First match wins in
+// the original q0-first/source-order traversal; arbitrary caller input is
+// never retained. Translation remains specific to each returned match.
+const SHAPE_MATCH_INDEX: ReadonlyMap<string, ShapeTemplate> = (() => {
+  const index = new Map<string, ShapeTemplate>();
+  for (const quarterTurns of [0, 1, 2, 3] as const) {
+    for (const definition of FORMAL_BLOCK_SHAPES) {
+      const rotatedCells = definition.cells.map((cell) => rotateCell(
+        cell, definition.canonicalWidth, definition.canonicalHeight, quarterTurns,
+      ));
+      const key = layoutKey(rotatedCells);
+      if (index.has(key)) continue;
+      const [targetWidth, targetHeight] = rotatedSize(
+        definition.canonicalWidth, definition.canonicalHeight, quarterTurns,
+      );
+      index.set(key, {
+        shapeId: definition.shapeId,
+        quarterTurns,
+        targetWidth,
+        targetHeight,
+        canonicalWidth: definition.canonicalWidth,
+        canonicalHeight: definition.canonicalHeight,
+      });
+    }
+  }
+  return index;
+})();
+
 /**
  * Finds a supplied formal whole-block sprite for an arbitrary translated grid
  * silhouette. Reflection is intentionally never considered.
@@ -117,39 +147,18 @@ export const matchFormalBlockShape = (
   const normalizedCells = absoluteCells.map(([x, y]) => [x - minX, y - minY] as const);
   const targetKey = layoutKey(normalizedCells);
 
-  // Try every source image without rotation first, then progressively rotated
-  // variants. This keeps the dedicated horizontal and vertical bar art native.
-  for (const quarterTurns of [0, 1, 2, 3] as const) {
-    if (rotationPolicy === "native-only" && quarterTurns !== 0) continue;
-    for (const definition of FORMAL_BLOCK_SHAPES) {
-      if (definition.cells.length !== normalizedCells.length) continue;
-      const rotatedCells = definition.cells.map((cell) => rotateCell(
-        cell,
-        definition.canonicalWidth,
-        definition.canonicalHeight,
-        quarterTurns,
-      ));
-      if (layoutKey(rotatedCells) !== targetKey) continue;
-
-      const [targetWidth, targetHeight] = rotatedSize(
-        definition.canonicalWidth,
-        definition.canonicalHeight,
-        quarterTurns,
-      );
-      return {
-        shapeId: definition.shapeId,
-        quarterTurns,
-        minX,
-        minY,
-        targetWidth,
-        targetHeight,
-        canonicalWidth: definition.canonicalWidth,
-        canonicalHeight: definition.canonicalHeight,
-      };
-    }
-  }
-
-  return undefined;
+  const template = SHAPE_MATCH_INDEX.get(targetKey);
+  if (!template || (rotationPolicy === "native-only" && template.quarterTurns !== 0)) return undefined;
+  return {
+    shapeId: template.shapeId,
+    quarterTurns: template.quarterTurns,
+    minX,
+    minY,
+    targetWidth: template.targetWidth,
+    targetHeight: template.targetHeight,
+    canonicalWidth: template.canonicalWidth,
+    canonicalHeight: template.canonicalHeight,
+  };
 };
 
 // Apply the native-art contract only to accepted remakes and the adapted first

@@ -1,0 +1,1 @@
+import fs from 'node:fs';const l=JSON.parse(fs.readFileSync('deliverables/league-regeneration-20261005/round2/early-hard-source42-105.json')).level;for(const b of l.blocks)console.log(b.id,b.color,b.x,b.y,JSON.stringify(b.shape));

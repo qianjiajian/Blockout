@@ -155,6 +155,15 @@ export const getJourneyEpisode = (highestLevel: unknown): JourneyEpisode => {
 
 export const getJourneyEpisodeIndex = (highestLevel: unknown): number => getJourneyEpisode(highestLevel).index;
 
+/** Chapter ranges locate the map; backgrounds require clearing their label's level. */
+export const isJourneyEpisodeUnlocked = (
+  episode: Pick<JourneyEpisode, "unlockLevel">,
+  highestLevel: unknown,
+  completedLevels?: readonly number[],
+): boolean => episode.unlockLevel <= 1 || (completedLevels === undefined
+  ? episode.unlockLevel < clampJourneyLevel(highestLevel)
+  : completedLevels.includes(episode.unlockLevel));
+
 /**
  * Normalizes a persisted/selected theme and prevents navigating into a chapter
  * that the player's current Journey progress has not unlocked yet.
@@ -162,20 +171,22 @@ export const getJourneyEpisodeIndex = (highestLevel: unknown): number => getJour
 export const sanitizeJourneyEpisodeIndex = (
   value: unknown,
   highestLevel: unknown,
+  completedLevels?: readonly number[],
 ): number => {
   const numeric = Number(value);
   if (!Number.isFinite(numeric)) return 1;
 
   const requestedIndex = Math.max(1, Math.floor(numeric));
-  const highestUnlockedIndex = JOURNEY_EPISODES
-    .filter((episode) => episode.unlockLevel <= clampJourneyLevel(highestLevel))
-    .at(-1)?.index ?? 1;
-  return Math.min(requestedIndex, highestUnlockedIndex);
+  const eligibleEpisodes = JOURNEY_EPISODES
+    .filter((episode) => episode.index <= requestedIndex
+      && isJourneyEpisodeUnlocked(episode, highestLevel, completedLevels));
+  return eligibleEpisodes[eligibleEpisodes.length - 1]?.index ?? 1;
 };
 
 export const getJourneySegment = (level: unknown): JourneySegment => {
   const current = clampJourneyLevel(level);
-  return JOURNEY_SEGMENTS.find((segment) => current <= segment.endLevel) ?? JOURNEY_SEGMENTS.at(-1)!;
+  return JOURNEY_SEGMENTS.find((segment) => current <= segment.endLevel)
+    ?? JOURNEY_SEGMENTS[JOURNEY_SEGMENTS.length - 1]!;
 };
 
 // Three physical cards are visible in the supplied formal layout. These legacy
@@ -191,9 +202,9 @@ const JOURNEY_DEFAULT_ANCHORS = Object.freeze(JOURNEY_SEGMENTS.flatMap((segment)
 export const getJourneyDefaultAnchorLevel = (level: unknown): number => {
   const current = clampJourneyLevel(level);
   const segment = getJourneySegment(current);
-  return JOURNEY_DEFAULT_ANCHORS
-    .filter((start) => start >= segment.startLevel && start <= segment.endLevel - 2 && start <= current)
-    .at(-1) ?? segment.startLevel;
+  const anchors = JOURNEY_DEFAULT_ANCHORS
+    .filter((start) => start >= segment.startLevel && start <= segment.endLevel - 2 && start <= current);
+  return anchors[anchors.length - 1] ?? segment.startLevel;
 };
 
 export const getJourneyReward = (milestoneLevel: unknown): JourneyReward | undefined => {
@@ -225,7 +236,7 @@ export const sanitizeJourneyProgressMemory = (value: unknown): JourneyProgressMe
 
 /**
  * Chooses one modal event. Episode introductions are chronological and always
- * take priority; after they are acknowledged, the newest reached unclaimed
+ * take priority; after they are acknowledged, the newest completed unclaimed
  * milestone reward is returned.
  */
 export const findPendingJourneyEvent = (
@@ -236,14 +247,12 @@ export const findPendingJourneyEvent = (
   const current = clampJourneyLevel(highestLevel);
   const safeMemory = sanitizeJourneyProgressMemory(memory);
   const seenEpisodes = new Set(safeMemory.seenEpisodeUnlockLevels);
-  const episodeUnlock = JOURNEY_EPISODE_UNLOCK_LEVELS.find(
-    (level) => level <= current && !seenEpisodes.has(level),
+  const episodeUnlock = JOURNEY_EPISODES.slice(1).find(
+    (episode) => isJourneyEpisodeUnlocked(episode, current, completedLevels)
+      && !seenEpisodes.has(episode.unlockLevel),
   );
 
-  if (episodeUnlock !== undefined) {
-    const episode = JOURNEY_EPISODES.find((item) => item.unlockLevel === episodeUnlock);
-    if (episode) return { type: "episode_unlock", level: episodeUnlock, episode };
-  }
+  if (episodeUnlock) return { type: "episode_unlock", level: episodeUnlock.unlockLevel, episode: episodeUnlock };
 
   const claimed = new Set(safeMemory.claimedMilestoneLevels);
   const completed = completedLevels === undefined ? undefined : new Set(completedLevels);
@@ -268,6 +277,8 @@ export const deriveLegacyJourneyProgress = (
   const completed = completedLevels === undefined ? undefined : new Set(completedLevels);
   return {
     claimedMilestoneLevels: JOURNEY_MILESTONE_LEVELS.filter((level) => completed?.has(level) ?? level < current),
-    seenEpisodeUnlockLevels: JOURNEY_EPISODE_UNLOCK_LEVELS.filter((level) => level <= current),
+    seenEpisodeUnlockLevels: JOURNEY_EPISODES.slice(1)
+      .filter((episode) => isJourneyEpisodeUnlocked(episode, current, completedLevels))
+      .map((episode) => episode.unlockLevel),
   };
 };

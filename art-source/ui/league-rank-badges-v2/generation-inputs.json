@@ -1,0 +1,14 @@
+{
+  "generator": "user-provided-formal-assets",
+  "sourceDirectory": "C:/Users/Administrator/Desktop/block out/1-8勋章",
+  "tiers": [
+    { "id": "bronze", "input": "originals/user-provided-bronze.png" },
+    { "id": "silver", "input": "originals/user-provided-silver.png" },
+    { "id": "gold", "input": "originals/user-provided-gold.png" },
+    { "id": "platinum", "input": "originals/user-provided-platinum.png" },
+    { "id": "emerald", "input": "originals/user-provided-emerald.png" },
+    { "id": "diamond", "input": "originals/user-provided-diamond.png" },
+    { "id": "master", "input": "originals/user-provided-master.png" },
+    { "id": "glory", "input": "originals/user-provided-glory.png" }
+  ]
+}

@@ -24,21 +24,24 @@ export interface HomeTextPlacement {
   maxWidth?: number;
 }
 
-// Coordinates and dimensions are copied from the supplied 720×1584 layout.
-// Rendering uses drawImage(image, x, y), so these dimensions are evidence and
-// hit-test geometry only; they are never passed back to drawImage as a resize.
+// The original HUD uses the supplied 720×1584 native artwork coordinates.
+// The four side entries share square bounds for proportional artwork drawing
+// and hit testing, so replacement icons do not change the column's geometry.
 export const HOME_ART_LAYOUT = {
   background: { x: 0, y: 0, width: 720, height: 1584 },
   header: { x: 0, y: 0, width: 720, height: 201 },
   coinPanel: { x: 42, y: 56, width: 170, height: 48 },
   lifePanel: { x: 242, y: 56, width: 170, height: 48 },
+  lifeControl: { x: 225, y: 47, width: 187, height: 67 },
   coinIcon: { x: 16, y: 47, width: 62, height: 64 },
   heartIcon: { x: 225, y: 47, width: 75, height: 67 },
   coinAdd: { x: 172, y: 61, width: 36, height: 36 },
   lifeAdd: { x: 371, y: 61, width: 36, height: 36 },
   settings: { x: 592, y: 58, width: 82, height: 85 },
-  dailyTaskEntry: { x: 582, y: 226, width: 118, height: 118 },
-  achievementEntry: { x: 580, y: 360, width: 118, height: 118 },
+  dailyTaskEntry: { x: 576, y: 226, width: 118, height: 118 },
+  achievementEntry: { x: 576, y: 398, width: 118, height: 118 },
+  dailyChallengeEntry: { x: 576, y: 570, width: 118, height: 118 },
+  leagueEntry: { x: 576, y: 742, width: 118, height: 118 },
   levelPlate: { x: 228, y: 1122, width: 257, height: 91 },
   previousLevel: { x: 123, y: 1132, width: 76, height: 89 },
   nextLevel: { x: 514, y: 1132, width: 75, height: 87 },

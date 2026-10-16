@@ -1,0 +1,46 @@
+{
+  "source": "C:/Users/Administrator/20261009_115925.mp4",
+  "sha256": "ba9ffb56ee69dd0fd294457d2a60f6cd60264110a01db0d8391a048e03bf79ae",
+  "requestedStartSeconds": 174,
+  "referenceFrameSeconds": 183,
+  "referenceFrame": "raw-183s.png",
+  "referenceFrameSha256": "c91fcbecd9fea6510ccfef22870b8dad73fc7cf51dc5f155feb56abe85fb5ec8",
+  "observed": "结算页底部圆角区域、分段进度条、右侧奖励、只剩8关了。视频仅作布局参考，项目保原每5关名画解锁与50灵感手动获得。",
+  "rawFrames": [
+    {
+      "seconds": 174,
+      "file": "raw-174s.png",
+      "sha256": "5c3cfc37c1f38450fb04457052a1521237f43162cb5dc5d0151c02aabd70af9b"
+    },
+    {
+      "seconds": 174.5,
+      "file": "raw-174.5s.png",
+      "sha256": "742522980736376fcb5b08f5d7a24cd434ec02ddd94b980584f8ab29273542cb"
+    },
+    {
+      "seconds": 175,
+      "file": "raw-175s.png",
+      "sha256": "3a30a7bc21874310d6c66872d82d44ab8f06c99382ca785fa3e36b9cb7135880"
+    },
+    {
+      "seconds": 181,
+      "file": "raw-181s.png",
+      "sha256": "20c632e5e614befd511e478608e4f7313ba05c5e8cd8b6995d50fd7421f2fb6f"
+    },
+    {
+      "seconds": 182,
+      "file": "raw-182s.png",
+      "sha256": "c374adb5f5237adadfd96eb4d96fb4cd7b225240a20c57ef0db408b97a07d9f8"
+    },
+    {
+      "seconds": 183,
+      "file": "raw-183s.png",
+      "sha256": "c91fcbecd9fea6510ccfef22870b8dad73fc7cf51dc5f155feb56abe85fb5ec8"
+    },
+    {
+      "seconds": 184,
+      "file": "raw-184s.png",
+      "sha256": "d9f720b5aa587cc4c25ac1b29d93b251bae6219c146d5439521d52b9928dbbdb"
+    }
+  ]
+}

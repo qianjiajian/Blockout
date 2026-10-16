@@ -508,7 +508,7 @@ const gateBoundaryCells = (level: LevelSpec, gate: SolverState["gates"][number])
 const vacatesForeignGate = (level: LevelSpec, state: SolverState, drag: SolverDrag): boolean => {
   if (drag.exitSide) return false;
   const block = state.blocks.find((candidate) => candidate.id === drag.blockId);
-  const destination = drag.path.at(-1);
+  const destination = drag.path[drag.path.length - 1];
   if (!block || !destination) return false;
   const before = new Set(cellsAt(block).map(([x, y]) => positionKey(x, y)));
   const after = new Set(cellsAt(block, destination[0], destination[1]).map(([x, y]) => positionKey(x, y)));
@@ -567,7 +567,7 @@ const applyDrag = (level: LevelSpec, state: SolverState, drag: SolverDrag): Solv
   const next = cloneState(state);
   const block = next.blocks.find((candidate) => candidate.id === drag.blockId);
   if (!block) return next;
-  const destination = drag.path.at(-1);
+  const destination = drag.path[drag.path.length - 1];
   if (destination) [block.x, block.y] = destination;
   if (!drag.exitSide) {
     if (destination) releaseReadyGenerators(level, next, "move");

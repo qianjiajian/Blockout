@@ -7,6 +7,10 @@ const output = fileURLToPath(new URL(`../playtest-results/playtest-supply-time-f
 const shot = (name) => resolve(output, name);
 const playtestUrl = process.env.PLAYTEST_URL ?? "http://127.0.0.1:5173/";
 const saveKey = "color-escape-save-v1";
+// v1.160: independently assert the agreed global prices, not runtime-derived expectations.
+const EXPECTED_SUPPLY_PRICES = Object.freeze({ time: 300, rocket: 400, pulse: 400 });
+const coinsAfterTimePurchase = 1000 - EXPECTED_SUPPLY_PRICES.time;
+const coinsAfterTimeAndRocketPurchase = coinsAfterTimePurchase - EXPECTED_SUPPLY_PRICES.rocket;
 await mkdir(output, { recursive: true });
 
 const browser = await chromium.launch({ headless: true });
@@ -70,33 +74,33 @@ if (typeof currentUpdateNoticeId !== "string" || !currentUpdateNoticeId) {
   throw new Error("Supply E2E: current update notice id was unavailable");
 }
 const prices = Object.fromEntries(state.supply.items.map((item) => [item.kind, item.price]));
-if (prices.time !== 180 || prices.rocket !== 240 || prices.pulse !== 210) {
+if (prices.time !== EXPECTED_SUPPLY_PRICES.time || prices.rocket !== EXPECTED_SUPPLY_PRICES.rocket || prices.pulse !== EXPECTED_SUPPLY_PRICES.pulse) {
   throw new Error("Supply E2E: runtime prices diverged from the economy contract");
 }
 await page.screenshot({ path: shot("round25-supply-standard.png") });
 
 await clickInteractionTarget(page, "supply.time");
 state = await debug(page);
-if (state.economy.coins !== 820 || state.economy.boosters.time !== 4 || state.supply.feedback?.text !== "已补充冻结 · 库存 4/9") {
+if (state.economy.coins !== coinsAfterTimePurchase || state.economy.boosters.time !== 4 || state.supply.feedback?.text !== "已补充冻结 · 库存 4/9") {
   throw new Error("Supply E2E: successful purchase was not atomic or clearly acknowledged");
 }
 await page.screenshot({ path: shot("round25-supply-purchased.png") });
 
 await clickInteractionTarget(page, "supply.rocket");
 state = await debug(page);
-if (state.economy.coins !== 580 || state.economy.boosters.rocket !== 9 || !state.supply.items.find((item) => item.kind === "rocket")?.full) {
+if (state.economy.coins !== coinsAfterTimeAndRocketPurchase || state.economy.boosters.rocket !== 9 || !state.supply.items.find((item) => item.kind === "rocket")?.full) {
   throw new Error("Supply E2E: reaching the stock cap did not update inventory and affordance together");
 }
 await clickInteractionTarget(page, "supply.pulse");
 state = await debug(page);
-if (state.economy.coins !== 580 || state.economy.boosters.pulse !== 9 || state.supply.feedback?.text !== "脉冲库存已满") {
+if (state.economy.coins !== coinsAfterTimeAndRocketPurchase || state.economy.boosters.pulse !== 9 || state.supply.feedback?.text !== "脉冲库存已满") {
   throw new Error("Supply E2E: full inventory spent coins or lacked a specific reason");
 }
 
 await page.reload({ waitUntil: "networkidle" });
 await page.waitForTimeout(250);
 state = await debug(page);
-if (state.economy.coins !== 580 || state.economy.boosters.time !== 4 || state.economy.boosters.rocket !== 9) {
+if (state.economy.coins !== coinsAfterTimeAndRocketPurchase || state.economy.boosters.time !== 4 || state.economy.boosters.rocket !== 9) {
   throw new Error("Supply E2E: purchase did not persist across reload");
 }
 await clickInteractionTarget(page, "homeSupply");
@@ -108,7 +112,7 @@ await writeSave(page, makeSave(50, { time: 2, rocket: 2, pulse: 2 }));
 await clickInteractionTarget(page, "homeSupply");
 await clickInteractionTarget(page, "supply.rocket");
 state = await debug(page);
-if (state.economy.coins !== 50 || state.economy.boosters.rocket !== 2 || state.supply.feedback?.text !== "金币不足 · 还差 190") {
+if (state.economy.coins !== 50 || state.economy.boosters.rocket !== 2 || state.supply.feedback?.text !== `金币不足 · 还差 ${EXPECTED_SUPPLY_PRICES.rocket - 50}`) {
   throw new Error("Supply E2E: insufficient balance was not rejected atomically with an exact reason");
 }
 await page.screenshot({ path: shot("round25-supply-insufficient.png") });
@@ -143,7 +147,7 @@ if (state.economy.coins !== 1000 || state.economy.boosters.time !== 3) {
 await clickInteractionTarget(failedWrite, "homeSupply");
 await clickInteractionTarget(failedWrite, "supply.time");
 state = await debug(failedWrite);
-if (state.economy.coins !== 820 || state.economy.boosters.time !== 4
+if (state.economy.coins !== coinsAfterTimePurchase || state.economy.boosters.time !== 4
   || state.supply.feedback?.text !== "已补充冻结 · 库存 4/9") {
   throw new Error("Supply E2E: purchase did not recover after storage became writable again");
 }
@@ -204,15 +208,15 @@ if (state.screen !== "supply" || state.supply.pendingPurchase?.kind !== "time") 
 }
 await unknownWrite.evaluate(() => window.__supplyStorageRestore());
 const firstDurableCandidate = await unknownWrite.evaluate((key) => JSON.parse(localStorage.getItem(key)), saveKey);
-if (firstDurableCandidate.coins !== 820 || firstDurableCandidate.boosters.time !== 4) {
+if (firstDurableCandidate.coins !== coinsAfterTimePurchase || firstDurableCandidate.boosters.time !== 4) {
   throw new Error("Supply E2E: ambiguity fixture did not write the first candidate before throwing");
 }
 await clickInteractionTarget(unknownWrite, "supply.time");
 state = await debug(unknownWrite);
 const retriedDurableCandidate = await unknownWrite.evaluate((key) => JSON.parse(localStorage.getItem(key)), saveKey);
-if (state.economy.coins !== 820 || state.economy.boosters.time !== 4
+if (state.economy.coins !== coinsAfterTimePurchase || state.economy.boosters.time !== 4
   || state.supply.pendingPurchase
-  || retriedDurableCandidate.coins !== 820 || retriedDurableCandidate.boosters.time !== 4) {
+  || retriedDurableCandidate.coins !== coinsAfterTimePurchase || retriedDurableCandidate.boosters.time !== 4) {
   throw new Error("Supply E2E: ambiguous purchase retry charged or granted more than once");
 }
 await unknownWrite.close();
@@ -260,9 +264,9 @@ if (state.economy.coins !== 1000 || state.economy.boosters.time !== 3
 await clickInteractionTarget(lostOrdinaryAcknowledgement, "supply.time");
 state = await debug(lostOrdinaryAcknowledgement);
 const ordinaryRecoveryDurable = await lostOrdinaryAcknowledgement.evaluate((key) => JSON.parse(localStorage.getItem(key)), saveKey);
-if (state.economy.coins !== 820 || state.economy.boosters.time !== 4 || !state.settings.sound
+if (state.economy.coins !== coinsAfterTimePurchase || state.economy.boosters.time !== 4 || !state.settings.sound
   || state.supply.pendingPurchase || state.storage.normalizationPending !== false
-  || ordinaryRecoveryDurable.coins !== 820 || ordinaryRecoveryDurable.boosters.time !== 4
+  || ordinaryRecoveryDurable.coins !== coinsAfterTimePurchase || ordinaryRecoveryDurable.boosters.time !== 4
   || !ordinaryRecoveryDurable.sound) {
   throw new Error("Supply E2E: transaction did not recover exactly once from a newer pre-write baseline");
 }
@@ -340,12 +344,12 @@ const verifyUnnormalizedBaselineRecovery = async (fixtureName, durableValue) => 
   await clickInteractionTarget(recoveryPage, "supply.time");
   recoveryState = await debug(recoveryPage);
   const persisted = await recoveryPage.evaluate((key) => JSON.parse(localStorage.getItem(key)), saveKey);
-  if (recoveryState.economy.coins !== 820 || recoveryState.economy.boosters.time !== 4
+  if (recoveryState.economy.coins !== coinsAfterTimePurchase || recoveryState.economy.boosters.time !== 4
     || recoveryState.supply.pendingPurchase
     || recoveryState.supply.feedback?.text !== "已补充冻结 · 库存 4/9"
     || recoveryState.storage.durableBaselineStatus !== "ok"
     || recoveryState.storage.normalizationPending !== false
-    || persisted.coins !== 820 || persisted.boosters.time !== 4) {
+    || persisted.coins !== coinsAfterTimePurchase || persisted.boosters.time !== 4) {
     throw new Error(`Supply E2E: ${fixtureName} did not recover exactly once after storage resumed`);
   }
   await recoveryPage.close();
@@ -379,7 +383,7 @@ if (state.screen !== "supply") throw new Error("Supply E2E: 320x568 entry target
 await small.screenshot({ path: shot("round25-supply-320x568.png") });
 await clickInteractionTarget(small, "supply.time");
 state = await debug(small);
-if (state.economy.coins !== 820 || state.economy.boosters.time !== 4) {
+if (state.economy.coins !== coinsAfterTimePurchase || state.economy.boosters.time !== 4) {
   throw new Error("Supply E2E: 320x568 purchase target missed or mutated incorrectly");
 }
 await clickInteractionTarget(small, "navigation.2");
@@ -402,7 +406,7 @@ if (state.screen !== "supply") throw new Error("Supply E2E: 44px safe-top entry 
 await safePage.screenshot({ path: shot("round25-supply-safearea-390x844.png") });
 await clickInteractionTarget(safePage, "supply.time");
 state = await debug(safePage);
-if (state.economy.coins !== 820 || state.economy.boosters.time !== 4) {
+if (state.economy.coins !== coinsAfterTimePurchase || state.economy.boosters.time !== 4) {
   throw new Error("Supply E2E: safe-area purchase target diverged from rendering");
 }
 await clickInteractionTarget(safePage, "navigation.2");

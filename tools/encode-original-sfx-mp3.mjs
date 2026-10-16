@@ -3,11 +3,12 @@ import { createHash } from "node:crypto";
 import { mkdir, mkdtemp, readFile, rename, rm, stat, writeFile } from "node:fs/promises";
 import { isAbsolute, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
+import { ORIGINAL_SFX_KINDS, ORIGINAL_SFX_MASTER_KINDS } from "./audio-quality.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const sourceRoot = resolve(root, "art-source/audio/sfx");
 const runtimeRoot = resolve(root, "public/assets/audio/sfx");
-const names = ["blocked", "ice", "booster", "time", "rocket", "pulse", "mechanic", "reward", "unlock", "win", "fail"];
+const names = ORIGINAL_SFX_KINDS;
 export const ORIGINAL_SFX_ENCODING = Object.freeze({
   codec: "mp3", encoder: "libmp3lame", bitrateKbps: 96, sampleRate: 44100, channels: 2, writeXing: true,
 });
@@ -39,11 +40,11 @@ export async function encodeOriginalSfxMp3() {
   const sourceManifest = JSON.parse(await readFile(resolve(sourceRoot, "manifest.json"), "utf8"));
   const previousManifest = JSON.parse(await readFile(resolve(runtimeRoot, "manifest.json"), "utf8"));
   if (sourceManifest.sampleRate !== 44100 || sourceManifest.channels !== 2
-    || Object.keys(sourceManifest.sounds).sort().join() !== [...names].sort().join()) {
+    || Object.keys(sourceManifest.sounds).sort().join() !== [...ORIGINAL_SFX_MASTER_KINDS].sort().join()) {
     throw new Error("Unexpected source SFX set or format; expected the original 11 stereo 44.1 kHz masters.");
   }
   // Keep all user-provided effects byte-for-byte; never re-encode them.
-  for (const name of ["button", "exit", "putdown", "thaw", "shell", "shutter"]) {
+  for (const name of ["button", "exit", "putdown", "thaw", "shell", "shutter", "timeover", "time", "rocket", "pulse", "fail", "win", "gold", "itemArrival"]) {
     const supplied = previousManifest.providedSounds?.[name];
     if (supplied?.file !== `${name}.mp3`
       || sha256(await readFile(resolve(runtimeRoot, supplied.file))) !== supplied.sha256.toLowerCase()) {

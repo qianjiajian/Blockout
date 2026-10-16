@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig, type Plugin } from "vite";
+import { webRuntimeLevelProjectionPlugin } from "./tools/web-runtime-level-projection.mjs";
 
 const projectRoot = dirname(fileURLToPath(import.meta.url));
 const boardShapesPath = resolve(projectRoot, "src/core/boardShapes.ts");
@@ -118,7 +119,8 @@ const boardEditorSavePlugin = (): Plugin => ({
 
 export default defineConfig({
   base: "./",
-  plugins: [boardEditorSavePlugin()],
+  plugins: [boardEditorSavePlugin(), webRuntimeLevelProjectionPlugin()],
+  worker: { plugins: () => [webRuntimeLevelProjectionPlugin()] },
   test: {
     // The 100-level validation search is intentionally memory-bound. Running
     // chapter files sequentially in one worker thread keeps CI and WeChat

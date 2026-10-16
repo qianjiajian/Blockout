@@ -182,6 +182,19 @@ describe("independent Collection Album art contract", () => {
     expect(albumRenderer).not.toContain("ctx.drawImage(art.titlePanel, FORMAL_COLLECTION_LAYOUT.titlePanel");
   });
 
+  it("hides star conditions for locked level collection details", () => {
+    const renderer = readFileSync(resolve("src/game/ColorEscapeGame.ts"), "utf8");
+    const start = renderer.indexOf("private drawCollectionAlbumDetail(");
+    const end = renderer.indexOf("private drawCollectionPage(", start);
+    expect(start).toBeGreaterThanOrEqual(0);
+    expect(end).toBeGreaterThan(start);
+    const detailRenderer = renderer.slice(start, end);
+    expect(detailRenderer).toContain("if (level?.obtained === true)");
+    expect(detailRenderer).toContain("const status = collectionStarStatus");
+    expect(detailRenderer.indexOf("const status = collectionStarStatus"))
+      .toBeGreaterThan(detailRenderer.indexOf("if (level?.obtained === true)"));
+  });
+
   it("keeps all legacy PNG sources and only the retained badge and restored inspiration WebP runtime", () => {
     expect(readdirSync(FORMAL_SOURCE_DIR).sort()).toEqual(
       LEGACY_SOURCE_ASSETS.map(({ file }) => `${file}.png`).sort(),

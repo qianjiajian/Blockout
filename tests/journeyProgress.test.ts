@@ -14,6 +14,7 @@ import {
   getJourneyDefaultAnchorLevel,
   getJourneyReward,
   getJourneySegment,
+  isJourneyEpisodeUnlocked,
   sanitizeJourneyEpisodeIndex,
   sanitizeJourneyProgressMemory,
 } from "../src/core/journeyProgress";
@@ -134,10 +135,40 @@ describe("Journey progress model", () => {
     expect(sanitizeJourneyEpisodeIndex(4, 1)).toBe(1);
     expect(sanitizeJourneyEpisodeIndex(10, 40)).toBe(4);
     expect(sanitizeJourneyEpisodeIndex(10, 70)).toBe(7);
-    expect(sanitizeJourneyEpisodeIndex(10, 71)).toBe(8);
+    expect(sanitizeJourneyEpisodeIndex(10, 71)).toBe(7);
+    expect(sanitizeJourneyEpisodeIndex(10, 72)).toBe(8);
     expect(sanitizeJourneyEpisodeIndex(999, 100)).toBe(10);
     expect(sanitizeJourneyEpisodeIndex(999, 200)).toBe(20);
     expect(sanitizeJourneyEpisodeIndex("2", 21)).toBe(2);
+  });
+
+  it("unlocks each background only after its own required level is completed", () => {
+    expect(isJourneyEpisodeUnlocked(JOURNEY_EPISODES[0], 1, [])).toBe(true);
+    for (const episode of JOURNEY_EPISODES.slice(1)) {
+      expect(isJourneyEpisodeUnlocked(episode, episode.unlockLevel)).toBe(false);
+      expect(isJourneyEpisodeUnlocked(episode, episode.unlockLevel + 1)).toBe(true);
+      expect(isJourneyEpisodeUnlocked(episode, 200, [])).toBe(false);
+      expect(isJourneyEpisodeUnlocked(episode, 200, [episode.unlockLevel - 1])).toBe(false);
+      expect(isJourneyEpisodeUnlocked(episode, 200, [episode.unlockLevel])).toBe(true);
+    }
+  });
+
+  it("uses sparse completion records when sanitizing selected backgrounds without inferring lower chapters", () => {
+    expect(sanitizeJourneyEpisodeIndex(2, 11, [10])).toBe(1);
+    expect(sanitizeJourneyEpisodeIndex(2, 12, [11])).toBe(2);
+    expect(sanitizeJourneyEpisodeIndex(4, 100, [21])).toBe(3);
+    expect(sanitizeJourneyEpisodeIndex(2, 100, [21])).toBe(1);
+    expect(sanitizeJourneyEpisodeIndex(20, 200, [])).toBe(1);
+  });
+
+  it("does not schedule or acknowledge a scene for reaching its level, even with sparse higher progress", () => {
+    const memory = { claimedMilestoneLevels: [10], seenEpisodeUnlockLevels: [] };
+    expect(findPendingJourneyEvent(11, memory, [10])).toBeUndefined();
+    expect(findPendingJourneyEvent(101, memory, [99])).toBeUndefined();
+    expect(findPendingJourneyEvent(12, memory, [10, 11])).toMatchObject({ type: "episode_unlock", level: 11 });
+    expect(deriveLegacyJourneyProgress(11, [10]).seenEpisodeUnlockLevels).toEqual([]);
+    expect(deriveLegacyJourneyProgress(12, [10, 11]).seenEpisodeUnlockLevels).toEqual([11]);
+    expect(deriveLegacyJourneyProgress(101, [21, 99]).seenEpisodeUnlockLevels).toEqual([21]);
   });
 
   it("prioritizes unseen episode unlocks over the latest reward", () => {
@@ -253,7 +284,7 @@ describe("Journey progress model", () => {
     });
     expect(deriveLegacyJourneyProgress(11)).toEqual({
       claimedMilestoneLevels: [10],
-      seenEpisodeUnlockLevels: [11],
+      seenEpisodeUnlockLevels: [],
     });
     expect(deriveLegacyJourneyProgress(10, [10])).toEqual({
       claimedMilestoneLevels: [10],
@@ -261,7 +292,7 @@ describe("Journey progress model", () => {
     });
     expect(deriveLegacyJourneyProgress(11, [])).toEqual({
       claimedMilestoneLevels: [],
-      seenEpisodeUnlockLevels: [11],
+      seenEpisodeUnlockLevels: [],
     });
     expect(deriveLegacyJourneyProgress(999)).toEqual({
       claimedMilestoneLevels: JOURNEY_MILESTONE_LEVELS,

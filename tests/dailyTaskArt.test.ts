@@ -23,6 +23,7 @@ const ASSETS = [
   { input: "14.png", file: "bonus-panel.png", key: "bonusPanel", width: 524, height: 113, sha256: "c938e269f99affc354e0b6e844960ebb0d428aec98389cece065578a855eb132" },
   { input: "15.png", file: "panel.png", key: "panel", width: 594, height: 889, sha256: "b5cc9b255865bb96acd3a6104abd710befd12bbbd3d393fc38e88f4b3821c700" },
   { input: "supplied task-row.png", file: "task-row.png", key: "taskRow", width: 458, height: 115, sha256: "980954593cc91da9b8390ea80b0f91ff61f2c59c26248ffbdd173e198d9ad302" },
+  { input: "ImageGen claimed check", file: "claimed-check.png", key: "claimedCheck", width: 160, height: 120, sha256: "a1ae0e90dbd342a90f3b0e9a7ce79b086e588a61e602d68e8e1dd1d2d0349cd1" },
 ] as const;
 
 interface ArtRecord {
@@ -72,13 +73,13 @@ describe("supplied Daily Tasks V2 formal art", () => {
     );
     expect(readdirSync(RUNTIME).sort()).toEqual(ASSETS.map((asset) => asset.file).sort());
     const entries = manifest.assets.filter((row) => row.loadGroup === "formal-daily-tasks");
-    expect(entries).toHaveLength(15);
+    expect(entries).toHaveLength(16);
     expect(entries.some((row) => row.source.includes("reference-layout"))).toBe(false);
   });
 
-  it("uses fifteen unique V2 cutouts and retires every V1 runtime reference", () => {
-    expect(Object.keys(DAILY_TASK_ART_URLS)).toHaveLength(15);
-    expect(new Set(Object.values(DAILY_TASK_ART_URLS)).size).toBe(15);
+  it("uses sixteen unique V2 cutouts and retires every V1 runtime reference", () => {
+    expect(Object.keys(DAILY_TASK_ART_URLS)).toHaveLength(16);
+    expect(new Set(Object.values(DAILY_TASK_ART_URLS)).size).toBe(16);
     expect(Object.values(DAILY_TASK_ART_URLS).sort()).toEqual(
       ASSETS.map((asset) => `assets/art/ui/formal-pages/daily-tasks-v2/${asset.file}`).sort(),
     );

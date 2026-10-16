@@ -1,0 +1,33 @@
+plugins {
+    id "com.android.application"
+}
+
+android {
+    namespace "com.blockout.app"
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.blockout.app"
+        minSdk 23
+        targetSdk 35
+        versionCode 3
+        versionName "0.1.2"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            shrinkResources false
+        }
+    }
+
+    sourceSets {
+        main {
+            assets.srcDirs = [providers.gradleProperty("webAssetsDir").getOrElse("../../dist")]
+        }
+    }
+}
+
+dependencies {
+    implementation "androidx.webkit:webkit:1.12.1"
+}

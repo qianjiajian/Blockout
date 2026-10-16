@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.7.3" type="incidents">
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.webkit:webkit than 1.12.1 is available: 1.17.1">
+        <fix-replace
+            description="Change to 1.17.1"
+            family="Update versions"
+            oldString="1.12.1"
+            replacement="1.17.1"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="32"
+            column="20"
+            startOffset="564"
+            endLine="32"
+            endColumn="51"
+            endOffset="595"/>
+    </incident>
+
+    <incident
+        id="DiscouragedApi"
+        severity="warning"
+        message="Should not restrict activity to fixed orientation. This may not be suitable for different form factors, causing the app to be letterboxed.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*manifest*0}"
+            line="15"
+            column="13"
+            startOffset="585"
+            endLine="15"
+            endColumn="49"
+            endOffset="621"/>
+    </incident>
+
+    <incident
+        id="SetJavaScriptEnabled"
+        severity="warning"
+        message="Using `setJavaScriptEnabled` can introduce XSS vulnerabilities into your application, review carefully">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/blockout/app/MainActivity.java"
+            line="166"
+            column="9"
+            startOffset="7829"
+            endLine="166"
+            endColumn="44"
+            endOffset="7864"/>
+    </incident>
+
+</incidents>

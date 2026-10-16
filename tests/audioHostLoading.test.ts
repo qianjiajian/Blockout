@@ -4,7 +4,7 @@ import { WechatHost } from "../src/platform/WechatHost";
 
 const sounds = [
   "blocked", "exit", "ice", "thaw", "win", "button", "putdown", "fail",
-  "reward", "booster", "unlock", "time", "rocket", "pulse", "mechanic", "shell", "shutter",
+  "reward", "gold", "itemArrival", "booster", "unlock", "time", "rocket", "pulse", "mechanic", "shell", "shutter", "timeover",
 ];
 
 // Exercise actual private loader methods without constructing a canvas or
@@ -14,7 +14,7 @@ function harness(platform: "web" | "wechat", failedSound?: string) {
   const buffer = {} as AudioBuffer;
   const host = Object.assign(Object.create(platform === "web" ? WebHost.prototype : WechatHost.prototype), {
     audio: {},
-    soundscape: { setSoundBuffer: vi.fn() },
+    soundscape: { setSoundBuffer: vi.fn(), stopSound: vi.fn() },
     loadAssetSubpackage: vi.fn(async () => undefined),
     decodeAudioAsset: vi.fn(async (path: string) => {
       if (path === `${prefix}${failedSound}.mp3`) throw new Error("decode failed");
@@ -26,7 +26,7 @@ function harness(platform: "web" | "wechat", failedSound?: string) {
 }
 
 describe.each(["web", "wechat"] as const)("%s MP3 effect loading", (platform) => {
-  it("loads all 17 effects from MP3 paths and coalesces repeated requests", async () => {
+  it("loads all 20 effects from MP3 paths and coalesces repeated requests", async () => {
     const { host, prefix, buffer, done } = harness(platform);
     host.beginEffectsAssetLoad();
     host.beginEffectsAssetLoad();
@@ -38,7 +38,7 @@ describe.each(["web", "wechat"] as const)("%s MP3 effect loading", (platform) =>
     else expect(host.loadAssetSubpackage).not.toHaveBeenCalled();
   });
 
-  it.each(["blocked", "shell", "shutter"])("leaves the synthesized fallback available when %s MP3 fails", async (failedSound) => {
+  it.each(["blocked", "shell", "shutter", "gold", "itemArrival"])("leaves the synthesized fallback available when %s MP3 fails", async (failedSound) => {
     const { host, done } = harness(platform, failedSound);
     host.beginEffectsAssetLoad();
     await expect(done()).resolves.toBeUndefined();
@@ -53,6 +53,27 @@ describe.each(["web", "wechat"] as const)("%s MP3 effect loading", (platform) =>
     host.beginEffectsAssetLoad();
     expect(host.decodeAudioAsset).not.toHaveBeenCalled();
     expect(host.loadAssetSubpackage).not.toHaveBeenCalled();
+  });
+
+  it("leaves timeover unloaded on decode failure without holding any pending playback", async () => {
+    const { host, done } = harness(platform, "timeover");
+    host.beginEffectsAssetLoad();
+    await expect(done()).resolves.toBeUndefined();
+    expect(host.soundscape.setSoundBuffer).toHaveBeenCalledTimes(sounds.length - 1);
+    expect(host.soundscape.setSoundBuffer.mock.calls.some(([kind]: [string]) => kind === "timeover")).toBe(false);
+  });
+
+  it("forwards timeover stop without creating or loading audio", () => {
+    const { host } = harness(platform);
+    host.stopSound("timeover");
+    expect(host.soundscape.stopSound).toHaveBeenCalledExactlyOnceWith("timeover");
+    expect(host.decodeAudioAsset).not.toHaveBeenCalled();
+    expect(host.loadAssetSubpackage).not.toHaveBeenCalled();
+    host.soundscape = undefined;
+    host.audio = undefined;
+    expect(() => host.stopSound("timeover")).not.toThrow();
+    expect(host.soundscape).toBeUndefined();
+    expect(host.audio).toBeUndefined();
   });
 });
 

@@ -38,9 +38,33 @@ export const launchWechatGameWhenReady = (
     throw new Error("WeChat lifecycle API is unavailable");
   }
   let launched = false;
-  api.onShow(() => {
+  let retryTimer: ReturnType<typeof setTimeout> | undefined;
+  let retries = 0;
+  // DevTools Nightly can dispatch the first onShow before its WAGame bridge
+  // has finished wiring the window/system APIs. A short retry alone still
+  // leaves a red native jsbridge error in the console, so do not construct
+  // WechatHost until the bridge has had a full startup window.
+  const initialDelayMs = 500;
+  const retryDelayMs = 250;
+  const retryLimit = 40;
+  const bridgeNotReady = (error: unknown): boolean => /jsbridge not ready|window information is unavailable/i.test(String(error));
+  const attempt = (): void => {
+    retryTimer = undefined;
     if (launched) return;
-    launched = true;
-    launch();
+    try {
+      launch();
+      launched = true;
+    } catch (error) {
+      if (!bridgeNotReady(error) || retries >= retryLimit) throw error;
+      retries += 1;
+      retryTimer = setTimeout(attempt, retryDelayMs);
+    }
+  };
+  api.onShow(() => {
+    if (launched || retryTimer) return;
+    // DevTools can deliver onShow before its native bridge is ready. Avoid
+    // the known first-call error, then keep the bounded retry for slower
+    // devices.
+    retryTimer = setTimeout(attempt, initialDelayMs);
   });
 };

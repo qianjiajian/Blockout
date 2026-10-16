@@ -1,0 +1,1 @@
+const fs=require('fs'); const p='src/core/revisedRepositionFloor.ts'; const s=fs.readFileSync(p,'utf8'); const start=s.indexOf('export interface SeamChamberCompositionOptions'); const end=s.indexOf('/**\n * A proof for a level made of physically disconnected',start); console.error({start,end}); if(start>=0&&end>start)fs.writeFileSync(p,s.slice(0,start)+s.slice(end));

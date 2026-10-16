@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-05",
+  "status": "PENDING_INDEPENDENT_LOWER_BOUND_PROOF",
+  "source": "src/core/levels.ts",
+  "sourceLevelCount": 200,
+  "stageCount": 15,
+  "candidatesPerStage": 30,
+  "dailyDifficultyLabels": {
+    "1": "难",
+    "2": "超难",
+    "3": "超超难"
+  },
+  "notes": [
+    "每个机制解锁阶段均登记三档各10个主线改编候选；当天抽取仍由玩家种子固定。",
+    "每个槽位都由正式 id 派生独立 LevelSpec，并记录布局 SHA；同一 sourceLevelId 不再直接复用运行时布局。",
+    "proofStatus=pending 表示真实下界证明尚未绑定到该槽位；在证明完成前不得把目录标为正式。",
+    "目录隔离于生产 LEVELS、玩家存档和活动关序；本次只完成独立布局生成，未发布。"
+  ],
+  "stages": [],
+  "slots": []
+}

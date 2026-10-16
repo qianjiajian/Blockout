@@ -1,59 +1,45 @@
 import { describe, expect, it } from "vitest";
-import gameSource from "../src/game/ColorEscapeGame.ts?raw";
-import { GAME_ART } from "../src/game/artManifest";
 import { LIFE_REFILL_COIN_COST, LIFE_REFILL_COIN_COST_PER_LIFE } from "../src/core/lives";
-import { LIFE_REFILL_LAYOUT, PAUSE_SETTINGS_LAYOUT } from "../src/game/formalPageLayout";
+import { LIFE_REFILL_LAYOUT } from "../src/game/formalPageLayout";
+import { BOOSTER_PURCHASE_LAYOUT } from "../src/game/boosterPurchaseLayout";
 
-describe("common life refill panel", () => {
-  it("reuses the common panel, close and action geometry", () => {
-    expect(LIFE_REFILL_LAYOUT.panel).toEqual(PAUSE_SETTINGS_LAYOUT.panel);
-    expect(LIFE_REFILL_LAYOUT.close).toEqual(PAUSE_SETTINGS_LAYOUT.close);
-    expect(LIFE_REFILL_LAYOUT.buyButton.x + LIFE_REFILL_LAYOUT.buyButton.width / 2).toBe(360);
-    expect(LIFE_REFILL_LAYOUT.buyButton.width).toBe(PAUSE_SETTINGS_LAYOUT.homeButton.width);
-    expect(LIFE_REFILL_LAYOUT.buyButton.height).toBe(PAUSE_SETTINGS_LAYOUT.homeButton.height);
-    expect(LIFE_REFILL_LAYOUT).not.toHaveProperty("cancelButton");
-    expect(LIFE_REFILL_LAYOUT.title.size).toBe(PAUSE_SETTINGS_LAYOUT.typography.title.size);
-    expect(LIFE_REFILL_LAYOUT.title.x).toBe(360);
-  });
-
-  it("keeps the coin pile, debit plate and actions inside the panel without overlap", () => {
+describe("shared purchase-style life refill panel", () => {
+  it("reuses the purchase panel with separate same-row ad and refill hit areas", () => {
     const layout = LIFE_REFILL_LAYOUT;
-    for (const rect of [layout.coinPile, layout.costPill, layout.buyButton]) {
-      expect(rect.x).toBeGreaterThan(layout.panel.x);
-      expect(rect.y).toBeGreaterThan(layout.panel.y);
-      expect(rect.x + rect.width).toBeLessThan(layout.panel.x + layout.panel.width);
-      expect(rect.y + rect.height).toBeLessThan(layout.panel.y + layout.panel.height);
+    expect(layout.panel).toEqual(BOOSTER_PURCHASE_LAYOUT.panel);
+    expect(layout.close).toEqual(BOOSTER_PURCHASE_LAYOUT.close);
+    expect(layout.adButton).toEqual(BOOSTER_PURCHASE_LAYOUT.ad);
+    expect(layout.buyButton).toEqual(BOOSTER_PURCHASE_LAYOUT.buy);
+    expect(layout.icon).toEqual(BOOSTER_PURCHASE_LAYOUT.icon);
+    expect(layout.coinIcon).toEqual(BOOSTER_PURCHASE_LAYOUT.coinIcon);
+    expect(layout.adIcon).toEqual(BOOSTER_PURCHASE_LAYOUT.adIcon);
+    expect(layout.title).toEqual(BOOSTER_PURCHASE_LAYOUT.titleText);
+    for (const rect of [layout.adButton, layout.buyButton, layout.icon]) {
+      expect(rect.x).toBeGreaterThanOrEqual(layout.panel.x);
+      expect(rect.y).toBeGreaterThanOrEqual(layout.panel.y);
+      expect(rect.x + rect.width).toBeLessThanOrEqual(layout.panel.x + layout.panel.width);
+      expect(rect.y + rect.height).toBeLessThanOrEqual(layout.panel.y + layout.panel.height);
     }
-    expect(layout.coinPile.x + layout.coinPile.width).toBeLessThan(layout.costPill.x);
-    expect(layout.coinPile.y + layout.coinPile.height).toBeLessThan(layout.feedback.y - layout.feedback.size);
-    expect(layout.feedback.y + layout.feedback.size).toBeLessThan(layout.buyButton.y);
-    expect(layout.cost.x).toBe(layout.costPill.x + layout.costPill.width / 2);
-    expect(layout.coinPile.width / layout.coinPile.height).toBeCloseTo(243 / 203, 8);
+    expect(layout.adButton.y).toEqual(layout.buyButton.y);
+    expect(layout.adButton.x + layout.adButton.width).toBeLessThan(layout.buyButton.x);
+    expect(layout.close.y + layout.close.height).toBeLessThan(layout.adButton.y);
+    expect(layout).not.toHaveProperty("cancelButton");
   });
 
-  it("reuses the supplied coin pile/blue plate and green common action asset", () => {
-    expect(GAME_ART.ui.win.coinPile).toBe("assets/art/ui/formal-pages/overlays/win/coin-pile.png");
-    expect(GAME_ART.ui.win.rewardPill).toBe("assets/art/ui/formal-pages/overlays/win/reward-pill.png");
-    expect(GAME_ART.ui.pauseSettings.homeButton).toBe("assets/art/ui/formal-pages/overlays/pause-settings/home-button.png");
+  it("preserves the existing real refill economy rather than the reference's example price", () => {
     expect(LIFE_REFILL_COIN_COST).toBe(500);
     expect(LIFE_REFILL_COIN_COST_PER_LIFE).toBe(100);
   });
 
-  it("renders the actual debit, not the sample reward or old generic modal chrome", () => {
-    const source = gameSource;
-    const refill = source.slice(source.indexOf("  private drawLifeRefill():"), source.indexOf("  private drawStorageUnavailable():"));
-    expect(refill).toContain('quote.coinCost > 0 ? `-${quote.coinCost}` : "0"');
-    expect(refill).toContain("const quote = this.lifeRefillQuote(nowMs)");
-    expect(refill).toContain("if (full)");
-    expect(refill).toContain('this.tr("common.full")');
-    expect(refill).toContain("ctx.drawImage(chrome.homeButton");
-    expect(refill).toContain("ctx.drawImage(this.lifeRefillArt.coinPile");
-    expect(refill).toContain("ctx.drawImage(this.lifeRefillArt.rewardPill");
-    expect(refill).not.toContain("this.drawModal(");
-    expect(refill).not.toContain("this.drawButton(");
-    expect(refill).not.toContain("gameplay.life.refillCoins");
-    expect(refill).toContain("if (!this.pendingLifeRefill)");
-    expect(source).not.toContain("lifeRefillClose");
-    expect(refill).toContain('this.drawPressable("lifeRefillDismiss"');
+  it("centers the lone full-state ad without changing its size or vertical placement", () => {
+    const layout = LIFE_REFILL_LAYOUT;
+    expect(layout.adButtonCentered.x + layout.adButtonCentered.width / 2)
+      .toBeCloseTo(layout.panel.x + layout.panel.width / 2, 10);
+    expect(layout.adButtonCentered.y).toBe(layout.adButton.y);
+    expect(layout.adButtonCentered.width).toBe(layout.adButton.width);
+    expect(layout.adButtonCentered.height).toBe(layout.adButton.height);
+    expect(layout.adButtonCentered.x).toBeGreaterThan(layout.adButton.x);
+    expect(layout.adButtonCentered.x + layout.adButtonCentered.width)
+      .toBeLessThan(layout.panel.x + layout.panel.width);
   });
 });

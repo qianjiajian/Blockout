@@ -54,6 +54,40 @@ describe("independent Collection album localization", () => {
       .toBe("Not enough Inspiration · Need 7 more");
   });
 
+  it.each([1, 4])("keeps the compact masterpiece hint dynamic for %i remaining levels", (amount) => {
+    expect(collectionAlbumText("zh-CN", "unlockRemaining", { amount }))
+      .toBe(`再通${amount}关解锁新名画`);
+    expect(collectionAlbumText("zh-TW", "unlockRemaining", { amount }))
+      .toBe(`再通${amount}關解鎖新名畫`);
+  });
+
+  it("provides the restoration guide hint in all ten languages", () => {
+    expect(COLLECTION_ALBUM_TEXT_KEYS).toContain("restoreGuideHint");
+    for (const language of GAME_LANGUAGES) {
+      expect(collectionAlbumText(language, "restoreGuideHint").trim(), language).not.toBe("");
+    }
+    expect(collectionAlbumText("zh-CN", "restoreGuideHint"))
+      .toBe("点击修复，点亮这幅名画");
+    expect(collectionAlbumText("en", "restoreGuideHint"))
+      .toBe("Tap Restore to bring this artwork to life");
+  });
+
+  it("provides localized masterpiece reveal copy without changing the restore guide", () => {
+    expect(COLLECTION_ALBUM_TEXT_KEYS).toContain("introNewMasterpiece");
+    expect(COLLECTION_ALBUM_TEXT_KEYS).toContain("introRestoreHint");
+    for (const language of GAME_LANGUAGES) {
+      expect(collectionAlbumText(language, "introNewMasterpiece").trim(), language).not.toBe("");
+      expect(collectionAlbumText(language, "introRestoreHint").trim(), language).not.toBe("");
+    }
+    expect(collectionAlbumText("zh-CN", "introNewMasterpiece")).toBe("获得新名画");
+    expect(collectionAlbumText("zh-CN", "introRestoreHint"))
+      .toBe("前往收藏，修复并收藏这幅名画");
+    expect(collectionAlbumText("en", "introNewMasterpiece")).toBe("New Masterpiece");
+    expect(collectionAlbumText("en", "introRestoreHint"))
+      .toBe("Open Collection to restore and collect this artwork");
+    expect(collectionAlbumText(undefined, "introNewMasterpiece")).toBe("New Masterpiece");
+  });
+
   it.each(GAME_LANGUAGES)("formats the supplied current inspiration balance without accumulating or truncating it in %s", language => {
     const expected = {
       "zh-CN": "灵感：{amount}",

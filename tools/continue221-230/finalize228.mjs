@@ -1,0 +1,23 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';import {createHash} from 'node:crypto';
+import {loadApi,replay} from '../remake191-200/replay.mjs';import {loadSpatialApi} from '../remake111to120-spatial-floor-v147.mjs';import {nativeKeyFloor,qualifyNativeKeyFloor} from './native-key-floor.mjs';
+import {auditOpeningCoverage} from '../revised-opening-coverage.mjs';import {auditHiddenCoverage} from '../revised-hidden-coverage.mjs';import {auditGateSpanLimits} from '../revised-gate-span-limits.mjs';import {verifyRulesLock} from '../verify-rules-lock.mjs';
+const lock=verifyRulesLock();assert(lock.ok);const{api}=await loadApi();
+const prior=JSON.parse(fs.readFileSync('deliverables/continue221-230-20260930/author228/batch-5601-report.json')).accepted;
+const level=structuredClone(prior.level),drags=prior.record.route.drags;level.preservedMoveTarget=27;
+level.mechanismAdaptation.change='来源228首稳687秒：14体42格、4外壳、1绿色H2竖轴；四冰门红8蓝3紫4绿12，普通黄门。新6×7原创满铺15体42格，保4壳与每层颜色及轴。黄V2→H2，黄L3→H3，红J4→SQ2，普通紫V2拆红S+紫S，普通红H2改黄；全部原向素材。三星27拖取同图完整路线，不称最优；没有源升降或卷帘。逐体映射见qualified228.json。';
+const ignored=new Set(['missing-source-reference','missing-source-hash','missing-seed','missing-source-number','incomplete-source-inventory','originality-unverified','wrong-rule-profile']);assert.deepEqual(api.auditRevisedCandidate(level).issues.filter(i=>!ignored.has(i.code)),[]);
+const checks={opening:auditOpeningCoverage(new api.PuzzleModel(level).snapshot()),hidden:auditHiddenCoverage(level),gates:auditGateSpanLimits(level),art:api.auditCandidateBlockArt(level)};for(const c of Object.values(checks))assert(c.passed,JSON.stringify(c));
+const authoritative=api.replayRevisedRoute(level,drags);assert(authoritative.valid&&authoritative.complete);assert.equal(authoritative.effectiveDrags,27);assert.equal(authoritative.nonClearingDrags,8);
+const pointerCompatible=replay(level,drags,api,{complete:true,requirePointerCompatible:true});
+const proof=nativeKeyFloor(level,{floor:5,countdown:true,maxMilliseconds:3000,maxStates:400000});assert(proof.thresholdProven);
+const qualification=qualifyNativeKeyFloor(level,drags,await loadSpatialApi(),{countdown:true});
+const observations=JSON.parse(fs.readFileSync('deliverables/continue221-230-20260930/source228-230/observations.json')),source=observations.levels.find(r=>r.id===228);
+source.observed.iceGates=[{color:'red',side:'top',count:8},{color:'blue',side:'left-upper',count:3},{color:'purple',side:'left-lower',count:4},{color:'green',side:'bottom',count:12}];
+source.observed.bodyCount=14;source.observed.occupiedCellCount=42;source.observed.boardBoundingWidth=6;source.observed.boardBoundingHeight=10;source.observed.playableCellCount=52;
+source.additionalColorEvidence=['frame-715.png','frame-735.png','frame-745.png'];source.unknown=[];
+const mapping=[
+ [0,'green H2 vertical axis','unchanged shape/color/axis'],[1,'yellow V2','H2'],[2,'green SQ2','unchanged'],[3,'purple V2','red S plus purple S l228-b14'],[4,'purple→red SQ2 shell','unchanged'],[5,'yellow→green SQ2 shell','unchanged'],[6,'red→blue SQ2 shell','unchanged'],[7,'blue H2','unchanged'],[8,'red H2','yellow H2'],[9,'yellow L3 [[0,0],[1,0],[1,1]]','H3'],[10,'red J4 [[0,0],[1,0],[1,1],[1,2]]','SQ2'],[11,'purple→yellow H3 shell','unchanged'],[12,'blue H3','unchanged'],[13,'yellow H3','unchanged'],[14,'part of source purple V2','purple S paired with l228-b3']
+].map(([i,sourceBody,change])=>({candidateId:'l228-b'+i,sourceBody,change}));
+const hash=x=>createHash('sha256').update(JSON.stringify(x)).digest('hex');
+const packet={status:'HEADLESS_BOUNDS_STATIC_PASS_POINTER_PENDING',activeRule:lock.activeVersion,governingRule:'1.121.0',level,drags,levelSha256:hash(level),routeSha256:hash(drags),difficulty:{min:5,max:10,L:5,U:8},starTargets:api.levelStarTargets(level),source,sourceDifferences:{board:'Source 6×10 contour52 playable cells with42 occupied → authored6×7 rectangle42 cells, completely filled. Every source body represented; one ordinary V2 split yields15 bodies.',bodyMapping:mapping,gateCounts:'Four ice gates8/3/4/12 and one ordinary gate preserved; gate positions/widths redesigned. No lift or curtain added.'},checks,authoritative,pointerCompatible,proof,qualification,pointerValidated:false,naturalClockValidated:false,humanBlindTested:false,formalAdopted:false,releaseApproved:false};
+const file='deliverables/continue221-230-20260930/author228/qualified228.json';fs.writeFileSync(file,JSON.stringify(packet,null,2));console.log(JSON.stringify({file,status:packet.status,L:5,U:8,drags:27,levelSha256:packet.levelSha256,qualification:{states:qualification.states,transitions:qualification.transitions},multiCellRepositions:pointerCompatible.multiCellRepositions}));

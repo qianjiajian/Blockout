@@ -1,0 +1,274 @@
+{
+  "prototype": "seam-component-additive-v1",
+  "status": "threshold-proven-by-component-sum",
+  "componentCount": 31,
+  "layout": {
+    "width": 2,
+    "height": 62,
+    "seams": 30,
+    "blockCount": 62,
+    "gateCount": 62
+  },
+  "globalReplay": {
+    "valid": true,
+    "complete": true,
+    "effectiveDrags": 93,
+    "nonClearingDrags": 31,
+    "clearEvents": 62
+  },
+  "localFloor": {
+    "floorPerComponent": 1,
+    "sum": 31,
+    "allThresholdProven": true
+  },
+  "components": [
+    {
+      "index": 0,
+      "layoutSha256": "6da06676c13eea22730557ce0b4af3b8935ce2953344c6dc6e7a07ca743be68f",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 1,
+      "layoutSha256": "10c965feeaba784e76870c1e317bacaa55fc0ccd9f0822e15d80f1de5c2712f4",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 2,
+      "layoutSha256": "6aae4cc4aa55285b19305f6d92a062384a7744bfd8859897f9f8175077044922",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 3,
+      "layoutSha256": "ddf4d2bfc2cae9ba6b163d5013148f1dbfe06a4563344ab7a5e6b29c6ade4b0d",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 4,
+      "layoutSha256": "d2177076633cd7df0f87c2c5174ab6b1768615b145bfc5b9e739be429928122a",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 5,
+      "layoutSha256": "9bd565c3462609a7853b30a1be2c68234d2ded9c9245f7ceb933c06114d50876",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 6,
+      "layoutSha256": "768cb201379a76cff5a0585c8e4de7b4e1f200e8626cf57bed8cc6951ad07531",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 7,
+      "layoutSha256": "b0f6ace96844ba00785e76464b4c8641859636275ded236df62de2fc7246d7fc",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 8,
+      "layoutSha256": "4d8080826b2e4ae0d28159f2ac4f713fbacbeaadf28208815a09b6e47382efe6",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 9,
+      "layoutSha256": "6a17f1882bb92168ba1ce0a9e9ba36d9e1f5be7d3c1af6b2ebef3500f3615a17",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 10,
+      "layoutSha256": "d72f56adc731948fefbf2dcea376dcc5590d51f42cbfdb30b3bee09704b96f35",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 11,
+      "layoutSha256": "db0009b9f4ebf9187b2a2e4da45f1445e9de350fe15ecaa35f434cd12cd109fb",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 12,
+      "layoutSha256": "bc9bce4d4e5f910b19f85ea33b8df190c4023b3c94aa22894a425bd9a156fc17",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 13,
+      "layoutSha256": "e6db0ba2df4403ce6ea6cdb736852293f896bd4c48ff85745fb998449082fee5",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 14,
+      "layoutSha256": "bd70d9493c633a17d652cce7ec0f7ce787de8817dd41868a2b9ed1286f26d8f4",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 15,
+      "layoutSha256": "90b6d47fa49277f0095a630336281875895db011d6bb805d472555375685225d",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 16,
+      "layoutSha256": "c8323d61313d7f2b8ee688f8de0b12f57696f4d465c7484dc14846f88c83015c",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 17,
+      "layoutSha256": "db5850b8e4a28881bced73ea437a9bd306acd71cab0585b05c40e06228c0da10",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 18,
+      "layoutSha256": "95f9f3250ac71d62b7cd9f8efaa8f22359d03f4d030b3c7f4a1454d29af52dd5",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 19,
+      "layoutSha256": "e15a5b621e65d52aa168c81eb3a2c66135f2dad7f55c708e85dfdb1a0ba789f4",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 20,
+      "layoutSha256": "15d35c1dea68b658d1e86087a255f3590775d843de7df5de8c3a50881ec3d09a",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 21,
+      "layoutSha256": "9342ed73253df451715937a5d35b374d3b4ec7d63cc39522b1a7f342c40403c1",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 22,
+      "layoutSha256": "ea8cf8676abdea7f1689d9909d43435ab9f29c8d7c7d94e5c2c9bea3286b3017",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 23,
+      "layoutSha256": "ca301380f6fe404a755d9054c0c27f3f56d70a077858a144e5cb0d76978db9ad",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 24,
+      "layoutSha256": "8606d979b9779834fe36ff0b896cd57bdd435d5c01c0a5b3f6c078395d1248e3",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 25,
+      "layoutSha256": "5172f7c4910aa324341ba07711b18ae8d6ba6d53f8da4cd2c8cfe20feb2877e9",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 26,
+      "layoutSha256": "673fdcdf89dea14b374613797061c7a030dcb816a2836588dc9db05f9947e2e1",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 27,
+      "layoutSha256": "35006f0359f47bb202d2d8e133be3bb488a73c83d3304c4ca23abf4bf75a4b8f",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 28,
+      "layoutSha256": "3181edc9ae95109ca548a86d553e061572aa4d39456646e491db16b79265a362",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 29,
+      "layoutSha256": "2e939f74ec7d62b3c16c43cfcb8f0729c2e3c8891be99a102b5d2dbf88c8d0c6",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    },
+    {
+      "index": 30,
+      "layoutSha256": "9d1c76448c2ab368464fd7035a03114b6c3edaba32646cdf1b54e5e39a22815b",
+      "proofStatus": "threshold-proven",
+      "termination": "below-threshold-exhausted",
+      "exploredStates": 1,
+      "discoveredStates": 1
+    }
+  ]
+}

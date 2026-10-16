@@ -11,14 +11,15 @@ import type { LevelSpec } from '../src/core/types';
 import type { RevisedSearchDrag } from '../src/core/revisedLevelSearch';
 type Row={id:number;level:LevelSpec;drags:RevisedSearchDrag[];lowerBound:number;upperBound:number};
 const fixture=JSON.parse(readFileSync(new URL('./fixtures/remake182185-v107.json',import.meta.url),'utf8')) as {ruleVersion:string;rows:Row[]};
-// The v1.107 fixture remains immutable. v1.111 changes only the current formal
-// Lv182 move target; the separate Lv185 scoring packet is still a candidate.
-const expectedCurrentLevel=(r:Row):LevelSpec=>r.id===182?{...r.level,preservedMoveTarget:48}:r.level;
+// The v1.107 fixture remains immutable. Current production also includes the
+// user-authorized formal Lv185 source-adapted object written in v1.123.
+const formal185=JSON.parse(readFileSync(new URL('../deliverables/star-targets181-187-20260929/formal-packets/level185.json',import.meta.url),'utf8')) as {level:LevelSpec};
+const expectedCurrentLevel=(r:Row):LevelSpec=>r.id===182?{...r.level,preservedMoveTarget:48}:r.id===185?formal185.level:r.level;
 describe('v1.107 formal additions with the later v1.111 Lv182 scoring override',()=>{
  it('adds only reviewed missing IDs to the existing eight-level stage',()=>{
   expect(fixture.ruleVersion).toBe('1.107.0');expect(fixture.rows.length).toBeGreaterThan(0);
   const ids=fixture.rows.map(r=>r.id);expect(new Set(ids).size).toBe(ids.length);expect(ids.every(id=>[182,185].includes(id))).toBe(true);
-  expect(REMADE_181_190_IDS).toEqual([181,183,184,186,187,188,189,190,...ids].sort((a,b)=>a-b));
+  expect(REMADE_181_190_IDS).toEqual([181,182,183,184,185,186,187,188,189,190]);
   expect(LEVELS).toHaveLength(200);
   for(const before of LEVELS_BEFORE_181_190_REMAKE){const mapped=applyRemake181to190(before),r=fixture.rows.find(r=>r.id===before.id);if(r)expect(mapped).toEqual(expectedCurrentLevel(r));else if(!REMADE_181_190_IDS.includes(before.id))expect(mapped).toBe(before);}
  });
@@ -26,7 +27,7 @@ describe('v1.107 formal additions with the later v1.111 Lv182 scoring override',
   const l=LEVELS[r.id-1],before=LEVELS_BEFORE_181_190_REMAKE[r.id-1];expect(l).toEqual(expectedCurrentLevel(r));
   for(const k of ['id','name','width','height','playable','blocked','seams','timeSeconds','reward','parMoves'] as const)expect(l[k],k).toEqual(before[k]);
   expect(levelStarTargets(r.level)).toEqual(levelStarTargets(before));
-  expect(levelStarTargets(l)).toEqual(r.id===182?{moveTarget:48,timeTargetSeconds:97}:levelStarTargets(before));
+  expect(levelStarTargets(l)).toEqual(r.id===182?{moveTarget:48,timeTargetSeconds:97}:r.id===185?{moveTarget:50,timeTargetSeconds:93}:levelStarTargets(before));
   expect(l.difficulty).toBe('hard');expect(l.mechanismRules).toBe('revised-2026-09-27-v1.5');
   for(const b of l.blocks)expect(matchFormalBlockShapeForLevel(b.shape,l.id)?.quarterTurns,b.id).toBe(0);
   // These fields record separately verified proof bounds; this test is not a

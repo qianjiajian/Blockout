@@ -1,0 +1,6 @@
+import fs from 'node:fs'; import {build} from 'esbuild';
+const d=JSON.parse(fs.readFileSync('deliverables/continue221-230-20260929/rebuild221-223/candidate-levels.json'));
+const b=await build({stdin:{resolveDir:process.cwd(),contents:"export {auditRevisedMechanismContract} from './src/core/revisedMechanismContract.ts'; export {PuzzleModel} from './src/core/PuzzleModel.ts';",loader:'ts'},bundle:true,write:false,platform:'node',format:'esm',logLevel:'silent'});
+const m=await import('data:text/javascript;base64,'+Buffer.from(b.outputFiles[0].text).toString('base64'));
+const results=[]; for(const level of d.levels){let contract=[];let route='';try{contract=m.auditRevisedMechanismContract(level); const p=new m.PuzzleModel(level); p.startCountdown(); for(const block of level.blocks.filter(x=>!x.shutterId)){p.beginAction(); const side=level.gates.find(g=>g.color===block.color)?.side; const r=p.tryExit(block.id,side); if(!r.ok){route=`reject ${block.id} ${r.reason}`;break;} p.commitAction();} results.push({id:level.id,contract,complete:p.snapshot().complete,route});}catch(e){results.push({id:level.id,error:String(e),contract});}}
+fs.writeFileSync('deliverables/continue221-230-20260929/rebuild221-223/model-audit.json',JSON.stringify({status:'AUDIT_COMPLETE',results},null,2)+'\n',{flag:'wx'}); console.log(JSON.stringify(results));

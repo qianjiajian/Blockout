@@ -10,8 +10,9 @@ import {
 import { HOME_ART_LAYOUT } from "../src/game/homeArtLayout";
 
 describe("achievement UI layout", () => {
-  it("keeps the Home entry in the open right-side scene area", () => {
+  it("keeps the Home entry in the right shortcut column above the level controls", () => {
     const entry = HOME_ART_LAYOUT.achievementEntry;
+    expect(entry.x).toBe(HOME_ART_LAYOUT.dailyTaskEntry.x);
     expect(entry.x).toBeGreaterThan(HOME_ART_LAYOUT.background.width / 2);
     expect(entry.x + entry.width).toBeLessThan(HOME_ART_LAYOUT.background.width);
     expect(entry.y).toBeGreaterThan(HOME_ART_LAYOUT.header.height);

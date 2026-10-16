@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+import {loadRuntime,verifyCandidate,levelSha256} from './contract.mjs';
+import {independentPartitionSha256} from './geometry.mjs';
+const OUT='deliverables/daily-formal-v2-20261007/design-lab';
+const input=JSON.parse(fs.readFileSync(`${OUT}/nearby-b0-candidate-104.json`));
+const runtime=await loadRuntime(),source=runtime.LEVELS.find(l=>l.id===198);
+const level=structuredClone(input.level);level.id=198;level.reward=0;level.name='每日挑战·基础·超难10';
+const candidate={formalId:'daily-mechanisms-color-exit-1-d2-10',stageKey:'mechanisms-color-exit-1',difficulty:2,sourceLevelId:198,sourceLevelSha256:levelSha256(source),level,drags:input.drags};
+const evidence=await verifyCandidate(runtime,candidate,{lowerBudget:{maxStates:160000,maxTransitions:900000,maxMilliseconds:8000}});
+evidence.provenance={baselinePath:`${OUT}/nearby-b0-candidate-104.json`,sourceLevelId:198,sourceLevelSha256:levelSha256(source),partitionSha256:independentPartitionSha256(level),ruleVersion:'1.153.0',removedMechanisms:['frozen-exit','numeric-ice','multilayer-shell','key-lock'],changes:input.changes};
+fs.writeFileSync(`${OUT}/stage1-d2-10-seed.json`,JSON.stringify(evidence,null,2)+'\n');
+console.log(JSON.stringify({status:evidence.status,accepted:evidence.accepted,L:evidence.L,U:evidence.U,reasons:evidence.reasons}));

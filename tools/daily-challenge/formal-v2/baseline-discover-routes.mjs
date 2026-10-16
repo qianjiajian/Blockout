@@ -1,0 +1,10 @@
+import fs from 'node:fs';import path from 'node:path';import {OUT,read,write} from './baseline-common.mjs';
+const wanted=new Set(read(`${OUT}/manifest.json`).rows.map(r=>r.sourceLevelId));const files=[];
+function walk(dir,depth=0){if(depth>5)return;for(const e of fs.readdirSync(dir,{withFileTypes:true})){const p=path.join(dir,e.name);if(e.isDirectory()){if(/pointer|source-snapshot|node_modules|\.git|competitor|screens|native-runs|candidate-art|opening|render|preview|design-search|design-v\d|isolated-art|baseline$/i.test(e.name))continue;walk(p,depth+1);}else if(e.name.endsWith('.json')&&/(candidate|packet|level\d|level-\d|route|verification|accepted|aggregate|adoption|summary|current|catalog|final)/i.test(e.name)){const size=fs.statSync(p).size;if(size>500&&size<5*1024*1024)files.push(p.replaceAll('\\','/'));}}}
+for(const e of fs.readdirSync('deliverables',{withFileTypes:true})){if(e.isDirectory()&&/^(remake|regen|finite|star-target|campaign|continue|lv\d|formal)/.test(e.name))walk(path.join('deliverables',e.name));}
+const candidates=[];for(const file of files){let data;try{data=read(file);}catch{continue;}
+function visit(obj,key='',depth=0){if(!obj||typeof obj!=='object'||depth>3)return;const id=obj.level?.id??obj.id??obj.levelId;const drags=obj.drags??obj.route?.drags??obj.search?.drags??obj.witness?.drags;
+if(wanted.has(id)&&Array.isArray(drags)&&drags.length&&drags.every(d=>typeof d?.blockId==='string'&&Array.isArray(d.path)))candidates.push({sourceLevelId:id,file,key,drags});
+for(const [k,v]of Object.entries(obj)){if(k==='level'||k==='drags'||k==='route'||k==='search'||k==='witness')continue;if(Array.isArray(v)&&v.length<250)for(let i=0;i<v.length;i++)visit(v[i],`${key}.${k}[${i}]`,depth+1);else if(v&&typeof v==='object'&&!Array.isArray(v))visit(v,`${key}.${k}`,depth+1);}}
+visit(data);}
+fs.writeFileSync(`${OUT}/source-route-candidates.json`,JSON.stringify({filesExamined:files.length,wantedSourceIds:[...wanted].sort((a,b)=>a-b),candidates})+'\n');console.log({filesExamined:files.length,candidates:candidates.length,sourceCount:new Set(candidates.map(c=>c.sourceLevelId)).size});

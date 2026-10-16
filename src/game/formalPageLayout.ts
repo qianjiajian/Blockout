@@ -1,8 +1,10 @@
 import type { HomeArtPlacement } from "./homeArtLayout";
+import { BOOSTER_PURCHASE_LAYOUT } from "./boosterPurchaseLayout";
 
 export type FormalMetaPage = "supply" | "leaderboard" | "levels" | "records";
 
-// All coordinates below are authored against the supplied 720×1584 mockups.
+// Unless explicitly marked as logical, coordinates below are authored against
+// the supplied 720×1584 mockups.
 // Runtime rendering keeps supplied bitmaps at their mockup placements and
 // applies only the single, uniform 720-wide artboard transform. Reused
 // leaderboard portraits are aspect-preserving contained into their measured
@@ -393,6 +395,20 @@ export const STATUS_OVERLAY_LAYOUT = {
   },
 } as const;
 
+/** First-use booster unlock tutorial. Coordinates are authored on the 720px home artboard. */
+export const BOOSTER_UNLOCK_GUIDE_LAYOUT = {
+  overlay: { color: "#000000", alpha: 0.82 },
+  panel: { x: 59, y: 298, width: 594, height: 889 },
+  close: { x: 0, y: 0, width: 720, height: 1584 },
+  title: { x: 360, y: 310, size: 56, fill: "#fff4b5", stroke: "#b8520c", lineWidth: 6 },
+  subtitle: { x: 356, y: 462, size: 30, fill: "#fff3a0", stroke: "#381ea2", lineWidth: 3 },
+  visual: { x: 360, y: 640, size: 148 },
+  count: { x: 360, y: 825, size: 64 },
+  descriptionPanel: { x: 105, y: 794, width: 502, height: 152, radius: 25 },
+  description: { x: 356, y: 850, maxWidth: 438, lineHeight: 42, size: 28, fill: "#4e347e" },
+  hint: { x: 360, y: 1135, size: 36, fill: "#c3a475", stroke: "#5c4426", lineWidth: 1 },
+} as const;
+
 // Collection, pause/settings and settlement coordinates are measured directly
 // from the supplied Cut 2 mockups. Every slice is drawn at its authored pixel
 // size; the renderer applies only the shared, uniform 720-wide artboard
@@ -495,18 +511,37 @@ export const PAUSE_SETTINGS_LAYOUT = {
 } as const;
 
 export const LIFE_REFILL_LAYOUT = {
-  overlay: PAUSE_SETTINGS_LAYOUT.overlay,
-  panel: PAUSE_SETTINGS_LAYOUT.panel,
-  close: PAUSE_SETTINGS_LAYOUT.close,
-  title: { x: 360, y: 381, size: 60, maxWidth: 310 },
-  lives: { x: 360, y: 566, size: 64, maxWidth: 420 },
-  recovery: { x: 360, y: 634, size: 34, maxWidth: 420 },
-  coinPile: { x: 145, y: 687, width: 194.4, height: 162.4 },
-  costPill: { x: 380, y: 734, width: 178, height: 69 },
-  cost: { x: 469, y: 770, size: 40, maxWidth: 150 },
-  feedback: { x: 360, y: 891, size: 28, maxWidth: 442 },
-  buyButton: { x: 247.5, y: 1017, width: 225, height: 84 },
-  action: { y: 1065, size: 36 },
+  // Already projected to 496×1078 logical coordinates, like the purchase popup.
+  overlay: { alpha: 0.83, color: "#05020d" },
+  panel: BOOSTER_PURCHASE_LAYOUT.panel,
+  close: BOOSTER_PURCHASE_LAYOUT.close,
+  title: BOOSTER_PURCHASE_LAYOUT.titleText,
+  icon: BOOSTER_PURCHASE_LAYOUT.icon,
+  lives: {
+    x: BOOSTER_PURCHASE_LAYOUT.icon.x + BOOSTER_PURCHASE_LAYOUT.icon.width / 2,
+    y: BOOSTER_PURCHASE_LAYOUT.icon.y + BOOSTER_PURCHASE_LAYOUT.icon.height / 2,
+    size: BOOSTER_PURCHASE_LAYOUT.quantityText.size,
+    maxWidth: BOOSTER_PURCHASE_LAYOUT.icon.width * 0.65,
+  },
+  recoveryTitle: BOOSTER_PURCHASE_LAYOUT.descriptionText,
+  recovery: {
+    ...BOOSTER_PURCHASE_LAYOUT.descriptionText,
+    y: BOOSTER_PURCHASE_LAYOUT.descriptionText.y + BOOSTER_PURCHASE_LAYOUT.descriptionText.lineHeight,
+  },
+  adButton: BOOSTER_PURCHASE_LAYOUT.ad,
+  adButtonCentered: {
+    ...BOOSTER_PURCHASE_LAYOUT.ad,
+    x: BOOSTER_PURCHASE_LAYOUT.panel.x
+      + (BOOSTER_PURCHASE_LAYOUT.panel.width - BOOSTER_PURCHASE_LAYOUT.ad.width) / 2,
+  },
+  adIcon: BOOSTER_PURCHASE_LAYOUT.adIcon,
+  adLabel: BOOSTER_PURCHASE_LAYOUT.adLabel,
+  adReward: BOOSTER_PURCHASE_LAYOUT.adReward,
+  coinIcon: BOOSTER_PURCHASE_LAYOUT.coinIcon,
+  cost: BOOSTER_PURCHASE_LAYOUT.priceText,
+  feedback: BOOSTER_PURCHASE_LAYOUT.feedbackText,
+  buyButton: BOOSTER_PURCHASE_LAYOUT.buy,
+  action: BOOSTER_PURCHASE_LAYOUT.buyText,
 } as const;
 
 export const LANGUAGE_PICKER_LAYOUT = {

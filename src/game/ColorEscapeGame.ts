@@ -1,10 +1,57 @@
+import { WELFARE_REWARD_AMOUNTS, normalizeWelfareRewards, cloneWelfareRewards, deriveWelfareRewards, prepareWelfareReward, confirmWelfareAdCompletion, completeWelfareReward, cancelWelfareReward, type WelfareRewardState, type WelfareRewardKind, type WelfareRewardAccount } from "../core/welfareRewards";
+import { normalizeLifeRefillAd, cloneLifeRefillAd, prepareLifeRefillAd, confirmLifeRefillAd, completeLifeRefillAd, cancelLifeRefillAd, type LifeRefillAdState } from "../core/lifeRefillAd";
+import { normalizeBoosterRewardAd, cloneBoosterRewardAd, prepareBoosterRewardAd, confirmBoosterRewardAd, completeBoosterRewardAd, cancelBoosterRewardAd, type BoosterRewardAdState } from "../core/boosterRewardAd";
+import { normalizeDailyChallengeRewardAd, cloneDailyChallengeRewardAd, prepareDailyChallengeRewardAd, confirmDailyChallengeRewardAd, completeDailyChallengeRewardAd, cancelDailyChallengeRewardAd, consumeDailyChallengeRewardAttempt, dailyChallengeRewardAttempts, type DailyChallengeRewardAdState } from "../core/dailyChallengeRewardAd";
+import { drawWelfareStation, welfareStationLayout, type WelfareStationView } from "./welfareStationUi";
+import { WELFARE_SUPPLIED_ART, type WelfareSuppliedArt, type WelfareSuppliedArtKey } from "./welfareSuppliedArt";
+import { welfareText } from "./welfareLocalization";
+import { DAILY_SUCCESS_ART_URLS } from "./artManifest";
+import { DAILY_SUCCESS_LAYOUT } from "./winSettlementLayout";
+import { sampleBoosterUnlockMotion, drawBoosterUnlockGlow, boosterUnlockLandedCount, BOOSTER_UNLOCK_FLIGHT_DURATION, BOOSTER_UNLOCK_READY_AGE } from "./boosterUnlockAnimation";
 import { LEVELS, getLevel } from "../core/levels";
+import { normalizeCollectionStarRecords, collectionStarStatus, type CollectionStarRecord } from "../core/collectionStarRecord";
+import { normalizeMainlineRankingProgress, observeMainlineRanking, recordMainlineRankingStars, rankingWeekStartMs, type MainlineRankingProgress } from "../core/mainlineRankingProgress";
+import { isRankingProvince, randomRankingProvince } from "../core/rankingProvince";
+import { normalizePlayerProfile, cleanProfileName, startProfileAttempt, completeProfileAttempt, PROFILE_RENAME_PRICE, PROFILE_AVATAR_COUNT, PROFILE_FRAME_COUNT, profileAvatarPath, profileFramePath, profileAppearanceUnlocked, profileAppearanceUnread, markProfileAppearanceSeen, type ProfileAppearanceKind, type PlayerProfile } from "../core/playerProfile";
+import { drawPlayerProfile, drawProfileAvatar, profileNotificationDotRect, profileTargets, profileCatalogMaxScroll, PROFILE_CATALOG_RECT, PROFILE_STATS_ACTION_BOUNDS, PROFILE_HOME_RECT, PROFILE_INPUT_RECT, PROFILE_SCALE, PROFILE_OFFSET_Y, type ProfileArt, type ProfileView, type ProfilePage } from "./playerProfileUi";
+import { PROFILE_SUPPLIED_ART, type ProfileSuppliedArt, type ProfileSuppliedArtKey } from "./profileSuppliedArt";
+import { ProfileScroll } from "./profileScroll";
+import { GrayscaleImageCache } from "./GrayscaleImageCache";
+import { PopupEntranceController, popupBounds } from "./popupEntrance";
+import { FEATURE_UNLOCK_LAYOUT, type FeatureUnlockArt } from "./featureUnlockUi";
+import { createStackedHintMotion, advanceStackedHints, stackedHintBackgroundAlpha, STACKED_HINT_GEOMETRY, type StackedHintMotion } from "./stackedHintMotion";
+import { parseLeague, finishLeagueAttempt, type LeagueState, type LeagueAttempt } from "../core/league";
+import { LeagueRun } from "../core/leagueRun";
+import { getLeagueLevel, nextLeagueLevel, LEAGUE_LEVEL_COUNT } from "../core/leagueLevels";
+import { reconcileLeagueAccount, LeagueAccountTransaction } from "../core/leagueAccount";
+import { drawLeague, LEAGUE_UI, leagueRows, leagueCountdown, type LeagueView } from "./leagueUi";
+import { LEAGUE_TIER_SLIDE_DURATION, sampleLeagueTierPosition, type LeagueTierSlide } from "./leagueTierSlide";
+import { LeagueScroll, LEAGUE_LIST } from "./leagueScroll";
+import { LeagueArtStore } from "./LeagueArtStore";
+import { LeagueSettlementArtStore } from "./LeagueSettlementArtStore";
+import { LEAGUE_SETTLEMENT_UI } from "./leagueSettlementUi";
+import { ProfileAvatarArtStore, PROFILE_AVATAR_PATHS, PROFILE_FRAME_PATHS, type ProfileAvatarArt } from "./ProfileAvatarArtStore";
+import {
+  TEMPORARY_TEST_LEVEL_IDS,
+  getAdjacentTemporaryTestLevelId,
+  getTemporaryTestLevelStrict,
+} from "./temporaryTestLevelCatalog";
 import { MUSIC_CATALOG, isMusicTrack, musicCatalogEntry } from "../audio/musicCatalog";
 import type { MusicCatalogEntry, MusicTrackId } from "../audio/musicCatalog";
 import { PuzzleModel } from "../core/PuzzleModel";
+import { IS_WECHAT_BUILD } from "../platform/buildTarget";
 import { drawContinuousGateStrip } from "./continuousGateStrip";
 import { JourneyDeferredArt } from "./JourneyDeferredArt";
 import { CollectionArtworkStore } from "./CollectionArtworkStore";
+import { CountdownWarning } from "./countdownWarning";
+import { ComboAnimation, drawComboPraise } from "./comboAnimation";
+import { TimeFreezeAnimation, drawTimeFreezeAnimation } from "./timeFreezeAnimation";
+import { PulseAnimation, drawPulseAnimation, drawPulseDim, pulseTargetArrival, samplePulseShake,
+  PULSE_RELEASE_TIME, type PulseTarget } from "./pulseAnimation";
+import { projectPulseBlockRects, projectPulseGateRect } from "./pulseHighlightGeometry";
+import { drawRocketFlight, drawRocketImpact, drawRocketShatter, sampleRocketShake,
+  ROCKET_FLIGHT_DURATION, ROCKET_REDUCED_FLIGHT_DURATION,
+  ROCKET_SHATTER_DURATION, ROCKET_REDUCED_SHATTER_DURATION } from "./rocketAnimation";
 import {
   evaluateLevelStars,
   levelStarTargets,
@@ -38,6 +85,25 @@ import {
   type DailyTaskProgressState,
 } from "../core/dailyTasks";
 import {
+  DAILY_CHALLENGE_DIFFICULTIES,
+  DAILY_CHALLENGE_MAX_ATTEMPTS,
+  millisecondsUntilNextDailyChallengeDay,
+  DAILY_CHALLENGE_REWARDS,
+  dailyChallengeDifficultyLabel,
+  getDailyChallengeAssignment,
+  getDailyChallengeSourceLevel,
+  cloneDailyChallengeLevel,
+  getDailyChallengeRunOwner,
+  sanitizeDailyChallengeRunOwner,
+  dailyChallengeRunMatches,
+  reconcileDailyChallengeState,
+  consumeDailyChallengeAttempt,
+  completeDailyChallenge,
+  type DailyChallengeDifficulty,
+  type DailyChallengeState,
+  type DailyChallengeRunOwner,
+} from "../core/dailyChallenge";
+import {
   LEVEL_COLLECTION_CATALOG,
   MASTERPIECE_COLLECTION_CATALOG,
   collectionCatalogFor,
@@ -59,7 +125,17 @@ import {
   type CollectionProgressCatalog,
   type CollectionProgressSave,
 } from "../core/collectionProgress";
+import { deriveMasterpieceUnlockProgress, type MasterpieceUnlockProgress } from "../core/masterpieceUnlockProgress";
+import { drawCollectionRewardProgress, sampleCollectionRewardProgress } from "./collectionRewardProgress";
 import { SUPPLY_ITEMS, SUPPLY_ORDER, TIME_FREEZE_SECONDS, nextUnseenUnlockedSupply, purchaseSupply, unlockedSupplyKinds } from "../core/supply";
+import { BOOSTER_PURCHASE_QUANTITY, getBoosterBundlePrice, purchaseBoosterBundle } from "../core/boosterPurchase";
+import { BOOSTER_PURCHASE_LAYOUT } from "./boosterPurchaseLayout";
+import { BOOSTER_PURCHASE_ART_URLS, type BoosterPurchaseArt } from "./boosterPurchaseArt";
+import { SuppliedRevealArtStore, SUPPLIED_COLLECTION_INTRO_LAYOUT } from "./suppliedRevealArt";
+import { SUPPLIED_SETTLEMENT_ART, SUPPLIED_RANK_ART, type SuppliedSettlementArt, type SuppliedRankArt } from "./suppliedSettlementArt";
+import { FEATURE_UNLOCKS, isFeatureUnlocked, type FeatureId } from "../core/featureUnlocks";
+import { sanitizeFeatureGuideProgress, queueFeatureUnlockGuides, acknowledgeFeatureGuide,
+  type FeatureGuideProgress, type GuidedFeatureId } from "../core/featureUnlockGuides";
 import type { SupplyKind } from "../core/supply";
 import {
   DEFAULT_META_DISCOVERY,
@@ -71,8 +147,8 @@ import {
 } from "../core/metaDiscovery";
 import {
   buildMetaLeaderboard,
+  metaLeaderboardDisplayEntries,
   PLACEHOLDER_META_LEADERBOARD_SOURCE,
-  type MetaLeaderboardAvatar,
   type MetaLeaderboardEntry,
   type MetaLeaderboardMode,
   type MetaLeaderboardSnapshot,
@@ -87,6 +163,7 @@ import {
   getJourneyEpisodeThemeIndex,
   getJourneyReward,
   getJourneySegment,
+  isJourneyEpisodeUnlocked,
   sanitizeJourneyEpisodeIndex,
   sanitizeJourneyProgressMemory,
   type JourneyEpisode,
@@ -112,15 +189,14 @@ import {
   type LifeState,
 } from "../core/lives";
 import {
-  gatePortalRailKeys,
   gatePortals,
   portalBoundaryAnchor,
   portalTangentOffset,
 } from "../core/gatePortals";
 import { connectedBoardCompartment } from "./boardSeamVisualGeometry";
-import { COLORS, type BlockColor, type BlockState, type ExitAttemptStatus, type GatePortalSpec, type GeneratorSpec, type Point, type PuzzleSnapshot, type Side } from "../core/types";
+import { COLORS, type BlockColor, type BlockState, type ExitAttemptStatus, type GatePortalSpec, type GeneratorSpec, type LevelSpec, type Point, type PuzzleSnapshot, type Side } from "../core/types";
 import type { GameHost, MusicScene, PointerSample, SoundKind, StorageReadResult } from "../platform/Host";
-import { ART_ATLASES, GAME_ART, type CollectionAlbumArtUrls, type DailyTaskArtUrls, type AchievementArtUrls, type MusicLibraryArtUrls } from "./artManifest";
+import { ART_ATLASES, GAME_ART, LIFE_REFILL_ART, FEATURE_UNLOCK_ART, type CollectionAlbumArtUrls, type DailyTaskArtUrls, type DailyChallengeArtUrls, type AchievementArtUrls, type MusicLibraryArtUrls } from "./artManifest";
 import {
   HOME_ARTBOARD,
   HOME_ART_LAYOUT,
@@ -142,6 +218,7 @@ import {
   LIFE_REFILL_LAYOUT,
   PAUSE_SETTINGS_LAYOUT,
   STATUS_OVERLAY_LAYOUT,
+  BOOSTER_UNLOCK_GUIDE_LAYOUT,
   WIN_ART_LAYOUT,
   type FormalMetaPage,
 } from "./formalPageLayout";
@@ -155,6 +232,7 @@ import {
   type TranslationParams,
 } from "./localization";
 import { chooseBlockBadgeCell } from "./blockBadge";
+import { dailyKeyLockMarkerAnchor, dailyKeyLockMarkerLayout } from "./dailyKeyLockMarkerLayout";
 import { orderBlocksByDepth } from "./blockDepthOrder";
 import { pickNearbyBlock } from "./blockPicker";
 import { adaptiveRescueAction } from "./adaptiveRescue";
@@ -165,10 +243,10 @@ import {
   boardPortalVisualDepthTop,
   boardRimCornerVisualTop,
   boardRimRunVisualTop,
-  buildBoardRimLayout,
   orderBoardRimLayersByDepth,
   splitBoardRimRunIntoSegments,
 } from "./boardRim";
+import { BoardGeometryCache, visibleFlipDoorsOnRim } from "./BoardGeometryCache";
 import { frozenGateCounterCenter } from "./frozenGateCounterGeometry";
 import {
   KEY_LOCK_COUNT_VERTICAL_OFFSET_CELLS,
@@ -178,7 +256,7 @@ import {
   markerAspectRatio,
 } from "./keyLockMarkerArt";
 import { projectShutterVisualRect, shutterCounterLayout } from "./shutterVisualLayout";
-import { ACTIVE_REVISED_MECHANISM_ART_PATHS, REVISED_MECHANISM_ART_URLS, missingMechanismArtPaths } from "./revisedMechanismArt";
+import { REVISED_MECHANISM_ART_URLS, missingMechanismArtPaths, requiredMechanismArtPaths } from "./revisedMechanismArt";
 import { SHUTTER_NINE_SLICE_PATHS, SHUTTER_NINE_SLICE_URLS, shutterFrameScale, type ShutterNineSliceImages } from "./shutterNineSlice";
 import { sampleRevisedFlipGate, sampleRevisedKeyUnlock } from "./revisedMarkerAnimation";
 import { sampleRevisedRegionAnimation, revisedRegionOpeningGeometry, sampleRevisedGeneratorExhaustion, sampleRevisedGeneratorSpawn } from "./revisedRegionAnimation";
@@ -233,7 +311,7 @@ import {
   sampleDirectLevelTransition,
   shouldDirectAdvanceAfterClear,
 } from "./completionFlow";
-import { tutorialGuideMotion } from "./tutorialGuideMotion";
+import { tutorialGuideMotion, tutorialTapMotion } from "./tutorialGuideMotion";
 import { winGlowRotation } from "./winGlowAnimation";
 import { MECHANISM_GUIDE, MECHANISM_GUIDE_SAVE_IDS } from "../core/mechanismCatalog";
 import { FeatureIntroIconArt } from "./featureIntroIcon";
@@ -252,6 +330,7 @@ import {
   ACHIEVEMENT_LAYOUT,
   achievementBadgePlacement,
   achievementClaimPlacement,
+  achievementClaimedCheckPlacement,
   achievementRowBackgroundPlacement,
   achievementRowPlacement,
   achievementScrollMaximum,
@@ -269,6 +348,12 @@ import {
 import { collectionAlbumText, type CollectionAlbumTextKey } from "./collectionAlbumLocalization";
 import { createMechanismGuideLayout, mechanismGuideRect } from "./mechanismGuideLayout";
 import { DAILY_TASK_LAYOUT, dailyTaskRows } from "./dailyTaskLayout";
+import {
+  DAILY_CHALLENGE_LAYOUT,
+  dailyChallengeRowButtonRect,
+  dailyChallengeRowCompletedRect,
+  dailyChallengeRowRect,
+} from "./dailyChallengeLayout";
 import { dailyTaskText, type DailyTaskTextKey } from "./dailyTaskLocalization";
 import {
   GENERATOR_RIM_METRICS,
@@ -277,6 +362,7 @@ import {
   type GeneratorRimAnchor,
   type GeneratorRimGeometry,
 } from "./generatorRimGeometry";
+import { includeDailyGeneratorSpriteInsets } from "./dailyGeneratorInsets";
 import {
   generatorSpawnAnimation,
   generatorSpawnBatchOffset,
@@ -293,6 +379,7 @@ import { WIN_CRITERION_KINDS, WIN_SETTLEMENT_LAYOUT, type WinCriterionKind } fro
 
 const LOGICAL_WIDTH = 496;
 const LOGICAL_HEIGHT = 1078;
+const HOME_RESOURCE_SHIFT_X = 110;
 const HOME_ARTBOARD_SCALE = LOGICAL_WIDTH / HOME_ARTBOARD.width;
 const HOME_ARTBOARD_OFFSET_Y = (LOGICAL_HEIGHT - HOME_ARTBOARD.height * HOME_ARTBOARD_SCALE) / 2;
 const GAMEPLAY_ARTBOARD_SCALE = LOGICAL_WIDTH / GAMEPLAY_ARTBOARD.width;
@@ -368,6 +455,8 @@ const COLLECTION_SCROLL_DEAD_ZONE_CSS = 7;
 const JOURNEY_PROGRESS_DURATION = 1.2;
 const JOURNEY_PROGRESS_REDUCED_DURATION = 0.16;
 const EPISODE_UNLOCK_HOME_DELAY = 0.2;
+const JOURNEY_SCENE_REVEAL_DURATION = 0.6;
+const JOURNEY_SCENE_RESTORE_DURATION = 0.25;
 const JOURNEY_REWARD_FLIGHT_DURATION = 0.72;
 
 const gentleReverseStep = (progress: number): number => {
@@ -419,7 +508,7 @@ const UPDATE_NOTICE = {
     "全部图片保持原比例显示",
   ],
 } as const;
-type Screen = "home" | "achievements" | "mechanismGuide" | "dailyTasks" | "levels" | "records" | "supply" | "leaderboard" | "settings" | "musicLibrary" | "language" | "updates" | "resetConfirm" | "feature" | "playing" | "paused" | "win" | "failed" | "settlementFailed";
+type Screen = "home" | "league" | "leagueResult" | "achievements" | "mechanismGuide" | "dailyTasks" | "dailyChallenge" | "levels" | "records" | "supply" | "leaderboard" | "settings" | "musicLibrary" | "language" | "updates" | "resetConfirm" | "feature" | "playing" | "paused" | "boosterPurchase" | "win" | "failed" | "settlementFailed";
 type MainNavigationScreen = "supply" | "leaderboard" | "home" | "levels" | "records";
 
 interface SettlementPresentation {
@@ -465,6 +554,21 @@ const MUSIC_LAYOUT = {
 // player frame on the narrower browser/phone viewports.
 const MUSIC_ROW_SCALE = 1;
 
+const MAINLINE_RANK_CHANGE_DURATION = 2.3;
+const JOURNEY_COIN_WALLET = {
+  panel: { x: 282, y: 106, width: 170, height: 48 },
+  icon: { x: 256, y: 97, width: 62, height: 64 },
+  text: { x: 373, y: 130 },
+} as const;
+const MAINLINE_RANK_CHANGE_LAYOUT = {
+  // Above the result panel (y=287), clear of stars, rewards and Continue.
+  banner: { x: 18, y: 144, width: 410, height: 124 },
+  avatar: { x: 36, y: 169, width: 72, height: 72 },
+  title: { x: 268, y: 167, size: 23, maxWidth: 280 },
+  ranks: { x: 268, y: 209, size: 31, maxWidth: 280 },
+  delta: { x: 268, y: 246, size: 19, maxWidth: 280 },
+} as const;
+
 const musicArtRect = (rect: { x: number; y: number; width: number; height: number }) => rect;
 
 interface CompletionMetrics {
@@ -472,10 +576,22 @@ interface CompletionMetrics {
   elapsedSeconds: number;
 }
 
+interface MainlineRankChangePresentation {
+  beforeRank: number;
+  afterRank: number;
+  age: number;
+  duration: number;
+}
+
 interface PendingSettlement {
   candidateSave: SaveData;
   baselineSave: SaveData;
   presentation: SettlementPresentation;
+}
+interface DailyChallengeWinPresentation {
+  difficulty: DailyChallengeDifficulty;
+  coins: number;
+  inspiration: number;
 }
 interface PendingSettlementAbandon {
   candidateSave: SaveData;
@@ -635,10 +751,10 @@ interface JourneyScrollView {
 
 interface FormalShopArt {
   screen: "supply";
-  reference: HTMLImageElement;
-  buyButton: HTMLImageElement;
-  boosterTile: HTMLImageElement;
+  ui: WelfareSuppliedArt;
+  life: HTMLImageElement;
   priceCoin: HTMLImageElement;
+  inspiration: HTMLImageElement;
   boosterIcons: Record<Booster, HTMLImageElement>;
 }
 
@@ -652,7 +768,8 @@ interface FormalLeaderboardArt {
   tabActive: HTMLImageElement;
   tabInactive: HTMLImageElement;
   podium: HTMLImageElement;
-  avatars: Record<MetaLeaderboardAvatar, HTMLImageElement>;
+  avatars: HTMLImageElement[];
+  frames: HTMLImageElement[];
   podiumNameplates: readonly [HTMLImageElement, HTMLImageElement, HTMLImageElement];
   podiumMedals: readonly [HTMLImageElement, HTMLImageElement, HTMLImageElement];
   rankMedals: readonly [HTMLImageElement, HTMLImageElement, HTMLImageElement];
@@ -671,18 +788,15 @@ interface FormalJourneyArt {
   title: HTMLImageElement;
   track: HTMLImageElement;
   trackProgress: HTMLImageElement;
-  destination: HTMLImageElement;
   currentMarker: HTMLImageElement;
   levelCardLeft: HTMLImageElement;
   levelCardActiveLeft: HTMLImageElement;
   rewardCardRight: HTMLImageElement;
   rewardCardActiveRight: HTMLImageElement;
   deferred: JourneyDeferredArt;
-  lockedShade: HTMLImageElement;
   episodeRangePanel: HTMLImageElement;
   episodeSelectedButton: HTMLImageElement;
   episodeActionButton: HTMLImageElement;
-  lock: HTMLImageElement;
   rewards: Record<Exclude<JourneyRewardKind, "unlimited_lives"> | "complete", HTMLImageElement>;
 }
 
@@ -716,7 +830,7 @@ interface PauseSettingsArt {
   toggleOff: HTMLImageElement;
   replayButton: HTMLImageElement;
   homeButton: HTMLImageElement;
-  clearProgressButton: HTMLImageElement;
+  clearProgressButton?: HTMLImageElement;
 }
 
 interface StatusOverlayArt {
@@ -782,38 +896,67 @@ interface FormalIceAssetRequest {
 }
 
 interface WinArt {
+  suppliedSettlement?: SuppliedSettlementArt;
+  suppliedRank?: SuppliedRankArt;
   panel: HTMLImageElement;
   glow: HTMLImageElement;
   rewardPill: HTMLImageElement;
   coinPile: HTMLImageElement;
   continueButton: HTMLImageElement;
   close: HTMLImageElement;
+  dailyRewards?: {
+    card: HTMLImageElement;
+    inspiration: HTMLImageElement;
+    coins: HTMLImageElement;
+  };
 }
 
 type DailyTaskArt = { [Key in keyof DailyTaskArtUrls]: HTMLImageElement };
+type DailyChallengeArt = { [Key in keyof DailyChallengeArtUrls]: HTMLImageElement };
 type AchievementArt = { [Key in keyof AchievementArtUrls]: HTMLImageElement };
 
 interface SaveData {
+  mainlineRanking?: MainlineRankingProgress;
+  welfareRewards?: WelfareRewardState;
+  lifeRefillAd?: LifeRefillAdState;
+  boosterRewardAd?: BoosterRewardAdState;
+  dailyChallengeRewardAd?: DailyChallengeRewardAdState;
+  playerProfile?: PlayerProfile;
   schemaVersion: 1;
+  league?: LeagueState;
+  leagueIntroSeen?: boolean;
+  featureGuideProgress?: FeatureGuideProgress;
+  /** One-time collection onboarding is unlocked by the first clear of level 5. */
+  collectionIntroPending?: boolean;
+  collectionIntroShown?: boolean;
   currentLevel: number;
   highestLevel: number;
   coins: number;
+  /** Background music preference; kept separate from sound effects. */
+  music?: boolean;
   sound: boolean;
   haptic: boolean;
   reducedMotion: boolean;
   language: GameLanguage;
   selectedMusicTrack?: MusicTrackId;
+  /** Unlocked tracks explicitly removed from the playlist by the player. */
+  mutedMusicTracks: MusicTrackId[];
   featureSeen: string[];
   boosterUnlockSeen: Booster[];
+  /** Boosters that the player has successfully used at least once. */
+  boosterUsageSeen: Booster[];
   metaDiscovery: MetaDiscoveryState;
   boosters: Record<Booster, number>;
   bestStars: Record<string, number>;
+  bestStarConditions: Record<string, CollectionStarRecord>;
   bestMoves: Record<string, number>;
   rewardedLevels: number[];
   journeyProgress: JourneyProgressMemory;
   achievementProgress: AchievementProgressState;
   collectionProgress: CollectionProgressSave;
   dailyTaskProgress: DailyTaskProgressState;
+  /** Daily challenge assignments, attempts and per-day rewards. */
+  dailyChallenge: DailyChallengeState;
   selectedJourneyEpisode: number;
   lifeState: LifeState;
   /** Legacy schema-v1 fields retained only for nondestructive save normalization. */
@@ -828,6 +971,9 @@ interface SaveData {
     /** Legacy markers are read only so interrupted retired-Daily runs refund safely. */
     daily: boolean;
     dailyDayKey?: string;
+    dailyChallengeDifficulty?: DailyChallengeDifficulty;
+    dailyChallengeSourceLevelId?: number;
+    dailyChallengeOwner?: DailyChallengeRunOwner;
     boosterSpent: Record<Booster, number>;
   };
 }
@@ -848,8 +994,17 @@ interface JourneyPresentation {
   age: number;
   intent: "progress_event" | "theme_selection" | "reward_inspection";
   themeApplying?: boolean;
+  sceneReveal?: boolean;
   error?: string;
   blockedGrant?: boolean;
+}
+
+interface CollectionIntroState {
+  level: number;
+  itemId: string;
+  age: number;
+  restoration?: boolean;
+  unlockPreview?: boolean;
 }
 
 interface Rect { x: number; y: number; width: number; height: number }
@@ -896,6 +1051,15 @@ interface Particle {
   fadePortion?: number;
   fragmentSpeck?: boolean;
   exitAnimationId?: string;
+}
+interface RocketFlight {
+  owner: PuzzleModel;
+  blockId: string;
+  blockPosition: { x: number; y: number };
+  age: number;
+  duration: number;
+  source: { x: number; y: number };
+  target: { x: number; y: number };
 }
 interface ExitGhost {
   mode: "gate" | "rocket" | "shell";
@@ -962,7 +1126,16 @@ interface ExitFailureFeedback extends Rect {
 }
 interface BoosterFeedback { text: string; color: string; age: number; duration: number }
 interface BoosterUnlockToast { kind: Booster; age: number; duration: number }
-interface UndoAction { booster?: Booster }
+interface BoosterUnlockGuide { kind: Booster; age: number; duration: number; flightAge?: number }
+interface FreezeUsageGuide { age: number }
+interface RocketRescueGuide {
+  phase: "booster" | "target";
+  age: number;
+}
+interface PulseRescueGuide {
+  phase: "booster";
+  age: number;
+}
 interface DragVisualState {
   blockId: string;
   x: number;
@@ -1106,9 +1279,16 @@ const COLLECTION_PROGRESS_CATALOG: CollectionProgressCatalog = Object.freeze({
 
 const DEFAULT_SAVE: SaveData = {
   schemaVersion: 1,
+  featureGuideProgress: { version: 1, pending: [], seen: [] },
+  leagueIntroSeen: false,
+  collectionIntroPending: false,
+  collectionIntroShown: false,
   currentLevel: 1,
   highestLevel: 1,
-  coins: 1000,
+  // New players begin with an empty coin balance. Existing saves keep their
+  // persisted balance through sanitizeSave instead of being reset here.
+  coins: 0,
+  music: true,
   sound: true,
   haptic: true,
   reducedMotion: false,
@@ -1116,22 +1296,33 @@ const DEFAULT_SAVE: SaveData = {
   // Undefined preserves the original menu/gameplay scene mapping until the
   // player explicitly chooses a library track.
   selectedMusicTrack: undefined,
+  // All unlocked tracks start in the playlist. A track is only stored here
+  // after the player turns its heart off, so newly unlocked tracks light up by
+  // default without a migration step.
+  mutedMusicTracks: [],
   featureSeen: [],
   boosterUnlockSeen: [],
+  boosterUsageSeen: [],
   metaDiscovery: { ...DEFAULT_META_DISCOVERY },
   boosters: { time: 3, rocket: 3, pulse: 3 },
   bestStars: {},
+  bestStarConditions: {},
   bestMoves: {},
   rewardedLevels: [],
   journeyProgress: { claimedMilestoneLevels: [], seenEpisodeUnlockLevels: [] },
   achievementProgress: { claimedIds: [] },
   collectionProgress: {
     ...DEFAULT_COLLECTION_PROGRESS,
+    inspiration: 50,
     restoredMasterpieceIds: [],
     seenItemIds: [],
     claimedMilestoneIds: [],
   },
   dailyTaskProgress: createDailyTaskProgress(localDayKey(), 1),
+  dailyChallenge: reconcileDailyChallengeState(undefined, new Date(), 1),
+  lifeRefillAd: normalizeLifeRefillAd(undefined),
+  boosterRewardAd: normalizeBoosterRewardAd(undefined),
+  dailyChallengeRewardAd: normalizeDailyChallengeRewardAd(undefined),
   selectedJourneyEpisode: 1,
   lifeState: createDefaultLifeState(),
   dailyStreak: 0,
@@ -1158,21 +1349,21 @@ const STARTUP_RETRY_EMERGENCY_RECT = { x: 70, y: 500, width: 356, height: 96 } a
 
 const BUTTONS = {
   startupRetry: homeArtRect(STARTUP_RETRY_ART_RECT),
-  homeSupply: homeArtRect({ x: 16, y: 47, width: 196, height: 64 }),
+  homeSupply: homeArtRect({ x: 16 + HOME_RESOURCE_SHIFT_X, y: 47, width: 196, height: 64 }),
   homeSettings: homeArtRect(HOME_ART_LAYOUT.settings),
-  homeMusic: homeArtRect({ x: 580, y: 500, width: 118, height: 118 }),
-  homeLife: homeArtRect(HOME_ART_LAYOUT.lifePanel),
-  lifeRefillBuy: homeArtRect(LIFE_REFILL_LAYOUT.buyButton),
-  lifeRefillDismiss: homeArtRect(LIFE_REFILL_LAYOUT.close),
+  homeLife: homeArtRect({ ...HOME_ART_LAYOUT.lifeControl, x: HOME_ART_LAYOUT.lifeControl.x + HOME_RESOURCE_SHIFT_X }),
+  lifeRefillBuy: LIFE_REFILL_LAYOUT.buyButton,
+  lifeRefillDismiss: LIFE_REFILL_LAYOUT.close,
   homeAchievements: homeArtRect(HOME_ART_LAYOUT.achievementEntry),
+  homeLeague: homeArtRect(HOME_ART_LAYOUT.leagueEntry),
   homePlay: homeArtRect(HOME_ART_LAYOUT.start),
   homePrev: homeArtRect(HOME_ART_LAYOUT.previousLevel),
   homeNext: homeArtRect(HOME_ART_LAYOUT.nextLevel),
   temporaryLevelSelector: TEMPORARY_LEVEL_SELECTOR_HOME_RECT,
   menuBack: homeArtRect(PAUSE_SETTINGS_LAYOUT.close),
   leaderboardWeekly: homeArtRect(FORMAL_LEADERBOARD_LAYOUT.tabs[0]),
-  leaderboardWorld: homeArtRect(FORMAL_LEADERBOARD_LAYOUT.tabs[1]),
-  leaderboardCountry: homeArtRect(FORMAL_LEADERBOARD_LAYOUT.tabs[2]),
+  leaderboardWorld: homeArtRect(FORMAL_LEADERBOARD_LAYOUT.tabs[2]),
+  leaderboardCountry: homeArtRect(FORMAL_LEADERBOARD_LAYOUT.tabs[1]),
   formalPageRetry: { x: 151, y: 522, width: 194, height: 58 },
   journeyPresentationLater: { x: 151, y: 594, width: 194, height: 58 },
   updateToast: { x: 70, y: 130, width: 356, height: 96 },
@@ -1181,7 +1372,6 @@ const BUTTONS = {
   musicClose: homeArtRect(MUSIC_LAYOUT.close),
   languageBack: homeArtRect(LANGUAGE_PICKER_LAYOUT.close),
   achievementClose: homeArtRect(ACHIEVEMENT_LAYOUT.close),
-  undo: gameplayArtRect(GAMEPLAY_ART_LAYOUT.back),
   pause: gameplayArtRect(GAMEPLAY_ART_LAYOUT.pause),
   time: gameplayArtRect(GAMEPLAY_ART_LAYOUT.boosters[0].base),
   rocket: gameplayArtRect(GAMEPLAY_ART_LAYOUT.boosters[1].base),
@@ -1196,12 +1386,15 @@ const BUTTONS = {
   pauseResume: homeArtRect(PAUSE_SETTINGS_LAYOUT.close),
   pauseRestart: homeArtRect(PAUSE_SETTINGS_LAYOUT.replayButton),
   pauseHome: homeArtRect(PAUSE_SETTINGS_LAYOUT.homeButton),
-  winPrimary: homeArtRect(WIN_ART_LAYOUT.continueButton),
-  winClose: homeArtRect(WIN_ART_LAYOUT.close),
+  winPrimary: homeArtRect(WIN_SETTLEMENT_LAYOUT.continueButton),
+  winClose: homeArtRect(WIN_SETTLEMENT_LAYOUT.close),
 };
 
+const COLLECTION_INTRO_LAYOUT = SUPPLIED_COLLECTION_INTRO_LAYOUT;
+const COLLECTION_INTRO_DURATION = 1.8;
+
 const MAIN_NAVIGATION: ReadonlyArray<{ screen: MainNavigationScreen; label: string }> = [
-  { screen: "supply", label: "商店" },
+  { screen: "supply", label: "商城" },
   { screen: "leaderboard", label: "排行" },
   { screen: "home", label: "主页" },
   { screen: "levels", label: "旅程" },
@@ -1260,7 +1453,14 @@ const inside = (x: number, y: number, rect: Rect): boolean => (
   x >= rect.x && y >= rect.y && x <= rect.x + rect.width && y <= rect.y + rect.height
 );
 
-const copyDefaultSave = (): SaveData => JSON.parse(JSON.stringify(DEFAULT_SAVE)) as SaveData;
+const copyDefaultSave = (): SaveData => {
+  const copy = JSON.parse(JSON.stringify(DEFAULT_SAVE)) as SaveData;
+  // DEFAULT_SAVE is created once at module load. Regenerate the daily
+  // challenge state for every new/reset profile so different players do not
+  // inherit the same persisted seed and same-day assignment.
+  copy.dailyChallenge = reconcileDailyChallengeState(undefined, new Date(), 1);
+  return copy;
+};
 
 const isPlainRecord = (value: unknown): value is Record<string, unknown> => (
   typeof value === "object" && value !== null && !Array.isArray(value)
@@ -1292,7 +1492,7 @@ const trustedStorageBaseline = (result: StorageReadResult<unknown>): TrustedStor
     : { status: result.status };
 };
 
-const storedValueBaseline = (value: unknown): TrustedStorageBaseline => ({
+const storedValueBaseline = (value: unknown): Extract<TrustedStorageBaseline, { status: "ok" }> => ({
   status: "ok",
   value: canonicalStorageValue(value),
 });
@@ -1300,9 +1500,12 @@ const storedValueBaseline = (value: unknown): TrustedStorageBaseline => ({
 const storageReadMatchesBaseline = (
   result: StorageReadResult<unknown>,
   baseline: TrustedStorageBaseline | undefined,
+  serializedReadValue: string | undefined,
 ): boolean => {
   if (!baseline || result.status !== baseline.status) return false;
-  return result.status !== "ok" || (baseline.status === "ok" && storageValuesEqual(result.value, baseline.value));
+  // The caller derives this serialization from this attempt's actual read.
+  // Trusted baselines already own a detached, canonical value.
+  return result.status !== "ok" || (baseline.status === "ok" && serializedReadValue === JSON.stringify(baseline.value));
 };
 
 const boundedInteger = (value: unknown, fallback: number, minimum: number, maximum: number): number => {
@@ -1344,8 +1547,27 @@ export class ColorEscapeGame {
   private readonly leaderboardSource: MetaLeaderboardSource;
   private readonly deviceLanguage: GameLanguage;
   private save: SaveData;
+  private leagueTransaction?: LeagueAccountTransaction<SaveData>;
+  private leagueRun?: LeagueRun;
+  private leagueRunResult?: {points:number;status:string;persistence:PersistenceOutcome};
+  private leagueResultAnimationAge = 0;
+  private leagueScroll = new LeagueScroll();
+  private leagueArtStore?: LeagueArtStore;
+  private leagueSettlementArtStore?: LeagueSettlementArtStore;
+  private leagueAvatarArtStore?: ProfileAvatarArtStore;
+  private leagueChallengeNotice = false;
+  private leagueTier = 0;
+  private leagueTierSlide?: LeagueTierSlide;
+  private leagueInfo = false;
+  private leagueIntroPage?: 0 | 1;
+  private leaguePersistence?: "unknown" | "rejected";
+  private leagueAction: "open" | "refresh" | "claim" | "intro" = "open";
+  private leagueFrameSecond = 0;
   private model: PuzzleModel;
+  private boardGeometryCache?: BoardGeometryCache;
   private screen: Screen = "home";
+  private popupEntrance = new PopupEntranceController();
+  private profileInputAfterEntrance = false;
   private selectedId?: string;
   private activePointer?: number;
   private pendingButtonPress?: PendingButtonPress;
@@ -1363,6 +1585,16 @@ export class ColorEscapeGame {
   private exitFailure?: ExitFailureFeedback;
   private mechanicPulses: MechanicPulse[] = [];
   private boardShakeTime = 0;
+  private readonly countdownWarning = new CountdownWarning();
+  private readonly comboAnimation = new ComboAnimation();
+  private comboAnimationOwner?: PuzzleModel;
+  private readonly timeFreezeAnimation = new TimeFreezeAnimation();
+  private readonly pulseAnimation = new PulseAnimation();
+  private pulseAnimationOwner?: PuzzleModel;
+  private pulsePresentationPulses: MechanicPulse[] = [];
+  private pulsePresentationTransitions: RevisedMechanicTransition[] = [];
+  private rocketFlight?: RocketFlight;
+  private rocketImpact?: { age: number; target: { x: number; y: number } };
   private lastFrame = 0;
   private pendingCelebration = 0;
   private elapsed = 0;
@@ -1376,9 +1608,53 @@ export class ColorEscapeGame {
   private updateToastVisible = false;
   private updateToastAge = 0;
   private boosterUnlockToast?: BoosterUnlockToast;
+  private boosterUnlockGuide?: BoosterUnlockGuide;
+  private freezeUsageGuide?: FreezeUsageGuide;
+  /** Prevents the same run from re-showing the hand after it is dismissed. */
+  private freezeUsageGuideShownThisRun = false;
+  /** Lv7 deadlock rescue is intentionally run-scoped and repeats on re-entry. */
+  private rocketRescueGuide?: RocketRescueGuide;
+  /** Lv10 frozen-one rescue is intentionally run-scoped and repeats on re-entry. */
+  private pulseRescueGuide?: PulseRescueGuide;
   private updateReturnScreen: "home" | "settings" = "home";
-  private undoActions: UndoAction[] = [];
   private lastBlockedFeedbackAt = 0;
+  /** Shared, non-interactive overlay for feedback from every button. */
+  private buttonHints: (StackedHintMotion & { text: string; feature?: FeatureId })[] = [];
+  private get featureLockFeedbacks(): (StackedHintMotion & { text: string; feature: FeatureId })[] {
+    return (this.buttonHints ?? []).filter((hint): hint is StackedHintMotion & { text: string; feature: FeatureId } => hint.feature !== undefined);
+  }
+  private get featureLockFeedback(): (StackedHintMotion & { feature: FeatureId }) | undefined {
+    return this.featureLockFeedbacks?.[this.featureLockFeedbacks.length - 1];
+  }
+  private set featureLockFeedback(feedback: { feature: FeatureId; age: number } | undefined) {
+    this.buttonHints = (this.buttonHints ?? []).filter(hint => hint.feature === undefined);
+    if (feedback) this.buttonHints.push({ ...createStackedHintMotion(), ...feedback,
+      text: this.tr("feature.lockedAfterLevel", { level: FEATURE_UNLOCKS[feedback.feature].completedLevel }) });
+  }
+  private featureUnlockGuide?: { feature: GuidedFeatureId; phase: "reveal" | "focus"; age: number; persistence?: "unknown" | "rejected" };
+  private featureUnlockArt?: FeatureUnlockArt;
+  private featureUnlockArtLoading = false;
+  private featureUnlockArtRequestToken = 0;
+  private featureUnlockArtError?: string;
+  private pendingFeatureGuideAck?: { feature: GuidedFeatureId; open: boolean; candidateSave: SaveData; baselineSave: SaveData };
+  private deferredHomeJourneyLevels?: Set<number>;
+  private profilePage?: ProfilePage;
+  private profileArt?: ProfileArt;
+  private homeProfileArt?: Pick<ProfileArt, "avatars" | "frames">;
+  private homeProfileArtRevision = 0;
+  private profileArtLoading = false;
+  private profileArtRequestToken = 0;
+  private profileArtError = false;
+  private profileDraftAvatar = 0;
+  private profileDraftFrame = 0;
+  private profileScrolls = { avatar: new ProfileScroll(), frame: new ProfileScroll() };
+  private profileGrayImages = new GrayscaleImageCache(() => this.host.createOffscreenCanvas?.());
+  private profileScrollTarget?: string;
+  private profileDraftName = "";
+  private profileRenameReturnPage: "stats" | "avatar" = "avatar";
+  private profileFeedback?: string;
+  private closeProfileInput?: () => void;
+  private pendingProfileSave?: { candidateSave: SaveData; baselineSave: SaveData; rename: boolean; seenOnly?: boolean };
   private blockedBlockId?: string;
   private blockedFeedbackTime = 0;
   private blockerFocusBlockId?: string;
@@ -1399,18 +1675,53 @@ export class ColorEscapeGame {
   private fpsSamples: number[] = [];
   private dirty = true;
   private framePending = false;
+  private frameToken?: object;
   private earnedStars = 0;
   private winCoinReward = 0;
+  private dailyChallengeWin?: DailyChallengeWinPresentation;
   private winStarConditions?: LevelStarEvaluation;
   private winGlowAge = 0;
+  private mainlineRankChange?: MainlineRankChangePresentation;
+  private mainlineRankArt?: SuppliedRankArt;
+  private masterpieceUnlockPresentation?: { progress: MasterpieceUnlockProgress; age: number; revealShown?: boolean };
+  private masterpieceUnlockArtwork?: CollectionArtworkStore;
   private assistedClear = false;
   private lifeRefreshTimer?: number;
+  private leagueHomeRefreshTimer?: number;
   private pendingLifeStart?: { baselineSave: SaveData; candidateSave: SaveData };
   private lifeRefillOpen = false;
   private lifeRefillFeedback?: string;
   private pendingLifeRefill?: { baselineSave: SaveData; candidateSave: SaveData; quote: ReturnType<typeof getLifeRefillQuote> };
+  private pendingLifeRefillAd?: {
+    stage: "prepare" | "receipt" | "reward" | "cancel";
+    requestId: string;
+    baselineSave: SaveData;
+    candidateSave: SaveData;
+    message?: string;
+  };
+  private lifeRefillAdRequestId?: string;
+  private pendingBoosterRewardAd?: {
+    stage: "prepare" | "receipt" | "reward" | "cancel";
+    requestId: string;
+    kind: Booster;
+    baselineSave: SaveData;
+    candidateSave: SaveData;
+    message?: string;
+  };
+  private boosterRewardAdRequestId?: string;
+  private pendingDailyChallengeRewardAd?: {
+    stage: "prepare" | "receipt" | "reward" | "cancel";
+    requestId: string;
+    baselineSave: SaveData;
+    candidateSave: SaveData;
+    message?: string;
+  };
+  private dailyChallengeRewardAdRequestId?: string;
   private appVisible: boolean;
   private storageBaselineReady: boolean;
+  private startupEntryPending = false;
+  private startupAudioPreparation?: Promise<void>;
+  private startupAudioPending = false;
   private durableStorageBaseline?: TrustedStorageBaseline;
   private storageReadAttempts = 0;
   private pendingSettlement?: PendingSettlement;
@@ -1422,6 +1733,30 @@ export class ColorEscapeGame {
   private languageSaveFailed = false;
   private pendingLanguageSelection?: PendingLanguageSelection;
   private pendingSupplyPurchase?: PendingSupplyPurchase;
+  private pendingWelfareSave?: {
+    stage: "prepare" | "receipt" | "reward" | "cancel";
+    kind: WelfareRewardKind; requestId: string;
+    baselineSave: SaveData; candidateSave: SaveData;
+    message?: string;
+  };
+  private welfareAdRequestId?: string;
+  private welfareSelectedBooster: Booster = "rocket";
+  private welfareScroll = 0;
+  private welfareScrollGesture?: { pointerId: number; startY: number; startScroll: number; moved: boolean };
+  private welfareFeedback?: string;
+  private welfareFeedbackUntil?: number;
+  private welfareRewardDeferred = false;
+  private welfareRefreshTimer?: number;
+  private welfareCelebration?: { kind: WelfareRewardKind; boosterKind?: Booster };
+
+  private boosterPurchase?: { kind: Booster; feedback?: string };
+  private pendingBoosterPurchase?: {
+    kind: Booster; baselineSave: SaveData; candidateSave: SaveData; price: number; quantity: number;
+  };
+  private boosterPurchaseArt?: BoosterPurchaseArt;
+  private boosterPurchaseArtLoading = false;
+  private boosterPurchaseArtRequestToken = 0;
+  private boosterPurchaseArtError?: string;
   private pendingJourneyClaim?: PendingJourneyClaim;
   private pendingAchievementClaim?: PendingAchievementClaim;
   private pendingDailyTaskClaim?: PendingDailyTaskClaim;
@@ -1430,14 +1765,30 @@ export class ColorEscapeGame {
   private leaderboardMode: LeaderboardMode = "world";
   private leaderboardScrollOffsets: Record<LeaderboardMode, number> = { weekly: 0, world: 0, country: 0 };
   private leaderboardScrollGesture?: LeaderboardScrollGesture;
+  private rankingVisitClockMs?: number;
+  private mainlineRankingCompletedAtMs?: number;
+  private rankingProvinceLookupToken = 0;
+  private rankingProvinceLoading = false;
+  private rankingProvinceResolved?: { province: string; source: "ip" | "random" };
+  private rankingRefreshTimer?: number;
+  private pendingRankingSave?: { baselineSave: SaveData; candidateSave: SaveData };
+  private rankingSaveRejected = false;
+  private leaderboardSnapshotCache?: {
+    key: string;
+    snapshots: Partial<Record<LeaderboardMode, MetaLeaderboardSnapshot>>;
+  };
   private journeyScrollOffset = 0;
   private journeyScrollVelocity = 0;
   private journeyScrollGesture?: JourneyScrollGesture;
   private journeyPresentation?: JourneyPresentation;
+  private collectionIntro?: CollectionIntroState;
+  private suppliedRevealArt?: SuppliedRevealArtStore;
+  private collectionRestorationGuide?: { itemId: string; age: number };
   private journeyHomeThemeArt?: HTMLImageElement;
   private journeyHomeThemeIndex?: number;
   private journeyHomeThemeRequestToken = 0;
   private journeyHomeThemeLoading = false;
+  private journeyHomeThemeFailed = false;
   private collectionSelectedId: string = COLLECTION_ALL_ITEMS[0].id;
   private collectionScrollOffset = 0;
   private collectionScrollGesture?: CollectionScrollGesture;
@@ -1456,6 +1807,12 @@ export class ColorEscapeGame {
   private dailyTaskArtRequestToken = 0;
   private dailyTaskArtError?: string;
   private dailyTaskRefreshTimer?: number;
+  private dailyChallengeFeedback?: { text: string; color: string };
+  private dailyChallengePendingDifficulty?: DailyChallengeDifficulty;
+  private dailyChallengeArt?: DailyChallengeArt;
+  private dailyChallengeArtLoading = false;
+  private dailyChallengeArtRequestToken = 0;
+  private dailyChallengeArtError?: string;
   private collectionAlbumTab: CollectionAlbumTab = "levels";
   private collectionAlbumPage: Record<CollectionAlbumTab, number> = { levels: 0, masterpieces: 0 };
   private collectionAlbumDetailId?: string;
@@ -1470,10 +1827,17 @@ export class ColorEscapeGame {
   private navigationTransition?: MainNavigationTransition;
   private navigationPendingTarget?: MainNavigationScreen;
   private directLevelTransition?: DirectLevelTransition;
-  private homeCoinFlight?: HomeCoinFlight;
+  private homeCoinFlights: HomeCoinFlight[] = [];
+  // Preserve the leading-flight view used by presentation gates and existing
+  // debug fixtures. New rewards append to the collection instead of replacing it.
+  private get homeCoinFlight(): HomeCoinFlight | undefined { return this.homeCoinFlights?.[0]; }
+  private set homeCoinFlight(flight: HomeCoinFlight | undefined) { this.homeCoinFlights = flight ? [flight] : []; }
   private shellArtReady = false;
   private artReady = false;
   private revisedArt = new Map<string, HTMLImageElement>();
+  private revisedArtLevel?: LevelSpec;
+  private revisedArtPaths: readonly string[] = [];
+  private revisedArtRequestToken = 0;
   private revisedArtLoading = false;
   private revisedArtError?: string;
   private revisedArtRetryAt = 0;
@@ -1486,6 +1850,14 @@ export class ColorEscapeGame {
   private artLoadError?: string;
   private artLoadFailurePhase?: "shell" | "deferred";
   private formalBlockArtSignature = "";
+  private formalBlockPlanCache?: {
+    level: LevelSpec;
+    plan: { signature: string; requests: FormalBlockAssetRequest[] };
+  };
+  private formalIcePlanCache?: {
+    level: LevelSpec;
+    plan: { signature: string; requests: FormalIceAssetRequest[] };
+  };
   private formalBlockArtRequestToken = 0;
   private formalBlockArtRequestSignature?: string;
   private formalBlockArtFailedSignature?: string;
@@ -1509,7 +1881,7 @@ export class ColorEscapeGame {
   private winArtLoading = false;
   private winArtRequestToken = 0;
   private winArtError?: string;
-  private lifeRefillArt?: Pick<WinArt, "coinPile" | "rewardPill">;
+  private lifeRefillArt?: { [K in keyof typeof LIFE_REFILL_ART]: HTMLImageElement };
   private lifeRefillArtLoading = false;
   private lifeRefillArtRequestToken = 0;
   private lifeRefillArtError?: string;
@@ -1546,12 +1918,19 @@ export class ColorEscapeGame {
       navigationSelected: HTMLImageElement;
       navigationDivider: HTMLImageElement;
       shopIcon: HTMLImageElement;
+      shopIconLocked: HTMLImageElement;
+      featureLock: HTMLImageElement;
       leaderboardIcon: HTMLImageElement;
+      leaderboardIconLocked: HTMLImageElement;
       homeIcon: HTMLImageElement;
       journeyIcon: HTMLImageElement;
+      journeyIconLocked: HTMLImageElement;
       collectionIcon: HTMLImageElement;
       collectionAlbumEntry: HTMLImageElement;
       dailyTaskEntry: HTMLImageElement;
+      sideEntryBase: HTMLImageElement;
+      leagueEntry: HTMLImageElement;
+      dailyChallengeEntry: HTMLImageElement;
       achievementEntry: HTMLImageElement;
     };
     gameplayBackground?: HTMLImageElement;
@@ -1559,7 +1938,9 @@ export class ColorEscapeGame {
     boosters?: HTMLImageElement;
     boosterUnlockBanner?: HTMLImageElement;
     discoveryBadge?: HTMLImageElement;
+    lockedHintPanel?: HTMLImageElement;
     onboarding?: HTMLImageElement;
+    tutorialHand?: HTMLImageElement;
     mechanics?: HTMLImageElement;
     uiPanel?: HTMLImageElement;
     buttons?: HTMLImageElement;
@@ -1610,6 +1991,7 @@ export class ColorEscapeGame {
     formalSelectionFrame?: HTMLImageElement;
     musicLibrary?: MusicLibraryArt;
   } = {};
+  private tutorialHandRequested = false;
 
   constructor(host: GameHost, leaderboardSource: MetaLeaderboardSource = PLACEHOLDER_META_LEADERBOARD_SOURCE) {
     this.host = host;
@@ -1627,18 +2009,34 @@ export class ColorEscapeGame {
     this.storageReadAttempts = 1;
     const loaded = initialStorage.status === "ok" ? initialStorage.value : undefined;
     this.save = this.recoverInterruptedRun(this.sanitizeSave(loaded ?? copyDefaultSave()));
+    this.save.playerProfile ??= normalizePlayerProfile(undefined);
+    this.startupEntryPending = this.hasPendingStartupEntry(initialStorage, this.save);
     this.save.language = this.languageForStorageRead(initialStorage, loaded);
     this.updateCanvasLanguage();
-    this.updateToastVisible = this.save.lastSeenUpdate !== UPDATE_NOTICE.id;
+    this.updateToastVisible = false;
     const storedMotionPreference = isPlainRecord(loaded) && typeof loaded.reducedMotion === "boolean";
     if (!storedMotionPreference && host.prefersReducedMotion?.()) this.save.reducedMotion = true;
     this.storageBaselineReady = this.establishStorageBaseline(initialStorage, this.save);
-    this.model = new PuzzleModel(getLevel(this.save.currentLevel), { deferExitCompletion: true });
+    // Restore an interrupted daily run from the same mainline-based adapted
+    // LevelSpec used when it started.  Loading the campaign source here would
+    // silently bring back a stale/synthetic daily board after a refresh.
+    const restoredDailyRun = this.save.activeRun?.daily
+      && this.save.activeRun.dailyDayKey === this.save.dailyChallenge.dayKey
+      && (this.save.activeRun.dailyChallengeDifficulty === 1
+        || this.save.activeRun.dailyChallengeDifficulty === 2
+        || this.save.activeRun.dailyChallengeDifficulty === 3)
+      ? this.save.activeRun.dailyChallengeOwner
+        ? dailyChallengeRunMatches(this.save.dailyChallenge, this.save.activeRun.dailyChallengeOwner)
+          ? this.save.activeRun.dailyChallengeOwner.assignment : undefined
+        : getDailyChallengeAssignment(this.save.dailyChallenge, this.save.activeRun.dailyChallengeDifficulty)
+      : undefined;
+    const restoredDailyLevel = restoredDailyRun && restoredDailyRun.sourceLevelId === this.save.activeRun?.levelId
+      ? cloneDailyChallengeLevel(restoredDailyRun)
+      : undefined;
+    this.model = new PuzzleModel(restoredDailyLevel ?? getLevel(this.save.currentLevel), { deferExitCompletion: true });
+    this.prepareStartupAudio();
     this.syncMusic();
     this.resetJourneyScrollToLevel(this.save.highestLevel);
-    // The home entry is intentionally independent from the full player art.
-    // It can arrive after the shell without delaying the first frame.
-    void this.requestMusicEntryArt();
     void this.loadArt();
     host.onPointer({
       down: (sample) => this.handleDown(this.toLogical(sample)),
@@ -1647,13 +2045,24 @@ export class ColorEscapeGame {
       cancel: (sample) => this.handleCancel(this.toLogical(sample)),
     });
     host.onHide(() => {
+      this.closeProfileInput?.();this.closeProfileInput=undefined;
+      this.cancelProfileScroll();
+      this.leagueScroll.cancel();
       this.advanceRevisedClockBeforeMutation();
       this.playableClockSlices.reset();
       this.appVisible = false;
+      // A queued host callback may arrive after hide, or after a later show.
+      // Invalidate it so returning to the foreground can request a fresh frame.
+      this.frameToken = undefined;
+      this.framePending = false;
       this.syncMusic();
+      this.cancelWelfareRefreshWatch();
+      this.welfareScrollGesture = undefined;
       this.cancelLifeRefreshWatch();
       this.cancelDailyTaskRefreshWatch();
-      this.temporaryLevelSelector = undefined;
+      this.cancelLeagueHomeRefreshWatch();
+      this.cancelRankingRefreshWatch();
+      if (!this.popupEntrance.snapshot().some(entry => entry.key === "temporaryLevelSelector" && entry.phase === "exit")) this.temporaryLevelSelector = undefined;
       this.pendingButtonPress = undefined;
       this.leaderboardScrollGesture = undefined;
       this.journeyScrollGesture = undefined;
@@ -1682,17 +2091,25 @@ export class ColorEscapeGame {
     });
     host.onShow(() => {
       this.appVisible = true;
+      if (this.screen === "paused" && !this.pauseUnlocked()) {
+        this.screen = "playing";
+        this.playableClockSlices.reset();
+      }
       this.syncMusic();
       if (!this.storageBaselineReady) this.retryStorageBaseline();
       this.ensureDailyTaskCycle();
       this.refreshLifeState();
       this.scheduleLifeRefreshWatch();
       this.scheduleDailyTaskRefreshWatch();
+      if (this.screen === "leaderboard") this.beginRankingPage(true);
       this.lastFrame = 0;
       this.dirty = true;
       this.scheduleFrame();
     });
     host.onResize(() => {
+      this.closeProfileInput?.();this.closeProfileInput=undefined;
+      this.cancelProfileScroll();
+      this.welfareScrollGesture = undefined;
       // Pointer samples received before and after a viewport change use different
       // coordinate scales. Cancel the in-flight action so the next sample cannot
       // turn that scale change into a synthetic drag.
@@ -1717,6 +2134,9 @@ export class ColorEscapeGame {
   }
 
   private async loadImages(paths: readonly string[], concurrency = ART_LOAD_CONCURRENCY): Promise<HTMLImageElement[]> {
+    // Start all required package downloads before bounded decode workers reach
+    // their first image in each package. Normal image loads still own failures.
+    void this.host.prepareImages?.(paths).catch(() => {});
     const images = new Array<HTMLImageElement>(paths.length);
     let cursor = 0;
     let failed = false;
@@ -1843,22 +2263,48 @@ export class ColorEscapeGame {
     });
   }
 
+  private syncRevisedMechanismArtPlan(): void {
+    if (this.revisedArtLevel === this.model.level) return;
+    this.revisedArtLevel = this.model.level;
+    this.revisedArtPaths = requiredMechanismArtPaths(this.model.level);
+    const retained = new Set(this.revisedArtPaths);
+    this.revisedArtRequestToken += 1;
+    this.revisedArtLoading = false;
+    this.revisedArtError = undefined;
+    this.revisedArtRetryAt = 0;
+    this.revisedArtFailures = 0;
+    for (const [path, image] of this.revisedArt) {
+      if (retained.has(path)) continue;
+      this.revisedArt.delete(path);
+      this.host.releaseImage?.(image);
+    }
+  }
+
   private ensureRevisedMechanismArt(): void {
+    this.syncRevisedMechanismArtPlan();
     if (this.revisedArtLoading || monotonicGameTime() < this.revisedArtRetryAt) return;
-    const paths = missingMechanismArtPaths(this.model.level, this.revisedArt);
+    const paths = this.revisedArtPaths.filter((path) => !this.revisedArt.has(path));
     if (!paths.length) return;
+    const token = ++this.revisedArtRequestToken;
+    const level = this.model.level;
     this.revisedArtLoading = true;
     void this.loadImages(paths).then((images) => {
+      if (token !== this.revisedArtRequestToken || level !== this.model.level) {
+        for (const image of images) this.host.releaseImage?.(image);
+        return;
+      }
       paths.forEach((path, index) => this.revisedArt.set(path, images[index]));
       this.revisedArtError = undefined;
       this.revisedArtFailures = 0;
       this.revisedArtRetryAt = 0;
     }).catch((error: unknown) => {
+      if (token !== this.revisedArtRequestToken || level !== this.model.level) return;
       this.revisedArtError = error instanceof Error ? error.message : String(error);
       // A transient strip/subpackage failure must not poison future scenes.
       this.revisedArtFailures += 1;
       this.revisedArtRetryAt = monotonicGameTime() + Math.min(30000, 1000 * 2 ** Math.min(5, this.revisedArtFailures - 1));
     }).finally(() => {
+      if (token !== this.revisedArtRequestToken || level !== this.model.level) return;
       this.revisedArtLoading = false;
       this.dirty = true;
       this.scheduleFrame();
@@ -1907,12 +2353,16 @@ export class ColorEscapeGame {
         return { x: board.innerX + (Math.min(...cells.map(([x]) => x)) + Math.max(...cells.map(([x]) => x)) + 1) * board.cell / 2,
           y: board.innerY + (Math.min(...cells.map(([, y]) => y)) + Math.max(...cells.map(([, y]) => y)) + 1) * board.cell / 2 };
       };
+      const dailyAnchor = (item: BlockState) => dailyKeyLockMarkerAnchor(
+        item.shape.map(([x, y]) => [item.x + x, item.y + y] as Point), board,
+      );
+      const dailyMarkers = Boolean(this.dailyChallengeRunInfo() || this.dailyChallengeWin);
       add({ kind: "lock", targetId: block.id, age: 0, duration: 1.35,
         previousCount: block.lockCount ?? 1, remainingCount: remaining.lockCount ?? 0,
-        source: {
+        source: dailyMarkers ? dailyAnchor(key) : {
           x: board.innerX + (key.x + Math.min(...key.shape.map(([x]) => x)) + 0.5) * board.cell,
           y: board.innerY + (key.y + Math.max(...key.shape.map(([, y]) => y)) + 0.5) * board.cell + keyLockMarkerVerticalOffset(board.cell),
-        }, target: { ...center(remaining), y: center(remaining).y + keyLockMarkerVerticalOffset(board.cell) },
+        }, target: dailyMarkers ? dailyAnchor(remaining) : { ...center(remaining), y: center(remaining).y + keyLockMarkerVerticalOffset(board.cell) },
         color: keyLockMarkerColor(block.lockedBy, this.model.level) });
     }
   }
@@ -1986,7 +2436,7 @@ export class ColorEscapeGame {
       frame: this.revisedMechanismImage(REVISED_MECHANISM_ART_URLS.lift.frame),
       left: this.revisedMechanismImage(REVISED_MECHANISM_ART_URLS.lift.left),
       right: this.revisedMechanismImage(REVISED_MECHANISM_ART_URLS.lift.right),
-    }, sample, transition ? 0 : region.count);
+    }, sample, transition && transition.age >= 0 ? 0 : region.count);
     return true;
   }
 
@@ -2024,8 +2474,11 @@ export class ColorEscapeGame {
   }
 
   private async loadArt(): Promise<void> {
+    // Fetch the gameplay package while the home shell decodes, rather than
+    // discovering it several decode batches into deferred loading.
+    void this.host.prepareImages?.([GAME_ART.gameplay.formalBlocks.blue.solid[1]]).catch(() => {});
     try {
-      const [home, homeTopHeader, homeResourcePanel, homeCoinIcon, homeHeartIcon, homeAddButton, homeSettingsButton, homeLevelPlate, homeArrowLeft, homeArrowRight, homeStarLeft, homeStarCenter, homeStarRight, homeEmptyStarLeft, homeEmptyStarCenter, homeEmptyStarRight, homeStartButton, homeNavigationBar, homeNavigationSelected, homeNavigationDivider, homeShopIcon, homeLeaderboardIcon, homeHomeIcon, homeJourneyIcon, homeCollectionIcon, homeCollectionAlbumEntry, missionsEntryImage, achievementEntryImage, onboarding, uiPanel] = await this.loadImages([
+      const [home, homeTopHeader, homeResourcePanel, homeCoinIcon, homeHeartIcon, homeAddButton, homeSettingsButton, homeLevelPlate, homeArrowLeft, homeArrowRight, homeStarLeft, homeStarCenter, homeStarRight, homeEmptyStarLeft, homeEmptyStarCenter, homeEmptyStarRight, homeStartButton, homeNavigationBar, homeNavigationSelected, homeNavigationDivider, homeShopIcon, homeLeaderboardIcon, homeHomeIcon, homeJourneyIcon, homeCollectionIcon, homeCollectionAlbumEntry, missionsEntryImage, sideEntryBaseImage, leagueEntryImage, dailyChallengeEntryImage, achievementEntryImage, onboarding, uiPanel, homeShopIconLocked, homeLeaderboardIconLocked, homeJourneyIconLocked, lockedHintPanel, homeFeatureLock] = await this.loadImages([
         GAME_ART.backgrounds.home,
         GAME_ART.ui.home.topHeader,
         GAME_ART.ui.home.resourcePanel,
@@ -2053,9 +2506,17 @@ export class ColorEscapeGame {
         GAME_ART.ui.home.collectionIcon,
         GAME_ART.ui.home.collectionAlbumEntry,
         GAME_ART.ui.home.dailyTaskEntry,
+        GAME_ART.ui.home.sideEntryBase,
+        GAME_ART.ui.home.leagueEntry,
+        GAME_ART.ui.home.dailyChallengeEntry,
         GAME_ART.ui.home.achievementEntry,
         GAME_ART.ui.onboardingDaily,
         GAME_ART.ui.universalPanel,
+        GAME_ART.ui.home.shopIconLocked,
+        GAME_ART.ui.home.leaderboardIconLocked,
+        GAME_ART.ui.home.journeyIconLocked,
+        GAME_ART.ui.lockedHintPanel,
+        GAME_ART.ui.home.featureLock,
       ]);
       this.art = {
         home,
@@ -2080,22 +2541,43 @@ export class ColorEscapeGame {
           navigationSelected: homeNavigationSelected,
           navigationDivider: homeNavigationDivider,
           shopIcon: homeShopIcon,
+          shopIconLocked: homeShopIconLocked,
+          featureLock: homeFeatureLock,
           leaderboardIcon: homeLeaderboardIcon,
+          leaderboardIconLocked: homeLeaderboardIconLocked,
           homeIcon: homeHomeIcon,
           journeyIcon: homeJourneyIcon,
+          journeyIconLocked: homeJourneyIconLocked,
           collectionIcon: homeCollectionIcon,
           collectionAlbumEntry: homeCollectionAlbumEntry,
           dailyTaskEntry: missionsEntryImage,
+          sideEntryBase: sideEntryBaseImage,
+          leagueEntry: leagueEntryImage,
+          dailyChallengeEntry: dailyChallengeEntryImage,
           achievementEntry: achievementEntryImage,
         },
         onboarding,
         uiPanel,
+        lockedHintPanel,
       };
       // Chapter 1 uses the already-loaded Home shell image. Other chapters
       // still load on demand, after the shell exists, so startup never decodes
       // the same 720x1584 bitmap twice.
       void this.requestJourneyHomeThemeArt(this.save.selectedJourneyEpisode);
       this.shellArtReady = true;
+      // Prepare the shared interface package (including Journey's map art)
+      // without decoding pages or downloading other chapters' Home backgrounds.
+      void this.host.prepareImages?.([
+        GAME_ART.ui.formalPages.journey.background,
+        ...Object.values(GAME_ART.ui.collectionAlbum),
+        GAME_ART.ui.collectionCardAtlases.levels[0],
+      ]).catch(() => {});
+      // Decode only the default page while gameplay art is still loading, so
+      // an immediate switch after startup can already show its card pictures.
+      if (this.screen === "home") {
+        this.collectionAlbumPage.levels = this.collectionAlbumDefaultLevelPage();
+        this.requestCollectionAlbumArtwork();
+      }
       this.artShellLoadMs = Date.now() - this.artLoadStartedAt;
       this.dirty = true;
       this.scheduleFrame();
@@ -2118,6 +2600,8 @@ export class ColorEscapeGame {
   }
 
   private formalBlockAssetPlan(): { signature: string; requests: FormalBlockAssetRequest[] } {
+    const level = this.model.level;
+    if (this.formalBlockPlanCache?.level === level) return this.formalBlockPlanCache.plan;
     const requests: FormalBlockAssetRequest[] = [];
     const seen = new Set<string>();
     const add = (color: BlockColor, kind: "solid" | "shell", shapeId: FormalBlockShapeId): void => {
@@ -2139,10 +2623,14 @@ export class ColorEscapeGame {
     requests.sort((left, right) => `${left.kind}:${left.color}:${left.shapeId}`.localeCompare(
       `${right.kind}:${right.color}:${right.shapeId}`,
     ));
-    return {
+    const plan = {
       signature: requests.map((request) => `${request.kind}:${request.color}:${request.shapeId}`).join("|"),
       requests,
     };
+    // The model replaces LevelSpec on a board change; runtime clears and shells
+    // mutate model state, not this full authored inventory (including queues).
+    this.formalBlockPlanCache = { level, plan };
+    return plan;
   }
 
   private buildFormalBlockArt(
@@ -2188,7 +2676,7 @@ export class ColorEscapeGame {
       this.formalBlockArtRequestSignature = undefined;
       this.formalBlockArtFailedSignature = plan.signature;
       this.formalBlockArtError = error instanceof Error ? error.message : String(error);
-      this.hudFeedback = { text: this.tr("startup.formalBlockLoadFailed"), color: "#ffbf5e", age: 0, duration: 3.2 };
+      this.hudFeedback = this.notifyButtonFeedback({ text: this.tr("startup.formalBlockLoadFailed"), color: "#ffbf5e", age: 0, duration: 3.2 });
       this.dirty = true;
       this.scheduleFrame();
     });
@@ -2200,6 +2688,8 @@ export class ColorEscapeGame {
   }
 
   private formalIceAssetPlan(): { signature: string; requests: FormalIceAssetRequest[] } {
+    const level = this.model.level;
+    if (this.formalIcePlanCache?.level === level) return this.formalIcePlanCache.plan;
     const requests: FormalIceAssetRequest[] = [];
     const seen = new Set<FormalBlockShapeId>();
     for (const block of this.model.level.blocks) {
@@ -2212,10 +2702,12 @@ export class ColorEscapeGame {
       requests.push({ shapeId: match.shapeId, path });
     }
     requests.sort((left, right) => left.shapeId - right.shapeId);
-    return {
+    const plan = {
       signature: requests.map((request) => `${request.shapeId}`).join("|"),
       requests,
     };
+    this.formalIcePlanCache = { level, plan };
+    return plan;
   }
 
   private buildFormalIceBlockArt(
@@ -2267,10 +2759,13 @@ export class ColorEscapeGame {
     try {
       const initialPlan = this.formalBlockAssetPlan();
       const initialIcePlan = this.formalIceAssetPlan();
+      const pauseClear = IS_WECHAT_BUILD
+        ? undefined
+        : (await this.loadImages([GAME_ART.ui.pauseSettings.clearProgressButton]))[0];
       const [
         gameplayBackground, boosters, boosterUnlockBanner, discoveryBadge, mechanics, buttons,
         pausePanel, pauseClose, pauseSound, pauseHaptic, pauseEffects, pauseToggleOn, pauseToggleOff,
-        pauseReplay, pauseHome, pauseClear, statusRemainingPanel, statusClock, statusFeatureIceDoor, systemIcons,
+        pauseReplay, pauseHome, statusRemainingPanel, statusClock, statusFeatureIceDoor, systemIcons,
         redBlock, blueBlock, greenBlock, yellowBlock, purpleBlock, orangeBlock, pinkBlock, cyanBlock,
         redGateHorizontal1, redGateHorizontal2, redGateHorizontal3,
         redGateVertical1, redGateVertical2, redGateVertical3,
@@ -2324,7 +2819,6 @@ export class ColorEscapeGame {
         GAME_ART.ui.pauseSettings.toggleOff,
         GAME_ART.ui.pauseSettings.replayButton,
         GAME_ART.ui.pauseSettings.homeButton,
-        GAME_ART.ui.pauseSettings.clearProgressButton,
         GAME_ART.ui.statusOverlay.remainingPanel,
         GAME_ART.ui.statusOverlay.clock,
         GAME_ART.ui.statusOverlay.featureIceDoor,
@@ -2607,10 +3101,14 @@ export class ColorEscapeGame {
         mechanicRelayMote,
         formalSelectionFrame,
       };
+      // The auto-entered first levels should open with their recordings ready,
+      // rather than starting a download on the first block interaction.
+      if (this.startupAudioPending) await this.startupAudioPreparation;
       this.artReady = true;
       this.artLoadError = undefined;
       this.artLoadFailurePhase = undefined;
       this.artFullLoadMs = Date.now() - this.artLoadStartedAt;
+      this.tryBeginStartupEntry();
       this.dirty = true;
       this.scheduleFrame();
       // The supplied star/generator cut-outs are optional overlays. Load them
@@ -2668,13 +3166,8 @@ export class ColorEscapeGame {
 
   private formalPageImages(art: FormalPageArt): HTMLImageElement[] {
     if (art.screen === "supply") {
-      return [
-        art.reference,
-        art.buyButton,
-        art.boosterTile,
-        art.priceCoin,
-        ...Object.values(art.boosterIcons),
-      ];
+      // Compatibility fields alias these same acquisitions; release each only once.
+      return Object.values(art.ui);
     }
     if (art.screen === "leaderboard") {
       return [
@@ -2687,6 +3180,7 @@ export class ColorEscapeGame {
         art.tabInactive,
         art.podium,
         ...Object.values(art.avatars),
+        ...art.frames,
         ...art.podiumNameplates,
         ...art.podiumMedals,
         ...art.rankMedals,
@@ -2718,18 +3212,15 @@ export class ColorEscapeGame {
       art.title,
       art.track,
       art.trackProgress,
-      art.destination,
       art.currentMarker,
       art.levelCardLeft,
       art.levelCardActiveLeft,
       art.rewardCardRight,
       art.rewardCardActiveRight,
       ...art.deferred.images,
-      art.lockedShade,
       art.episodeRangePanel,
       art.episodeSelectedButton,
       art.episodeActionButton,
-      art.lock,
       ...Object.values(art.rewards),
     ];
   }
@@ -2742,6 +3233,7 @@ export class ColorEscapeGame {
   }
 
   private releaseFormalPageArt(): void {
+    this.suppliedRevealArt?.dispose("scene");
     this.formalPageArtRequestToken += 1;
     this.formalPageArtRequest = undefined;
     this.formalPageArtError = undefined;
@@ -2759,17 +3251,22 @@ export class ColorEscapeGame {
   }
 
   private winArtImages(art: WinArt): HTMLImageElement[] {
-    return [
+    return [...new Set([
       art.panel,
       art.glow,
       art.rewardPill,
       art.coinPile,
       art.continueButton,
       art.close,
-    ];
+      ...(art.suppliedSettlement ? Object.values(art.suppliedSettlement) : []),
+      ...(art.suppliedRank ? Object.values(art.suppliedRank) : []),
+      ...(art.dailyRewards ? Object.values(art.dailyRewards) : []),
+    ])];
   }
 
   private releaseWinArt(): void {
+    this.masterpieceUnlockArtwork?.dispose();
+    this.masterpieceUnlockArtwork = undefined;
     this.winArtRequestToken += 1;
     this.winArtLoading = false;
     this.winArtError = undefined;
@@ -2787,19 +3284,50 @@ export class ColorEscapeGame {
     this.lifeRefillArt = undefined;
   }
 
+  private releaseBoosterPurchaseArt(): void {
+    this.boosterPurchaseArtRequestToken += 1;
+    this.boosterPurchaseArtLoading = false;
+    this.boosterPurchaseArtError = undefined;
+    if (this.boosterPurchaseArt) for (const image of Object.values(this.boosterPurchaseArt)) this.host.releaseImage?.(image);
+    this.boosterPurchaseArt = undefined;
+  }
+
+  private requestBoosterPurchaseArt(): void {
+    if (this.boosterPurchaseArt || this.boosterPurchaseArtLoading) return;
+    const token = ++this.boosterPurchaseArtRequestToken;
+    this.boosterPurchaseArtLoading = true;
+    this.boosterPurchaseArtError = undefined;
+    const keys = Object.keys(BOOSTER_PURCHASE_ART_URLS) as Array<keyof BoosterPurchaseArt>;
+    void this.loadImages(keys.map(key => BOOSTER_PURCHASE_ART_URLS[key])).then((images) => {
+      if (token !== this.boosterPurchaseArtRequestToken || this.screen !== "boosterPurchase") {
+        for (const image of images) this.host.releaseImage?.(image);
+        return;
+      }
+      this.boosterPurchaseArt = Object.fromEntries(keys.map((key, index) => [key, images[index]])) as BoosterPurchaseArt;
+      this.boosterPurchaseArtLoading = false;
+      this.dirty = true;
+      this.scheduleFrame();
+    }).catch((error: unknown) => {
+      if (token !== this.boosterPurchaseArtRequestToken) return;
+      this.boosterPurchaseArtLoading = false;
+      this.boosterPurchaseArtError = error instanceof Error ? error.message : String(error);
+      this.dirty = true;
+      this.scheduleFrame();
+    });
+  }
+
   private requestLifeRefillArt(): void {
     if (this.lifeRefillArt || this.lifeRefillArtLoading) return;
     const token = ++this.lifeRefillArtRequestToken;
     this.lifeRefillArtLoading = true;
     this.lifeRefillArtError = undefined;
-    // Reuse the supplied coin pile and blue value plate without retaining the
-    // full victory panel/glow on Home or changing positive victory rewards.
-    void this.loadImages([GAME_ART.ui.win.coinPile, GAME_ART.ui.win.rewardPill]).then((images) => {
+    const keys = Object.keys(LIFE_REFILL_ART) as Array<keyof typeof LIFE_REFILL_ART>;
+    void this.loadImages(keys.map((key) => LIFE_REFILL_ART[key])).then((images) => {
       if (token !== this.lifeRefillArtRequestToken || !this.lifeRefillOpen) {
         for (const image of images) this.host.releaseImage?.(image);
         return;
       }
-      this.lifeRefillArt = { coinPile: images[0], rewardPill: images[1] };
+      this.lifeRefillArt = Object.fromEntries(keys.map((key, index) => [key, images[index]])) as NonNullable<typeof this.lifeRefillArt>;
       this.lifeRefillArtLoading = false;
       this.dirty = true;
       this.scheduleFrame();
@@ -2812,11 +3340,48 @@ export class ColorEscapeGame {
     });
   }
 
+  private releaseFeatureUnlockArt(): void {
+    this.featureUnlockArtRequestToken += 1;
+    this.featureUnlockArtLoading = false;
+    this.featureUnlockArtError = undefined;
+    if (this.featureUnlockArt) {
+      for (const image of Object.values(this.featureUnlockArt)) this.host.releaseImage?.(image);
+      this.featureUnlockArt = undefined;
+    }
+  }
+
+  private requestFeatureUnlockArt(): void {
+    if (this.featureUnlockArt || this.featureUnlockArtLoading || this.featureUnlockGuide?.phase !== "reveal") return;
+    const token = ++this.featureUnlockArtRequestToken;
+    this.featureUnlockArtLoading = true;
+    this.featureUnlockArtError = undefined;
+    const keys = Object.keys(FEATURE_UNLOCK_ART) as Array<keyof FeatureUnlockArt>;
+    void this.loadImages(keys.map(key => FEATURE_UNLOCK_ART[key])).then(images => {
+      if (token !== this.featureUnlockArtRequestToken || this.featureUnlockGuide?.phase !== "reveal" || this.screen !== "home") {
+        for (const image of images) this.host.releaseImage?.(image);
+        return;
+      }
+      this.featureUnlockArt = Object.fromEntries(keys.map((key, index) => [key, images[index]])) as FeatureUnlockArt;
+      this.featureUnlockArtLoading = false;
+      this.dirty = true;
+      this.scheduleFrame();
+    }).catch((error: unknown) => {
+      if (token !== this.featureUnlockArtRequestToken) return;
+      this.featureUnlockArtLoading = false;
+      this.featureUnlockArtError = error instanceof Error ? error.message : String(error);
+      this.dirty = true;
+      this.scheduleFrame();
+    });
+  }
+
   private collectionAlbumArtImages(art: CollectionAlbumArt): HTMLImageElement[] {
     return Object.values(art);
   }
 
   private releaseCollectionAlbumArt(): void {
+    this.suppliedRevealArt?.dispose("painting");
+    this.collectionRestorationGuide = undefined;
+    if (this.collectionIntro?.restoration) this.collectionIntro = undefined;
     this.collectionAlbumArtRequestToken += 1;
     this.collectionAlbumArtworkRequestToken += 1;
     this.collectionAlbumArtLoading = false;
@@ -2861,6 +3426,45 @@ export class ColorEscapeGame {
       if (token !== this.achievementArtRequestToken) return;
       this.achievementArtLoading = false;
       this.achievementArtError = error instanceof Error ? error.message : String(error);
+      this.dirty = true;
+      this.scheduleFrame();
+    });
+  }
+
+  private dailyChallengeArtImages(art: DailyChallengeArt): HTMLImageElement[] {
+    return Object.values(art);
+  }
+
+  private releaseDailyChallengeArt(): void {
+    this.dailyChallengeArtRequestToken += 1;
+    this.dailyChallengeArtLoading = false;
+    this.dailyChallengeArtError = undefined;
+    if (this.dailyChallengeArt) {
+      for (const image of this.dailyChallengeArtImages(this.dailyChallengeArt)) this.host.releaseImage?.(image);
+    }
+    this.dailyChallengeArt = undefined;
+  }
+
+  private requestDailyChallengeArt(): void {
+    if (this.dailyChallengeArt || this.dailyChallengeArtLoading) return;
+    const token = ++this.dailyChallengeArtRequestToken;
+    this.dailyChallengeArtLoading = true;
+    this.dailyChallengeArtError = undefined;
+    const paths = GAME_ART.ui.dailyChallenge;
+    const keys = Object.keys(paths) as (keyof DailyChallengeArtUrls)[];
+    void this.loadImages(keys.map((key) => paths[key])).then((images) => {
+      if (token !== this.dailyChallengeArtRequestToken || this.screen !== "dailyChallenge") {
+        for (const image of images) this.host.releaseImage?.(image);
+        return;
+      }
+      this.dailyChallengeArt = Object.fromEntries(keys.map((key, index) => [key, images[index]])) as DailyChallengeArt;
+      this.dailyChallengeArtLoading = false;
+      this.dirty = true;
+      this.scheduleFrame();
+    }).catch((error: unknown) => {
+      if (token !== this.dailyChallengeArtRequestToken) return;
+      this.dailyChallengeArtLoading = false;
+      this.dailyChallengeArtError = error instanceof Error ? error.message : String(error);
       this.dirty = true;
       this.scheduleFrame();
     });
@@ -2927,6 +3531,10 @@ export class ColorEscapeGame {
   }
 
   private collectionAlbumCurrentAtlasIndexes(): number[] {
+    // The Home reveal owns only its artwork, not the collection page or its
+    // neighboring atlases. Reuse this decoded image when Continue opens it.
+    const introItem = this.collectionIntro && findCollectionCatalogItem(this.collectionIntro.itemId);
+    if (introItem) return [this.collectionAlbumAtlasIndex(introItem)];
     const indexes = this.collectionAlbumPageAtlasIndexes(this.collectionAlbumLayout().pagination.pageIndex);
     const detail = this.collectionAlbumDetailId ? findCollectionCatalogItem(this.collectionAlbumDetailId) : undefined;
     if (detail) indexes.push(this.collectionAlbumAtlasIndex(detail));
@@ -2939,10 +3547,15 @@ export class ColorEscapeGame {
   }
 
   private collectionAlbumItemArtworkFailed(item: CollectionCatalogItem | undefined): boolean {
-    return Boolean(item && this.collectionAlbumArtwork?.failedIndexes.includes(this.collectionAlbumAtlasIndex(item)));
+    return Boolean(item && (this.collectionAlbumArtwork?.failedIndexes.includes(this.collectionAlbumAtlasIndex(item))
+      || (this.collectionIntro?.itemId === item.id && this.suppliedRevealArt?.failed("painting"))));
   }
 
   private requestCollectionAlbumArtwork(retry = false): void {
+    if (this.collectionIntro) {
+      this.suppliedRevealAssets("painting");
+      if (retry) this.suppliedRevealArt?.request("painting", true);
+    }
     if (!this.collectionAlbumArtwork) {
       this.collectionAlbumArtwork = new CollectionArtworkStore({
         paths: [...GAME_ART.ui.collectionCardAtlases.levels, ...GAME_ART.ui.collectionCardAtlases.masterpieces],
@@ -2961,17 +3574,20 @@ export class ColorEscapeGame {
     const store = this.collectionAlbumArtwork;
     const page = this.collectionAlbumLayout().pagination.pageIndex;
     const tab = this.collectionAlbumTab;
-    const plan = `${tab}:${page}:${this.collectionAlbumDetailId ?? ""}`;
+    const plan = this.collectionIntro ? `intro:${this.collectionIntro.itemId}`
+      : `${tab}:${page}:${this.collectionAlbumDetailId ?? ""}`;
     if (!retry && this.collectionAlbumArtworkPlan === plan) return;
     this.collectionAlbumArtworkPlan = plan;
     const token = ++this.collectionAlbumArtworkRequestToken;
+    const current = this.collectionAlbumCurrentAtlasIndexes();
+    const neighbors = this.collectionIntro ? [] : [...this.collectionAlbumPageAtlasIndexes(page + 1, tab),
+      ...this.collectionAlbumPageAtlasIndexes(page - 1, tab)];
+    store.retain([...current, ...neighbors]);
     // Publish each current-page atlas independently. Only then prefetch the
     // adjacent pages in this category; never pull in the other category.
-    void store.request(this.collectionAlbumCurrentAtlasIndexes(), retry).then(() => {
+    void store.request(current, retry).then(() => {
       if (this.collectionAlbumArtwork !== store || token !== this.collectionAlbumArtworkRequestToken
         || !this.collectionAlbumVisible()) return;
-      const neighbors = [...this.collectionAlbumPageAtlasIndexes(page + 1, tab),
-        ...this.collectionAlbumPageAtlasIndexes(page - 1, tab)];
       void store.request(neighbors, false, false).catch(() => {});
     }).catch(() => {
       // Failed slots remain visible and retry only after an explicit click.
@@ -2979,6 +3595,10 @@ export class ColorEscapeGame {
   }
 
   private requestCollectionAlbumArt(): void {
+    // Entering the full album dismisses the transient Home banner before its
+    // larger deferred image group is requested. Unlock previews use only the
+    // separate artwork request below and keep the pending Home notification.
+    this.clearMainlineRankChange();
     this.requestCollectionAlbumArtwork();
     if (this.collectionAlbumArt || this.collectionAlbumArtLoading) return;
     const token = ++this.collectionAlbumArtRequestToken;
@@ -2988,6 +3608,10 @@ export class ColorEscapeGame {
     const keys = Object.keys(paths) as (keyof CollectionAlbumArtUrls)[];
     void this.loadImages(keys.map((key) => paths[key])).then((images) => {
       if (token !== this.collectionAlbumArtRequestToken || !this.collectionAlbumVisible()) {
+        // A navigation can finish while the deferred images are in flight.
+        // Clear the in-flight marker when that happens so a later visit can
+        // request the album again instead of being stuck on the loading state.
+        if (token === this.collectionAlbumArtRequestToken) this.collectionAlbumArtLoading = false;
         for (const image of images) this.host.releaseImage?.(image);
         return;
       }
@@ -3010,13 +3634,13 @@ export class ColorEscapeGame {
     this.winArtLoading = true;
     this.winArtError = undefined;
     const paths = GAME_ART.ui.win;
+    const dailyRewards = Boolean(this.dailyChallengeRunInfo() || this.dailyChallengeWin);
+    const dailyPaths = GAME_ART.ui.dailyChallenge;
     void this.loadImages([
-      paths.panel,
-      paths.glow,
-      paths.rewardPill,
-      paths.coinPile,
-      paths.continueButton,
-      paths.close,
+      ...(dailyRewards ? [DAILY_SUCCESS_ART_URLS.panel, paths.glow, paths.rewardPill, paths.coinPile,
+        DAILY_SUCCESS_ART_URLS.continueButton, DAILY_SUCCESS_ART_URLS.close,
+        dailyPaths.rewardCard, dailyPaths.gemIcon, dailyPaths.coinIcon]
+        : [...Object.values(SUPPLIED_SETTLEMENT_ART), ...Object.values(SUPPLIED_RANK_ART)]),
     ]).then((images) => {
       if (token !== this.winArtRequestToken) {
         for (const image of images) this.host.releaseImage?.(image);
@@ -3024,14 +3648,23 @@ export class ColorEscapeGame {
       }
       let cursor = 0;
       const take = (): HTMLImageElement => images[cursor++];
-      this.winArt = {
+      if (dailyRewards) this.winArt = {
         panel: take(),
         glow: take(),
         rewardPill: take(),
         coinPile: take(),
         continueButton: take(),
         close: take(),
+        dailyRewards: { card: take(), inspiration: take(), coins: take() },
       };
+      else {
+        const suppliedSettlement = Object.fromEntries(Object.keys(SUPPLIED_SETTLEMENT_ART).map(key => [key, take()])) as SuppliedSettlementArt;
+        const suppliedRank = Object.fromEntries(Object.keys(SUPPLIED_RANK_ART).map(key => [key, take()])) as SuppliedRankArt;
+        this.winArt = { panel: suppliedSettlement.panel, glow: suppliedSettlement.panel,
+          rewardPill: suppliedSettlement.rewardPill, coinPile: suppliedSettlement.coinPile,
+          continueButton: suppliedSettlement.continueButton, close: suppliedSettlement.close,
+          suppliedSettlement, suppliedRank };
+      }
       this.winArtLoading = false;
       this.dirty = true;
       this.scheduleFrame();
@@ -3118,17 +3751,11 @@ export class ColorEscapeGame {
     void (async () => {
       let art: FormalPageArt;
       if (screen === "supply") {
-        const paths = GAME_ART.ui.formalPages.shop;
-        const [reference, buyButton, boosterTile, priceCoin, time, rocket, pulse] = await this.loadImages([
-          paths.reference,
-          paths.buyButton,
-          paths.boosterTile,
-          paths.priceCoin,
-          paths.time,
-          paths.rocket,
-          paths.pulse,
-        ]);
-        art = { screen, reference, buyButton, boosterTile, priceCoin, boosterIcons: { time, rocket, pulse } };
+        const entries = Object.entries(WELFARE_SUPPLIED_ART) as [WelfareSuppliedArtKey, string][];
+        const images = await this.loadImages(entries.map(([, path]) => path));
+        const ui = Object.fromEntries(entries.map(([key], index) => [key, images[index]])) as WelfareSuppliedArt;
+        art = { screen, ui, priceCoin: ui.rewardCoins, life: ui.rewardLife, inspiration: ui.rewardInspiration,
+          boosterIcons: { time: ui.boosterTime, rocket: ui.boosterRocket, pulse: ui.boosterPulse } };
       } else if (screen === "leaderboard") {
         const paths = GAME_ART.ui.formalPages.leaderboard;
         const images = await this.loadImages([
@@ -3140,11 +3767,8 @@ export class ColorEscapeGame {
           paths.tabActive,
           paths.tabInactive,
           paths.podium,
-          paths.avatars.fox,
-          paths.avatars.raccoon,
-          paths.avatars.panda,
-          paths.avatars.rabbit,
-          paths.avatars.cat,
+          ...PROFILE_AVATAR_PATHS,
+          ...PROFILE_FRAME_PATHS,
           paths.podiumNameplates.gold,
           paths.podiumNameplates.silver,
           paths.podiumNameplates.bronze,
@@ -3172,7 +3796,8 @@ export class ColorEscapeGame {
           tabActive: take(),
           tabInactive: take(),
           podium: take(),
-          avatars: { fox: take(), raccoon: take(), panda: take(), rabbit: take(), cat: take() },
+          avatars: PROFILE_AVATAR_PATHS.map(take),
+          frames: PROFILE_FRAME_PATHS.map(take),
           podiumNameplates: [take(), take(), take()],
           podiumMedals: [take(), take(), take()],
           rankMedals: [take(), take(), take()],
@@ -3184,7 +3809,6 @@ export class ColorEscapeGame {
         };
       } else if (screen === "levels") {
         const paths = GAME_ART.ui.formalPages.journey;
-        const initialEpisodeIndexes = this.journeyEpisodeIndexesInView();
         const images = await this.loadImages([
           paths.background,
           paths.topHeader,
@@ -3192,24 +3816,20 @@ export class ColorEscapeGame {
           paths.title,
           paths.track,
           paths.trackProgress,
-          paths.destination,
           paths.currentMarker,
           paths.levelCardLeft,
           paths.levelCardActiveLeft,
           paths.rewardCardRight,
           paths.rewardCardActiveRight,
-          paths.lockedShade,
           paths.episodeRangePanel,
           paths.episodeSelectedButton,
           paths.episodeActionButton,
-          paths.lock,
           paths.rewards.time,
           paths.rewards.rocket,
           paths.rewards.pulse,
           paths.rewards.heart,
           paths.rewards.coins,
           paths.rewards.complete,
-          ...initialEpisodeIndexes.map((index) => paths.episodes[index]),
         ]);
         let cursor = 0;
         const take = (): HTMLImageElement => images[cursor++];
@@ -3221,17 +3841,14 @@ export class ColorEscapeGame {
           title: take(),
           track: take(),
           trackProgress: take(),
-          destination: take(),
           currentMarker: take(),
           levelCardLeft: take(),
           levelCardActiveLeft: take(),
           rewardCardRight: take(),
           rewardCardActiveRight: take(),
-          lockedShade: take(),
           episodeRangePanel: take(),
           episodeSelectedButton: take(),
           episodeActionButton: take(),
-          lock: take(),
           rewards: {
             time: take(),
             rocket: take(),
@@ -3243,7 +3860,7 @@ export class ColorEscapeGame {
           deferred: new JourneyDeferredArt({
             episodePaths: paths.episodes,
             presentationPaths: paths.presentation,
-            initialEpisodes: initialEpisodeIndexes.map((index) => ({ index, image: take() })),
+            destinationPath: paths.destination,
             loadImage: async (path) => {
               const image = await this.host.createImage(path);
               this.artLoadedImageCount += 1;
@@ -3339,30 +3956,39 @@ export class ColorEscapeGame {
   }
 
   start(): void {
+    this.requestHomeProfileArt();
     this.scheduleFrame();
   }
 
   private scheduleFrame(): void {
-    if (this.framePending) return;
+    if (!this.appVisible || this.framePending) return;
+    const token = {};
+    this.frameToken = token;
     this.framePending = true;
     this.host.requestFrame((time) => {
+      if (this.frameToken !== token) return;
+      this.frameToken = undefined;
       this.framePending = false;
       this.frame(time);
     });
   }
 
-  loadLevel(id: number, play = false, preserveDirectTransition = false): void {
+  loadLevel(id: number, play = false, preserveDirectTransition = false, levelOverride?: LevelSpec, retainDailyChallengeArt = false): void {
+    if(this.leagueRun) return;
     // Never let navigation clear an immutable candidate whose storage bridge
     // returned an ambiguous result. The owning button must retry that exact
     // candidate before any other save mutation can proceed.
-    if (this.pendingLifeStart || this.pendingLifeRefill
+    if (this.pendingLifeStart || this.pendingLifeRefill || this.boosterRewardAdTransactionActive()
+      || this.lifeRefillAdTransactionActive()
+      || this.dailyChallengeRewardAdTransactionActive()
       || this.pendingSettlementAbandon
       || this.pendingSettlement
-      || this.pendingSupplyPurchase
+      || this.pendingSupplyPurchase || this.welfareTransactionActive() || this.pendingProfileSave || this.pendingRankingSave || this.pendingBoosterPurchase
       || this.pendingJourneyClaim
       || this.pendingAchievementClaim
       || this.pendingDailyTaskClaim
       || this.pendingCollectionRestoration
+      || this.pendingFeatureGuideAck
       || this.pendingJourneyThemeSelection) {
       this.playSound("blocked");
       this.vibrate("light");
@@ -3370,74 +3996,28 @@ export class ColorEscapeGame {
       this.scheduleFrame();
       return;
     }
-    const normalized = Math.max(1, Math.min(LEVELS.length, Math.floor(Number(id)) || 1));
+    const normalized = this.temporaryLevelTestSession
+      ? getTemporaryTestLevelStrict(id).id
+      : Math.max(1, Math.min(LEVELS.length, Math.floor(Number(id)) || 1));
     if (play && !this.canStartCampaignAttempt()) return;
     this.playableClockSlices.reset();
     this.temporaryLevelSelector = undefined;
     if (!preserveDirectTransition) this.directLevelTransition = undefined;
-    this.homeCoinFlight = undefined;
+    this.clearHomeCoinFlight();
+    this.featureUnlockGuide = undefined;
+    this.releaseFeatureUnlockArt();
+    this.collectionIntro = undefined;
+    this.collectionRestorationGuide = undefined;
     this.save.activeRun = undefined;
     this.save.currentLevel = normalized;
-    this.model = new PuzzleModel(getLevel(normalized), { deferExitCompletion: true });
-    this.pendingButtonPress = undefined;
-    this.selectedId = undefined;
-    this.activePointer = undefined;
-    this.selectionAssist = undefined;
-    this.dragVisual = undefined;
-    this.strategyNudgeDrag = undefined;
-    this.strategyFollowupAvailableAt = undefined;
-    this.strategyFollowupAction = undefined;
-    this.strategyFollowupDrags = 0;
-    this.strategyRescueDrags = 0;
-    this.boosterTarget = undefined;
-    this.boosterFeedback = undefined;
-    this.hudFeedback = undefined;
-    this.supplyFeedback = undefined;
-    this.undoActions = [];
-    this.blockedBlockId = undefined;
-    this.blockedFeedbackTime = 0;
-    this.blockerFocusBlockId = undefined;
-    this.blockerFocusTime = 0;
-    this.grabFeedbackTime = 0;
-    this.noClearMoveStreak = 0;
-    this.strategyNudgeAcknowledged = false;
-    this.earnedStars = 0;
-    this.winCoinReward = 0;
-    this.assistedClear = false;
-    this.pendingSettlement = undefined;
-    this.pendingSettlementAbandon = undefined;
-    this.pendingLifeStart = undefined;
-    this.pendingSupplyPurchase = undefined;
-    this.pendingJourneyClaim = undefined;
-    this.pendingAchievementClaim = undefined;
-    this.pendingDailyTaskClaim = undefined;
-    this.pendingCollectionRestoration = undefined;
-    this.pendingJourneyThemeSelection = undefined;
-    this.boosterUnlockToast = undefined;
-    this.settlementSaveFailed = false;
-    this.settlementFailureKind = undefined;
-    this.settlementSaveAttempts = 0;
-    this.particles = [];
-    this.exitGhosts = [];
-    this.exitPulses = [];
-    this.generatorSpawnAnimations = [];
-    this.exitFailure = undefined;
-    this.revisedTransitions = [];
-    this.mechanicPulses = [];
-    this.boardShakeTime = 0;
-    this.pendingCelebration = 0;
-    this.runElapsedSeconds = 0;
-    this.completionMetrics = undefined;
-    this.winStarConditions = undefined;
-    this.journeyPresentation = undefined;
-    this.achievementScrollGesture = undefined;
-    this.achievementFeedback = undefined;
-    this.collectionAlbumDetailId = undefined;
-    this.collectionAlbumFeedback = undefined;
-    this.navigationTransition = undefined;
-    this.navigationPendingTarget = undefined;
+    const level = this.temporaryLevelTestSession
+      ? getTemporaryTestLevelStrict(normalized)
+      : levelOverride?.id === normalized ? levelOverride : getLevel(normalized);
+    this.model = new PuzzleModel(level, { deferExitCompletion: true });
+    this.resetPuzzlePresentation();
     this.screen = play ? "playing" : "home";
     this.releaseFormalPageArt();
+    if (!retainDailyChallengeArt) this.releaseDailyChallengeArt();
     this.releaseWinArt();
     this.releaseCollectionAlbumArt();
     this.releaseAchievementArt();
@@ -3479,7 +4059,7 @@ export class ColorEscapeGame {
     const nowMs = Date.now();
     const lifeState = this.currentLifeState(nowMs);
     const starTargets = levelStarTargets(this.model.level);
-    const settledStarConditions = this.winStarConditions ?? (this.pendingSettlement
+    const settledStarConditions = this.dailyChallengeWin ? undefined : (this.winStarConditions ?? (this.pendingSettlement
       ? {
         passed: true as const,
         moves: this.pendingSettlement.presentation.moves,
@@ -3490,9 +4070,39 @@ export class ColorEscapeGame {
         timeAchieved: this.pendingSettlement.presentation.timeAchieved,
         earnedStars: this.pendingSettlement.presentation.earnedStars,
       }
-      : undefined);
+      : undefined));
     return {
       screen: this.screen,
+      featureUnlocks: Object.fromEntries((Object.keys(FEATURE_UNLOCKS) as FeatureId[]).map((feature) => [
+        feature, { ...FEATURE_UNLOCKS[feature], unlocked: this.featureUnlocked(feature) },
+      ])),
+      featureLockFeedback: this.featureLockFeedback ? { ...this.featureLockFeedback } : undefined,
+      featureLockFeedbacks: (this.featureLockFeedbacks ?? []).map((feedback) => ({ ...feedback })),
+      buttonHints: (this.buttonHints ?? []).map(hint => ({ ...hint })),
+      featureUnlockGuide: {
+        ...this.featureUnlockGuide, active: Boolean(this.featureUnlockGuide),
+        ready: this.featureUnlockGuideReady(), targetRect: this.featureGuideTargetRect(),
+        art: { ready: Boolean(this.featureUnlockArt), loading: this.featureUnlockArtLoading, error: this.featureUnlockArtError },
+        layout: this.featureGuideLayout(),
+        pending: [...(this.save.featureGuideProgress?.pending ?? [])],
+        seen: [...(this.save.featureGuideProgress?.seen ?? [])],
+        persistencePending: Boolean(this.pendingFeatureGuideAck),
+      },
+      collectionIntro: {
+        active: Boolean(this.collectionIntro),
+        restoration: this.collectionIntro?.restoration === true,
+        unlockPreview: this.collectionIntro?.unlockPreview === true,
+        level: this.collectionIntro?.level,
+        itemId: this.collectionIntro?.itemId,
+        age: this.collectionIntro?.age,
+        ready: this.collectionIntroReady(),
+        pending: this.save.collectionIntroPending === true,
+        shown: this.save.collectionIntroShown === true,
+        restorationGuide: this.collectionRestorationGuide ? {
+          ...this.collectionRestorationGuide,
+          visible: this.collectionRestorationGuideEligible(),
+        } : undefined,
+      },
       temporaryLevelTest: {
         active: Boolean(this.temporaryLevelTestSession),
         selectorOpen: Boolean(this.temporaryLevelSelector),
@@ -3515,6 +4125,7 @@ export class ColorEscapeGame {
       level: this.model.level,
       starTargets,
       puzzle: this.model.snapshot(),
+      countdownWarning: this.countdownWarning.debug(this.model.snapshot(), this.save.reducedMotion),
       selectedId: this.selectedId,
       activePointer: this.activePointer,
       buttonPress: this.pendingButtonPress ? {
@@ -3544,17 +4155,28 @@ export class ColorEscapeGame {
       boosterTarget: this.boosterTarget,
       boosterFeedback: this.boosterFeedback ? { text: this.boosterFeedback.text, color: this.boosterFeedback.color } : undefined,
       hudFeedback: this.hudFeedback ? { text: this.hudFeedback.text, color: this.hudFeedback.color } : undefined,
-      undoActions: this.undoActions.map((action) => ({ ...action })),
       controls: {
-        undoEnabled: this.undoActions.length > 0,
+        undoEnabled: false,
         boosters: {
           time: this.boosterUnlocked("time") && this.save.boosters.time > 0,
-          rocket: this.boosterUnlocked("rocket") && this.save.boosters.rocket > 0,
-          pulse: this.boosterUnlocked("pulse") && this.save.boosters.pulse > 0,
+          rocket: this.boosterUnlocked("rocket") && this.availableRocketStock() > 0,
+          pulse: this.boosterUnlocked("pulse") && this.availablePulseStock() > 0,
         },
       },
       interactionTargets: this.interactionTargetEvidence(),
+      league: {
+        run: this.leagueRun ? {points:this.leagueRun.provisionalPoints,completedMs:this.leagueRun.completedMs,specialIds:[...this.leagueRun.specialIds],attempt:this.leagueRun.attempt} : undefined,
+        result: this.leagueRunResult,
+        unlocked: this.featureUnlocked("league"), hasState: Boolean(this.save.league), scrollOffset: this.leagueScroll.offset, listViewport: LEAGUE_LIST, scrolling: Boolean(this.leagueScroll.gesture), previewTier: this.leagueTier,
+        tierPosition: this.leagueTierPosition(), tierSlide: this.leagueTierSlide ? { ...this.leagueTierSlide } : undefined,
+        artReady: Boolean(this.leagueArtStore?.art), artLoading: this.leagueArtStore?.loading ?? false, artError: this.leagueArtStore?.error ?? false,
+        settlementArtReady: Boolean(this.leagueSettlementArtStore?.art), settlementArtLoading: this.leagueSettlementArtStore?.loading ?? false, settlementArtError: this.leagueSettlementArtStore?.error ?? false,
+        infoOpen: this.leagueInfo, introPage: this.leagueIntroPage, introSeen: this.save.leagueIntroSeen===true, persistence: this.leaguePersistence ?? "idle",
+        pendingTransaction: this.leagueTransaction?.pending ?? false,
+        state: this.getLeagueState(), rows: this.save.league ? leagueRows(this.save.league) : [],
+      },
       settings: {
+        music: this.save.music !== false,
         sound: this.save.sound,
         haptic: this.save.haptic,
         reducedMotion: this.save.reducedMotion,
@@ -3566,7 +4188,7 @@ export class ColorEscapeGame {
         deviceLanguage: this.deviceLanguage,
         supportedLanguages: GAME_LANGUAGE_METADATA.map((entry) => ({ ...entry })),
       },
-      audio: { scene: this.musicScene(), enabled: this.save.sound && this.appVisible },
+      audio: { scene: this.musicScene(), enabled: this.save.music !== false && this.appVisible },
       progression: { highestLevel: this.save.highestLevel, bestStars: { ...this.save.bestStars }, bestMoves: { ...this.save.bestMoves } },
       achievements: {
         open: this.screen === "achievements",
@@ -3582,12 +4204,14 @@ export class ColorEscapeGame {
         entries: sortAchievementEntries(achievementSummary.entries).map((entry, index) => ({
           ...entry,
           rect: homeArtRect(achievementRowPlacement(index, this.achievementScrollOffset)),
-          claimRect: this.achievementClaimRect(index),
-          rewardRect: homeArtRect({
+          claimRect: entry.claimed ? undefined : this.achievementClaimRect(index),
+          claimedCheckRect: entry.claimed
+            ? homeArtRect(achievementClaimedCheckPlacement(index, this.achievementScrollOffset)) : undefined,
+          rewardRect: entry.claimed ? undefined : homeArtRect({
             ...ACHIEVEMENT_LAYOUT.reward,
             y: ACHIEVEMENT_LAYOUT.reward.y + index * ACHIEVEMENT_LAYOUT.rowPitch - this.achievementScrollOffset,
           }),
-          rewardIconRect: homeArtRect({
+          rewardIconRect: entry.claimed ? undefined : homeArtRect({
             x: ACHIEVEMENT_LAYOUT.reward.x + 15,
             y: ACHIEVEMENT_LAYOUT.reward.y + index * ACHIEVEMENT_LAYOUT.rowPitch
               - this.achievementScrollOffset + ACHIEVEMENT_LAYOUT.reward.height / 2,
@@ -3641,15 +4265,61 @@ export class ColorEscapeGame {
         entries: dailyTaskSummary.tasks.map((task, index) => ({
           ...task,
           rowRect: homeArtRect(dailyRows[index].row),
-          rewardRect: homeArtRect(dailyRows[index].reward),
-          rewardIconRect: homeArtRect({
+          rewardRect: task.claimed ? undefined : homeArtRect(dailyRows[index].reward),
+          rewardIconRect: task.claimed ? undefined : homeArtRect({
             x: dailyRows[index].reward.x + 16.5,
             y: dailyRows[index].reward.y + 15.5,
             width: 1,
             height: 1,
           }),
-          claimRect: homeArtRect(dailyRows[index].claim),
+          claimRect: task.claimed ? undefined : homeArtRect(dailyRows[index].claim),
+          claimedCheckRect: task.claimed ? homeArtRect(dailyRows[index].claimedCheck) : undefined,
         })),
+      },
+      dailyChallenge: {
+        open: this.screen === "dailyChallenge",
+        dayKey: this.save.dailyChallenge.dayKey,
+        stageKey: this.save.dailyChallenge.stageKey,
+        stageUnlockLevel: this.save.dailyChallenge.stageUnlockLevel,
+        unlockedMechanisms: [...this.save.dailyChallenge.unlockedMechanisms],
+        attemptsRemaining: this.save.dailyChallenge.attemptsRemaining,
+        bonusAttempts: this.dailyChallengeBonusAttempts(this.save.dailyChallenge),
+        totalAttemptsRemaining: this.dailyChallengeAttemptsRemaining(this.save.dailyChallenge),
+        maxAttempts: DAILY_CHALLENGE_MAX_ATTEMPTS,
+        nextAttemptMs: this.dailyChallengeNextAttemptMs(nowMs),
+        nextResetMs: millisecondsUntilNextDailyChallengeDay(new Date(nowMs)),
+        resetTimeZone: "Asia/Shanghai",
+        selected: { ...this.save.dailyChallenge.selected },
+        completed: { ...this.save.dailyChallenge.completed },
+        rewarded: { ...this.save.dailyChallenge.rewarded },
+        notificationVisible: this.dailyChallengeHasNotification(),
+        feedback: this.dailyChallengeFeedback ? { ...this.dailyChallengeFeedback } : undefined,
+        entryRect: homeArtRect(DAILY_CHALLENGE_LAYOUT.entry),
+        closeRect: homeArtRect(DAILY_CHALLENGE_LAYOUT.close),
+        art: {
+          requested: this.dailyChallengeArtLoading,
+          ready: Boolean(this.dailyChallengeArt),
+          error: this.dailyChallengeArtError,
+          splitAssetCount: Object.keys(GAME_ART.ui.dailyChallenge).length,
+          loadedImages: this.dailyChallengeArt ? this.dailyChallengeArtImages(this.dailyChallengeArt).length : 0,
+          entryReady: Boolean(this.art.homeUi?.dailyChallengeEntry),
+        },
+        rows: DAILY_CHALLENGE_DIFFICULTIES.map((difficulty, index) => {
+          const assignment = getDailyChallengeAssignment(this.save.dailyChallenge, difficulty);
+          return {
+            difficulty,
+            label: dailyChallengeDifficultyLabel(difficulty),
+            assignmentId: assignment?.id,
+            sourceLevelId: assignment?.sourceLevelId,
+            minimumRepositionMoves: assignment?.minimumRepositionMoves,
+            reward: { ...DAILY_CHALLENGE_REWARDS[difficulty] },
+            completed: this.save.dailyChallenge.completed[difficulty],
+            rewarded: this.save.dailyChallenge.rewarded[difficulty],
+            rect: homeArtRect(dailyChallengeRowRect(index)),
+            buttonRect: this.save.dailyChallenge.completed[difficulty] ? undefined : homeArtRect(dailyChallengeRowButtonRect(index)),
+            claimedCheckRect: this.save.dailyChallenge.completed[difficulty] ? homeArtRect(dailyChallengeRowCompletedRect(index)) : undefined,
+          };
+        }),
       },
       collectionAlbum: {
         open: this.screen === "records" || this.screen === "mechanismGuide",
@@ -3715,6 +4385,18 @@ export class ColorEscapeGame {
       },
       boosterUnlock: {
         seen: [...this.save.boosterUnlockSeen],
+        guide: this.boosterUnlockGuide ? {
+          kind: this.boosterUnlockGuide.kind,
+          title: this.boosterName(this.boosterUnlockGuide.kind),
+          effect: this.boosterEffect(this.boosterUnlockGuide.kind),
+          age: this.boosterUnlockGuide.age,
+          duration: this.boosterUnlockGuide.duration,
+          phase: this.boosterUnlockGuide.flightAge === undefined ? "reveal" : "flight",
+          flightAge: this.boosterUnlockGuide.flightAge,
+          canContinue: this.boosterUnlockGuideCanContinue(),
+          closeRect: this.boosterUnlockGuideCloseRect(),
+          visible: this.boosterUnlockGuideEligible(),
+        } : undefined,
         pending: this.boosterUnlockToast ? {
           kind: this.boosterUnlockToast.kind,
           title: SUPPLY_ITEMS[this.boosterUnlockToast.kind].title,
@@ -3725,6 +4407,47 @@ export class ColorEscapeGame {
           visible: this.boosterUnlockToastEligible(),
         } : undefined,
         artReady: Boolean(this.art.boosterUnlockBanner),
+      },
+      freezeUsageGuide: {
+        used: this.save.boosterUsageSeen.includes("time"),
+        shownThisRun: this.freezeUsageGuideShownThisRun,
+        age: this.freezeUsageGuide?.age,
+        visible: Boolean(this.freezeUsageGuide && this.freezeUsageGuideEligible()),
+        target: { ...BUTTONS.time },
+      },
+      timeFreezeAnimation: this.timeFreezeAnimation.sample(this.model.snapshot().timeFreezeSeconds ?? 0, this.save.reducedMotion),
+      pulseAnimation: { ...this.pulseAnimation.sample(this.save.reducedMotion),
+        shake: samplePulseShake(this.pulseAnimation.sample(this.save.reducedMotion).age, this.save.reducedMotion) },
+      rocketAnimation: {
+        flight: this.rocketFlight ? { blockId: this.rocketFlight.blockId, age: this.rocketFlight.age,
+          duration: this.rocketFlight.duration, source: { ...this.rocketFlight.source }, target: { ...this.rocketFlight.target } } : undefined,
+        impact: this.rocketImpact ? { age: this.rocketImpact.age, target: { ...this.rocketImpact.target } } : undefined,
+        eligibleBlockIds: this.rocketTargetBlockIds(),
+        shake: this.rocketImpact ? sampleRocketShake(this.rocketImpact.age, this.save.reducedMotion) : { x: 0, y: 0 },
+      },
+      rocketRescueGuide: {
+        visible: Boolean(this.rocketRescueGuide && this.rocketRescueGuideEligible()),
+        phase: this.rocketRescueGuide?.phase,
+        age: this.rocketRescueGuide?.age,
+        targetBlockId: this.model.level.rocketRescue?.targetBlockId,
+        targetBlock: this.model.level.rocketRescue
+          ? this.model.getBlock(this.model.level.rocketRescue.targetBlockId)
+            ? { ...this.model.getBlock(this.model.level.rocketRescue.targetBlockId)! }
+            : undefined
+          : undefined,
+        booster: { ...BUTTONS.rocket },
+      },
+      pulseRescueGuide: {
+        visible: Boolean(this.pulseRescueGuide && this.pulseRescueGuideEligible()),
+        phase: this.pulseRescueGuide?.phase,
+        age: this.pulseRescueGuide?.age,
+        targetBlockId: this.model.level.pulseRescue?.targetBlockId,
+        targetBlock: this.model.level.pulseRescue
+          ? this.model.getBlock(this.model.level.pulseRescue.targetBlockId)
+            ? { ...this.model.getBlock(this.model.level.pulseRescue.targetBlockId)! }
+            : undefined
+          : undefined,
+        booster: { ...BUTTONS.pulse },
       },
       assistedClear: this.assistedClear,
       economy: {
@@ -3741,25 +4464,8 @@ export class ColorEscapeGame {
             this.directLevelTransition.reducedMotion,
           ),
         } : undefined,
-        coinFlight: this.homeCoinFlight ? {
-          ...this.homeCoinFlight,
-          duration: homeCoinFlightDuration(this.homeCoinFlight.reducedMotion),
-          coinCount: homeCoinFlightTiming(this.homeCoinFlight.reducedMotion).coinCount,
-          displayedCoins: this.displayedHomeCoins(),
-          target: this.homeCoinFlight.kind === "inspiration" ? this.inspirationTarget() : this.homeCoinTarget(),
-          start: this.homeCoinFlight.start ?? { x: LOGICAL_WIDTH * 0.52, y: LOGICAL_HEIGHT * 0.615 },
-          coins: Array.from(
-            { length: homeCoinFlightTiming(this.homeCoinFlight.reducedMotion).coinCount },
-            (_, index) => ({
-              index,
-              progress: homeCoinLocalProgress(
-                this.homeCoinFlight!.age,
-                index,
-                this.homeCoinFlight!.reducedMotion,
-              ),
-            }),
-          ),
-        } : undefined,
+        coinFlight: this.homeCoinFlight ? this.homeCoinFlightEvidence(this.homeCoinFlight) : undefined,
+        coinFlights: (this.homeCoinFlights ?? []).map((flight) => this.homeCoinFlightEvidence(flight)),
       },
       lives: {
         ...lifeState,
@@ -3769,9 +4475,20 @@ export class ColorEscapeGame {
         refillOpen: this.lifeRefillOpen,
         refillFeedback: this.lifeRefillFeedback,
         refillPersistence: this.pendingLifeRefill ? "unknown" : "idle",
+        refillAdPersistence: this.pendingLifeRefillAd ? this.pendingLifeRefillAd.stage : "idle",
+        refillAdRequestId: this.lifeRefillAdRequestId,
         unlimitedRemainingMs: getUnlimitedLivesRemainingMs(lifeState, nowMs),
         nextRecoveryRemainingMs: getNextLifeRecoveryRemainingMs(lifeState, nowMs),
       },
+      boosterPurchase: this.boosterPurchase ? {
+        ...this.boosterPurchase,
+        price: this.pendingBoosterPurchase?.price ?? getBoosterBundlePrice(this.boosterPurchase.kind),
+        quantity: this.pendingBoosterPurchase?.quantity ?? BOOSTER_PURCHASE_QUANTITY,
+        persistence: this.pendingBoosterPurchase ? "unknown" : "idle",
+        artReady: Boolean(this.boosterPurchaseArt),
+        artError: this.boosterPurchaseArtError,
+      } : undefined,
+      welfare: { ...this.welfareView(), pendingStage: this.pendingWelfareSave?.stage, adRequestId: this.welfareAdRequestId, ledger: this.save.welfareRewards ? cloneWelfareRewards(this.save.welfareRewards) : undefined },
       supply: {
         feedback: this.supplyFeedback ? { ...this.supplyFeedback } : undefined,
         pendingPurchase: this.pendingSupplyPurchase ? {
@@ -3790,11 +4507,18 @@ export class ColorEscapeGame {
         ...this.save.activeRun,
         boosterSpent: { ...this.save.activeRun.boosterSpent },
       } : undefined,
+      masterpieceUnlock: this.masterpieceUnlockPresentation ? {
+        ...this.masterpieceUnlockPresentation.progress,
+        age: this.masterpieceUnlockPresentation.age,
+        revealShown: Boolean(this.masterpieceUnlockPresentation.revealShown),
+        visible: this.screen === "win" && !this.dailyChallengeWin && Boolean(this.winArt),
+        artworkReady: Boolean(this.masterpieceUnlockArtwork?.images.length),
+      } : undefined,
       settlement: {
         status: this.settlementSaveFailed
           ? "failed"
           : this.screen === "win" || this.directLevelTransition ? "committed" : "idle",
-        kind: "normal",
+        kind: this.dailyChallengeWin ? "dailyChallenge" : "normal",
         levelId: this.model.level.id,
         attempts: this.settlementSaveAttempts,
         operation: this.pendingSettlementAbandon ? "abandon" : "settle",
@@ -3811,8 +4535,10 @@ export class ColorEscapeGame {
           : undefined,
         rewardPresented: !this.settlementSaveFailed && this.screen === "win",
         coinReward: this.winCoinReward,
+        inspirationReward: this.dailyChallengeWin?.inspiration ?? 0,
         earnedStars: this.earnedStars,
         starConditions: settledStarConditions,
+        rankChange: this.mainlineRankChange ? { ...this.mainlineRankChange } : undefined,
         pendingCoinDelta: this.pendingSettlementAbandon
           ? this.pendingSettlementAbandon.candidateSave.coins - this.save.coins
           : this.pendingSettlement
@@ -3944,6 +4670,9 @@ export class ColorEscapeGame {
           )),
           pendingEpisodeIndexes: deferredJourneyArt?.pendingEpisodeIndexes ?? [],
           failedEpisodeIndexes: deferredJourneyArt?.failedEpisodeIndexes ?? [],
+          destinationReady: Boolean(deferredJourneyArt?.destination),
+          destinationLoading: deferredJourneyArt?.destinationLoading ?? false,
+          destinationError: deferredJourneyArt?.destinationError,
           presentationReady: this.journeyPresentationArtReady(),
           presentationLoading: deferredJourneyArt?.presentationLoading ?? false,
           presentationError: deferredJourneyArt?.presentationError,
@@ -3970,7 +4699,15 @@ export class ColorEscapeGame {
           selectedEpisode: this.save.selectedJourneyEpisode,
           loadedEpisode: this.journeyHomeThemeIndex,
           loading: this.journeyHomeThemeLoading,
+          failed: this.journeyHomeThemeFailed,
         },
+        sceneReveal: this.journeyPresentation?.sceneReveal ? {
+          hudAlpha: this.journeySceneHudAlpha(),
+          ready: this.journeySceneConfirmReady(),
+          title: this.journeySceneTitle(),
+          name: this.journeySceneName(),
+          ...this.journeySceneLayout(),
+        } : undefined,
         activeIndex: journeyView.activeIndex,
         focusLevel: journeyView.focusLevel,
         scrollOffset: journeyView.scrollOffset,
@@ -4053,6 +4790,10 @@ export class ColorEscapeGame {
         returnScreen: this.screen === "updates" ? this.updateReturnScreen : undefined,
       },
       board: this.boardLayout(),
+      combo: {
+        count: this.comboAnimation?.count ?? 0,
+        praises: this.comboAnimation?.samples(this.save.reducedMotion) ?? [],
+      },
       averageFps: this.fpsSamples.length ? this.fpsSamples.reduce((sum, value) => sum + value, 0) / this.fpsSamples.length : 0,
       particles: this.particles.length,
       exitFragments: this.particles.filter((particle) => particle.exitFragment).length,
@@ -4242,7 +4983,7 @@ export class ColorEscapeGame {
       pendingCelebration: this.pendingCelebration,
       art: {
         shellReady: this.shellArtReady,
-        revisedMechanisms: { ready: ACTIVE_REVISED_MECHANISM_ART_PATHS.every((path) => this.revisedArt.has(path)),
+        revisedMechanisms: { ready: missingMechanismArtPaths(this.model.level, this.revisedArt).length === 0,
           currentSceneReady: missingMechanismArtPaths(this.model.level, this.revisedArt).length === 0,
           loading: this.revisedArtLoading, error: this.revisedArtError, loadedImages: this.revisedArt.size },
         ready: this.artReady,
@@ -4315,6 +5056,12 @@ export class ColorEscapeGame {
   }
 
   private tr<Key extends TranslationKey>(key: Key, params?: TranslationParams<Key>): string {
+    if (key === "navigation.shop") return welfareText(this.save.language, "navigationTitle");
+    if (key === "featureGuide.supply.name" && (this.save.language === "zh-CN" || this.save.language === "zh-TW")) {
+      return translate(this.save.language, key);
+    }
+    if (key === "shop.title" || key === "featureGuide.supply.name") return welfareText(this.save.language, "title");
+    if (key === "featureGuide.supply.description") return welfareText(this.save.language, "subtitle");
     return params === undefined
       ? translate(this.save.language, key)
       : translate(this.save.language, key, params);
@@ -4343,6 +5090,9 @@ export class ColorEscapeGame {
   }
 
   private collectionItemEffect(item: CollectionItem): string {
+    // The Chinese guide uses its concise catalog copy; first-time mechanism
+    // introductions keep the separately localized, detailed explanations.
+    if (this.save.language === "zh-CN") return item.effect;
     return this.tr(`collection.mechanism.${item.id}.effect` as TranslationKey);
   }
 
@@ -4383,7 +5133,16 @@ export class ColorEscapeGame {
 
   private sanitizeSave(value: unknown): SaveData {
     if (!isPlainRecord(value) || value.schemaVersion !== 1) {
-      return { ...copyDefaultSave(), dailyTaskProgress: createDailyTaskProgress(localDayKey(), 1) };
+      return {
+        ...copyDefaultSave(),
+        dailyTaskProgress: createDailyTaskProgress(localDayKey(), 1),
+        dailyChallenge: reconcileDailyChallengeState(undefined, new Date(), 1),
+        mainlineRanking: normalizeMainlineRankingProgress(undefined),
+        welfareRewards: normalizeWelfareRewards(undefined, Date.now()),
+        lifeRefillAd: normalizeLifeRefillAd(undefined),
+        boosterRewardAd: normalizeBoosterRewardAd(undefined),
+        dailyChallengeRewardAd: normalizeDailyChallengeRewardAd(undefined),
+      };
     }
     const source = migrateLegacyCampaignCap(value, LEVELS.length);
     const highestLevel = boundedInteger(source.highestLevel, 1, 1, LEVELS.length);
@@ -4407,6 +5166,9 @@ export class ColorEscapeGame {
     const boosterUnlockSeen = Array.isArray(source.boosterUnlockSeen)
       ? [...new Set(source.boosterUnlockSeen.filter((kind): kind is Booster => SUPPLY_ORDER.includes(kind as Booster)))]
       : unlockedSupplyKinds(highestLevel);
+    const boosterUsageSeen = Array.isArray(source.boosterUsageSeen)
+      ? [...new Set(source.boosterUsageSeen.filter((kind): kind is Booster => SUPPLY_ORDER.includes(kind as Booster)))]
+      : [];
     const legacyJourneyProgress = deriveLegacyJourneyProgress(highestLevel, sanitizedRewardedLevels);
     const rawJourneyProgress = isPlainRecord(source.journeyProgress) ? source.journeyProgress : undefined;
     const normalizedJourneyProgress = sanitizeJourneyProgressMemory(rawJourneyProgress);
@@ -4418,7 +5180,7 @@ export class ColorEscapeGame {
       seenEpisodeUnlockLevels: (rawJourneyProgress && Array.isArray(rawJourneyProgress.seenEpisodeUnlockLevels)
         ? normalizedJourneyProgress.seenEpisodeUnlockLevels
         : legacyJourneyProgress.seenEpisodeUnlockLevels)
-        .filter((level) => level <= highestLevel),
+        .filter((level) => isJourneyEpisodeUnlocked({ unlockLevel: level }, highestLevel, sanitizedRewardedLevels)),
     };
     const storedBoosters = isPlainRecord(source.boosters) ? source.boosters : {};
     const safeCount = (count: unknown, fallback = 0, max = 99): number => boundedInteger(count, fallback, 0, max);
@@ -4450,49 +5212,113 @@ export class ColorEscapeGame {
     );
     const storedRun = isPlainRecord(source.activeRun) ? source.activeRun : undefined;
     const storedSpent = isPlainRecord(storedRun?.boosterSpent) ? storedRun.boosterSpent : {};
-    const activeLevel = boundedInteger(storedRun?.levelId, currentLevel, 1, highestLevel);
+    const activeRunDaily = storedRun?.daily === true;
+    const activeLevel = boundedInteger(storedRun?.levelId, currentLevel, 1, activeRunDaily ? LEVELS.length : highestLevel);
     const returnLevel = boundedInteger(storedRun?.returnLevelId, currentLevel, 1, highestLevel);
-    const activeRunDaily = typeof storedRun?.daily === "boolean" ? storedRun.daily : false;
+    const storedSpentCap = (kind: Booster): number => (
+      (activeLevel === 7 && kind === "rocket") || (activeLevel === 10 && kind === "pulse")
+        ? SUPPLY_ITEMS[kind].maxStock
+        : Math.max(0, SUPPLY_ITEMS[kind].maxStock - Math.min(SUPPLY_ITEMS[kind].maxStock, boosters[kind]))
+    );
     const activeRunDayKey = activeRunDaily ? validLocalDay(storedRun?.dailyDayKey) : "";
-    const activeRun: SaveData["activeRun"] = storedRun ? {
+    const activeRunDailyDifficulty = activeRunDaily && (storedRun?.dailyChallengeDifficulty === 1
+      || storedRun?.dailyChallengeDifficulty === 2
+      || storedRun?.dailyChallengeDifficulty === 3)
+      ? storedRun.dailyChallengeDifficulty as DailyChallengeDifficulty
+      : undefined;
+    const activeRunDailySource = activeRunDaily && Number.isInteger(storedRun?.dailyChallengeSourceLevelId)
+      ? Math.max(1, Math.min(LEVELS.length, Number(storedRun?.dailyChallengeSourceLevelId)))
+      : undefined;
+    const storedDailyOwner = activeRunDaily ? sanitizeDailyChallengeRunOwner(storedRun?.dailyChallengeOwner) : undefined;
+    let activeRun: SaveData["activeRun"] = storedRun ? {
       levelId: activeLevel,
       returnLevelId: returnLevel,
       lifeStarted: storedRun.lifeStarted === true,
       daily: activeRunDaily,
       ...(activeRunDayKey ? { dailyDayKey: activeRunDayKey } : {}),
+      ...(activeRunDailyDifficulty ? { dailyChallengeDifficulty: activeRunDailyDifficulty } : {}),
+      ...(activeRunDailySource ? { dailyChallengeSourceLevelId: activeRunDailySource } : {}),
+      ...(storedDailyOwner ? { dailyChallengeOwner: storedDailyOwner } : {}),
       boosterSpent: {
-        time: safeCount(storedSpent.time, 0, Math.max(0, SUPPLY_ITEMS.time.maxStock - Math.min(SUPPLY_ITEMS.time.maxStock, boosters.time))),
-        rocket: safeCount(storedSpent.rocket, 0, Math.max(0, SUPPLY_ITEMS.rocket.maxStock - Math.min(SUPPLY_ITEMS.rocket.maxStock, boosters.rocket))),
-        pulse: safeCount(storedSpent.pulse, 0, Math.max(0, SUPPLY_ITEMS.pulse.maxStock - Math.min(SUPPLY_ITEMS.pulse.maxStock, boosters.pulse))),
+        time: safeCount(storedSpent.time, 0, storedSpentCap("time")),
+        rocket: safeCount(storedSpent.rocket, 0, storedSpentCap("rocket")),
+        pulse: safeCount(storedSpent.pulse, 0, storedSpentCap("pulse")),
       },
     } : undefined;
+    const dailyChallenge = reconcileDailyChallengeState(source.dailyChallenge, new Date(), highestLevel, LEVELS, activeRun);
+    const dailyChallengeRewardAd = normalizeDailyChallengeRewardAd(source.dailyChallengeRewardAd, dailyChallenge.dayKey);
+    if (activeRunDaily && storedRun && Object.prototype.hasOwnProperty.call(storedRun, "dailyChallengeOwner")
+      && (!storedDailyOwner || !dailyChallengeRunMatches(dailyChallenge, storedDailyOwner)
+        || storedDailyOwner.assignment.sourceLevelId !== activeLevel
+        || storedDailyOwner.assignment.sourceLevelId !== activeRunDailySource
+        || storedDailyOwner.difficulty !== activeRunDailyDifficulty || storedDailyOwner.dayKey !== activeRunDayKey)) {
+      // A corrupt/stale owner must not load a different daily board or refund
+      // attempts/boosters. Legacy runs without this field keep their saved pool.
+      activeRun = undefined;
+    }
     const storedMusicTrack = isMusicTrack(source.selectedMusicTrack)
       && MUSIC_CATALOG.some((entry) => entry.id === source.selectedMusicTrack && entry.unlockLevel <= highestLevel)
       ? source.selectedMusicTrack
       : DEFAULT_SAVE.selectedMusicTrack;
+    const mutedMusicTracks = Array.isArray(source.mutedMusicTracks)
+      ? [...new Set(source.mutedMusicTracks.filter((track): track is MusicTrackId => (
+        isMusicTrack(track)
+        && MUSIC_CATALOG.some((entry) => entry.id === track && entry.unlockLevel <= highestLevel)
+      )))]
+      : [];
     return {
       schemaVersion: 1,
+      mainlineRanking: normalizeMainlineRankingProgress(source.mainlineRanking, Date.now(),
+        isPlainRecord(source.playerProfile) && typeof source.playerProfile.joinedAt === "number" ? source.playerProfile.joinedAt : undefined,
+        Object.entries(bestStars).reduce((sum, [key, stars]) => Number(key) <= highestLevel ? sum + stars : sum, 0)),
+      welfareRewards: normalizeWelfareRewards(source.welfareRewards, Date.now()),
+      lifeRefillAd: normalizeLifeRefillAd(source.lifeRefillAd),
+      boosterRewardAd: normalizeBoosterRewardAd(source.boosterRewardAd),
+      dailyChallengeRewardAd,
+      playerProfile: (()=>{
+        const profile=normalizePlayerProfile(source.playerProfile),progress={highestLevel,rewardedLevels:sanitizedRewardedLevels};
+        if(!profileAppearanceUnlocked("avatar",profile.avatar,progress))profile.avatar=0;
+        if(!profileAppearanceUnlocked("frame",profile.frame,progress))profile.frame=0;
+        profile.seenAvatars=(profile.seenAvatars ?? []).filter(index=>profileAppearanceUnlocked("avatar",index,progress));
+        profile.seenFrames=(profile.seenFrames ?? []).filter(index=>profileAppearanceUnlocked("frame",index,progress));
+        markProfileAppearanceSeen(profile,"avatar",profile.avatar,progress);
+        markProfileAppearanceSeen(profile,"frame",profile.frame,progress);
+        return profile;
+      })(),
       currentLevel,
       highestLevel,
       coins: safeCount(source.coins, DEFAULT_SAVE.coins, 999999),
+      league: reconcileLeagueAccount({ coins: 0, league: parseLeague(source.league) }, isFeatureUnlocked("league", { highestLevel, rewardedLevels: sanitizedRewardedLevels }), Date.now(), Math.floor(Math.random() * 0x7fffffff)).league,
+      leagueIntroSeen: source.leagueIntroSeen===true,
+      featureGuideProgress: sanitizeFeatureGuideProgress(source.featureGuideProgress, { highestLevel, rewardedLevels: sanitizedRewardedLevels }),
+      collectionIntroPending: source.collectionIntroShown === true ? false : source.collectionIntroPending === true,
+      collectionIntroShown: source.collectionIntroShown === true,
+      music: typeof source.music === "boolean"
+        ? source.music
+        : typeof source.sound === "boolean" ? source.sound : DEFAULT_SAVE.music,
       sound: typeof source.sound === "boolean" ? source.sound : DEFAULT_SAVE.sound,
       haptic: typeof source.haptic === "boolean" ? source.haptic : DEFAULT_SAVE.haptic,
       reducedMotion: typeof source.reducedMotion === "boolean" ? source.reducedMotion : DEFAULT_SAVE.reducedMotion,
       language: isGameLanguage(source.language) ? source.language : DEFAULT_SAVE.language,
       selectedMusicTrack: storedMusicTrack,
+      mutedMusicTracks,
       featureSeen: boundedStringSet(source.featureSeen),
       boosterUnlockSeen,
+      boosterUsageSeen,
       metaDiscovery,
       boosters,
       activeRun,
       bestStars,
+      bestStarConditions: normalizeCollectionStarRecords(source.bestStarConditions),
       bestMoves,
       rewardedLevels: sanitizedRewardedLevels,
       journeyProgress,
       achievementProgress: sanitizeAchievementProgress(source.achievementProgress),
       collectionProgress,
-      dailyTaskProgress: reconcileDailyTaskProgress(source.dailyTaskProgress, new Date(), highestLevel),
-      selectedJourneyEpisode: sanitizeJourneyEpisodeIndex(source.selectedJourneyEpisode, highestLevel),
+      dailyTaskProgress: reconcileDailyTaskProgress(source.dailyTaskProgress, new Date(), highestLevel,
+        isFeatureUnlocked("dailyTasks", { highestLevel, rewardedLevels: sanitizedRewardedLevels })),
+      dailyChallenge,
+      selectedJourneyEpisode: sanitizeJourneyEpisodeIndex(source.selectedJourneyEpisode, highestLevel, sanitizedRewardedLevels),
       lifeState: reconcileLifeState(source.lifeState, Date.now()),
       dailyStreak: boundedInteger(source.dailyStreak, 0, 0, 999),
       lastDailyCompletedDay: validLocalDay(source.lastDailyCompletedDay),
@@ -4503,8 +5329,19 @@ export class ColorEscapeGame {
   private cloneSave(save: SaveData): SaveData {
     return {
       ...save,
+      ...(save.mainlineRanking ? { mainlineRanking: { ...save.mainlineRanking } } : {}),
+      ...(save.welfareRewards ? { welfareRewards: cloneWelfareRewards(save.welfareRewards) } : {}),
+      ...(save.lifeRefillAd ? { lifeRefillAd: cloneLifeRefillAd(save.lifeRefillAd) } : {}),
+      ...(save.boosterRewardAd ? { boosterRewardAd: cloneBoosterRewardAd(save.boosterRewardAd) } : {}),
+      ...(save.dailyChallengeRewardAd ? { dailyChallengeRewardAd: cloneDailyChallengeRewardAd(save.dailyChallengeRewardAd) } : {}),
+      ...(save.playerProfile ? { playerProfile: { ...save.playerProfile, attempts: { ...save.playerProfile.attempts },
+        seenAvatars: [...(save.playerProfile.seenAvatars ?? [])], seenFrames: [...(save.playerProfile.seenFrames ?? [])] } } : {}),
+      league: parseLeague(save.league),
+      featureGuideProgress: sanitizeFeatureGuideProgress(save.featureGuideProgress, save),
+      mutedMusicTracks: [...save.mutedMusicTracks],
       featureSeen: [...save.featureSeen],
       boosterUnlockSeen: [...save.boosterUnlockSeen],
+      boosterUsageSeen: [...save.boosterUsageSeen],
       metaDiscovery: {
         ...save.metaDiscovery,
         ...(save.metaDiscovery.collectionViewedItemIds
@@ -4513,6 +5350,7 @@ export class ColorEscapeGame {
       },
       boosters: { ...save.boosters },
       bestStars: { ...save.bestStars },
+      bestStarConditions: normalizeCollectionStarRecords(save.bestStarConditions),
       bestMoves: { ...save.bestMoves },
       rewardedLevels: [...save.rewardedLevels],
       journeyProgress: {
@@ -4526,6 +5364,18 @@ export class ColorEscapeGame {
         ...save.dailyTaskProgress,
         tasks: save.dailyTaskProgress.tasks.map((task) => ({ ...task })),
       },
+      dailyChallenge: {
+        ...save.dailyChallenge,
+        pools: {
+          1: save.dailyChallenge.pools[1].map((entry) => ({ ...entry })),
+          2: save.dailyChallenge.pools[2].map((entry) => ({ ...entry })),
+          3: save.dailyChallenge.pools[3].map((entry) => ({ ...entry })),
+        },
+        selected: { ...save.dailyChallenge.selected },
+        unlockedMechanisms: [...save.dailyChallenge.unlockedMechanisms],
+        completed: { ...save.dailyChallenge.completed },
+        rewarded: { ...save.dailyChallenge.rewarded },
+      },
       collectionProgress: {
         ...save.collectionProgress,
         restoredMasterpieceIds: [...save.collectionProgress.restoredMasterpieceIds],
@@ -4536,6 +5386,11 @@ export class ColorEscapeGame {
       activeRun: save.activeRun ? {
         ...save.activeRun,
         boosterSpent: { ...save.activeRun.boosterSpent },
+        ...(save.activeRun.dailyChallengeOwner ? { dailyChallengeOwner: {
+          ...save.activeRun.dailyChallengeOwner,
+          assignment: { ...save.activeRun.dailyChallengeOwner.assignment,
+            dailyMechanisms: save.activeRun.dailyChallengeOwner.assignment.dailyMechanisms?.slice() },
+        } } : {}),
       } : undefined,
     };
   }
@@ -4544,8 +5399,19 @@ export class ColorEscapeGame {
     const candidate = this.cloneSave(save);
     const activeRun = candidate.activeRun;
     if (!activeRun) return candidate;
+    if (activeRun.daily) {
+      // Daily attempts and boosters are consumed when used/started; leaving a
+      // run must never refund either resource or touch campaign progression.
+      candidate.currentLevel = activeRun.returnLevelId;
+      candidate.activeRun = undefined;
+      return candidate;
+    }
     candidate.currentLevel = activeRun.returnLevelId;
     (Object.keys(candidate.boosters) as Booster[]).forEach((kind) => {
+      // Lv7 rescue rockets were reserved without touching inventory. There is
+      // therefore nothing to refund when an interrupted run is abandoned.
+      if ((activeRun.levelId === 7 && kind === "rocket")
+        || (activeRun.levelId === 10 && kind === "pulse")) return;
       const recoveryCeiling = Math.max(SUPPLY_ITEMS[kind].maxStock, candidate.boosters[kind]);
       candidate.boosters[kind] = Math.min(recoveryCeiling, candidate.boosters[kind] + activeRun.boosterSpent[kind]);
     });
@@ -4578,21 +5444,7 @@ export class ColorEscapeGame {
 
   private lifeHeaderText(nowMs = Date.now()): string {
     const state = this.currentLifeState(nowMs);
-    const unlimitedRemaining = getUnlimitedLivesRemainingMs(state, nowMs);
-    if (unlimitedRemaining > 0) {
-      const countdown = formatLifeCountdown(unlimitedRemaining);
-      const parts = countdown.split(":");
-      const compactCountdown = parts.length === 3
-        ? `${Number(parts[0]) * 60 + Number(parts[1])}:${parts[2]}`
-        : countdown;
-      return `∞ ${compactCountdown}`;
-    }
-    if (state.lives > MAX_LIVES) return `${state.lives}`;
-    if (state.lives === MAX_LIVES) return this.tr("common.full");
-    const recoveryRemaining = getNextLifeRecoveryRemainingMs(state, nowMs);
-    return recoveryRemaining > 0
-      ? `${state.lives} · ${formatLifeCountdown(recoveryRemaining)}`
-      : `${state.lives}/${MAX_LIVES}`;
+    return getUnlimitedLivesRemainingMs(state, nowMs) > 0 ? "∞" : `${state.lives}`;
   }
 
   private refreshLifeState(nowMs = Date.now()): LifeState {
@@ -4600,7 +5452,8 @@ export class ColorEscapeGame {
     if (reconciled.lives !== this.save.lifeState.lives
       || reconciled.nextLifeAtMs !== this.save.lifeState.nextLifeAtMs
       || reconciled.unlimitedLivesUntilMs !== this.save.lifeState.unlimitedLivesUntilMs) {
-      if (this.pendingLifeStart || this.pendingLifeRefill || this.pendingSupplyPurchase || this.pendingJourneyClaim || this.pendingAchievementClaim
+      if (this.pendingLifeStart || this.pendingLifeRefill || this.pendingLifeRefillAd || this.lifeRefillAdRequestId || this.pendingBoosterRewardAd || this.boosterRewardAdRequestId || this.pendingSupplyPurchase || this.welfareTransactionActive() || this.pendingProfileSave || this.pendingRankingSave || this.pendingBoosterPurchase || this.pendingJourneyClaim || this.pendingAchievementClaim
+        || this.pendingFeatureGuideAck
         || this.pendingDailyTaskClaim
         || this.pendingCollectionRestoration
         || this.pendingJourneyThemeSelection) {
@@ -4641,18 +5494,19 @@ export class ColorEscapeGame {
   }
 
   private buyLifeRefill(nowMs = Date.now()): void {
+    if (this.lifeRefillAdTransactionActive()) return;
     const pending = this.pendingLifeRefill;
     const baselineSave = pending?.baselineSave ?? this.cloneSave(this.save);
     const candidateSave = pending?.candidateSave ?? this.cloneSave(baselineSave);
     if (!pending) {
       const quote = getLifeRefillQuote(candidateSave.lifeState, nowMs);
       if (quote.missingLives === 0) {
-        this.lifeRefillFeedback = this.tr("gameplay.life.refillFull");
+        this.lifeRefillFeedback = this.notifyButtonFeedback(this.tr("gameplay.life.refillFull"));
         this.playSound("blocked");
         return;
       }
       if (candidateSave.coins < quote.coinCost) {
-        this.lifeRefillFeedback = this.tr("shop.insufficientCoins", { shortfall: quote.coinCost - candidateSave.coins });
+        this.lifeRefillFeedback = this.notifyButtonFeedback(this.tr("shop.insufficientCoins", { shortfall: quote.coinCost - candidateSave.coins }));
         this.playSound("blocked");
         return;
       }
@@ -4663,19 +5517,215 @@ export class ColorEscapeGame {
     const outcome = this.persistVerified(candidateSave, baselineSave);
     if (outcome !== "committed") {
       if (outcome === "rejected") this.pendingLifeRefill = undefined;
-      this.lifeRefillFeedback = this.tr(outcome === "unknown" ? "shop.saveUnknown" : "shop.saveFailed");
+      this.lifeRefillFeedback = this.notifyButtonFeedback(this.tr(outcome === "unknown" ? "shop.saveUnknown" : "shop.saveFailed"));
       this.playSound("blocked");
       return;
     }
     this.save = candidateSave;
     this.pendingLifeRefill = undefined;
-    this.lifeRefillFeedback = this.tr("gameplay.life.refillSuccess");
+    this.lifeRefillFeedback = this.notifyButtonFeedback(this.tr("gameplay.life.refillSuccess"));
     this.scheduleLifeRefreshWatch();
     this.playSound("reward");
   }
 
+  /** A life-refill ad is a durable, one-life transaction independent of the welfare station. */
+  private lifeRefillAdTransactionActive(): boolean {
+    return Boolean(this.pendingLifeRefillAd || this.lifeRefillAdRequestId
+      || this.save?.lifeRefillAd?.pending);
+  }
+
+  private lifeRefillTargets(): Array<[string, Rect]> {
+    const targets: Array<[string, Rect]> = [];
+    const adActive = this.lifeRefillAdTransactionActive();
+    if (!this.pendingLifeRefill && !adActive) targets.push(["lifeRefillDismiss", BUTTONS.lifeRefillDismiss]);
+    if (this.lifeRefillArtError) targets.push(["lifeRefillRetry", LIFE_REFILL_LAYOUT.panel]);
+    if (!this.lifeRefillArt) return targets;
+    const full = this.lifeRefillQuote().missingLives === 0;
+    const adButton = full ? LIFE_REFILL_LAYOUT.adButtonCentered : LIFE_REFILL_LAYOUT.adButton;
+    if (adActive) {
+      if (this.pendingLifeRefillAd && !this.lifeRefillAdRequestId)
+        targets.push(["lifeRefillAd", adButton]);
+      if (this.pendingLifeRefillAd && !this.lifeRefillAdRequestId)
+        targets.push(["lifeRefillDismiss", BUTTONS.lifeRefillDismiss]);
+      return targets;
+    }
+    if (!full) {
+      if (!this.pendingLifeRefill) targets.push(["lifeRefillAd", adButton]);
+      targets.push(["lifeRefillBuy", BUTTONS.lifeRefillBuy]);
+    }
+    return targets;
+  }
+
+  private handleLifeRefillPointer(point: PointerSample): void {
+    const key = this.lifeRefillTargets().find(([, rect]) => this.interactionHit(point, rect))?.[0];
+    if (key === "lifeRefillRetry") this.requestLifeRefillArt();
+    else if (key === "lifeRefillAd") this.startLifeRefillAd();
+    else if (key === "lifeRefillBuy") this.buyLifeRefill();
+    else if (key === "lifeRefillDismiss") {
+      this.closePopup("lifeRefill", () => {
+        this.lifeRefillOpen = false;
+        this.releaseLifeRefillArt();
+      });
+      this.playSound("button");
+    }
+    this.dirty = true; this.scheduleFrame();
+  }
+
+  private startLifeRefillAd(): void {
+    if (this.pendingLifeRefillAd) {
+      this.finishLifeRefillAdSave();
+      return;
+    }
+    if (this.save.lifeRefillAd?.pending) {
+      this.recoverLifeRefillAd();
+      if (this.pendingLifeRefillAd) this.finishLifeRefillAdSave();
+      return;
+    }
+    if (this.lifeRefillAdTransactionActive() || this.pendingLifeRefill || this.welfareTransactionActive()
+      || this.boosterRewardAdTransactionActive()
+      || this.dailyChallengeRewardAdTransactionActive()
+      || this.rankingSaveBlocked() || !this.lifeRefillOpen || !this.appVisible) return;
+    const quote = this.lifeRefillQuote();
+    if (quote.missingLives === 0) {
+      this.lifeRefillFeedback = this.notifyButtonFeedback(this.tr("gameplay.life.refillFull"));
+      this.playSound("blocked");
+      this.dirty = true; this.scheduleFrame();
+      return;
+    }
+    let available = false;
+    try { available = Boolean(this.host.showRewardedAd && (this.host.isRewardedAdAvailable?.() ?? true)); }
+    catch { available = false; }
+    if (!available) {
+      this.lifeRefillFeedback = this.notifyButtonFeedback(this.tr("gameplay.life.adUnavailable"));
+      this.playSound("blocked");
+      this.dirty = true; this.scheduleFrame();
+      return;
+    }
+    const requestId = "life-refill-" + Date.now() + "-" + Math.random().toString(36).slice(2, 12);
+    const baselineSave = this.cloneSave(this.save);
+    const prepared = prepareLifeRefillAd(baselineSave.lifeRefillAd, { id: requestId, nowMs: Date.now() });
+    if (prepared.status !== "prepared") {
+      this.lifeRefillFeedback = this.notifyButtonFeedback(this.tr("gameplay.life.adUnavailable"));
+      this.playSound("blocked");
+      this.dirty = true; this.scheduleFrame();
+      return;
+    }
+    const candidateSave = this.cloneSave(baselineSave);
+    candidateSave.lifeRefillAd = prepared.state;
+    this.pendingLifeRefillAd = { stage: "prepare", requestId, baselineSave, candidateSave };
+    this.lifeRefillFeedback = undefined;
+    this.finishLifeRefillAdSave();
+  }
+
+  private finishLifeRefillAdSave(): void {
+    const pending = this.pendingLifeRefillAd;
+    if (!pending) return;
+    const outcome = this.persistVerified(pending.candidateSave, pending.baselineSave);
+    if (outcome !== "committed") {
+      // Preserve the completed-view proof and the exact reward candidate even
+      // after a definite rejection. Retrying must never request a second ad.
+      this.lifeRefillFeedback = this.notifyButtonFeedback(outcome === "unknown" ? welfareText(this.save.language, "saveUnknown")
+        : pending.stage === "prepare" ? this.tr("shop.saveFailed") : welfareText(this.save.language, "saveFailed"));
+      this.playSound("blocked");
+      this.dirty = true; this.scheduleFrame();
+      return;
+    }
+    this.save = pending.candidateSave;
+    this.pendingLifeRefillAd = undefined;
+    this.lifeRefillFeedback = undefined;
+    if (pending.stage === "prepare") void this.watchLifeRefillAd(pending.requestId);
+    else if (pending.stage === "receipt") this.settleLifeRefillAd();
+    else if (pending.stage === "reward") {
+      this.lifeRefillFeedback = this.notifyButtonFeedback(welfareText(this.save.language, "lives") + " +1");
+      this.scheduleLifeRefreshWatch();
+      this.playSound("reward");
+      this.vibrate("light");
+    } else this.lifeRefillFeedback = this.notifyButtonFeedback(pending.message ?? this.tr("gameplay.life.adUnavailable"));
+    this.dirty = true; this.scheduleFrame();
+  }
+
+  private async watchLifeRefillAd(requestId: string): Promise<void> {
+    if (this.lifeRefillAdRequestId) return;
+    this.lifeRefillAdRequestId = requestId;
+    this.syncMusic(); this.dirty = true; this.scheduleFrame();
+    let result: { status: string; requestId: string };
+    try { result = await this.host.showRewardedAd?.(requestId) ?? { status: "unavailable", requestId }; }
+    catch { result = { status: "error", requestId }; }
+    if (this.lifeRefillAdRequestId !== requestId) return;
+    this.lifeRefillAdRequestId = undefined;
+    const request = this.save.lifeRefillAd?.pending;
+    if (!request || request.id !== requestId) { this.syncMusic(); return; }
+    const completed = result.requestId === requestId && result.status === "completed";
+    const baselineSave = this.cloneSave(this.save);
+    const candidateSave = this.cloneSave(baselineSave);
+    candidateSave.lifeRefillAd = completed
+      ? confirmLifeRefillAd(baselineSave.lifeRefillAd, requestId, Date.now()).state
+      : cancelLifeRefillAd(baselineSave.lifeRefillAd, requestId).state;
+    this.pendingLifeRefillAd = {
+      stage: completed ? "receipt" : "cancel",
+      requestId,
+      baselineSave,
+      candidateSave,
+      message: completed ? undefined : welfareText(this.save.language,
+        result.status === "cancelled" ? "adCancelled" : "adFailed"),
+    };
+    this.finishLifeRefillAdSave();
+    this.syncMusic();
+  }
+
+  private settleLifeRefillAd(): void {
+    const baselineSave = this.cloneSave(this.save);
+    const completed = completeLifeRefillAd(baselineSave.lifeRefillAd, baselineSave.lifeState, Date.now());
+    if (completed.status !== "rewarded") return;
+    const candidateSave = this.cloneSave(baselineSave);
+    candidateSave.lifeRefillAd = completed.state;
+    candidateSave.lifeState = completed.lifeState;
+    this.pendingLifeRefillAd = {
+      stage: "reward",
+      requestId: completed.request?.id ?? "",
+      baselineSave,
+      candidateSave,
+    };
+    this.finishLifeRefillAdSave();
+  }
+
+  /** Resolve durable ad receipts after a hide/reload without replaying the ad. */
+  private recoverLifeRefillAd(): void {
+    if (!this.storageBaselineReady || !this.appVisible || this.lifeRefillAdRequestId
+      || this.pendingWelfareSave || this.welfareAdRequestId || this.boosterRewardAdTransactionActive()
+      || this.dailyChallengeRewardAdTransactionActive()) return;
+    if (this.pendingLifeRefillAd) {
+      if (!this.lifeRefillOpen) this.openLifeRefill();
+      return;
+    }
+    const request = this.save.lifeRefillAd?.pending;
+    if (!request) return;
+    // Recovery may fail to save; always leave a visible retry surface, even if
+    // natural recovery filled the lives since the original ad was watched.
+    if (!this.lifeRefillOpen) this.openLifeRefill();
+    if (request.phase === "completed") this.settleLifeRefillAd();
+    else {
+      const baselineSave = this.cloneSave(this.save);
+      const candidateSave = this.cloneSave(baselineSave);
+      candidateSave.lifeRefillAd = cancelLifeRefillAd(baselineSave.lifeRefillAd, request.id).state;
+      this.pendingLifeRefillAd = {
+        stage: "cancel", requestId: request.id, baselineSave, candidateSave,
+        message: this.tr("gameplay.life.adUnavailable"),
+      };
+      this.finishLifeRefillAdSave();
+    }
+  }
+
   private ensureCampaignLifeStarted(nowMs = Date.now()): boolean {
+    if(this.leagueRun) return true;
     if (this.temporaryLevelTestSession) return true;
+    // Daily challenges spend their own attempt when they start and never
+    // consume campaign lives.
+    if (this.save.activeRun?.daily) {
+      if (this.save.activeRun.lifeStarted) return true;
+      this.save.activeRun.lifeStarted = true;
+      return true;
+    }
     if (!this.pendingLifeStart && this.save.activeRun?.lifeStarted) return true;
     const pending = this.pendingLifeStart;
     const baseline = pending?.baselineSave ?? this.cloneSave(this.save);
@@ -4691,6 +5741,8 @@ export class ColorEscapeGame {
       candidate.lifeState = attempt.state;
       candidate.activeRun ??= this.createRunJournal(this.model.level.id);
       candidate.activeRun.lifeStarted = true;
+      candidate.playerProfile ??= normalizePlayerProfile(undefined);
+      startProfileAttempt(candidate.playerProfile, this.model.level.id);
       this.pendingLifeStart = { baselineSave: baseline, candidateSave: candidate };
     }
     const outcome = this.persistVerified(candidate, baseline);
@@ -4711,27 +5763,80 @@ export class ColorEscapeGame {
     return true;
   }
 
+  private shouldAutoEnterEarlyCampaign(save: SaveData = this.save): boolean {
+    return save.currentLevel >= 1 && save.currentLevel <= 5
+      && save.highestLevel <= 5
+      && !save.rewardedLevels.some((level) => level >= 5)
+      && !Object.entries(save.bestStars).some(([level, stars]) => Number(level) >= 5 && stars > 0)
+      && !save.collectionIntroPending && !save.collectionIntroShown
+      && !save.activeRun?.daily;
+  }
+
+  private hasPendingStartupEntry(read: StorageReadResult<unknown>, save: SaveData): boolean {
+    // Unknown or damaged reads must not turn a sanitized default into a new
+    // campaign. Existing, valid early-progress saves resume on every launch.
+    const known = read.status === "missing"
+      || (read.status === "ok" && isPlainRecord(read.value) && read.value.schemaVersion === 1);
+    const interruptedDaily = read.status === "ok" && isPlainRecord(read.value)
+      && isPlainRecord(read.value.activeRun) && read.value.activeRun.daily === true;
+    return known && !interruptedDaily && !save.activeRun?.daily && (this.shouldAutoEnterEarlyCampaign(save)
+      || (save.collectionIntroPending === true && !save.collectionIntroShown));
+  }
+
+  private tryBeginStartupEntry(): boolean {
+    if (!this.startupEntryPending || this.startupAudioPending || !this.artReady || !this.storageBaselineReady
+      || !this.appVisible || this.screen !== "home" || this.lifeRefillOpen || this.lifeRefillAdTransactionActive()
+      || this.boosterRewardAdTransactionActive() || this.dailyChallengeRewardAdTransactionActive()) return false;
+    this.startupEntryPending = false;
+    if (!this.shouldAutoEnterEarlyCampaign()) {
+      // A committed Lv5 clear may have been interrupted before its Home
+      // presentation. Resume the saved reveal, never grant or acknowledge it.
+      return this.beginCollectionIntro();
+    }
+    if (this.model.level.id !== this.save.currentLevel) return false;
+    // Use the ordinary start path: journal, guidance and first-action life
+    // charging stay unchanged. No synthetic move or tutorial acknowledgement.
+    this.releaseCollectionAlbumArt();
+    this.beginSelectedChallenge();
+    return true;
+  }
+
   private beginSelectedChallenge(): void {
     if (!this.canStartCampaignAttempt()) return;
+    this.clearMainlineRankChange();
+    this.clearHomeCoinFlight();
+    if (this.journeyPresentation?.phase === "claiming"
+      && this.journeyPresentation.event.type === "milestone_reward") this.journeyPresentation = undefined;
     this.beginRunJournal();
     const intro = getScheduledFeatureIntro(this.model.level.id);
     this.screen = intro && !this.save.featureSeen.includes(intro.kind) ? "feature" : "playing";
+    // The home button plays its feedback before this method changes screens.
+    // Resync after the transition so the menu track is stopped immediately and
+    // the gameplay track owns the level from its first visible frame.
+    this.syncMusic();
+    if (this.screen === "playing") this.updateBoosterUnlockGuide(0);
     this.dirty = true;
     this.scheduleFrame();
+  }
+
+  private canBrowseNextHomeLevel(): boolean {
+    return this.temporaryLevelTestSession
+      ? getAdjacentTemporaryTestLevelId(this.model.level.id, 1) !== this.model.level.id
+      : this.model.level.id < this.save.highestLevel;
   }
 
   private temporaryLevelSelectorLayout(): TemporaryLevelSelectorLayout {
     const selector = this.temporaryLevelSelector;
     return temporaryLevelSelectorLayout(
-      LEVELS.length,
-      selector?.page ?? temporaryLevelSelectorPageForLevel(this.model.level.id, LEVELS.length),
+      TEMPORARY_TEST_LEVEL_IDS,
+      selector?.page ?? temporaryLevelSelectorPageForLevel(this.model.level.id, TEMPORARY_TEST_LEVEL_IDS),
       selector?.selectedLevel ?? this.model.level.id,
     );
   }
 
   private openTemporaryLevelSelector(): void {
     this.temporaryLevelSelector = {
-      page: temporaryLevelSelectorPageForLevel(this.model.level.id, LEVELS.length),
+      page: temporaryLevelSelectorPageForLevel(this.model.level.id, TEMPORARY_TEST_LEVEL_IDS),
       selectedLevel: this.model.level.id,
     };
     this.pendingButtonPress = undefined;
@@ -4741,43 +5846,49 @@ export class ColorEscapeGame {
   }
 
   private closeTemporaryLevelSelector(): void {
-    this.temporaryLevelSelector = undefined;
-    this.playSound("button");
-    this.dirty = true;
-    this.scheduleFrame();
+    this.closePopup("temporaryLevelSelector", () => {
+      this.temporaryLevelSelector = undefined;
+      this.playSound("button");
+      this.dirty = true;
+      this.scheduleFrame();
+    });
   }
 
   private startTemporaryLevelTest(levelId: number): void {
-    if (!this.temporaryLevelTestSession) {
-      this.temporaryLevelTestSession = {
-        baselineSave: this.cloneSave(this.save),
-        baselineLevelId: this.model.level.id,
-      };
-    } else {
-      // Every direct test begins from the same durable baseline, so a previous
-      // test's rewards, failures or booster use cannot leak into the next one.
-      this.save = this.cloneSave(this.temporaryLevelTestSession.baselineSave);
-    }
-    this.temporaryLevelSelector = undefined;
-    this.loadLevel(levelId, false);
-    this.beginSelectedChallenge();
-    this.playSound("button");
+    this.closePopup("temporaryLevelSelector", () => {
+      if (!this.temporaryLevelTestSession) {
+        this.temporaryLevelTestSession = {
+          baselineSave: this.cloneSave(this.save),
+          baselineLevelId: this.model.level.id,
+        };
+      } else {
+        // Every direct test begins from the same durable baseline, so a previous
+        // test's rewards, failures or booster use cannot leak into the next one.
+        this.save = this.cloneSave(this.temporaryLevelTestSession.baselineSave);
+      }
+      this.temporaryLevelSelector = undefined;
+      this.loadLevel(levelId, false);
+      this.beginSelectedChallenge();
+      this.playSound("button");
+    });
   }
 
   private exitTemporaryLevelTest(): void {
-    const session = this.temporaryLevelTestSession;
-    if (!session) {
-      this.closeTemporaryLevelSelector();
-      return;
-    }
-    this.temporaryLevelSelector = undefined;
-    this.temporaryLevelTestSession = undefined;
-    this.save = this.cloneSave(session.baselineSave);
-    this.updateCanvasLanguage();
-    this.loadLevel(session.baselineLevelId, false);
-    this.scheduleLifeRefreshWatch();
-    this.syncMusic();
-    this.playSound("button");
+    this.closePopup("temporaryLevelSelector", () => {
+      const session = this.temporaryLevelTestSession;
+      if (!session) {
+        this.closeTemporaryLevelSelector();
+        return;
+      }
+      this.temporaryLevelSelector = undefined;
+      this.temporaryLevelTestSession = undefined;
+      this.save = this.cloneSave(session.baselineSave);
+      this.updateCanvasLanguage();
+      this.loadLevel(session.baselineLevelId, false);
+      this.scheduleLifeRefreshWatch();
+      this.syncMusic();
+      this.playSound("button");
+    });
   }
 
   private handleTemporaryLevelSelector(point: PointerSample): void {
@@ -4794,14 +5905,14 @@ export class ColorEscapeGame {
     }
     if (layout.canPrevious && this.interactionHit(point, layout.previousPage)) {
       const page = layout.page - 1;
-      const first = temporaryLevelSelectorLayout(LEVELS.length, page).cells[0]?.levelId ?? 1;
+      const first = temporaryLevelSelectorLayout(TEMPORARY_TEST_LEVEL_IDS, page).cells[0]?.levelId ?? 1;
       this.temporaryLevelSelector = { page, selectedLevel: first };
       this.playSound("button");
       return;
     }
     if (layout.canNext && this.interactionHit(point, layout.nextPage)) {
       const page = layout.page + 1;
-      const first = temporaryLevelSelectorLayout(LEVELS.length, page).cells[0]?.levelId ?? LEVELS.length;
+      const first = temporaryLevelSelectorLayout(TEMPORARY_TEST_LEVEL_IDS, page).cells[0]?.levelId ?? 1;
       this.temporaryLevelSelector = { page, selectedLevel: first };
       this.playSound("button");
       return;
@@ -4818,16 +5929,14 @@ export class ColorEscapeGame {
   }
 
   private spendBooster(kind: Booster): void {
-    this.save.activeRun ??= this.createRunJournal(this.model.level.id);
-    this.save.boosters[kind] -= 1;
-    this.save.activeRun.boosterSpent[kind] += 1;
-  }
-
-  private refundBooster(kind: Booster): void {
-    this.save.boosters[kind] += 1;
-    if (this.save.activeRun) {
-      this.save.activeRun.boosterSpent[kind] = Math.max(0, this.save.activeRun.boosterSpent[kind] - 1);
+    if(!this.leagueRun) this.save.activeRun ??= this.createRunJournal(this.model.level.id);
+    // Authored rescues are safety nets: reserve the booster in the run journal,
+    // but only deduct it from inventory after the level actually completes.
+    // Failed/restarted rescues therefore cost zero.
+    if (!this.deferredBoosterRun(kind)) {
+      this.save.boosters[kind] -= 1;
     }
+    if(!this.leagueRun && this.save.activeRun) this.save.activeRun.boosterSpent[kind] += 1;
   }
 
   private pendingCollectionDiscoveryItems(): CollectionItem[] {
@@ -4896,6 +6005,33 @@ export class ColorEscapeGame {
     this.lifeRefreshTimer = undefined;
   }
 
+  private cancelLeagueHomeRefreshWatch(): void {
+    if (this.leagueHomeRefreshTimer === undefined) return;
+    this.host.cancelTimeout(this.leagueHomeRefreshTimer);
+    this.leagueHomeRefreshTimer = undefined;
+  }
+
+  private syncLeagueHomeRefreshWatch(): void {
+    const now = Date.now();
+    const league = this.save.league;
+    const homeCountdown = this.screen === "home" && league && !league.pending && now < league.season.endMs;
+    const leagueCountdown = this.screen === "league" && league && !league.pending;
+    const dailyCountdown = this.screen === "dailyChallenge";
+    if (!this.appVisible || (!homeCountdown && !leagueCountdown && !dailyCountdown)) {
+      this.cancelLeagueHomeRefreshWatch();
+      return;
+    }
+    if (this.leagueHomeRefreshTimer !== undefined) return;
+    // Static menu countdowns need one redraw per second, including when lives
+    // are full or reduced motion is enabled. Their clocks remain wall-clock based.
+    this.leagueHomeRefreshTimer = this.host.scheduleTimeout(() => {
+      this.leagueHomeRefreshTimer = undefined;
+      if (!this.appVisible || (this.screen !== "home" && this.screen !== "league" && this.screen !== "dailyChallenge")) return;
+      this.dirty = true;
+      this.scheduleFrame();
+    }, 1000 - now % 1000);
+  }
+
   private scheduleLifeRefreshWatch(): void {
     this.cancelLifeRefreshWatch();
     if (!this.appVisible) return;
@@ -4936,7 +6072,8 @@ export class ColorEscapeGame {
   }
 
   private toggleSetting(kind: SettingKind): void {
-    this.save[kind] = !this.save[kind];
+    if (kind === "sound") this.save.music = this.save.music === false;
+    else this.save[kind] = !this.save[kind];
     if (kind === "reducedMotion" && this.save.reducedMotion) this.boardShakeTime = 0;
     this.persist();
     this.syncMusic();
@@ -4949,7 +6086,7 @@ export class ColorEscapeGame {
   private selectLanguage(language: GameLanguage): void {
     const pending = this.pendingLanguageSelection;
     if (pending && pending.language !== language) {
-      this.languageSaveFailed = true;
+      this.languageSaveFailed = true; this.showButtonHint(this.tr("settings.languageSaveFailed"));
       this.playSound("blocked");
       this.dirty = true;
       this.scheduleFrame();
@@ -4958,7 +6095,7 @@ export class ColorEscapeGame {
     if (language === this.save.language) {
       this.languageSaveFailed = false;
       this.pendingLanguageSelection = undefined;
-      this.screen = "settings";
+      this.closePopup("language", () => { this.screen = "settings"; });
       this.playSound("button");
       this.dirty = true;
       this.scheduleFrame();
@@ -4974,7 +6111,7 @@ export class ColorEscapeGame {
       this.pendingLanguageSelection = outcome === "unknown"
         ? { language, baselineSave: baseline, candidateSave: candidate }
         : undefined;
-      this.languageSaveFailed = true;
+      this.languageSaveFailed = true; this.showButtonHint(this.tr("settings.languageSaveFailed"));
       this.playSound("blocked");
       this.dirty = true;
       this.scheduleFrame();
@@ -4985,14 +6122,17 @@ export class ColorEscapeGame {
     this.pendingLanguageSelection = undefined;
     this.languageSaveFailed = false;
     this.updateCanvasLanguage();
-    this.screen = "settings";
+    this.closePopup("language", () => { this.screen = "settings"; });
     this.playSound("button");
     this.dirty = true;
     this.scheduleFrame();
   }
 
   private resetProgress(): void {
+    if (IS_WECHAT_BUILD) return;
+    if (this.welfareTransactionActive() || this.lifeRefillAdTransactionActive() || this.boosterRewardAdTransactionActive() || this.dailyChallengeRewardAdTransactionActive() || this.pendingRankingSave) return;
     const preferences = {
+      music: this.save.music !== false,
       sound: this.save.sound,
       haptic: this.save.haptic,
       reducedMotion: this.save.reducedMotion,
@@ -5002,33 +6142,736 @@ export class ColorEscapeGame {
     const candidate = {
       ...copyDefaultSave(),
       ...preferences,
+      playerProfile: normalizePlayerProfile(undefined),
+      mainlineRanking: normalizeMainlineRankingProgress(undefined),
       dailyTaskProgress: createDailyTaskProgress(localDayKey(), 1),
+      dailyChallenge: reconcileDailyChallengeState(undefined, new Date(), 1),
     };
     if (this.persistVerified(candidate) !== "committed") {
-      this.resetSaveFailed = true;
+      this.resetSaveFailed = true; this.showButtonHint(this.tr("settings.clearFailed"));
       this.playSound("blocked");
       this.dirty = true;
       this.scheduleFrame();
       return;
     }
     this.save = candidate;
-    void this.requestJourneyHomeThemeArt(this.save.selectedJourneyEpisode);
-    this.resetJourneyScrollToLevel(this.save.highestLevel);
-    this.journeyScrollVelocity = 0;
-    this.scheduleLifeRefreshWatch();
-    this.resetSaveFailed = false;
-    this.boosterUnlockToast = undefined;
-    this.loadLevel(1, false);
+    this.welfareRewardDeferred = false;
+    this.rankingProvinceLookupToken += 1;
+    this.rankingProvinceLoading = false;
+    this.rankingProvinceResolved = undefined;
+    this.rankingVisitClockMs = undefined;
+    this.leaderboardSnapshotCache = undefined;
+    this.cancelRankingRefreshWatch();
+    this.welfareFeedback = undefined;
+    this.welfareFeedbackUntil = undefined;
+    this.closePopup(["resetConfirm", "settings"], () => {
+      void this.requestJourneyHomeThemeArt(this.save.selectedJourneyEpisode);
+      this.requestHomeProfileArt();
+      this.deferredHomeJourneyLevels = undefined;
+      this.resetJourneyScrollToLevel(this.save.highestLevel);
+      this.journeyScrollVelocity = 0;
+      this.scheduleLifeRefreshWatch();
+      this.resetSaveFailed = false;
+      this.boosterUnlockToast = undefined;
+      this.boosterUnlockGuide = undefined;
+      this.loadLevel(1, false);
+    });
     this.playSound("button");
     this.vibrate("medium");
   }
 
+  private featureUnlocked(feature: FeatureId): boolean {
+    return isFeatureUnlocked(feature, this.temporaryLevelTestSession?.baselineSave ?? this.save);
+  }
+
+  private pauseUnlocked(): boolean {
+    const progress = this.temporaryLevelTestSession?.baselineSave ?? this.save;
+    return progress.highestLevel > 5 || progress.rewardedLevels.includes(5);
+  }
+
+  private requireFeature(feature: FeatureId): boolean {
+    if (this.featureUnlocked(feature)) {
+      this.featureLockFeedback = undefined;
+      return true;
+    }
+    this.showButtonHint(this.tr("feature.lockedAfterLevel", { level: FEATURE_UNLOCKS[feature].completedLevel }), feature);
+    this.playSound("blocked");
+    return false;
+  }
+
+  private navigationFeature(screen: MainNavigationScreen): FeatureId | undefined {
+    return screen === "levels" || screen === "leaderboard" || screen === "supply" ? screen : undefined;
+  }
+
+  private beginPendingFeatureGuide(): boolean {
+    if(this.profilePage)return false;
+    if (this.featureUnlockGuide) return true;
+    if (this.screen !== "home" || !this.appVisible || !this.artReady || !this.storageBaselineReady
+      || this.homeCoinFlight || this.collectionIntro || this.collectionRestorationGuide
+      || this.journeyPresentation || this.navigationTransition || this.directLevelTransition
+      || this.lifeRefillOpen || this.temporaryLevelTestSession || this.temporaryLevelSelector
+      || this.pendingButtonPress || this.activePointer !== undefined
+      || this.pendingSettlement || this.pendingSettlementAbandon || this.pendingLifeStart || this.pendingLifeRefill || this.boosterRewardAdTransactionActive()
+      || this.dailyChallengeRewardAdTransactionActive()
+      || this.pendingSupplyPurchase || this.welfareTransactionActive() || this.pendingProfileSave || this.pendingRankingSave || this.pendingBoosterPurchase || this.pendingJourneyClaim || this.pendingJourneyThemeSelection
+      || this.pendingLanguageSelection
+      || this.pendingDailyTaskClaim || this.pendingAchievementClaim || this.pendingCollectionRestoration
+      || this.leagueTransaction?.pending) return false;
+    const feature = this.save.featureGuideProgress?.pending.find(id => this.featureUnlocked(id));
+    if (!feature || !this.featureGuideIcon(feature)) return false;
+    this.featureUnlockGuide = { feature, phase: "reveal", age: 0 };
+    this.requestFeatureUnlockArt();
+    this.featureLockFeedback = undefined;
+    this.pendingButtonPress = undefined;
+    this.ensureTutorialHand();
+    this.playSound("reward");
+    this.dirty = true;
+    this.scheduleFrame();
+    return true;
+  }
+
+  private featureGuideIcon(feature: GuidedFeatureId): HTMLImageElement | undefined {
+    const ui = this.art.homeUi;
+    if (!ui) return undefined;
+    return ({ leaderboard: ui.leaderboardIcon, supply: ui.shopIcon, levels: ui.journeyIcon,
+      dailyChallenge: ui.dailyChallengeEntry, league: ui.leagueEntry })[feature];
+  }
+
+  private featureUnlockGuideReady(): boolean {
+    const guide = this.featureUnlockGuide;
+    return Boolean(guide && this.screen === "home" && this.appVisible && this.artReady
+      && (guide.phase === "focus" || (this.featureUnlockArt && (this.save.reducedMotion || guide.age >= 0.75))));
+  }
+
+  private updateFeatureUnlockGuide(delta: number): void {
+    const guide = this.featureUnlockGuide;
+    if (!guide || this.screen !== "home" || !this.appVisible || guide.persistence
+      || (guide.phase === "reveal" && !this.featureUnlockArt)) return;
+    const age = this.save.reducedMotion ? 1.2 : guide.phase === "reveal" ? Math.min(1.2, guide.age + delta) : guide.age + delta;
+    if (age === guide.age) return;
+    guide.age = age;
+    this.dirty = true;
+  }
+
+  private advanceFeatureUnlockGuide(): void {
+    const guide = this.featureUnlockGuide;
+    if (!guide || guide.phase !== "reveal" || !this.featureUnlockGuideReady() || this.pendingFeatureGuideAck) return;
+    this.closePopup("featureUnlock", () => {
+      guide.phase = "focus";
+      guide.age = 0;
+      this.releaseFeatureUnlockArt();
+      this.pendingButtonPress = undefined;
+      this.playSound("button");
+      this.dirty = true;
+      this.scheduleFrame();
+    });
+  }
+
+  private featureGuideTargetRect(): Rect | undefined {
+    const feature = this.featureUnlockGuide?.feature;
+    if (!feature) return undefined;
+    if (feature === "dailyChallenge") return homeArtRect(DAILY_CHALLENGE_LAYOUT.entry);
+    if (feature === "league") return BUTTONS.homeLeague;
+    return this.mainNavigationRect(feature === "supply" ? 0 : feature === "leaderboard" ? 1 : 3);
+  }
+
+  private featureGuideLayout(): { panel: Rect; look: Rect; later: Rect } {
+    return FEATURE_UNLOCK_LAYOUT;
+  }
+
+  private featureGuideTargets(): Array<[string, Rect]> {
+    if (this.featureUnlockGuide?.phase === "reveal" && this.screen === "home" && this.appVisible && this.featureUnlockArtError)
+      return [["featureGuide.artRetry", this.featureGuideLayout().look]];
+    if (!this.featureUnlockGuideReady()) return [];
+    const focus = this.featureUnlockGuide?.phase === "focus", layout = this.featureGuideLayout();
+    if (this.pendingFeatureGuideAck) return [["featureGuide.retry", focus ? this.featureGuideTargetRect()! : layout.look]];
+    return focus ? [["featureGuide.entry", this.featureGuideTargetRect()!]]
+      : [["featureGuide.look", layout.look]];
+  }
+
+  private finishFeatureUnlockGuide(open: boolean): void {
+    const guide = this.featureUnlockGuide;
+    const shouldOpen = this.pendingFeatureGuideAck?.open ?? open;
+    if (!guide || !this.featureUnlockGuideReady() || (shouldOpen && guide.phase !== "focus")) return;
+    const baselineSave = this.pendingFeatureGuideAck?.baselineSave ?? this.cloneSave(this.save);
+    const candidateSave = this.pendingFeatureGuideAck?.candidateSave ?? this.cloneSave(baselineSave);
+    if (!this.pendingFeatureGuideAck) {
+      candidateSave.featureGuideProgress = acknowledgeFeatureGuide(
+        sanitizeFeatureGuideProgress(candidateSave.featureGuideProgress, candidateSave), guide.feature);
+      this.pendingFeatureGuideAck = { feature: guide.feature, open: shouldOpen, candidateSave, baselineSave };
+    }
+    const pending = this.pendingFeatureGuideAck;
+    const outcome = this.persistVerified(pending.candidateSave, pending.baselineSave);
+    if (outcome !== "committed") {
+      guide.persistence = outcome;
+      this.showButtonHint(this.tr("featureGuide.saveFailed"));
+      this.playSound("blocked");
+      this.dirty = true; this.scheduleFrame(); return;
+    }
+    this.save = pending.candidateSave;
+    const target = this.featureGuideTargetRect()!;
+    this.pendingFeatureGuideAck = undefined;
+    const finish = (): void => {
+      if (this.featureUnlockGuide !== guide) return;
+      this.featureUnlockGuide = undefined;
+      this.releaseFeatureUnlockArt();
+      this.pendingButtonPress = undefined;
+      if (pending.open) {
+        if (pending.feature === "dailyChallenge") this.openDailyChallenge();
+        else if (pending.feature === "league") this.openLeague();
+        else this.handleMainNavigation({ id: 0, x: target.x + target.width / 2, y: target.y + target.height / 2 });
+      } else {
+        this.playSound("button");
+        this.beginPendingHomePresentation();
+      }
+    };
+    if (pending.open) finish();
+    else this.closePopup("featureUnlock", finish);
+    this.dirty = true;
+    this.scheduleFrame();
+  }
+
+  private openBoosterPurchase(kind: Booster): void {
+    if (this.screen !== "playing" || !this.appVisible || !this.storageBaselineReady
+      || this.activePointer !== undefined || this.rocketFlight || this.directLevelTransition
+      || this.lifeRefillOpen || this.boosterUnlockGuide || this.pendingLifeStart
+      || this.pendingSupplyPurchase || this.welfareTransactionActive() || this.lifeRefillAdTransactionActive() || this.boosterRewardAdTransactionActive() || this.pendingProfileSave || this.pendingRankingSave || this.pendingBoosterPurchase || this.pendingSettlement
+      || this.dailyChallengeRewardAdTransactionActive()
+      || this.pendingSettlementAbandon || this.leagueTransaction?.pending
+      || !this.boosterUnlocked(kind)) return;
+    const available = kind === "rocket" ? this.availableRocketStock()
+      : kind === "pulse" ? this.availablePulseStock() : this.save.boosters[kind];
+    if (available > 0 || !this.advanceRevisedClockBeforeMutation()) return;
+    const snapshot = this.model.snapshot();
+    if (snapshot.complete || snapshot.failed) return;
+    this.boosterTarget = undefined;
+    this.boosterFeedback = undefined;
+    this.pendingButtonPress = undefined;
+    this.boosterPurchase = { kind };
+    this.screen = "boosterPurchase";
+    this.playableClockSlices.reset();
+    this.lastFrame = 0;
+    this.requestBoosterPurchaseArt();
+    this.playSound("button");
+    this.dirty = true;
+    this.scheduleFrame();
+  }
+
+  private closeBoosterPurchase(): void {
+    if (this.screen !== "boosterPurchase" || this.pendingProfileSave || this.pendingRankingSave || this.pendingBoosterPurchase
+      || this.boosterRewardAdRequestId) return;
+    const modal = this.boosterPurchase;
+    this.closePopup("boosterPurchase", () => {
+      if (this.boosterPurchase !== modal) return;
+      this.boosterPurchase = undefined;
+      this.releaseBoosterPurchaseArt();
+      this.pendingButtonPress = undefined;
+      this.screen = "playing";
+      this.playableClockSlices.reset();
+      this.lastFrame = 0;
+    });
+    this.playSound("button");
+    this.dirty = true;
+    this.scheduleFrame();
+  }
+
+  private buyBoosterBundle(): void {
+    if (this.screen !== "boosterPurchase" || !this.boosterPurchase || !this.appVisible
+      || this.boosterRewardAdTransactionActive()) return;
+    const modal = this.boosterPurchase;
+    let transaction = this.pendingBoosterPurchase;
+    if (!transaction) {
+      const result = purchaseBoosterBundle(this.save.coins, this.save.boosters[modal.kind], modal.kind,
+        this.boosterUnlocked(modal.kind));
+      if (result.status !== "purchased") {
+        modal.feedback = this.notifyButtonFeedback(result.status === "insufficient-coins" ? this.tr("boosterPurchase.insufficientCoins")
+          : result.status === "full" ? this.tr("shop.fullInventory", { item: this.boosterName(modal.kind) })
+            : this.tr("gameplay.booster.unlockAtLevel", { item: this.boosterName(modal.kind), level: SUPPLY_ITEMS[modal.kind].unlockLevel }));
+        this.playSound("blocked");
+        this.dirty = true;
+        this.scheduleFrame();
+        return;
+      }
+      const baselineSave = this.cloneSave(this.save);
+      const candidateSave = this.cloneSave(baselineSave);
+      candidateSave.coins = result.coins;
+      candidateSave.boosters[modal.kind] = result.stock;
+      transaction = { kind: modal.kind, baselineSave, candidateSave, price: result.price, quantity: result.quantity };
+      this.pendingBoosterPurchase = transaction;
+    }
+    const outcome = this.persistVerified(transaction.candidateSave, transaction.baselineSave);
+    if (outcome === "committed") {
+      this.save = transaction.candidateSave;
+      this.pendingBoosterPurchase = undefined;
+      this.closeBoosterPurchase();
+      this.scheduleLifeRefreshWatch();
+      this.playSound("reward");
+      this.vibrate("light");
+    } else {
+      if (outcome === "rejected") this.pendingBoosterPurchase = undefined;
+      modal.feedback = this.notifyButtonFeedback(this.tr(outcome === "unknown" ? "shop.saveUnknown" : "shop.saveFailed"));
+      this.playSound("blocked");
+    }
+    this.dirty = true;
+    this.scheduleFrame();
+  }
+
+  /** Durable rewarded-video transaction for receiving one empty booster. */
+  private boosterRewardAdTransactionActive(): boolean {
+    return Boolean(this.pendingBoosterRewardAd || this.boosterRewardAdRequestId
+      || this.save?.boosterRewardAd?.pending);
+  }
+
+  private startBoosterRewardAd(): void {
+    if (this.pendingBoosterRewardAd) {
+      this.finishBoosterRewardAdSave();
+      return;
+    }
+    if (this.save.boosterRewardAd?.pending) {
+      this.recoverBoosterRewardAd();
+      if (this.pendingBoosterRewardAd) this.finishBoosterRewardAdSave();
+      return;
+    }
+    const modal = this.boosterPurchase;
+    if (this.screen !== "boosterPurchase" || !modal || !this.appVisible || !this.storageBaselineReady
+      || this.pendingBoosterPurchase || this.lifeRefillAdTransactionActive() || this.welfareTransactionActive()) return;
+    const availableStock = modal.kind === "rocket" ? this.availableRocketStock()
+      : modal.kind === "pulse" ? this.availablePulseStock() : this.save.boosters[modal.kind];
+    if (availableStock > 0) return;
+    let available = false;
+    try { available = Boolean(this.host.showRewardedAd && (this.host.isRewardedAdAvailable?.() ?? true)); }
+    catch { available = false; }
+    if (!available) {
+      modal.feedback = this.notifyButtonFeedback(this.tr("gameplay.life.adUnavailable"));
+      this.playSound("blocked"); this.dirty = true; this.scheduleFrame();
+      return;
+    }
+    const requestId = `booster-${modal.kind}-${Date.now()}-${Math.random().toString(36).slice(2, 12)}`;
+    const baselineSave = this.cloneSave(this.save);
+    const prepared = prepareBoosterRewardAd(baselineSave.boosterRewardAd, {
+      id: requestId, kind: modal.kind, nowMs: Date.now(),
+    });
+    if (prepared.status !== "prepared") {
+      modal.feedback = this.notifyButtonFeedback(this.tr("gameplay.life.adUnavailable"));
+      this.playSound("blocked"); this.dirty = true; this.scheduleFrame();
+      return;
+    }
+    const candidateSave = this.cloneSave(baselineSave);
+    candidateSave.boosterRewardAd = prepared.state;
+    this.pendingBoosterRewardAd = {
+      stage: "prepare", requestId, kind: modal.kind, baselineSave, candidateSave,
+    };
+    modal.feedback = undefined;
+    this.finishBoosterRewardAdSave();
+  }
+
+  private finishBoosterRewardAdSave(): void {
+    const pending = this.pendingBoosterRewardAd;
+    if (!pending) return;
+    const outcome = this.persistVerified(pending.candidateSave, pending.baselineSave);
+    if (outcome !== "committed") {
+      // Keep the exact candidate after an unknown/rejected write. A player
+      // who already completed the video must retry the save, never the ad.
+      if (this.boosterPurchase) this.boosterPurchase.feedback = this.notifyButtonFeedback(outcome === "unknown"
+        ? welfareText(this.save.language, "saveUnknown")
+        : pending.stage === "prepare" ? this.tr("shop.saveFailed") : welfareText(this.save.language, "saveFailed"));
+      this.playSound("blocked"); this.dirty = true; this.scheduleFrame();
+      return;
+    }
+    this.save = pending.candidateSave;
+    this.pendingBoosterRewardAd = undefined;
+    if (pending.stage === "prepare") void this.watchBoosterRewardAd(pending.requestId);
+    else if (pending.stage === "receipt") this.settleBoosterRewardAd();
+    else if (pending.stage === "reward") {
+      if (this.boosterPurchase) this.boosterPurchase.feedback = this.notifyButtonFeedback(`${this.tr("gameplay.life.getLife")} +1`);
+      this.playSound("reward"); this.vibrate("light");
+      // Return to the level with the newly granted item ready to use.
+      this.closeBoosterPurchase();
+    } else if (this.boosterPurchase) {
+      this.boosterPurchase.feedback = this.notifyButtonFeedback(pending.message ?? this.tr("gameplay.life.adUnavailable"));
+    }
+    this.dirty = true; this.scheduleFrame();
+  }
+
+  private async watchBoosterRewardAd(requestId: string): Promise<void> {
+    if (this.boosterRewardAdRequestId) return;
+    this.boosterRewardAdRequestId = requestId;
+    this.syncMusic(); this.dirty = true; this.scheduleFrame();
+    let result: { status: string; requestId: string };
+    try { result = await this.host.showRewardedAd?.(requestId) ?? { status: "unavailable", requestId }; }
+    catch { result = { status: "error", requestId }; }
+    if (this.boosterRewardAdRequestId !== requestId) return;
+    this.boosterRewardAdRequestId = undefined;
+    const request = this.save.boosterRewardAd?.pending;
+    if (!request || request.id !== requestId) { this.syncMusic(); return; }
+    const completed = result.requestId === requestId && result.status === "completed";
+    const baselineSave = this.cloneSave(this.save);
+    const candidateSave = this.cloneSave(baselineSave);
+    candidateSave.boosterRewardAd = completed
+      ? confirmBoosterRewardAd(baselineSave.boosterRewardAd, requestId, Date.now()).state
+      : cancelBoosterRewardAd(baselineSave.boosterRewardAd, requestId).state;
+    this.pendingBoosterRewardAd = {
+      stage: completed ? "receipt" : "cancel", requestId, kind: request.kind,
+      baselineSave, candidateSave,
+      message: completed ? undefined : welfareText(this.save.language,
+        result.status === "cancelled" ? "adCancelled" : "adFailed"),
+    };
+    this.finishBoosterRewardAdSave(); this.syncMusic();
+  }
+
+  private settleBoosterRewardAd(): void {
+    const baselineSave = this.cloneSave(this.save);
+    const request = baselineSave.boosterRewardAd?.pending;
+    if (!request) return;
+    const completed = completeBoosterRewardAd(
+      baselineSave.boosterRewardAd, baselineSave.boosters[request.kind], Date.now(),
+    );
+    if (completed.status !== "rewarded") {
+      if (this.boosterPurchase) this.boosterPurchase.feedback = this.notifyButtonFeedback(completed.status === "full"
+        ? this.tr("shop.fullInventory", { item: this.boosterName(request.kind) })
+        : welfareText(this.save.language, "saveFailed"));
+      this.dirty = true; this.scheduleFrame();
+      return;
+    }
+    const candidateSave = this.cloneSave(baselineSave);
+    candidateSave.boosterRewardAd = completed.state;
+    candidateSave.boosters = { ...candidateSave.boosters, [request.kind]: completed.stock };
+    this.pendingBoosterRewardAd = {
+      stage: "reward", requestId: request.id, kind: request.kind,
+      baselineSave, candidateSave,
+    };
+    this.finishBoosterRewardAdSave();
+  }
+
+  private recoverBoosterRewardAd(): void {
+    if (!this.storageBaselineReady || !this.appVisible || this.boosterRewardAdRequestId
+      || this.pendingWelfareSave || this.welfareAdRequestId || this.pendingLifeRefillAd || this.lifeRefillAdRequestId) return;
+    if (this.pendingBoosterRewardAd) {
+      if (this.screen !== "boosterPurchase" || this.boosterPurchase?.kind !== this.pendingBoosterRewardAd.kind) {
+        this.openBoosterPurchaseRecovery(this.pendingBoosterRewardAd.kind);
+      }
+      return;
+    }
+    const request = this.save.boosterRewardAd?.pending;
+    if (!request) return;
+    this.openBoosterPurchaseRecovery(request.kind);
+    if (request.phase === "completed") this.settleBoosterRewardAd();
+    else {
+      const baselineSave = this.cloneSave(this.save);
+      const candidateSave = this.cloneSave(baselineSave);
+      candidateSave.boosterRewardAd = cancelBoosterRewardAd(baselineSave.boosterRewardAd, request.id).state;
+      this.pendingBoosterRewardAd = {
+        stage: "cancel", requestId: request.id, kind: request.kind,
+        baselineSave, candidateSave, message: this.tr("gameplay.life.adUnavailable"),
+      };
+      this.finishBoosterRewardAdSave();
+    }
+  }
+
+  private openBoosterPurchaseRecovery(kind: Booster): void {
+    if (this.screen === "boosterPurchase" && this.boosterPurchase?.kind === kind) return;
+    this.boosterTarget = undefined;
+    this.boosterFeedback = undefined;
+    this.pendingButtonPress = undefined;
+    this.boosterPurchase = { kind };
+    this.screen = "boosterPurchase";
+    this.playableClockSlices.reset();
+    this.lastFrame = 0;
+    this.requestBoosterPurchaseArt();
+    this.dirty = true; this.scheduleFrame();
+  }
+
+  private boosterPurchaseTargets(): Array<[string, Rect]> {
+    const layout = BOOSTER_PURCHASE_LAYOUT;
+    const active = this.boosterRewardAdTransactionActive();
+    const targets: Array<[string, Rect]> = [];
+    if (active) {
+      if (this.pendingBoosterRewardAd && !this.boosterRewardAdRequestId)
+        targets.push(["boosterPurchase.ad", layout.ad]);
+      if (this.pendingBoosterRewardAd && !this.boosterRewardAdRequestId
+        && (this.pendingBoosterRewardAd.stage === "prepare" || this.pendingBoosterRewardAd.stage === "cancel"))
+        targets.push(["boosterPurchase.close", layout.close]);
+    } else {
+      const kind = this.boosterPurchase?.kind;
+      const available = kind === "rocket" ? this.availableRocketStock()
+        : kind === "pulse" ? this.availablePulseStock() : kind ? this.save.boosters[kind] : 1;
+      if (!this.pendingBoosterPurchase && available <= 0) targets.push(["boosterPurchase.ad", layout.ad]);
+      targets.push(["boosterPurchase.buy", layout.buy]);
+      if (!this.pendingBoosterPurchase) targets.push(["boosterPurchase.close", layout.close]);
+    }
+    if (this.boosterPurchaseArtError) targets.push(["boosterPurchase.artRetry", layout.content]);
+    return targets;
+  }
+
+  private welfareTransactionActive(): boolean {
+    return Boolean(this.pendingWelfareSave || this.welfareAdRequestId
+      || (this.save?.welfareRewards?.pending && !this.welfareRewardDeferred));
+  }
+
+  private welfareAccount(save = this.save): WelfareRewardAccount {
+    return { coins: save.coins, inspiration: save.collectionProgress.inspiration, lifeState: save.lifeState,
+      boosters: { ...save.boosters }, unlockedBoosters: unlockedSupplyKinds(save.highestLevel) };
+  }
+
+  private welfareAdAvailable(): boolean {
+    try { return Boolean(this.host.showRewardedAd && (this.host.isRewardedAdAvailable?.() ?? true)); }
+    catch { return false; }
+  }
+
+  private welfareLayout() {
+    return welfareStationLayout(this.welfareScroll ?? 0,
+      Math.min(1416, FORMAL_PAGE_CONTENT_BOTTOM - this.safeOffsets().bottom / HOME_ARTBOARD_SCALE - 22),
+      this.safeOffsets().top / HOME_ARTBOARD_SCALE);
+  }
+
+  private welfareView(): WelfareStationView {
+    const now = Date.now();
+    const summary = deriveWelfareRewards(this.save.welfareRewards, this.welfareAccount(), now);
+    const selected = summary.pending?.boosterKind ?? this.welfareSelectedBooster ?? "rocket";
+    const activeKind = this.pendingWelfareSave?.kind ?? summary.pending?.kind;
+    const cards = {} as WelfareStationView["cards"];
+    for (const kind of ["inspiration", "coins", "lives", "booster"] as const) {
+      const status = kind === "booster" ? summary.boosterChoices[selected].status : summary.cards[kind].status;
+      let state: WelfareStationView["cards"]["coins"]["state"] = status === "daily-limit" ? "limit"
+        : status === "full" || status === "capacity" ? "full" : status === "locked" ? "locked"
+        : status === "cooldown" ? "cooldown" : status === "busy" ? "blocked" : "available";
+      if (this.welfareTransactionActive()) state = kind === activeKind
+        ? this.pendingWelfareSave ? "retry" : "waiting" : "blocked";
+      else if (this.welfareRewardDeferred && summary.pending) state = kind === activeKind ? "retry" : "blocked";
+      else if (state === "available" && !this.welfareAdAvailable()) state = "unavailable";
+      cards[kind] = { remaining: summary.cards[kind].remaining, state,
+        cooldownSeconds: Math.ceil(summary.cooldownRemainingMs / 1000) };
+    }
+    const progress = this.collectionAlbumProgressSummary().masterpieces.find(item => item.blueprintUnlocked && !item.restored);
+    const next = progress ? MASTERPIECE_COLLECTION_CATALOG.find(item => item.id === progress.id) : undefined;
+    const shortfall = next ? Math.max(0, next.inspirationCost - this.save.collectionProgress.inspiration) : undefined;
+    const life = reconcileLifeState(this.save.lifeState, now);
+    const inspiration = this.displayedRewardBalance("inspiration", this.save.collectionProgress.inspiration);
+    return { language: this.save.language, coins: this.displayedHomeCoins(), inspiration,
+      lives: life.lives, livesLabel: life.unlimitedLivesUntilMs > now ? "∞" : String(life.lives) + "/5",
+      scroll: this.welfareScroll ?? 0, cards,
+      boosters: Object.fromEntries(SUPPLY_ORDER.map(kind => [kind, { stock: this.save.boosters[kind],
+        unlocked: this.boosterUnlocked(kind) }])) as WelfareStationView["boosters"],
+      selectedBooster: selected, inspirationShortfall: shortfall,
+      canOpenCollection: shortfall === 0 && !this.welfareTransactionActive(), feedback: this.welfareFeedbackUntil === undefined || now < this.welfareFeedbackUntil ? this.welfareFeedback : undefined,
+      resourceTopOffset: this.safeOffsets().top / HOME_ARTBOARD_SCALE,
+      viewportBottom: this.welfareLayout().viewport.y + this.welfareLayout().viewport.height };
+  }
+
+  private welfareTargets(): Array<[string, Rect]> {
+    const layout = this.welfareLayout();
+    const result: Array<[string, Rect]> = [];
+    const add = (key: string, rect: Rect) => {
+      const y = Math.max(rect.y, layout.viewport.y);
+      const bottom = Math.min(rect.y + rect.height, layout.viewport.y + layout.viewport.height);
+      if (bottom - y >= 20) result.push([key, homeArtRect({ ...rect, y, height: bottom - y })]);
+    };
+    for (const kind of ["inspiration", "coins", "lives", "booster"] as const) {
+      if (!this.welfareTransactionActive() || this.pendingWelfareSave?.kind === kind)
+        add("welfare.claim." + kind, layout.cards[kind].claim);
+    }
+    if (!this.welfareTransactionActive()) {
+      if (!this.save.welfareRewards?.pending) for (const kind of SUPPLY_ORDER) add("welfare.select." + kind, layout.boosters[kind]);
+      if (this.welfareView().canOpenCollection && layout.cards.inspiration.collection)
+        add("welfare.collection", layout.cards.inspiration.collection);
+    }
+    return result;
+  }
+
+  private handleWelfarePointer(point: PointerSample): void {
+    const hit = this.welfareTargets().find(([, rect]) => inside(point.x, point.y, rect));
+    if (!hit) return;
+    const key = hit[0];
+    this.playSound("button");
+    if (key.startsWith("welfare.select.")) {
+      this.welfareSelectedBooster = key.slice("welfare.select.".length) as Booster;
+      this.welfareFeedback = undefined;
+    } else if (key === "welfare.collection") this.openWelfareCollection();
+    else this.claimWelfareReward(key.slice("welfare.claim.".length) as WelfareRewardKind);
+    this.dirty = true; this.scheduleFrame();
+  }
+
+  private claimWelfareReward(kind: WelfareRewardKind): void {
+    if (this.screen !== "supply" || !this.storageBaselineReady) return;
+    if (this.pendingWelfareSave) {
+      if (this.pendingWelfareSave.kind === kind) this.finishWelfareSave();
+      return;
+    }
+    const receipt = this.save.welfareRewards?.pending;
+    if (this.welfareRewardDeferred && receipt?.phase === "completed") {
+      if (receipt.kind === kind) this.settleWelfareReward();
+      return;
+    }
+    if (this.welfareTransactionActive() || !this.requireFeature("supply")) return;
+    const view = this.welfareView();
+    if (view.cards[kind].state !== "available") {
+      this.welfareFeedbackUntil = Date.now() + 3500;
+      this.welfareFeedback = this.notifyButtonFeedback(welfareText(this.save.language, view.cards[kind].state,
+        { seconds: view.cards[kind].cooldownSeconds ?? 0 }));
+      this.dirty = true; this.scheduleFrame(); return;
+    }
+    const requestId = "welfare-" + Date.now() + "-" + Math.random().toString(36).slice(2, 12);
+    const baseline = this.cloneSave(this.save);
+    const prepared = prepareWelfareReward(baseline.welfareRewards, this.welfareAccount(baseline),
+      { id: requestId, kind, boosterKind: this.welfareSelectedBooster ?? "rocket", nowMs: Date.now() });
+    if (prepared.status !== "prepared") return;
+    const candidate = this.cloneSave(baseline); candidate.welfareRewards = prepared.state;
+    this.pendingWelfareSave = { stage: "prepare", kind, requestId, baselineSave: baseline, candidateSave: candidate };
+    this.finishWelfareSave();
+  }
+
+  private finishWelfareSave(): void {
+    const pending = this.pendingWelfareSave;
+    if (!pending) return;
+    const outcome = this.persistVerified(pending.candidateSave, pending.baselineSave);
+    if (outcome !== "committed") {
+      this.welfareFeedbackUntil = undefined;
+      this.welfareFeedback = this.notifyButtonFeedback(outcome === "unknown" ? welfareText(this.save.language, "saveUnknown")
+        : pending.stage === "reward" || pending.stage === "receipt" ? welfareText(this.save.language, "saveFailed")
+        : this.tr("shop.saveFailed"));
+      this.dirty = true; this.scheduleFrame(); return;
+    }
+    this.save = pending.candidateSave; this.pendingWelfareSave = undefined;
+    this.welfareFeedback = undefined;
+    this.welfareFeedbackUntil = Date.now() + 3500;
+    if (pending.stage === "prepare") void this.watchWelfareAd(pending.requestId);
+    else if (pending.stage === "receipt") this.settleWelfareReward();
+    else if (pending.stage === "reward") {
+      this.welfareRewardDeferred = false;
+      const request = pending.baselineSave.welfareRewards?.pending;
+      this.welfareCelebration = { kind: pending.kind, boosterKind: request?.boosterKind };
+      this.welfareFeedback = this.notifyButtonFeedback(welfareText(this.save.language, "claimed"));
+    } else this.welfareFeedback = this.notifyButtonFeedback(pending.message);
+    this.dirty = true; this.scheduleFrame();
+  }
+
+  private async watchWelfareAd(requestId: string): Promise<void> {
+    if (this.welfareAdRequestId) return;
+    this.welfareAdRequestId = requestId; this.syncMusic(); this.dirty = true; this.scheduleFrame();
+    let result: { status: string; requestId: string };
+    try { result = await this.host.showRewardedAd?.(requestId) ?? { status: "unavailable", requestId }; }
+    catch { result = { status: "error", requestId }; }
+    if (this.welfareAdRequestId !== requestId) return;
+    this.welfareAdRequestId = undefined;
+    const request = this.save.welfareRewards?.pending;
+    if (!request || request.id !== requestId) { this.syncMusic(); return; }
+    const completed = result.requestId === requestId && result.status === "completed";
+    const baseline = this.cloneSave(this.save), candidate = this.cloneSave(baseline);
+    candidate.welfareRewards = completed
+      ? confirmWelfareAdCompletion(baseline.welfareRewards, requestId, Date.now()).state
+      : cancelWelfareReward(baseline.welfareRewards, requestId, Date.now()).state;
+    this.pendingWelfareSave = { stage: completed ? "receipt" : "cancel", kind: request.kind,
+      requestId, baselineSave: baseline, candidateSave: candidate,
+      message: welfareText(this.save.language, result.status === "cancelled" ? "adCancelled" : "adFailed") };
+    this.finishWelfareSave(); this.syncMusic();
+  }
+
+  private settleWelfareReward(): void {
+    const baseline = this.cloneSave(this.save);
+    const completed = completeWelfareReward(baseline.welfareRewards, this.welfareAccount(baseline), Date.now());
+    if (completed.status !== "rewarded" || !completed.reward) {
+      if (completed.status === "full" || completed.status === "capacity") {
+        // Retain completed proof, but allow ordinary play/spending to make room.
+        this.welfareRewardDeferred = true;
+        this.welfareFeedback = this.notifyButtonFeedback(welfareText(this.save.language, "capacityPending"));
+        this.welfareFeedbackUntil = undefined;
+        this.dirty = true; this.scheduleFrame();
+      }
+      return;
+    }
+    this.welfareRewardDeferred = false;
+    const candidate = this.cloneSave(baseline);
+    candidate.welfareRewards = completed.state;
+    candidate.coins = completed.account.coins;
+    candidate.collectionProgress = { ...candidate.collectionProgress, inspiration: completed.account.inspiration };
+    candidate.lifeState = completed.account.lifeState;
+    candidate.boosters = { ...completed.account.boosters };
+    this.pendingWelfareSave = { stage: "reward", kind: completed.reward.kind,
+      requestId: completed.reward.requestId, baselineSave: baseline, candidateSave: candidate };
+    this.finishWelfareSave();
+  }
+
+  private recoverWelfareReward(): void {
+    if (!this.storageBaselineReady || !this.appVisible || this.pendingWelfareSave || this.welfareAdRequestId || this.welfareRewardDeferred
+      || this.lifeRefillAdTransactionActive() || this.boosterRewardAdTransactionActive()
+      || this.dailyChallengeRewardAdTransactionActive()) return;
+    const request = this.save.welfareRewards?.pending;
+    if (!request) return;
+    this.screen = "supply"; this.setFormalPageIntent("supply");
+    if (request.phase === "completed") this.settleWelfareReward();
+    else {
+      const baseline = this.cloneSave(this.save), candidate = this.cloneSave(baseline);
+      candidate.welfareRewards = cancelWelfareReward(baseline.welfareRewards, request.id, Date.now()).state;
+      this.pendingWelfareSave = { stage: "cancel", kind: request.kind, requestId: request.id,
+        baselineSave: baseline, candidateSave: candidate, message: welfareText(this.save.language, "adFailed") };
+      this.finishWelfareSave();
+    }
+  }
+
+  private presentWelfareReward(): void {
+    const reward = this.welfareCelebration;
+    if (!reward || !this.appVisible || this.screen !== "supply" || !this.formalPageArtFor("supply")) return;
+    this.welfareCelebration = undefined;
+    this.playSound("gold");
+    const rect = homeArtRect(this.welfareLayout().cards[reward.kind].claim);
+    const start = { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
+    if (reward.kind === "coins") this.beginHomeCoinFlight(100, start);
+    else if (reward.kind === "inspiration") this.beginInspirationFlight(WELFARE_REWARD_AMOUNTS.inspiration, start);
+    else this.emitBurst(start.x, start.y, "#ffe678", this.save.reducedMotion ? 3 : 14, 100, -20, 10);
+    this.dirty = true;
+  }
+
+  private openWelfareCollection(): void {
+    if (this.welfareTransactionActive()) return;
+    const progress = this.collectionAlbumProgressSummary().masterpieces.find(card => card.blueprintUnlocked && !card.restored
+      && this.save.collectionProgress.inspiration >= card.cost);
+    const item = progress ? MASTERPIECE_COLLECTION_CATALOG.find(card => card.id === progress.id) : undefined;
+    if (!item) return;
+    this.collectionAlbumTab = "masterpieces";
+    this.collectionAlbumPage.masterpieces = Math.floor(MASTERPIECE_COLLECTION_CATALOG.indexOf(item) / COLLECTION_ALBUM_PAGE_SIZE);
+    this.collectionAlbumDetailId = item.id; this.collectionAlbumFeedback = undefined;
+    this.screen = "records"; this.setFormalPageIntent("records");
+  }
+
+  private cancelWelfareRefreshWatch(): void {
+    if (this.welfareRefreshTimer !== undefined) clearTimeout(this.welfareRefreshTimer);
+    this.welfareRefreshTimer = undefined;
+  }
+
+  private syncWelfareRefreshWatch(): void {
+    if (this.screen !== "supply" || !this.appVisible) { this.cancelWelfareRefreshWatch(); return; }
+    if (this.welfareRefreshTimer !== undefined) return;
+    this.welfareRefreshTimer = setTimeout(() => {
+      this.welfareRefreshTimer = undefined; this.dirty = true; this.scheduleFrame();
+    }, 1000) as unknown as number;
+  }
+
+  private beginWelfareScroll(point: PointerSample): boolean {
+    const layout = this.welfareLayout();
+    if (this.screen !== "supply" || !this.storageBaselineReady || !this.formalPageArtFor("supply")
+      || layout.maxScroll <= 0 || !inside(point.x, point.y, homeArtRect(layout.viewport))) return false;
+    this.welfareScrollGesture = { pointerId: point.id, startY: point.y, startScroll: layout.scroll, moved: false };
+    return true;
+  }
+
+  private updateWelfareScroll(point: PointerSample): void {
+    const gesture = this.welfareScrollGesture;
+    if (!gesture || gesture.pointerId !== point.id) return;
+    const delta = (point.y - gesture.startY) / HOME_ARTBOARD_SCALE;
+    if (Math.abs(delta) > 9) gesture.moved = true;
+    if (!gesture.moved) return;
+    this.welfareScroll = Math.max(0, Math.min(this.welfareLayout().maxScroll, gesture.startScroll - delta));
+    this.pendingButtonPress = undefined; this.dirty = true; this.scheduleFrame();
+  }
+
   private buySupply(kind: Booster): void {
+    if (this.pendingBoosterPurchase) return;
+    if (!this.pendingSupplyPurchase && !this.requireFeature("supply")) return;
     const item = SUPPLY_ITEMS[kind];
     const pending = this.pendingSupplyPurchase;
     if (pending) {
       if (pending.kind !== kind) {
-        this.supplyFeedback = { text: this.tr("shop.previousPurchasePending"), color: "#ffcf70" };
+        this.supplyFeedback = this.notifyButtonFeedback({ text: this.tr("shop.previousPurchasePending"), color: "#ffcf70" });
         this.playSound("blocked");
         this.dirty = true;
         this.scheduleFrame();
@@ -5049,25 +6892,25 @@ export class ColorEscapeGame {
       this.pendingSupplyPurchase = transaction;
       this.finishSupplyPurchase(transaction, this.persistVerified(candidate, baseline));
     } else if (result.status === "locked") {
-      this.supplyFeedback = {
+      this.supplyFeedback = this.notifyButtonFeedback({
         text: this.tr("gameplay.booster.unlockAtLevel", {
           item: this.boosterName(kind),
           level: item.unlockLevel,
         }),
         color: "#bcb6dd",
-      };
+      });
       this.playSound("blocked");
     } else if (result.status === "full") {
-      this.supplyFeedback = {
+      this.supplyFeedback = this.notifyButtonFeedback({
         text: this.tr("shop.fullInventory", { item: this.boosterName(kind) }),
         color: "#bcb6dd",
-      };
+      });
       this.playSound("blocked");
     } else {
-      this.supplyFeedback = {
+      this.supplyFeedback = this.notifyButtonFeedback({
         text: this.tr("shop.insufficientCoins", { shortfall: result.shortfall }),
         color: "#ff9a86",
-      };
+      });
       this.playSound("blocked");
     }
     this.dirty = true;
@@ -5079,24 +6922,24 @@ export class ColorEscapeGame {
     if (outcome === "committed") {
       this.save = pending.candidateSave;
       this.pendingSupplyPurchase = undefined;
-      this.supplyFeedback = {
+      this.supplyFeedback = this.notifyButtonFeedback({
         text: this.tr("shop.purchaseSuccess", {
           item: this.boosterName(pending.kind),
           stock: pending.resultingStock,
           max: item.maxStock,
         }),
         color: "#76f5b1",
-      };
+      });
       const button = this.supplyBuyRect(pending.kind);
       this.emitBurst(button.x + button.width / 2, button.y + button.height / 2, "#ffe15c", 10, 72);
       this.playSound("reward");
       this.vibrate("light");
     } else {
       if (outcome === "rejected") this.pendingSupplyPurchase = undefined;
-      this.supplyFeedback = {
+      this.supplyFeedback = this.notifyButtonFeedback({
         text: outcome === "unknown" ? this.tr("shop.saveUnknown") : this.tr("shop.saveFailed"),
         color: "#ff9a86",
-      };
+      });
       this.playSound("blocked");
     }
     this.dirty = true;
@@ -5113,8 +6956,22 @@ export class ColorEscapeGame {
       return false;
     }
 
+    const normalizedBaseline = storedValueBaseline(normalized);
+    let serializedNormalized: string | undefined;
+    // An actual successful read can already contain the exact normalized save.
+    // Keep an independent baseline, but avoid rewriting those same bytes on
+    // every launch. Migrations and interrupted-run recovery still write below.
+    if (prior.status === "ok" && isPlainRecord(prior.value) && isPlainRecord(normalizedBaseline.value)
+      && Object.keys(prior.value).length === Object.keys(normalizedBaseline.value).length) {
+      serializedNormalized = JSON.stringify(normalizedBaseline.value);
+      if (JSON.stringify(prior.value) === serializedNormalized) {
+        this.durableStorageBaseline = normalizedBaseline;
+        return true;
+      }
+    }
+
     if (this.host.storageSet(SAVE_KEY, normalized)) {
-      this.durableStorageBaseline = storedValueBaseline(normalized);
+      this.durableStorageBaseline = normalizedBaseline;
       return true;
     }
 
@@ -5125,11 +6982,14 @@ export class ColorEscapeGame {
     try {
       this.storageReadAttempts += 1;
       const readBack = this.host.storageRead<unknown>(SAVE_KEY);
-      if (readBack.status === "ok" && storageValuesEqual(readBack.value, normalized)) {
-        this.durableStorageBaseline = storedValueBaseline(normalized);
+      const serializedReadValue = readBack.status === "ok"
+        ? JSON.stringify(canonicalStorageValue(readBack.value)) : undefined;
+      if (readBack.status === "ok"
+        && serializedReadValue === (serializedNormalized ?? JSON.stringify(normalizedBaseline.value))) {
+        this.durableStorageBaseline = normalizedBaseline;
         return true;
       }
-      if (storageReadMatchesBaseline(readBack, prior)) {
+      if (storageReadMatchesBaseline(readBack, prior, serializedReadValue)) {
         this.durableStorageBaseline = prior;
         return true;
       }
@@ -5143,6 +7003,7 @@ export class ColorEscapeGame {
   }
 
   private retryStorageBaseline(): boolean {
+    if (this.popupEntrance?.snapshot().some(entry => entry.key === "storageUnavailable" && entry.phase === "exit")) return true;
     this.storageReadAttempts += 1;
     const result = this.host.storageRead<unknown>(SAVE_KEY);
     if (result.status === "unavailable") {
@@ -5153,6 +7014,7 @@ export class ColorEscapeGame {
 
     const loaded = result.status === "ok" ? result.value : undefined;
     const restored = this.recoverInterruptedRun(this.sanitizeSave(loaded ?? copyDefaultSave()));
+    restored.playerProfile ??= normalizePlayerProfile(undefined);
     restored.language = this.languageForStorageRead(result, loaded);
     const storedMotionPreference = isPlainRecord(loaded) && typeof loaded.reducedMotion === "boolean";
     if (!storedMotionPreference && this.host.prefersReducedMotion?.()) restored.reducedMotion = true;
@@ -5164,32 +7026,73 @@ export class ColorEscapeGame {
       return false;
     }
 
+    this.startupEntryPending = this.hasPendingStartupEntry(result, restored);
     this.save = restored;
-    this.updateCanvasLanguage();
-    this.scheduleLifeRefreshWatch();
-    this.model = new PuzzleModel(getLevel(this.save.currentLevel), { deferExitCompletion: true });
-    this.generatorSpawnAnimations = [];
-    this.revisedTransitions = [];
-    this.storageBaselineReady = true;
-    this.updateToastVisible = this.save.lastSeenUpdate !== UPDATE_NOTICE.id;
-    this.pendingSettlement = undefined;
-    this.pendingSettlementAbandon = undefined;
-    this.pendingLifeStart = undefined;
-    this.pendingLifeRefill = undefined;
-    this.lifeRefillOpen = false;
-    this.releaseLifeRefillArt();
-    this.pendingSupplyPurchase = undefined;
-    this.pendingJourneyClaim = undefined;
-    this.pendingAchievementClaim = undefined;
-    this.pendingDailyTaskClaim = undefined;
-    this.pendingCollectionRestoration = undefined;
-    this.pendingJourneyThemeSelection = undefined;
-    this.pendingLanguageSelection = undefined;
-    this.boosterUnlockToast = undefined;
-    this.settlementSaveFailed = false;
-    this.settlementFailureKind = undefined;
-    this.screen = "home";
-    void this.requestJourneyHomeThemeArt(this.save.selectedJourneyEpisode);
+    this.rankingProvinceLookupToken += 1;
+    this.rankingProvinceLoading = false;
+    this.rankingProvinceResolved = undefined;
+    this.pendingRankingSave = undefined;
+    this.rankingVisitClockMs = undefined;
+    this.leaderboardSnapshotCache = undefined;
+    this.closePopup("storageUnavailable", () => {
+      this.requestHomeProfileArt();
+      this.deferredHomeJourneyLevels = undefined;
+      this.updateCanvasLanguage();
+      this.scheduleLifeRefreshWatch();
+      this.model = new PuzzleModel(getLevel(this.save.currentLevel), { deferExitCompletion: true });
+      this.resetCountdownWarning();
+      this.generatorSpawnAnimations = [];
+      this.revisedTransitions = [];
+      this.storageBaselineReady = true;
+      this.updateToastVisible = false;
+      this.pendingSettlement = undefined;
+      this.pendingSettlementAbandon = undefined;
+      this.pendingLifeStart = undefined;
+      this.pendingLifeRefill = undefined;
+      this.pendingLifeRefillAd = undefined;
+      this.lifeRefillAdRequestId = undefined;
+      this.pendingBoosterRewardAd = undefined;
+      this.boosterRewardAdRequestId = undefined;
+      this.pendingDailyChallengeRewardAd = undefined;
+      this.dailyChallengeRewardAdRequestId = undefined;
+      this.lifeRefillOpen = false;
+      this.releaseLifeRefillArt();
+      this.pendingSupplyPurchase = undefined;
+      this.pendingWelfareSave = undefined;
+      this.welfareRewardDeferred = false;
+      this.welfareFeedbackUntil = undefined;
+      this.welfareAdRequestId = undefined;
+      this.welfareCelebration = undefined;
+      this.pendingBoosterPurchase = undefined;
+      this.boosterPurchase = undefined;
+      this.releaseBoosterPurchaseArt();
+      this.pendingJourneyClaim = undefined;
+      this.pendingAchievementClaim = undefined;
+      this.pendingDailyTaskClaim = undefined;
+      this.pendingCollectionRestoration = undefined;
+      this.pendingJourneyThemeSelection = undefined;
+      this.collectionIntro = undefined;
+      this.collectionRestorationGuide = undefined;
+      this.pendingLanguageSelection = undefined;
+      this.boosterUnlockToast = undefined;
+      this.boosterUnlockGuide = undefined;
+      this.freezeUsageGuide = undefined;
+      this.freezeUsageGuideShownThisRun = false;
+      this.timeFreezeAnimation?.reset();
+      this.pulseAnimation?.reset();
+      this.pulseAnimationOwner = undefined;
+      this.pulsePresentationPulses = [];
+      this.pulsePresentationTransitions = [];
+      this.rocketFlight = undefined;
+      this.rocketImpact = undefined;
+      this.rocketRescueGuide = undefined;
+      this.pulseRescueGuide = undefined;
+      this.settlementSaveFailed = false;
+      this.settlementFailureKind = undefined;
+      this.screen = "home";
+      void this.requestJourneyHomeThemeArt(this.save.selectedJourneyEpisode);
+      this.tryBeginStartupEntry();
+    });
     this.dirty = true;
     this.scheduleFrame();
     return true;
@@ -5201,9 +7104,18 @@ export class ColorEscapeGame {
     // leaving the trusted durable save byte-for-byte untouched.
     if (this.temporaryLevelTestSession) return true;
     const unresolvedCandidate = this.pendingSettlementAbandon?.candidateSave
+      ?? this.pendingRankingSave?.candidateSave
+      ?? this.pendingProfileSave?.candidateSave
+      ?? this.pendingFeatureGuideAck?.candidateSave
+      ?? this.leagueTransaction?.pendingCandidate
       ?? this.pendingLifeStart?.candidateSave
       ?? this.pendingLifeRefill?.candidateSave
+      ?? this.pendingLifeRefillAd?.candidateSave
+      ?? this.pendingBoosterRewardAd?.candidateSave
+      ?? this.pendingDailyChallengeRewardAd?.candidateSave
       ?? this.pendingSettlement?.candidateSave
+      ?? this.pendingBoosterPurchase?.candidateSave
+      ?? this.pendingWelfareSave?.candidateSave
       ?? this.pendingSupplyPurchase?.candidateSave
       ?? this.pendingJourneyClaim?.candidateSave
       ?? this.pendingAchievementClaim?.candidateSave
@@ -5212,6 +7124,10 @@ export class ColorEscapeGame {
       ?? this.pendingJourneyThemeSelection?.candidateSave
       ?? this.pendingLanguageSelection?.candidateSave;
     if (unresolvedCandidate && save !== unresolvedCandidate) return false;
+    if (this.welfareAdRequestId && save !== this.pendingWelfareSave?.candidateSave) return false;
+    if (this.lifeRefillAdRequestId && save !== this.pendingLifeRefillAd?.candidateSave) return false;
+    if (this.boosterRewardAdRequestId && save !== this.pendingBoosterRewardAd?.candidateSave) return false;
+    if (this.dailyChallengeRewardAdRequestId && save !== this.pendingDailyChallengeRewardAd?.candidateSave) return false;
     if (!this.storageBaselineReady || !this.host.storageSet(SAVE_KEY, save)) return false;
     this.durableStorageBaseline = storedValueBaseline(save);
     return true;
@@ -5228,37 +7144,690 @@ export class ColorEscapeGame {
     try {
       this.storageReadAttempts += 1;
       const result = this.host.storageRead<unknown>(SAVE_KEY);
-      if (result.status === "ok" && storageValuesEqual(result.value, save)) {
-        this.durableStorageBaseline = storedValueBaseline(save);
-        return "committed";
+      const serializedReadValue = result.status === "ok"
+        ? JSON.stringify(canonicalStorageValue(result.value)) : undefined;
+      if (result.status === "ok") {
+        const candidateBaseline = storedValueBaseline(save);
+        if (serializedReadValue === JSON.stringify(candidateBaseline.value)) {
+          this.durableStorageBaseline = candidateBaseline;
+          return "committed";
+        }
+        // The live transaction baseline can legitimately be newer than our last
+        // confirmed durable baseline when an earlier ordinary save reached disk
+        // but its bridge acknowledgement was lost. Matching that exact immutable
+        // pre-write snapshot still proves this candidate did not land.
+        const liveBaseline = storedValueBaseline(baseline);
+        if (serializedReadValue === JSON.stringify(liveBaseline.value)) {
+          this.durableStorageBaseline = liveBaseline;
+          return "rejected";
+        }
       }
-      // The live transaction baseline can legitimately be newer than our last
-      // confirmed durable baseline when an earlier ordinary save reached disk
-      // but its bridge acknowledgement was lost. Matching that exact immutable
-      // pre-write snapshot still proves this candidate did not land.
-      if (result.status === "ok" && storageValuesEqual(result.value, baseline)) {
-        this.durableStorageBaseline = storedValueBaseline(baseline);
-        return "rejected";
-      }
-      if (storageReadMatchesBaseline(result, this.durableStorageBaseline)) return "rejected";
+      if (storageReadMatchesBaseline(result, this.durableStorageBaseline, serializedReadValue)) return "rejected";
       return "unknown";
     } catch {
       return "unknown";
     }
   }
 
+  /** Core entry points for the league UI; these never touch campaign level records. */
+  private leagueAccountTransaction(): LeagueAccountTransaction<SaveData> {
+    return this.leagueTransaction ??= new LeagueAccountTransaction(
+      () => this.save,
+      (candidate, baseline) => this.persistVerified(candidate, baseline),
+      candidate => {
+        const receivedReward = candidate.coins > this.save.coins;
+        this.save = candidate;
+        this.dirty = true;
+        if (receivedReward) this.playSound("gold");
+      },
+    );
+  }
+
+  getLeagueState(): LeagueState | undefined { return parseLeague(this.save.league); }
+
+  private openLeague(): void {
+    if (!this.leagueTransaction?.pending && !this.requireFeature("league")) return;
+    this.leagueScroll.offset = 0; this.leagueScroll.cancel(); this.leagueChallengeNotice = false;
+    this.leagueInfo = false;
+    this.leagueIntroPage = undefined;
+    this.leagueAction = "open";
+    const outcome = this.refreshLeague();
+    this.leaguePersistence = this.notifySaveFeedback(outcome === "committed" ? undefined : outcome);
+    this.leagueTier = this.save.league?.season.tier ?? 0;
+    this.leagueTierSlide = undefined;
+    this.screen = "league";
+    if(outcome === "committed")this.maybeShowLeagueIntro();
+    this.requestLeagueArt();
+    this.playSound("button");
+    this.dirty = true;
+    this.scheduleFrame();
+  }
+
+  private leagueTargets(): Array<[string, Rect]> {
+    const avatarsLoading = Boolean(this.leagueAvatarArtStore && !this.leagueAvatarArtStore.art);
+    if (this.screen === "league" && this.save.league?.pending && this.leagueIntroPage === undefined) {
+      if (this.leaguePersistence === "unknown") return [["league.retry", LEAGUE_SETTLEMENT_UI.claim]];
+      const targets: Array<[string, Rect]> = [["league.back", LEAGUE_SETTLEMENT_UI.back]];
+      if (this.leaguePersistence) return [...targets, ["league.retry", LEAGUE_SETTLEMENT_UI.claim]];
+      if (this.leagueSettlementArtStore?.art) return [...targets, ["league.claim", LEAGUE_SETTLEMENT_UI.claim]];
+      return this.leagueSettlementArtStore?.error ? [...targets, ["league.artRetry", LEAGUE_SETTLEMENT_UI.claim]] : targets;
+    }
+    if (this.leaguePersistence === "unknown") return [["league.retry", LEAGUE_UI.primary]];
+    if(this.leagueIntroPage!==undefined && this.leaguePersistence)return [["league.retry",LEAGUE_UI.primary]];
+    if(this.screen === "leagueResult") {
+      if(this.leagueRunResult?.persistence !== "committed") return this.leagueRunResult?.persistence === "unknown" ? [["league.resultRetry",LEAGUE_UI.startChallenge]] : [["league.resultRetry",LEAGUE_UI.startChallenge],["league.resultBack",LEAGUE_UI.cancelChallenge]];
+      return [["league.resultBack",LEAGUE_UI.resultContinue]];
+    }
+    if(this.leagueIntroPage!==undefined && this.leagueArtStore?.art && !avatarsLoading)return [["league.introContinue",LEAGUE_UI.introContinue]];
+    if(this.leagueChallengeNotice && this.save.league && nextLeagueLevel(this.save.league.season)!==undefined) return [["league.start",LEAGUE_UI.startChallenge],["league.dismiss",LEAGUE_UI.cancelChallenge]];
+    if (this.leagueInfo) return [["league.dismiss", LEAGUE_UI.detailClose]];
+    if (this.leagueChallengeNotice) return [["league.dismiss", LEAGUE_UI.dismiss]];
+    const targets: Array<[string, Rect]> = [["league.back", LEAGUE_UI.back]];
+    if (this.leaguePersistence) return [...targets, ["league.retry", LEAGUE_UI.primary]];
+    if (!this.leagueArtStore?.art || avatarsLoading) return this.leagueArtStore?.error || this.leagueAvatarArtStore?.error ? [...targets,["league.artRetry",LEAGUE_UI.primary]] : targets;
+    if (!this.save.league) return targets;
+    targets.push(["league.info", LEAGUE_UI.info]);
+    targets.push(["league.self",LEAGUE_UI.self],["league.challenge",LEAGUE_UI.challenge]);
+    if (this.leagueTier > 0) targets.push(["league.tierPrevious", LEAGUE_UI.tierPrevious]);
+    if (this.leagueTier < 7) targets.push(["league.tierNext", LEAGUE_UI.tierNext]);
+    return targets;
+  }
+
+  private handleLeaguePointer(point: PointerSample): void {
+    const key = this.leagueTargets().find(([, rect]) => this.interactionHit(point, rect))?.[0];
+    if (!key) return;
+    if(key === "league.introContinue") {
+      if(this.leagueIntroPage===0)this.leagueIntroPage=1;
+      else this.completeLeagueIntro();
+    }
+    else if(key === "league.start") { this.startLeaguePrototype(); return; }
+    else if(key === "league.resultRetry") { this.finishLeaguePrototype(); return; }
+    else if(key === "league.resultBack") { if(this.leagueRunResult?.persistence === "committed") this.continueLeaguePrototype(); else this.returnFromLeaguePrototype(); return; }
+    else if (key === "league.back") { this.leagueScroll.cancel(); this.leagueTierSlide = undefined; this.screen = "home"; this.leagueArtStore?.dispose(); this.leagueSettlementArtStore?.dispose(); this.leagueAvatarArtStore?.dispose(); this.releaseFormalPageArt(); }
+    else if (key === "league.artRetry") this.requestLeagueArt();
+    else if (key === "league.info") { this.leagueScroll.cancel(); this.leagueTierSlide = undefined; this.leagueInfo = true; }
+    else if (key === "league.dismiss") { this.closePopup("league.info", () => { this.leagueInfo = false; this.leagueChallengeNotice = false; }); }
+    else if (key === "league.self") { if(this.save.league) this.leagueScroll.toRank(leagueRows(this.save.league).find(row=>row.player)!.rank); }
+    else if (key === "league.challenge") { this.leagueScroll.cancel(); this.leagueTierSlide = undefined; this.leagueChallengeNotice = true; }
+    else if (key === "league.tierPrevious") this.shiftLeagueTier(-1);
+    else if (key === "league.tierNext") this.shiftLeagueTier(1);
+    else if (key === "league.claim" || key === "league.retry") {
+      if (key === "league.claim") this.leagueAction = "claim";
+      const outcome = this.leagueAction === "intro" ? this.completeLeagueIntro() : this.leagueAction === "claim" ? this.claimLeagueReward() : this.refreshLeague();
+      this.leaguePersistence = this.notifySaveFeedback(outcome === "committed" ? undefined : outcome);
+      if (outcome === "committed") { this.leagueTier = this.save.league?.season.tier ?? 0; this.leagueTierSlide = undefined; this.leagueScroll.offset = 0; this.leagueScroll.cancel();this.maybeShowLeagueIntro(); }
+      this.syncLeagueSettlementArt();
+    }
+    this.playSound("button"); this.dirty = true; this.scheduleFrame();
+  }
+
+  private leagueTierPosition(): number {
+    return this.leagueTierSlide && !this.save.reducedMotion
+      ? sampleLeagueTierPosition(this.leagueTierSlide) : this.leagueTier;
+  }
+
+  private shiftLeagueTier(direction: -1 | 1): void {
+    const target = Math.max(0, Math.min(7, this.leagueTier + direction));
+    if (target === this.leagueTier) return;
+    // Retarget from the rendered position so a rapid tap or reversal never snaps.
+    const from = this.leagueTierPosition();
+    this.leagueTier = target;
+    this.leagueTierSlide = this.save.reducedMotion || Math.abs(from - target) < 0.001
+      ? undefined : { from, to: target, age: 0 };
+  }
+
+  private updateLeagueTierSlide(delta: number): void {
+    const slide = this.leagueTierSlide;
+    if (!slide) return;
+    if (this.screen !== "league" || this.leagueInfo || this.leagueChallengeNotice
+      || this.leagueIntroPage !== undefined || this.save.league?.pending || this.leaguePersistence) {
+      this.leagueTierSlide = undefined;
+      this.dirty = true;
+      return;
+    }
+    if (!this.appVisible || !this.leagueArtStore?.art
+      || (this.leagueAvatarArtStore && !this.leagueAvatarArtStore.art)) return;
+    slide.age = Math.min(LEAGUE_TIER_SLIDE_DURATION, slide.age + Math.max(0, delta));
+    if (this.save.reducedMotion || slide.age >= LEAGUE_TIER_SLIDE_DURATION) this.leagueTierSlide = undefined;
+    this.dirty = true;
+  }
+
+  private maybeShowLeagueIntro():void {
+    if(this.featureUnlocked("league") && this.save.league && this.save.leagueIntroSeen!==true){this.leagueIntroPage??=0;this.leagueScroll.cancel();}
+  }
+
+  private completeLeagueIntro():PersistenceOutcome {
+    this.leagueAction="intro";
+    const outcome=this.leagueAccountTransaction().commit(account=>({...account,leagueIntroSeen:true}));
+    this.leaguePersistence=this.notifySaveFeedback(outcome==="committed"?undefined:outcome);
+    if(outcome==="committed")this.leagueIntroPage=undefined;
+    return outcome;
+  }
+
+  refreshLeague(now = Date.now()): PersistenceOutcome {
+    if (this.pendingFeatureGuideAck || this.pendingProfileSave || this.pendingRankingSave || this.pendingBoosterPurchase) return "committed";
+    if (!this.leagueTransaction?.pending && !this.featureUnlocked("league")) return "committed";
+    return this.leagueAccountTransaction().commit(account => reconcileLeagueAccount(
+      account, isFeatureUnlocked("league", this.temporaryLevelTestSession?.baselineSave ?? account), now, Math.floor(Math.random() * 0x7fffffff),
+    ));
+  }
+
+  private requestLeagueArt(): void {
+    this.leagueAvatarArtStore ??= new ProfileAvatarArtStore(
+      paths => this.loadImages(paths),
+      image => this.host.releaseImage?.(image),
+      () => { this.dirty = true; this.scheduleFrame(); },
+    );
+    this.leagueAvatarArtStore.request();
+    this.leagueArtStore ??= new LeagueArtStore(
+      async path => { const image = await this.host.createImage(path); this.artLoadedImageCount++; return image; },
+      image => this.host.releaseImage?.(image),
+      () => { this.dirty = true; this.scheduleFrame(); },
+    );
+    this.leagueArtStore.request();
+    this.syncLeagueSettlementArt(true);
+  }
+
+  private syncLeagueSettlementArt(retry = false): void {
+    if (this.screen !== "league" || !this.save.league?.pending) {
+      this.leagueSettlementArtStore?.dispose();
+      return;
+    }
+    this.leagueSettlementArtStore ??= new LeagueSettlementArtStore(
+      async path => { const image = await this.host.createImage(path); this.artLoadedImageCount++; return image; },
+      image => this.host.releaseImage?.(image),
+      () => { this.dirty = true; this.scheduleFrame(); },
+    );
+    if (retry || !this.leagueSettlementArtStore.error) this.leagueSettlementArtStore.request();
+  }
+
+  claimLeagueReward(now = Date.now()): PersistenceOutcome {
+    if (!this.leagueTransaction?.pending && !this.requireFeature("league")) return "rejected";
+    return this.leagueAccountTransaction().claim(now);
+  }
+
+  finishLeagueChallenge(attempt: LeagueAttempt, success: boolean, now = Date.now()): PersistenceOutcome {
+    return this.leagueAccountTransaction().finish(attempt, success, now);
+  }
+
+  private startLeaguePrototype(): void {
+    if (!this.requireFeature("league")) return;
+    if(this.leagueTransaction?.pending || this.leagueRunResult?.persistence === "unknown") return;
+    const outcome=this.refreshLeague();
+    this.syncLeagueSettlementArt();
+    if(outcome !== "committed") { this.leagueAction="refresh";this.leaguePersistence=this.notifySaveFeedback(outcome);this.leagueChallengeNotice=false;this.dirty=true;this.scheduleFrame();return; }
+    const state=this.save.league;
+    const index=state?nextLeagueLevel(state.season):undefined;
+    if(!state || state.pending || index===undefined) {if(this.leagueRun)this.returnFromLeaguePrototype();else{this.leagueChallengeNotice=false;this.dirty=true;this.scheduleFrame();}return;}
+    const entry=getLeagueLevel(index);
+    this.closePopup(["pause", "failed"], () => {
+      const startedAt = Date.now();
+      // A season can end while the old panel exits; never construct an
+      // attempt against an expired (or clock-reversed) captured season.
+      if (startedAt >= state.season.endMs || startedAt < state.lastNowMs) {
+        this.returnFromLeaguePrototype();
+        return;
+      }
+      const run=new LeagueRun(state,index,entry.level,entry.specials,startedAt);
+      this.resetPuzzlePresentation();this.playableClockSlices.reset();this.lastFrame=0;
+      this.leagueRun=run;this.leagueRunResult=undefined;this.model=run.model;
+      this.leagueChallengeNotice=false;this.leagueInfo=false;this.leagueScroll.cancel();
+      this.screen="playing";this.releaseFormalPageArt();this.releaseWinArt();this.captureInitialGeneratorSpawns();
+      this.dirty=true;this.scheduleFrame();
+    });
+  }
+
+  private finishLeaguePrototype(): void {
+    const run=this.leagueRun;if(!run?.successful || !this.save.league) return;
+    const at=run.completedMs!;
+    const result=this.leagueRunResult ?? { ...finishLeagueAttempt(this.save.league,run.attempt,true,at),persistence:"rejected" as PersistenceOutcome };
+    const outcome=this.finishLeagueChallenge(run.attempt,true,at);
+    this.leagueRunResult={points:result.points,status:result.status,persistence:outcome};
+    if (outcome !== "committed") this.notifySaveFeedback(outcome);
+    this.leagueResultAnimationAge=0;
+    this.pendingCelebration=0;this.screen="leagueResult";this.leaguePersistence=undefined;
+    this.dirty=true;this.scheduleFrame();
+    if(outcome === "committed") this.playSound("win");
+  }
+
+  private returnFromLeaguePrototype(): void {
+    if(this.leagueRunResult?.persistence === "unknown" || this.leagueTransaction?.pending) return;
+    const returnLevelId = this.save.currentLevel;
+    const unlocked = this.featureUnlocked("league");
+    this.closePopup(["pause", "failed"], () => {
+      this.leagueRun=undefined;this.leagueRunResult=undefined;this.resetPuzzlePresentation();
+      this.leagueResultAnimationAge=0;
+      this.playableClockSlices.reset();this.lastFrame=0;
+      this.model=new PuzzleModel(getLevel(returnLevelId),{deferExitCompletion:true});
+      if (!unlocked) {
+        this.screen="home";this.leagueArtStore?.dispose();this.leagueSettlementArtStore?.dispose();this.leagueAvatarArtStore?.dispose();this.releaseFormalPageArt();
+        this.dirty=true;this.scheduleFrame();return;
+      }
+      this.openLeague();
+    });
+  }
+
+  private continueLeaguePrototype(): void {
+    if(this.leagueRunResult?.persistence !== "committed") return;
+    this.returnFromLeaguePrototype();
+    if(this.screen === "league" && this.save.league && !this.save.league.pending) this.startLeaguePrototype();
+  }
+
+  private drawLeagueRunResult(): void {
+    const r=this.leagueRunResult,a=this.leagueArtStore?.art,ctx=this.ctx;if(!r)return;
+    ctx.save();ctx.fillStyle="#042c23";ctx.fillRect(0,0,496,1078);
+    if(a){ctx.drawImage(a.background,0,0,496,1078);ctx.fillStyle="rgba(0,18,12,.84)";ctx.fillRect(0,0,496,1078);}
+    this.label("荣耀联赛",248,145,36,"#ffe66d","center",900);
+    this.label(this.save.league ? leagueCountdown(this.save.league.season.endMs,Date.now()) : "",248,194,23,"#f0f5a2","center",900);
+    if (a && this.save.league) {
+      const tier = this.save.league.season.tier;
+      this.drawCollectionImageContained(a[(["bronze", "silver", "gold", "platinum", "emerald", "diamond", "master", "glory"] as const)[tier]],
+        { x: 190, y: 218, width: 116, height: 142 });
+    }
+    const league=this.save.league;
+    const priorScore=league&&r.persistence==="committed"?Math.max(0,league.season.score-r.points):league?.season.score??0;
+    const priorState=league&&r.persistence==="committed"?{...league,season:{...league.season,score:priorScore}}:league;
+    const oldRows=priorState?leagueRows(priorState):[];
+    const newRows=league?leagueRows(league):[];
+    const oldSelf=oldRows.findIndex(row=>row.player),newSelf=newRows.findIndex(row=>row.player);
+    const oldStart=Math.max(0,Math.min(Math.max(0,oldRows.length-5),oldSelf-2));
+    const newStart=Math.max(0,Math.min(Math.max(0,newRows.length-5),newSelf-2));
+    const flightDuration=1.8;
+    const rankAge=Math.max(0,this.leagueResultAnimationAge-flightDuration);
+    const progress=this.save.reducedMotion?1:Math.min(1,rankAge/2.8);
+    const focusProgress=this.save.reducedMotion?1:Math.min(1,rankAge/.65);
+    const slideProgress=this.save.reducedMotion?1:Math.min(1,Math.max(0,(rankAge-.45)/1.85));
+    const ease=1-Math.pow(1-slideProgress,3);
+    // Keep the player row at normal size while tokens are flying. It grows
+    // only after that phase completes, then settles back as the list moves.
+    const playerScale=1+.18*focusProgress*(1-slideProgress);
+    const drawRow=(row:typeof newRows[number]|undefined,y:number,alpha:number,scale=1)=>{if(!row)return;const me=row.player;ctx.save();ctx.globalAlpha=alpha;if(scale!==1){ctx.translate(248,y+36.5);ctx.scale(scale,scale);ctx.translate(-248,-(y+36.5));}if(a)this.drawCollectionImageContained(me?a["self-row"]:a.row,{x:38,y,width:420,height:73});else{ctx.fillStyle=me?"#fff0cd":"#f1e4b7";ctx.fillRect(38,y,420,73);}this.label(String(row.rank),66,y+46,25,"#704522","center",800);this.drawLeagueRankingAvatar(row.avatar,me,{x:88,y:y+8,width:58,height:58});this.label(row.name,163,y+31,20,me?"#704522":"#bd7a2d","left",800,undefined,0,135);if(a)this.drawCollectionImageContained(a["score-token"],{x:300,y:y+18,width:30,height:36});this.label(String(row.score),350,y+45,23,"#7b4d2a","center",800);this.label("0",414,y+48,17,"#8a7658","center",800);ctx.restore();};
+    for(let i=0;i<5;i++){
+      const y=430+i*82;
+      const oldScale=oldRows[oldStart+i]?.player?playerScale:1;
+      const newScale=newRows[newStart+i]?.player?playerScale:1;
+      // The competitor pushes the existing list down; the new higher-ranked
+      // rows enter from above. This is deliberately opposite to a fade swap.
+      drawRow(oldRows[oldStart+i],y+ease*82,1-ease,oldScale);
+      drawRow(newRows[newStart+i],y-(1-ease)*82,ease,newScale);
+    }
+    const animating=progress<1&&!this.save.reducedMotion;
+    if(a && r.persistence==="committed" && r.points>0 && newSelf>=0){
+      const preSlideTargetY=430+(oldSelf-oldStart)*82+36;
+      const postSlideTargetY=430+(newSelf-newStart)*82-(1-ease)*82+36;
+      const flight=this.save.reducedMotion?1:Math.min(1,this.leagueResultAnimationAge/flightDuration);
+      const ey=flight<1?preSlideTargetY:postSlideTargetY;
+      if(flight<1){
+        // The video emits several score tokens from the right side of the
+        // highlighted player row. They travel horizontally into its score
+        // badge before the ranking list is allowed to move.
+        for(let i=0;i<5;i++){
+          const tokenProgress=Math.min(1,Math.max(0,(this.leagueResultAnimationAge-i*.12)/1.15));
+          if(tokenProgress>=1)continue;
+          const u=1-Math.pow(1-tokenProgress,3);
+          const sx=430,sy=ey+(i%2===0?-3:3),ex=315;
+          const x=sx+(ex-sx)*u;
+          const y=sy-Math.sin(u*Math.PI)*(10+i*2);
+          ctx.save();ctx.globalAlpha=.95;ctx.shadowColor="#ffe46b";ctx.shadowBlur=14;this.drawCollectionImageContained(a["score-token"],{x:x-15,y:y-18,width:30,height:36});ctx.restore();
+        }
+      } else {
+        ctx.save();ctx.globalAlpha=.45+.25*Math.sin(this.leagueResultAnimationAge*8);ctx.shadowColor="#ffe46b";ctx.shadowBlur=22;this.drawCollectionImageContained(a["score-token"],{x:315-17,y:ey-20,width:34,height:40});ctx.restore();
+      }
+    }
+    const draw=(key:string,rect:Rect,label:string)=>{if(a){this.drawCollectionImageContained(a["continue-button"],rect);this.label(label,rect.x+rect.width/2,rect.y+rect.height*.65,25,"#fff2d3","center",900);}else this.drawButton(key,rect,label,"#43dc38","#0a8122",25);};
+    if(!animating||r.persistence!=="committed")draw(r.persistence === "committed"?"league.resultBack":"league.resultRetry",r.persistence === "committed"?LEAGUE_UI.resultContinue:LEAGUE_UI.startChallenge,r.persistence === "committed"?"继续":"重试保存");
+    if(r.persistence === "rejected")draw("league.resultBack",LEAGUE_UI.cancelChallenge,"放弃本局并返回");
+    ctx.restore();
+  }
+
+  private boosterUnlockProgress(): number {
+    const persistedProgress = Math.max(1, Math.floor(Number(this.save.highestLevel) || 1));
+    // A booster is usable in the level that teaches it. The durable campaign
+    // value can still point at the previous completed level while that level
+    // is being opened, so gameplay must include the active level in the
+    // unlock check. Keep home/shop screens tied to durable progression.
+    const gameplayScreen = this.screen === "playing"
+      || this.screen === "feature"
+      || this.screen === "paused"
+      || this.screen === "boosterPurchase"
+      || this.screen === "failed";
+    const activeLevel = gameplayScreen ? Math.floor(Number(this.model?.level?.id) || 0) : 0;
+    return Math.max(persistedProgress, activeLevel);
+  }
+
   private boosterUnlocked(kind: Booster): boolean {
-    return this.save.highestLevel >= SUPPLY_ITEMS[kind].unlockLevel;
+    return this.boosterUnlockProgress() >= SUPPLY_ITEMS[kind].unlockLevel;
+  }
+
+  private boosterGuideKindForCurrentLevel(): Booster | undefined {
+    const kind = SUPPLY_ORDER.find((candidate) => SUPPLY_ITEMS[candidate].unlockLevel === this.model.level.id);
+    return kind && this.boosterUnlocked(kind) && !this.save.boosterUnlockSeen.includes(kind) ? kind : undefined;
+  }
+
+  private boosterUnlockGuideEligible(): boolean {
+    if (this.screen !== "playing" || !this.appVisible) return false;
+    if (this.pendingLifeStart || this.lifeRefillOpen || this.pendingSupplyPurchase || this.welfareTransactionActive() || this.pendingProfileSave || this.pendingRankingSave || this.pendingBoosterPurchase
+      || this.pendingJourneyClaim || this.pendingAchievementClaim || this.pendingDailyTaskClaim
+      || this.pendingCollectionRestoration || this.navigationTransition || this.directLevelTransition
+      || this.homeCoinFlight || this.journeyPresentation || this.temporaryLevelSelector) return false;
+    const status = this.model.readStatus();
+    if (this.shouldShowBasicTutorial() || status.complete || status.failed) return false;
+    return true;
+  }
+
+  private boosterUnlockGuideCloseRect(): Rect {
+    return homeArtRect(BOOSTER_UNLOCK_GUIDE_LAYOUT.close);
+  }
+
+  private boosterUnlockGuideCanContinue(): boolean {
+    const guide = this.boosterUnlockGuide;
+    return Boolean(guide && guide.flightAge === undefined && (this.save.reducedMotion || guide.age >= BOOSTER_UNLOCK_READY_AGE));
+  }
+
+  private continueBoosterUnlockGuide(): void {
+    if (!this.boosterUnlockGuideCanContinue()) return;
+    this.boosterUnlockGuide!.flightAge = 0;
+    this.playSound("button");
+    this.dirty = true;
+    this.scheduleFrame();
+  }
+
+  private finishBoosterUnlockGuide(playFeedback = false): void {
+    const kind = this.boosterUnlockGuide?.kind;
+    if (!kind) return;
+    if (!this.save.boosterUnlockSeen.includes(kind)) {
+      this.commitTransientAcknowledgement((candidate) => {
+        candidate.boosterUnlockSeen = [...candidate.boosterUnlockSeen, kind];
+      });
+    }
+    this.boosterUnlockGuide = undefined;
+    this.playableClockSlices.reset();
+    this.lastFrame = 0;
+    if (playFeedback) this.playSound("button");
+    this.dirty = true;
+    this.scheduleFrame();
+  }
+
+  private updateBoosterUnlockGuide(delta: number): void {
+    if (!this.boosterUnlockGuide) {
+      if (!this.boosterUnlockGuideEligible()) return;
+      const kind = this.boosterGuideKindForCurrentLevel();
+      if (!kind) return;
+      this.boosterUnlockGuide = {
+        kind,
+        age: 0,
+        duration: BOOSTER_UNLOCK_FLIGHT_DURATION,
+      };
+      this.boosterUnlockToast = undefined;
+      this.playSound("unlock");
+      this.vibrate("light");
+      this.dirty = true;
+      return;
+    }
+    if (!this.boosterUnlockGuideEligible()) return;
+    this.boosterUnlockGuide.age += delta;
+    if (this.boosterUnlockGuide.flightAge !== undefined) {
+      const previousLanded = boosterUnlockLandedCount(this.boosterUnlockGuide.flightAge, this.save.reducedMotion);
+      this.boosterUnlockGuide.flightAge += delta;
+      const landed = boosterUnlockLandedCount(this.boosterUnlockGuide.flightAge, this.save.reducedMotion);
+      for (let index = previousLanded; index < landed; index += 1) this.playSound("itemArrival");
+      if (this.boosterUnlockGuide.flightAge >= (this.save.reducedMotion ? 0.2 : BOOSTER_UNLOCK_FLIGHT_DURATION)) this.finishBoosterUnlockGuide();
+    }
+    this.dirty = true;
+  }
+
+  private freezeUsageGuideEligible(snapshot = this.model.readStatus()): boolean {
+    if (this.screen !== "playing" || !this.appVisible || !snapshot.started
+      || snapshot.complete || snapshot.failed) return false;
+    if (this.directLevelTransition || this.pendingLifeStart || this.lifeRefillOpen
+      || this.boosterUnlockGuide || this.navigationTransition) return false;
+    // Freeze is unlocked globally from the player's highest unlocked level,
+    // so replaying any earlier level can still receive the same safety hint.
+    if (!this.boosterUnlocked("time") || this.save.boosters.time <= 0) return false;
+    if (this.save.boosterUsageSeen.includes("time")) return false;
+    if ((snapshot.timeFreezeSeconds ?? 0) > 0) return false;
+    return snapshot.remainingSeconds > 0 && snapshot.remainingSeconds <= 20;
+  }
+
+  private updateFreezeUsageGuide(delta: number): void {
+    const snapshot = this.model.readStatus();
+    // A completed or failed run is terminal for this presentation. Paused and
+    // background states deliberately retain the pending hint and its age so
+    // resuming inside the threshold can show it without replaying animation.
+    if (snapshot.complete || snapshot.failed
+      || (this.screen !== "playing" && this.screen !== "paused" && this.screen !== "boosterPurchase")) {
+      this.freezeUsageGuide = undefined;
+      return;
+    }
+    if (!this.freezeUsageGuideEligible(snapshot)) return;
+    if (!this.freezeUsageGuideShownThisRun) {
+      this.freezeUsageGuideShownThisRun = true;
+      this.freezeUsageGuide = { age: 0 };
+      this.dirty = true;
+      return;
+    }
+    if (this.screen === "playing" && this.appVisible) {
+      this.freezeUsageGuide ??= { age: 0 };
+      this.freezeUsageGuide.age += delta;
+      this.dirty = true;
+    }
+  }
+
+  private freezeUsageGuideGeometry(): TutorialGuideGeometry {
+    const target = {
+      x: BUTTONS.time.x + BUTTONS.time.width / 2,
+      y: BUTTONS.time.y + BUTTONS.time.height / 2,
+    };
+    const start = {
+      x: target.x + BUTTONS.time.width * 0.62,
+      y: target.y - BUTTONS.time.height * 0.92,
+    };
+    return {
+      blockId: "freeze-booster-guide",
+      origins: [],
+      points: [start, target],
+      start,
+      end: target,
+      reason: "authored",
+    };
+  }
+
+  private deferredRocketRescueRun(): boolean {
+    return !this.leagueRun
+      && !this.save.activeRun?.daily
+      && this.model.level.id === 7
+      && this.save.activeRun?.levelId === 7;
+  }
+
+  private deferredPulseRescueRun(): boolean {
+    return !this.leagueRun
+      && !this.save.activeRun?.daily
+      && this.model.level.id === 10
+      && this.save.activeRun?.levelId === 10;
+  }
+
+  private deferredBoosterRun(kind: Booster): boolean {
+    return (kind === "rocket" && this.deferredRocketRescueRun())
+      || (kind === "pulse" && this.deferredPulseRescueRun());
+  }
+
+  /** Stock that can still be reserved during Lv7's no-loss rescue run. */
+  private availableRocketStock(): number {
+    const reserved = this.deferredRocketRescueRun()
+      ? (this.save.activeRun?.boosterSpent.rocket ?? 0)
+      : 0;
+    return Math.max(0, this.save.boosters.rocket - reserved);
+  }
+
+  /** Stock that can still be reserved during Lv10's frozen-one rescue run. */
+  private availablePulseStock(): number {
+    const reserved = this.deferredPulseRescueRun()
+      ? (this.save.activeRun?.boosterSpent.pulse ?? 0)
+      : 0;
+    return Math.max(0, this.save.boosters.pulse - reserved);
+  }
+
+  private rocketRescueGuideEligible(snapshot = this.model.readStatus()): boolean {
+    if (this.rocketFlight) return false;
+    const rescue = this.model.level.rocketRescue;
+    if (!rescue || rescue.trigger !== "no-exit-deadlock") return false;
+    if (this.screen !== "playing" || !this.appVisible || !snapshot.started
+      || snapshot.complete || snapshot.failed) return false;
+    if (this.directLevelTransition || this.pendingLifeStart || this.lifeRefillOpen
+      || this.boosterUnlockGuide || this.navigationTransition) return false;
+    if (!this.boosterUnlocked("rocket") || this.availableRocketStock() <= 0) return false;
+    // Wait until the opening departure and its presentation have settled. The
+    // guide should describe the actual deadlock, never an in-flight animation.
+    if (this.exitGhosts.length > 0 || this.pendingCelebration > 0
+      || this.activePointer !== undefined || this.pendingButtonPress) return false;
+    const deadlockBlock = this.model.getBlock(rescue.deadlockBlockId);
+    // A real Lv7 deadlock is reached as soon as the pink opener leaves. Do
+    // not require an arbitrary parking coordinate: the target may still be
+    // at its authored start cell when the rescue prompt appears.
+    if (!deadlockBlock || snapshot.moves < 1) return false;
+    const target = this.model.getBlock(rescue.targetBlockId);
+    if (!target || !this.model.isBlockActive(target) || snapshot.moves <= 0) return false;
+    return !this.model.snapshot().blocks.some((block) => this.model.possibleExitSides(block).length > 0);
+  }
+
+  private updateRocketRescueGuide(delta: number): void {
+    const snapshot = this.model.readStatus();
+    if (snapshot.complete || snapshot.failed
+      || (this.screen !== "playing" && this.screen !== "paused" && this.screen !== "boosterPurchase")) {
+      this.rocketRescueGuide = undefined;
+      return;
+    }
+    if (!this.rocketRescueGuideEligible(snapshot)) return;
+    const phase: RocketRescueGuide["phase"] = this.boosterTarget === "rocket" ? "target" : "booster";
+    if (!this.rocketRescueGuide) {
+      this.rocketRescueGuide = { phase, age: 0 };
+      this.dirty = true;
+      return;
+    }
+    if (this.rocketRescueGuide.phase !== phase) {
+      this.rocketRescueGuide.phase = phase;
+      this.rocketRescueGuide.age = 0;
+    }
+    if (this.screen === "playing" && this.appVisible) this.rocketRescueGuide.age += delta;
+    this.dirty = true;
+  }
+
+  private rocketRescueGuideGeometry(): TutorialGuideGeometry | undefined {
+    const rescue = this.model.level.rocketRescue;
+    const guide = this.rocketRescueGuide;
+    if (!rescue || !guide) return undefined;
+    if (guide.phase === "booster") {
+      const end = {
+        x: BUTTONS.rocket.x + BUTTONS.rocket.width / 2,
+        y: BUTTONS.rocket.y + BUTTONS.rocket.height / 2,
+      };
+      const start = { x: end.x + 92, y: end.y - 84 };
+      return {
+        blockId: "rocket-rescue-booster",
+        origins: [],
+        points: [start, end],
+        start,
+        end,
+        reason: "authored",
+      };
+    }
+    const block = this.model.getBlock(rescue.targetBlockId);
+    if (!block?.shape.length) return undefined;
+    const board = this.boardLayout();
+    const centerX = block.shape.reduce((sum, [x]) => sum + x + 0.5, 0) / block.shape.length;
+    const centerY = block.shape.reduce((sum, [, y]) => sum + y + 0.5, 0) / block.shape.length;
+    const end = {
+      x: board.innerX + (block.x + centerX) * board.cell,
+      y: board.innerY + (block.y + centerY) * board.cell,
+    };
+    const start = { x: end.x + Math.min(96, board.cell * 1.1), y: end.y - Math.min(88, board.cell * 1.0) };
+    return {
+      blockId: block.id,
+      origins: [[block.x, block.y]],
+      points: [start, end],
+      start,
+      end,
+      reason: "authored",
+      focusBlockId: block.id,
+    };
+  }
+
+  private pulseRescueGuideEligible(snapshot = this.model.readStatus()): boolean {
+    const rescue = this.model.level.pulseRescue;
+    const guide = this.pulseRescueGuide;
+    if (!rescue || rescue.trigger !== "frozen-one" || !guide || snapshot.pulseRescueUsed) return false;
+    if (this.screen !== "playing" || !this.appVisible || !snapshot.started
+      || snapshot.complete || snapshot.failed) return false;
+    if (this.directLevelTransition || this.pendingLifeStart || this.lifeRefillOpen
+      || this.boosterUnlockGuide || this.navigationTransition) return false;
+    const target = this.model.getBlock(rescue.targetBlockId);
+    if (!target) return false;
+    return guide.phase === "booster"
+      && this.boosterUnlocked("pulse")
+      && this.availablePulseStock() > 0
+      && target.frozen === 1;
+  }
+
+  private updatePulseRescueGuide(delta: number): void {
+    const snapshot = this.model.readStatus();
+    if (snapshot.complete || snapshot.failed || snapshot.pulseRescueUsed
+      || (this.screen !== "playing" && this.screen !== "paused" && this.screen !== "boosterPurchase")) {
+      this.pulseRescueGuide = undefined;
+      return;
+    }
+    const rescue = this.model.level.pulseRescue;
+    const target = rescue ? this.model.getBlock(rescue.targetBlockId) : undefined;
+    if (!rescue || !target) {
+      this.pulseRescueGuide = undefined;
+      return;
+    }
+    if (!this.pulseRescueGuide) {
+      if (this.screen !== "playing" || !this.appVisible || !snapshot.started
+        || target.frozen !== 1 || !this.boosterUnlocked("pulse")
+        || this.availablePulseStock() <= 0) return;
+      this.pulseRescueGuide = { phase: "booster", age: 0 };
+      this.dirty = true;
+      return;
+    }
+    if (!this.pulseRescueGuideEligible(snapshot)) {
+      // Preserve the run-scoped guide while paused, backgrounded, or covered
+      // by a transition; it must resume at the same phase without advancing.
+      if (this.screen !== "playing" || !this.appVisible) return;
+      if (target.frozen !== 1) this.pulseRescueGuide = undefined;
+      return;
+    }
+    if (this.screen === "playing" && this.appVisible) this.pulseRescueGuide.age += delta;
+    this.dirty = true;
+  }
+
+  private pulseRescueGuideGeometry(): TutorialGuideGeometry | undefined {
+    const guide = this.pulseRescueGuide;
+    const end = {
+      x: BUTTONS.pulse.x + BUTTONS.pulse.width / 2,
+      y: BUTTONS.pulse.y + BUTTONS.pulse.height / 2,
+    };
+    if (!this.model.level.pulseRescue || !guide || guide.phase !== "booster") return undefined;
+    return {
+      blockId: "pulse-rescue-booster",
+      origins: [],
+      points: [end, end],
+      start: end,
+      end,
+      reason: "authored",
+    };
   }
 
   private boosterUnlockToastEligible(): boolean {
-    if (this.pendingLifeStart || this.lifeRefillOpen || this.pendingSupplyPurchase || this.pendingJourneyClaim || this.pendingAchievementClaim
+    if (this.screen === "home") return false;
+    if (this.featureUnlockGuide) return false;
+    if (this.boosterUnlockGuide || this.boosterGuideKindForCurrentLevel()) return false;
+    if (this.pendingLifeStart || this.lifeRefillOpen || this.pendingSupplyPurchase || this.welfareTransactionActive() || this.pendingProfileSave || this.pendingRankingSave || this.pendingBoosterPurchase || this.pendingJourneyClaim || this.pendingAchievementClaim
       || this.pendingDailyTaskClaim
       || this.pendingCollectionRestoration
       || this.navigationTransition || this.directLevelTransition || this.homeCoinFlight
-      || this.journeyPresentation || (this.screen === "home" && this.updateToastVisible)) return false;
+      || this.journeyPresentation || this.updateToastVisible) return false;
     if (this.screen === "playing" && this.shouldShowBasicTutorial()) return false;
-    return this.screen === "home" || this.screen === "supply" || this.screen === "leaderboard"
+    return this.screen === "supply" || this.screen === "leaderboard"
       || this.screen === "levels" || this.screen === "records" || this.screen === "playing";
   }
 
@@ -5279,6 +7848,7 @@ export class ColorEscapeGame {
   }
 
   private updateBoosterUnlockToast(delta: number): void {
+    if (this.boosterUnlockGuide || this.boosterGuideKindForCurrentLevel()) return;
     if (!this.boosterUnlockToast) {
       if (!this.boosterUnlockToastEligible()) return;
       const kind = nextUnseenUnlockedSupply(this.save.highestLevel, this.save.boosterUnlockSeen);
@@ -5320,24 +7890,74 @@ export class ColorEscapeGame {
   }
 
   private musicScene(): MusicScene {
-    if (this.screen === "paused" || this.screen === "settlementFailed") return "silent";
+    if (this.startupEntryPending && this.shouldAutoEnterEarlyCampaign()) return "gameplay";
+    if (this.screen === "settlementFailed") return "silent";
     if (this.screen === "win") return "victory";
     if (this.screen === "failed") return "defeat";
-    if (this.screen === "playing") {
-      const snapshot = this.model.snapshot();
+    if (this.screen === "playing" || this.screen === "paused" || this.screen === "boosterPurchase") {
+      const snapshot = this.model.readStatus();
       return snapshot.started && snapshot.remainingSeconds <= 20 ? "danger" : "gameplay";
     }
     if (this.screen === "feature") return "gameplay";
     return "menu";
   }
 
-  private syncMusic(): void {
-    this.host.music(this.musicScene(), this.save.sound && this.appVisible, this.save.selectedMusicTrack);
+  private prepareStartupAudio(): void {
+    if (!this.host.prepareAudio || (!this.save.music && !this.save.sound)) return;
+    this.startupAudioPending = this.startupEntryPending && this.shouldAutoEnterEarlyCampaign();
+    // Audio failure must never trap an offline/unsupported device on loading.
+    // The package/decoder may still finish later through the existing fallback.
+    this.startupAudioPreparation = new Promise<void>((resolve) => {
+      let settled = false;
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timeout);
+        this.startupAudioPending = false;
+        resolve();
+      };
+      const timeout = setTimeout(finish, 8_000);
+      try {
+        void this.host.prepareAudio!(this.musicScene(), { music: this.save.music !== false, sound: this.save.sound })
+          .then(finish, finish);
+      } catch { finish(); }
+    });
   }
+
+  private syncMusic(): void {
+    const scene = this.musicScene();
+    const enabled = this.save.music !== false && this.appVisible && !this.welfareAdRequestId && !this.lifeRefillAdRequestId && !this.boosterRewardAdRequestId && !this.dailyChallengeRewardAdRequestId;
+    // The custom music selector has been retired. Preserve its old save fields
+    // for compatibility, but never let them override the scene soundtrack or
+    // keep its old favourite playlist running after the UI was removed.
+    this.host.music(scene, enabled);
+    const snapshot = this.model.readStatus();
+    if (!this.save.sound || !this.appVisible || this.screen !== "playing"
+      || this.directLevelTransition || this.pendingLifeStart || this.lifeRefillOpen
+      || this.boosterUnlockGuide
+      || !snapshot.started || snapshot.complete || snapshot.failed
+      || (snapshot.timeFreezeSeconds ?? 0) > 0 || snapshot.remainingSeconds > 10) {
+      this.host.stopSound?.("timeover");
+    }
+  }
+
+  private resetCountdownWarning(): void {
+    this.countdownWarning.reset();
+    this.host.stopSound?.("timeover");
+  }
+
+  private updateCountdownWarning(delta: number): void {
+    const second = this.countdownWarning.update(this.model.readStatus(),
+      this.screen === "playing" && this.appVisible && !this.directLevelTransition
+        && !this.pendingLifeStart && !this.lifeRefillOpen && !this.boosterUnlockGuide, delta);
+    if (second !== undefined) this.playSound("timeover");
+  }
+
+  private buttonSoundContext = false;
 
   private playSound(kind: SoundKind): void {
     this.syncMusic();
-    if (this.save.sound) this.host.sound(kind);
+    if (this.save.sound) this.host.sound(kind === "blocked" && this.buttonSoundContext ? "button" : kind);
   }
   private vibrate(kind: "light" | "medium"): void { if (this.save.haptic) this.host.vibrate(kind); }
 
@@ -5357,7 +7977,31 @@ export class ColorEscapeGame {
   }
 
   private frame(time: number): void {
+    if (!this.appVisible) return;
     this.syncMusic();
+    if (this.screen === "leaderboard" && this.appVisible) this.updateRankingPage();
+    if (this.screen === "league" && this.appVisible) {
+      const now = Date.now();
+      if (Math.floor(now / 1000) !== this.leagueFrameSecond) {
+        this.leagueFrameSecond = Math.floor(now / 1000);
+        const state = this.save.league;
+        // Keep the displayed board stable while browsing, like the campaign
+        // leaderboard. Entry/start/completion catch up; expiry still settles.
+        if (state && !state.pending && !this.leaguePersistence && now >= state.season.endMs) {
+          const expire = (): void => {
+            if (this.screen !== "league" || this.save.league !== state) return;
+            this.leagueAction = "refresh";
+            const outcome = this.refreshLeague(Date.now());
+            this.leaguePersistence = this.notifySaveFeedback(outcome === "committed" ? undefined : outcome);
+            if (this.save.league?.pending || this.leaguePersistence) { this.leagueInfo = false; this.leagueChallengeNotice = false; this.leagueScroll.cancel(); }
+            this.syncLeagueSettlementArt();
+          };
+          if (this.leagueInfo) this.closePopup("league.info", expire);
+          else expire();
+        }
+        this.dirty = true;
+      }
+    }
     if (!this.shellArtReady) {
       if (this.artLoadError) this.render();
       return;
@@ -5367,8 +8011,22 @@ export class ColorEscapeGame {
       this.dirty = false;
       return;
     }
+    this.recoverLifeRefillAd();
+    this.recoverBoosterRewardAd();
+    this.recoverDailyChallengeRewardAd();
+    this.recoverWelfareReward();
+    this.presentWelfareReward();
+    this.tryBeginStartupEntry();
     const rawDelta = this.lastFrame ? Math.max(0, (time - this.lastFrame) / 1000) : 0;
     const delta = Math.min(0.05, rawDelta);
+    if (this.popupEntrance.update(delta, this.appVisible, this.save.reducedMotion)) this.dirty = true;
+    if (this.screen === "leagueResult" && this.appVisible && !this.save.reducedMotion) {
+      this.leagueResultAnimationAge = Math.min(5, this.leagueResultAnimationAge + delta);
+    }
+    this.updateLeagueTierSlide(delta);
+    if(this.screen === "league" && this.appVisible && this.leagueScroll.update(delta)) this.dirty = true;
+    if(this.profilePage && this.appVisible && !this.pendingProfileSave
+      && this.currentProfileScroll()?.update(delta, profileCatalogMaxScroll(this.profilePage))) this.dirty = true;
     this.lastFrame = time;
     this.elapsed += delta;
     const musicPlayback = this.host.musicTransport();
@@ -5413,18 +8071,23 @@ export class ColorEscapeGame {
       if (this.fpsSamples.length > 120) this.fpsSamples.shift();
     }
 
+    this.updateButtonHints(delta);
     this.updateJourneyPresentation(delta);
     this.updateJourneyScrollMotion(delta);
     this.updateDirectLevelTransition(delta);
     this.updateHomeCoinFlight(delta);
-    if (this.screen !== "playing" || !this.appVisible || this.lifeRefillOpen) this.playableClockSlices.reset();
+    this.updateMainlineRankChange(delta);
+    this.updateMasterpieceUnlockPresentation(delta);
+    if (!this.featureUnlockGuide && this.save.featureGuideProgress?.pending.length) this.beginPendingHomePresentation();
+    this.updateFeatureUnlockGuide(delta);
+    if (this.screen !== "playing" || !this.appVisible || this.lifeRefillOpen || this.boosterUnlockGuide) this.playableClockSlices.reset();
     const winGlowAnimating = this.appVisible
       && this.screen === "win"
       && Boolean(this.winArt)
       && !this.save.reducedMotion;
     if (winGlowAnimating) this.winGlowAge += delta;
 
-    if (this.screen === "playing") {
+    if (this.screen === "playing" && !this.boosterUnlockGuide) {
       this.ensureRevisedMechanismArt();
       for (const transition of this.revisedTransitions) {
         transition.age += delta;
@@ -5449,7 +8112,7 @@ export class ColorEscapeGame {
       // The first playable frame is the clock origin, not an interval spent
       // behind loading/intro/spawn animations. Subsequent active frames tick.
       const clockDelta = usesImmediatePlayableClock(this.model.level)
-        ? this.playableClockSlices.sample(monotonicGameTime(), this.appVisible && this.model.snapshot().started && !this.directLevelTransition && !this.pendingLifeStart && !this.lifeRefillOpen)
+        ? this.playableClockSlices.sample(monotonicGameTime(), this.appVisible && this.model.readStatus().started && !this.directLevelTransition && !this.pendingLifeStart && !this.lifeRefillOpen)
         : delta;
       const spatialChanged = this.directLevelTransition || this.pendingLifeStart || this.lifeRefillOpen ? false : this.model.tick(beginsPlayableClock ? 0 : clockDelta, heldBlock && this.dragVisual ? {
           blockId: heldBlock.id,
@@ -5460,6 +8123,7 @@ export class ColorEscapeGame {
           rollbackY: this.dragVisual.originY,
         } : undefined);
       const afterTick = this.model.snapshot();
+      this.countdownWarning.observe(beforeTick, afterTick);
       this.captureGeneratorSpawns(beforeTick, afterTick);
       this.captureRevisedMechanicTransitions(beforeTick, afterTick);
       this.reconcileRevisedMechanicTransitions(afterTick);
@@ -5475,11 +8139,12 @@ export class ColorEscapeGame {
         // The last clear may still have an older shell/exit event in flight.
         // Finish those valid events before changing screen and discarding FX.
         if (this.pendingCelebration <= 0) {
-          if (this.model.snapshot().pendingExitAnimations?.length) this.pendingCelebration = 0.001;
+          if (this.model.readStatus().pendingExitAnimationCount > 0) this.pendingCelebration = 0.001;
           else this.beginCelebration();
         }
       }
-      if (!this.directLevelTransition && this.model.snapshot().failed) {
+      if (!this.directLevelTransition && this.model.readStatus().failed) {
+        this.leagueRun?.discard();
         this.selectedId = undefined;
         this.activePointer = undefined;
         this.pendingButtonPress = undefined;
@@ -5501,6 +8166,7 @@ export class ColorEscapeGame {
         this.revisedTransitions = [];
         this.mechanicPulses = [];
         this.boardShakeTime = 0;
+        this.resetCountdownWarning();
         this.screen = "failed";
         this.dirty = true;
         this.playSound("fail");
@@ -5510,6 +8176,23 @@ export class ColorEscapeGame {
       this.updateToastAge += delta;
       if (this.updateToastAge >= UPDATE_TOAST_DURATION) this.acknowledgeUpdateNotice();
     }
+    this.updateBoosterUnlockGuide(delta);
+    this.updateFreezeUsageGuide(delta);
+    this.updateRocketRescueGuide(delta);
+    this.updatePulseRescueGuide(delta);
+    this.updateCollectionIntro(delta);
+    if (this.collectionRestorationGuide && this.collectionRestorationGuideEligible()) {
+      this.collectionRestorationGuide.age += delta;
+    }
+    this.updateCountdownWarning(delta);
+    this.updateRocketFlight(delta);
+    this.updatePulseAnimation(delta);
+    this.updateComboAnimation(delta);
+    const freezeSnapshot = this.model.readStatus();
+    this.timeFreezeAnimation.update(freezeSnapshot.timeFreezeSeconds ?? 0,
+      this.screen === "playing" && this.appVisible && !this.boosterUnlockGuide
+        && !this.pendingLifeStart && !this.lifeRefillOpen && !this.directLevelTransition,
+      rawDelta, freezeSnapshot.complete || freezeSnapshot.failed);
     this.updateBoosterUnlockToast(delta);
     this.updateParticles(delta);
     this.updateExitGhosts(delta);
@@ -5523,25 +8206,62 @@ export class ColorEscapeGame {
       && (Math.abs(this.journeyScrollVelocity) > 0.1
         || this.journeyScrollOffset < journeyBounds.min - 0.1
         || this.journeyScrollOffset > journeyBounds.max + 0.1);
-    const boardFxActive = this.screen === "playing" && this.appVisible;
+    const boardFxActive = this.screen === "playing" && this.appVisible && !this.boosterUnlockGuide;
     const particlesAnimating = this.particles.some((particle) => (
       boardFxActive || (!particle.exitAnimationId && !particle.exitFragment)
     ));
     const animated = this.screen === "playing"
+      || (this.appVisible && !this.pendingProfileSave && Math.abs(this.currentProfileScroll()?.velocity ?? 0) >= 5)
+      || (this.screen === "league" && this.appVisible && (
+        Math.abs(this.leagueScroll.velocity) >= 5
+        || (this.leagueTierSlide != null && Boolean(this.leagueArtStore?.art)
+          && (!this.leagueAvatarArtStore || Boolean(this.leagueAvatarArtStore.art)))
+      ))
+      // The league result contains a live rank transition. Keep rendering it
+      // after the first frame so the old/new rows visibly travel into place
+      // instead of freezing on the initial snapshot.
+      || (this.screen === "leagueResult" && this.appVisible && !this.save.reducedMotion && this.leagueResultAnimationAge < 5)
       || (this.screen === "home" && this.updateToastVisible) || particlesAnimating
       || (boardFxActive && (this.exitGhosts.length > 0 || this.exitPulses.length > 0 || this.mechanicPulses.length > 0 || this.boardShakeTime > 0))
       || this.exitFailure != null || this.boosterFeedback != null || this.hudFeedback != null
+      || ((this.buttonHints?.length ?? 0) > 0 && this.appVisible)
+      || (this.featureUnlockGuide != null && this.screen === "home" && this.appVisible
+        && !this.featureUnlockGuide.persistence && !this.save.reducedMotion)
       || this.navigationTransition != null || (this.boosterUnlockToast != null && this.boosterUnlockToastEligible())
-      || (this.journeyPresentation != null && this.journeyPresentation.phase !== "overlay")
+      || (this.journeyPresentation != null && (this.journeyPresentation.sceneReveal
+        ? this.appVisible && (this.journeyPresentation.phase === "claiming"
+          || (this.journeyPresentation.phase === "overlay"
+            && this.journeyPresentation.age < JOURNEY_SCENE_REVEAL_DURATION))
+        : this.journeyPresentation.phase !== "overlay"))
       || this.directLevelTransition != null || this.homeCoinFlight != null
       || (this.screen === "musicLibrary" && this.host.musicTransport().playing)
+      || (this.freezeUsageGuide != null && this.freezeUsageGuideEligible())
+      || (this.rocketRescueGuide != null && this.rocketRescueGuideEligible())
+      || (this.pulseRescueGuide != null && this.pulseRescueGuideEligible())
+      || (!this.save.reducedMotion && this.collectionRestorationGuideEligible())
+      || (this.collectionIntro != null && this.collectionIntroOnCurrentScreen() && this.appVisible
+        && this.collectionIntro.age < COLLECTION_INTRO_DURATION && this.collectionIntroArtworkReady())
       || winGlowAnimating
+      || (this.masterpieceUnlockPresentation != null && this.screen === "win" && this.appVisible
+        && Boolean(this.winArt) && this.masterpieceUnlockPresentation.age < 1.25)
+      || this.mainlineRankChangeEligible()
       || journeyScrollAnimating;
     if (this.dirty || animated) {
       this.render();
       this.dirty = false;
     }
-    if (animated) this.scheduleFrame();
+    this.syncWelfareRefreshWatch();
+    this.syncLeagueHomeRefreshWatch();
+    // Paint the fully transparent exit frame before releasing art or routing.
+    if (this.appVisible && this.popupEntrance.flushExits()) {
+      this.dirty = true;
+      this.scheduleFrame();
+    }
+    if (this.profileInputAfterEntrance && this.appVisible && !this.popupEntrance.active) {
+      this.profileInputAfterEntrance = false;
+      if (this.profilePage === "rename") this.openProfileNameInput();
+    }
+    if (animated || (this.appVisible && this.popupEntrance.active)) this.scheduleFrame();
   }
 
   private updateDragSettle(delta: number): void {
@@ -5792,17 +8512,18 @@ export class ColorEscapeGame {
   /** Charge the old eligibility set up to the event, before it can enable a bomb. */
   private advanceRevisedClockBeforeMutation(): boolean {
     if (!usesImmediatePlayableClock(this.model.level)) return true;
-    const before = this.model.snapshot();
-    const active = this.screen === "playing" && this.appVisible && before.started && !this.directLevelTransition && !this.pendingLifeStart && !this.lifeRefillOpen;
+    const before = this.model.readStatus();
+    const active = this.screen === "playing" && this.appVisible && before.started && !this.directLevelTransition && !this.pendingLifeStart && !this.lifeRefillOpen && !this.boosterUnlockGuide;
     const delta = this.playableClockSlices.sample(monotonicGameTime(), Boolean(active));
     if (active && !before.complete && !before.failed && delta > 0) {
       this.model.tick(delta);
-      const after = this.model.snapshot();
+      const after = this.model.readStatus();
+      this.countdownWarning.observe(before, after);
       this.runElapsedSeconds += Math.max(0, before.remainingSeconds - after.remainingSeconds);
       this.dirty = true;
       this.scheduleFrame();
     }
-    const after = this.model.snapshot();
+    const after = this.model.readStatus();
     return !after.failed && !after.complete;
   }
 
@@ -5933,7 +8654,7 @@ export class ColorEscapeGame {
   }
 
   private mainNavigationInteractive(): boolean {
-    return this.isMainNavigationScreen(this.screen)
+    return !this.profilePage && this.isMainNavigationScreen(this.screen)
       && !(this.screen === "records" && (this.collectionAlbumDetailId || this.pendingCollectionRestoration));
   }
 
@@ -5950,13 +8671,15 @@ export class ColorEscapeGame {
   }
 
   private closeMechanismGuide(): void {
-    this.collectionScrollGesture = undefined;
-    this.pendingButtonPress = undefined;
-    this.screen = "records";
-    this.releaseFormalPageArt();
-    this.playSound("button");
-    this.dirty = true;
-    this.scheduleFrame();
+    this.closePopup("mechanismGuide", () => {
+      this.collectionScrollGesture = undefined;
+      this.pendingButtonPress = undefined;
+      this.screen = "records";
+      this.releaseFormalPageArt();
+      this.playSound("button");
+      this.dirty = true;
+      this.scheduleFrame();
+    });
   }
 
   private mainNavigationSelectedScreen(): MainNavigationScreen {
@@ -6016,6 +8739,8 @@ export class ColorEscapeGame {
     for (let index = 0; index < MAIN_NAVIGATION.length; index += 1) {
       if (!this.interactionHit(point, this.mainNavigationRect(index))) continue;
       const target = MAIN_NAVIGATION[index].screen;
+      const feature = this.navigationFeature(target);
+      if (feature && !this.requireFeature(feature)) return true;
       const enteringCollection = target === "records" && this.mainNavigationSelectedScreen() !== "records";
       if (target === "supply") this.supplyFeedback = undefined;
       if (target !== "levels") this.journeyScrollVelocity = 0;
@@ -6083,7 +8808,21 @@ export class ColorEscapeGame {
         this.lastFrame = 0;
         changed = true;
       }
-      if (changed) this.playSound("button");
+      if (changed) {
+        // Reward visuals belong to the page that granted them; navigation is
+        // free to continue once the reward itself has been saved.
+        this.clearHomeCoinFlight();
+        if (this.journeyPresentation?.phase === "claiming"
+          && this.journeyPresentation.event.type === "milestone_reward") this.journeyPresentation = undefined;
+        // Freeze one ranking snapshot for the open page. A new page entry
+        // gets a fresh hourly catch-up, while drawing several rows in the
+        // same frame cannot observe different bot values.
+        this.leaderboardSnapshotCache = undefined;
+        this.rankingVisitClockMs = undefined;
+        if (target === "leaderboard") this.beginRankingPage();
+        else this.cancelRankingRefreshWatch();
+        this.playSound("button");
+      }
       this.dirty = true;
       this.scheduleFrame();
       return true;
@@ -6091,15 +8830,242 @@ export class ColorEscapeGame {
     return false;
   }
 
+  private mainlineWorldRankForSave(save: SaveData, nowMs: number): number {
+    const progress = normalizeMainlineRankingProgress(save.mainlineRanking, nowMs, save.playerProfile?.joinedAt);
+    return buildMetaLeaderboard("world", {
+      highestLevel: save.highestLevel,
+      bestStars: save.bestStars,
+      playerId: save.playerProfile?.id,
+      playerName: save.playerProfile?.name,
+      playerAvatar: save.playerProfile?.avatar,
+      playerFrame: save.playerProfile?.frame,
+      nowMs: Math.max(nowMs, progress.lastObservedMs),
+      groupCreatedAtMs: progress.epochMs,
+      province: progress.province,
+      weeklyStars: progress.weeklyStars,
+      weekBaselineMs: progress.weekBaselineMs,
+    }, this.leaderboardSource).player.rank;
+  }
+
+  private mainlineRankChangeForSettlement(
+    baseline: SaveData,
+    candidate: SaveData,
+    nowMs: number,
+  ): MainlineRankChangePresentation | undefined {
+    // The unlock clear itself keeps the existing feature introduction first.
+    if (!isFeatureUnlocked("leaderboard", baseline)) return undefined;
+    const beforeRank = this.mainlineWorldRankForSave(baseline, nowMs);
+    const afterRank = this.mainlineWorldRankForSave(candidate, nowMs);
+    if (afterRank >= beforeRank) return undefined;
+    return {
+      beforeRank,
+      afterRank,
+      age: 0,
+      duration: MAINLINE_RANK_CHANGE_DURATION,
+    };
+  }
+
+  private mainlineRankChangeEligible(): boolean {
+    return Boolean(this.mainlineRankChange && this.mainlineRankArt
+      && this.screen === "home" && this.appVisible && this.artReady && this.art.home && this.storageBaselineReady
+      && !this.homeCoinFlight && !this.directLevelTransition && !this.navigationTransition
+      && !this.journeyPresentation && !this.collectionIntro && !this.featureUnlockGuide
+      && !this.profilePage && !this.lifeRefillOpen && !this.temporaryLevelSelector
+      && !this.updateToastVisible && !this.popupEntrance?.active);
+  }
+
+  private clearMainlineRankChange(): void {
+    this.mainlineRankChange = undefined;
+    if (this.mainlineRankArt) {
+      for (const image of new Set(Object.values(this.mainlineRankArt))) this.host.releaseImage?.(image);
+      this.mainlineRankArt = undefined;
+    }
+  }
+
+  private returnHomeFromMainlineWin(): void {
+    const change = this.mainlineRankChange;
+    const art = change ? this.winArt?.suppliedRank : undefined;
+    // Hand only the banner images to Home. The rest of the result artwork
+    // still follows loadLevel's normal release/reset lifecycle.
+    if (art && this.winArt) this.winArt.suppliedRank = undefined;
+    this.loadLevel(this.save.currentLevel, false);
+    if (this.screen === "home") {
+      this.mainlineRankChange = change;
+      this.mainlineRankArt = art;
+    } else if (art && this.winArt) {
+      // A pending transaction can reject navigation; keep ownership on Win.
+      this.winArt.suppliedRank = art;
+    } else if (art) {
+      for (const image of new Set(Object.values(art))) this.host.releaseImage?.(image);
+    }
+  }
+
+  private updateMainlineRankChange(delta: number): void {
+    const change = this.mainlineRankChange;
+    // Settlement, reward flights, Home overlays and background time leave the
+    // committed rank snapshot queued until its banner can actually be seen.
+    if (!change || !this.mainlineRankChangeEligible()) return;
+    change.age = Math.min(change.duration, change.age + Math.max(0, delta));
+    if (change.age >= change.duration) this.clearMainlineRankChange();
+    this.dirty = true;
+  }
+
+  private updateMasterpieceUnlockPresentation(delta: number): void {
+    const presentation = this.masterpieceUnlockPresentation;
+    if (!presentation || this.screen !== "win" || !this.appVisible || !this.winArt) return;
+    // Let the shared popup finish entering before filling the next segment.
+    const age = this.save.reducedMotion ? 1.25 : Math.min(1.25, presentation.age + Math.max(0, delta));
+    if (age !== presentation.age) this.dirty = true;
+    presentation.age = age;
+    if (age >= 1.25) this.beginMasterpieceUnlockPreview();
+  }
+
+  private beginMasterpieceUnlockPreview(): boolean {
+    const presentation = this.masterpieceUnlockPresentation;
+    if (!presentation?.progress.justUnlocked || presentation.revealShown
+      || this.screen !== "win" || !this.appVisible || !this.winArt || this.collectionIntro
+      || this.popupEntrance?.snapshot().some((entry) => entry.phase === "exit")) return false;
+    const item = findCollectionCatalogItem(presentation.progress.targetId ?? "");
+    if (!item) return false;
+    presentation.age = 1.25;
+    presentation.revealShown = true;
+    this.collectionIntro = { level: item.unlockLevel, itemId: item.id, age: 0, unlockPreview: true };
+    this.requestCollectionAlbumArtwork();
+    this.dirty = true;
+    this.scheduleFrame();
+    return true;
+  }
+
+  private rankingSaveBlocked(): boolean {
+    return !this.storageBaselineReady || this.lifeRefillAdTransactionActive() || this.boosterRewardAdTransactionActive() || this.dailyChallengeRewardAdTransactionActive() || Boolean(this.temporaryLevelTestSession || this.profilePage
+      || this.pendingSettlement || this.pendingSettlementAbandon || this.pendingProfileSave
+      || this.pendingFeatureGuideAck || this.leagueTransaction?.pending || this.pendingLifeStart || this.pendingLifeRefill
+      || this.pendingBoosterPurchase || this.pendingWelfareSave || this.welfareAdRequestId || this.pendingSupplyPurchase
+      || this.pendingJourneyClaim || this.pendingAchievementClaim || this.pendingDailyTaskClaim
+      || this.pendingCollectionRestoration || this.pendingJourneyThemeSelection || this.pendingLanguageSelection);
+  }
+
+  private finishRankingSave(): void {
+    const pending = this.pendingRankingSave;
+    if (!pending) return;
+    const outcome = this.persistVerified(pending.candidateSave, pending.baselineSave);
+    if (outcome === "committed") {
+      this.save = pending.candidateSave;
+      this.pendingRankingSave = undefined;
+      this.rankingSaveRejected = false;
+      this.leaderboardSnapshotCache = undefined;
+    } else if (outcome === "rejected") {
+      // Preserve the selected region, but build a fresh candidate from the
+      // latest save on the next explicit entry/click after definite rejection.
+      this.pendingRankingSave = undefined;
+      this.rankingSaveRejected = true;
+    }
+    this.dirty = true;
+    this.scheduleFrame();
+  }
+
+  private beginRankingPage(preserveVisitClock = false): void {
+    if (this.screen !== "leaderboard" || !this.appVisible || !this.storageBaselineReady) return;
+    this.rankingSaveRejected = false;
+    if (this.pendingRankingSave) { this.finishRankingSave(); this.scheduleRankingRefreshWatch(); return; }
+    const nowMs = Date.now();
+    const progress = normalizeMainlineRankingProgress(this.save.mainlineRanking, nowMs, this.save.playerProfile?.joinedAt);
+    const keepVisit = preserveVisitClock && this.rankingVisitClockMs !== undefined
+      && rankingWeekStartMs(nowMs) <= rankingWeekStartMs(this.rankingVisitClockMs);
+    this.rankingVisitClockMs = Math.max(keepVisit ? this.rankingVisitClockMs! : nowMs, progress.lastObservedMs);
+    this.leaderboardSnapshotCache = undefined;
+    if (!this.rankingSaveBlocked()) {
+      const next = observeMainlineRanking(progress, this.rankingVisitClockMs);
+      if (!next.province && this.rankingProvinceResolved) {
+        next.province = this.rankingProvinceResolved.province;
+        next.provinceSource = this.rankingProvinceResolved.source;
+      }
+      if (!storageValuesEqual(next, this.save.mainlineRanking)) {
+        const baselineSave = this.cloneSave(this.save), candidateSave = this.cloneSave(baselineSave);
+        candidateSave.mainlineRanking = next;
+        this.pendingRankingSave = { baselineSave, candidateSave };
+        this.finishRankingSave();
+      }
+    }
+    if (!progress.province && !this.rankingProvinceResolved && !this.rankingProvinceLoading && !this.pendingRankingSave) {
+      this.rankingProvinceLoading = true;
+      const token = ++this.rankingProvinceLookupToken, ownerId = this.save.playerProfile?.id;
+      Promise.resolve().then(() => this.host.resolveLeaderboardProvince?.()).catch(() => undefined).then(result => {
+        if (token !== this.rankingProvinceLookupToken) return;
+        this.rankingProvinceLoading = false;
+        if (this.save.playerProfile?.id !== ownerId) return;
+        if (!this.save.mainlineRanking?.province) {
+          this.rankingProvinceResolved = result?.source === "ip" && isRankingProvince(result.province)
+            ? { province: result.province, source: "ip" } : { province: randomRankingProvince(), source: "random" };
+          // A lookup does not own the save: obtain the newest baseline only
+          // when the page is still open and all other transactions are idle.
+          if (this.screen === "leaderboard") this.beginRankingPage(true);
+        }
+        this.dirty = true; this.scheduleFrame();
+      });
+    }
+    this.scheduleRankingRefreshWatch();
+  }
+
+  private updateRankingPage(): void {
+    if (this.pendingRankingSave) return;
+    const now = Date.now();
+    if (this.rankingVisitClockMs === undefined
+      || rankingWeekStartMs(now) > rankingWeekStartMs(this.rankingVisitClockMs)
+      || (!this.rankingSaveRejected && this.save.mainlineRanking && rankingWeekStartMs(Math.max(now, this.save.mainlineRanking.lastObservedMs)) > this.save.mainlineRanking.weekStartMs)) this.beginRankingPage();
+    else if (!this.rankingSaveRejected && !this.rankingProvinceLoading && !this.save.mainlineRanking?.province
+      && !this.rankingSaveBlocked()) this.beginRankingPage(true);
+  }
+
+  private cancelRankingRefreshWatch(): void {
+    if (this.rankingRefreshTimer !== undefined) this.host.cancelTimeout(this.rankingRefreshTimer);
+    this.rankingRefreshTimer = undefined;
+  }
+
+  private scheduleRankingRefreshWatch(): void {
+    this.cancelRankingRefreshWatch();
+    if (this.screen !== "leaderboard" || !this.appVisible || !this.host.scheduleTimeout) return;
+    const now = Date.now(), nextWeek = rankingWeekStartMs(now) + 7 * 86_400_000;
+    this.rankingRefreshTimer = this.host.scheduleTimeout(() => {
+      this.rankingRefreshTimer = undefined;
+      this.updateRankingPage(); this.dirty = true; this.scheduleFrame(); this.scheduleRankingRefreshWatch();
+    }, Math.max(100, Math.min(60_000, nextWeek - now + 10)));
+  }
+
   private leaderboardSnapshot(mode: LeaderboardMode = this.leaderboardMode): MetaLeaderboardSnapshot {
-    return buildMetaLeaderboard(mode, {
-      highestLevel: this.save.highestLevel,
-      bestStars: this.save.bestStars,
+    const rawNow = Date.now();
+    const saved = normalizeMainlineRankingProgress(this.save.mainlineRanking, rawNow, this.save.playerProfile?.joinedAt);
+    const visiting = this.screen === "leaderboard";
+    let nowMs = visiting ? this.rankingVisitClockMs ?? Math.max(rawNow, saved.lastObservedMs) : Math.max(rawNow, saved.lastObservedMs);
+    if (rankingWeekStartMs(rawNow) > rankingWeekStartMs(nowMs)) nowMs = rawNow;
+    if (visiting) this.rankingVisitClockMs = nowMs;
+    const progress = observeMainlineRanking(saved, nowMs);
+    const profile = this.save.playerProfile;
+    const key = JSON.stringify([this.save.highestLevel, this.totalStars(), profile?.id, profile?.name,
+      profile?.avatar, profile?.frame, progress, nowMs]);
+    if (visiting && this.leaderboardSnapshotCache?.key === key && this.leaderboardSnapshotCache.snapshots[mode])
+      return this.leaderboardSnapshotCache.snapshots[mode]!;
+    const snapshot = buildMetaLeaderboard(mode, {
+      highestLevel: this.save.highestLevel, bestStars: this.save.bestStars,
+      playerId: profile?.id, playerName: profile?.name, playerAvatar: profile?.avatar, playerFrame: profile?.frame,
+      nowMs, groupCreatedAtMs: progress.epochMs, province: progress.province,
+      weeklyStars: progress.weeklyStars, weekBaselineMs: progress.weekBaselineMs,
     }, this.leaderboardSource);
+    if (!progress.province && mode !== "world") {
+      snapshot.entries = [];
+      snapshot.totalPlayers = 0;
+      snapshot.player = { ...snapshot.player, rank: 0 };
+    }
+    if (visiting) {
+      if (this.leaderboardSnapshotCache?.key !== key) this.leaderboardSnapshotCache = { key, snapshots: {} };
+      this.leaderboardSnapshotCache!.snapshots[mode] = snapshot;
+    }
+    return snapshot;
   }
 
   private leaderboardEntries(mode: LeaderboardMode = this.leaderboardMode): readonly MetaLeaderboardEntry[] {
-    return this.leaderboardSnapshot(mode).entries;
+    const snapshot = this.leaderboardSnapshot(mode);
+    return snapshot.totalPlayers ? metaLeaderboardDisplayEntries(snapshot) : [];
   }
 
   private leaderboardListViewportArt(): HomeArtPlacement {
@@ -6164,7 +9130,7 @@ export class ColorEscapeGame {
       firstIndex: entries.length ? firstIndex : -1,
       lastIndex: entries.length ? lastIndex : -1,
       firstRank: entries[0]?.rank ?? 0,
-      lastRank: entries.at(-1)?.rank ?? 0,
+      lastRank: entries[entries.length - 1]?.rank ?? 0,
       scrollOffset,
       maxScrollOffset,
       canScrollUp: scrollOffset > 0.5,
@@ -6384,7 +9350,7 @@ export class ColorEscapeGame {
   private collectionAlbumLayout(): CollectionAlbumLayout {
     const safe = this.safeOffsets();
     const items = this.collectionAlbumItems();
-    return createCollectionAlbumLayout({
+    const layout = createCollectionAlbumLayout({
       width: LOGICAL_WIDTH,
       height: LOGICAL_HEIGHT,
       safeInsets: { top: safe.top, right: 0, bottom: safe.bottom, left: 0 },
@@ -6394,6 +9360,18 @@ export class ColorEscapeGame {
       tab: this.collectionAlbumTab,
       direction: "ltr",
     });
+    const detailItem = this.collectionAlbumDetailId ? findCollectionCatalogItem(this.collectionAlbumDetailId) : undefined;
+    if (detailItem) {
+      const shift = 80 * layout.artTransform.scale;
+      layout.detail.primaryAction.visual.y -= shift;
+      layout.detail.primaryAction.hit.y -= shift;
+      if (detailItem.category === "masterpiece") {
+        layout.detail.restorationIcon.y -= shift;
+        layout.detail.restorationCost.y -= shift;
+        layout.detail.restorationLabel.y -= shift;
+      }
+    }
+    return layout;
   }
 
   private collectionAlbumRetryRect(layout: CollectionAlbumLayout): Rect {
@@ -6514,7 +9492,7 @@ export class ColorEscapeGame {
     if (!item) return;
     const pending = this.pendingCollectionRestoration;
     if (pending && pending.id !== item.id) {
-      this.collectionAlbumFeedback = { text: this.albumText("saveFailed"), color: "#a5414b" };
+      this.collectionAlbumFeedback = this.notifyButtonFeedback({ text: this.albumText("saveFailed"), color: "#a5414b" });
       this.playSound("blocked");
       this.dirty = true;
       this.scheduleFrame();
@@ -6522,7 +9500,7 @@ export class ColorEscapeGame {
     }
     if (item.category === "level") {
       if (pending) {
-        this.collectionAlbumFeedback = { text: this.albumText("saveFailed"), color: "#a5414b" };
+        this.collectionAlbumFeedback = this.notifyButtonFeedback({ text: this.albumText("saveFailed"), color: "#a5414b" });
         this.playSound("blocked");
         return;
       }
@@ -6531,9 +9509,12 @@ export class ColorEscapeGame {
         this.playSound("blocked");
         return;
       }
-      this.collectionAlbumDetailId = undefined;
-      this.loadLevel(item.levelId, false);
-      this.beginSelectedChallenge();
+      const levelId = item.levelId;
+      this.closePopup("collection.detail", () => {
+        this.collectionAlbumDetailId = undefined;
+        this.loadLevel(levelId, false);
+        this.beginSelectedChallenge();
+      });
       return;
     }
 
@@ -6552,10 +9533,10 @@ export class ColorEscapeGame {
         COLLECTION_PROGRESS_CATALOG,
       );
       if (restored.status === "insufficient-inspiration") {
-        this.collectionAlbumFeedback = {
+        this.collectionAlbumFeedback = this.notifyButtonFeedback({
           text: this.albumText("insufficientInspiration", { shortfall: restored.shortfall }),
           color: "#a5414b",
-        };
+        });
         this.playSound("blocked");
         this.dirty = true;
         this.scheduleFrame();
@@ -6575,7 +9556,7 @@ export class ColorEscapeGame {
     const outcome = this.persistVerified(candidate, baseline);
     if (outcome !== "committed") {
       if (outcome === "rejected") this.pendingCollectionRestoration = undefined;
-      this.collectionAlbumFeedback = { text: this.albumText("saveFailed"), color: "#a5414b" };
+      this.collectionAlbumFeedback = this.notifyButtonFeedback({ text: this.albumText("saveFailed"), color: "#a5414b" });
       this.playSound("blocked");
       this.dirty = true;
       this.scheduleFrame();
@@ -6583,9 +9564,11 @@ export class ColorEscapeGame {
     }
     this.save = candidate;
     this.pendingCollectionRestoration = undefined;
-    // The detail view already changes to the collected state after a commit;
-    // keep that state clear instead of adding a transient success caption.
+    if (this.collectionRestorationGuide?.itemId === item.id) this.collectionRestorationGuide = undefined;
     this.collectionAlbumFeedback = undefined;
+    // Reveal only the verified restoration; retries reuse the same saved candidate.
+    this.collectionIntro = { level: item.unlockLevel, itemId: item.id, age: 0, restoration: true };
+    this.requestCollectionAlbumArtwork();
     this.playSound("reward");
     this.vibrate("light");
     this.dirty = true;
@@ -6637,12 +9620,14 @@ export class ColorEscapeGame {
   }
 
   private dailyTaskHasNotification(): boolean {
+    if (!this.featureUnlocked("dailyTasks")) return false;
     return dailyTasksHaveNotification(this.save.dailyTaskProgress);
   }
 
   private ensureDailyTaskCycle(date = new Date()): boolean {
-    if (this.pendingDailyTaskClaim) return false;
-    const reconciled = reconcileDailyTaskProgress(this.save.dailyTaskProgress, date, this.save.highestLevel);
+    if (this.pendingSettlement || this.pendingSettlementAbandon || this.welfareTransactionActive() || this.lifeRefillAdTransactionActive() || this.boosterRewardAdTransactionActive() || this.dailyChallengeRewardAdTransactionActive() || this.pendingDailyTaskClaim || this.pendingFeatureGuideAck || this.pendingProfileSave || this.pendingRankingSave || this.pendingBoosterPurchase) return false;
+    const reconciled = reconcileDailyTaskProgress(this.save.dailyTaskProgress, date, this.save.highestLevel,
+      this.featureUnlocked("dailyTasks"));
     if (storageValuesEqual(reconciled, this.save.dailyTaskProgress)) return false;
     this.save = { ...this.save, dailyTaskProgress: reconciled };
     this.persist();
@@ -6678,7 +9663,491 @@ export class ColorEscapeGame {
     return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
   }
 
+  private dailyChallengeState(now = new Date()): DailyChallengeState {
+    if (this.welfareTransactionActive() || this.lifeRefillAdTransactionActive() || this.boosterRewardAdTransactionActive() || this.dailyChallengeRewardAdTransactionActive() || this.pendingFeatureGuideAck || this.pendingProfileSave || this.pendingRankingSave || this.pendingBoosterPurchase) return this.save.dailyChallenge;
+    // A run keeps the assignment from the day it started even if the wall
+    // clock crosses midnight before the board settles. Reconcile to the new
+    // day only after that run has been left or settled.
+    const activeRun = this.save.activeRun;
+    if (activeRun?.daily && activeRun.dailyDayKey === this.save.dailyChallenge.dayKey) {
+      return this.save.dailyChallenge;
+    }
+    const state = reconcileDailyChallengeState(this.save.dailyChallenge, now, this.save.highestLevel);
+    const rewardAd = normalizeDailyChallengeRewardAd(this.save.dailyChallengeRewardAd, state.dayKey);
+    const rewardChanged = !storageValuesEqual(rewardAd, this.save.dailyChallengeRewardAd);
+    if ((!storageValuesEqual(state, this.save.dailyChallenge) || rewardChanged)
+      && !this.pendingDailyTaskClaim
+      && !this.pendingSettlement
+      && !this.pendingSettlementAbandon) {
+      this.save = { ...this.save, dailyChallenge: state, dailyChallengeRewardAd: rewardAd };
+      this.persist();
+    }
+    return state;
+  }
+
+  private dailyChallengeRewardAdTransactionActive(): boolean {
+    return Boolean(this.pendingDailyChallengeRewardAd || this.dailyChallengeRewardAdRequestId
+      || this.save?.dailyChallengeRewardAd?.pending);
+  }
+
+  private dailyChallengeBonusAttempts(state = this.dailyChallengeState()): number {
+    return dailyChallengeRewardAttempts(this.save?.dailyChallengeRewardAd, state.dayKey);
+  }
+
+  private dailyChallengeAttemptsRemaining(state = this.dailyChallengeState()): number {
+    return state.attemptsRemaining + this.dailyChallengeBonusAttempts(state);
+  }
+
+  private dailyChallengeAdVisible(state = this.dailyChallengeState()): boolean {
+    return state.attemptsRemaining <= 0
+      && this.dailyChallengeBonusAttempts(state) <= 0
+      && DAILY_CHALLENGE_DIFFICULTIES.some((difficulty) => !state.completed[difficulty]);
+  }
+
+  /**
+   * Rows that can offer the one-attempt rewarded ad.  The ad is only shown
+   * after the free attempts and any previously granted bonus attempts have
+   * been spent, and an unavailable/locked row keeps its normal locked state.
+   */
+  private dailyChallengeAdRowIndices(state = this.dailyChallengeState()): number[] {
+    if (!this.dailyChallengeAdVisible(state)) return [];
+    return DAILY_CHALLENGE_DIFFICULTIES
+      .map((difficulty, index) => ({ difficulty, index }))
+      .filter(({ difficulty }) => !state.completed[difficulty] && Boolean(getDailyChallengeAssignment(state, difficulty)))
+      .map(({ index }) => index);
+  }
+
+  private drawDailyChallengeRewardAdVisual(
+    key: string,
+    rect: { x: number; y: number; width: number; height: number },
+    actionLabel = this.tr("gameplay.life.getLife"),
+    showRewardSuffix = true,
+  ): void {
+    const ctx = this.ctx;
+    const adBusy = Boolean(this.dailyChallengeRewardAdRequestId);
+    const adRetry = Boolean(this.pendingDailyChallengeRewardAd && !this.dailyChallengeRewardAdRequestId);
+    const pressed = this.buttonPressVisualScale(key) < 1;
+    const compact = rect.width < 220;
+    ctx.save();
+    traceRoundedRect(ctx, rect.x, rect.y, rect.width, rect.height, 14);
+    const fill = ctx.createLinearGradient(0, rect.y, 0, rect.y + rect.height);
+    fill.addColorStop(0, pressed ? "#18bce8" : "#39d9f3");
+    fill.addColorStop(1, pressed ? "#087dbb" : "#0b9dcc");
+    ctx.fillStyle = fill; ctx.fill();
+    ctx.strokeStyle = "#075b9b"; ctx.lineWidth = 3; ctx.stroke();
+    // Small clapper/video mark, matching the existing daily challenge ad
+    // affordance while allowing it to fit inside a row button.
+    const iconWidth = compact ? Math.min(42, rect.width * 0.22) : 27;
+    const iconHeight = compact ? Math.min(29, rect.height * 0.46) : 21;
+    const iconX = rect.x + 12;
+    const iconY = compact ? rect.y + (rect.height - iconHeight) / 2 : rect.y + 7;
+    ctx.fillStyle = "#fff4cf";
+    ctx.fillRect(iconX, iconY + 5, iconWidth, iconHeight - 5);
+    ctx.fillStyle = "#f8b44e";
+    ctx.fillRect(iconX, iconY, iconWidth, 8);
+    ctx.strokeStyle = "#8c4b26"; ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(iconX + iconWidth * 0.16, iconY); ctx.lineTo(iconX + iconWidth * 0.34, iconY + 8);
+    ctx.moveTo(iconX + iconWidth * 0.50, iconY); ctx.lineTo(iconX + iconWidth * 0.68, iconY + 8);
+    ctx.moveTo(iconX + iconWidth * 0.84, iconY); ctx.lineTo(iconX + iconWidth, iconY + 8);
+    ctx.stroke();
+    ctx.fillStyle = "#1464aa";
+    ctx.beginPath();
+    ctx.moveTo(iconX + iconWidth * 0.47, iconY + iconHeight * 0.50);
+    ctx.lineTo(iconX + iconWidth * 0.47, iconY + iconHeight * 0.84);
+    ctx.lineTo(iconX + iconWidth * 0.76, iconY + iconHeight * 0.67);
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+    this.label(adBusy ? this.tr("page.loading") : adRetry ? this.tr("common.retry") : actionLabel,
+      rect.x + (compact ? rect.width * 0.58 : 128), rect.y + rect.height / 2 + (compact ? 8 : 0),
+      Math.min(23, rect.height * 0.36), "#ffffff", "center", 1000, "#003753", 3,
+      compact ? Math.max(60, rect.width * 0.38) : 176);
+    if (showRewardSuffix) {
+      this.label("+1", rect.x + rect.width * 0.88, rect.y + rect.height / 2 + (compact ? 8 : 0),
+        Math.min(23, rect.height * 0.36), "#fff5dd", "center", 1000, "#7b2109", 3,
+        Math.max(30, rect.width * 0.16));
+    }
+  }
+
+  private dailyChallengeRewardAdAvailable(): boolean {
+    try { return Boolean(this.host.showRewardedAd && (this.host.isRewardedAdAvailable?.() ?? true)); }
+    catch { return false; }
+  }
+
+  private startDailyChallengeRewardAd(): void {
+    if (this.pendingDailyChallengeRewardAd) {
+      this.finishDailyChallengeRewardAdSave();
+      return;
+    }
+    if (this.save.dailyChallengeRewardAd?.pending) {
+      this.recoverDailyChallengeRewardAd();
+      if (this.pendingDailyChallengeRewardAd) this.finishDailyChallengeRewardAdSave();
+      return;
+    }
+    if (this.dailyChallengeRewardAdTransactionActive() || this.screen !== "dailyChallenge"
+      || !this.appVisible || this.pendingLifeRefillAd || this.lifeRefillAdRequestId
+      || this.boosterRewardAdTransactionActive() || this.welfareTransactionActive()
+      || this.pendingProfileSave || this.pendingRankingSave || this.pendingBoosterPurchase) return;
+    const state = this.dailyChallengeState();
+    if (!this.dailyChallengeAdVisible(state)) return;
+    if (!this.dailyChallengeRewardAdAvailable()) {
+      this.dailyChallengeFeedback = this.notifyButtonFeedback({ text: "广告暂不可用，请稍后重试", color: "#a5414b" });
+      this.playSound("blocked"); this.dirty = true; this.scheduleFrame(); return;
+    }
+    const requestId = "daily-challenge-ad-" + Date.now() + "-" + Math.random().toString(36).slice(2, 12);
+    const baselineSave = this.cloneSave(this.save);
+    const prepared = prepareDailyChallengeRewardAd(baselineSave.dailyChallengeRewardAd, {
+      id: requestId, dayKey: state.dayKey, nowMs: Date.now(),
+    });
+    if (prepared.status !== "prepared") return;
+    const candidateSave = this.cloneSave(baselineSave);
+    candidateSave.dailyChallengeRewardAd = prepared.state;
+    this.pendingDailyChallengeRewardAd = { stage: "prepare", requestId, baselineSave, candidateSave };
+    this.dailyChallengeFeedback = undefined;
+    this.finishDailyChallengeRewardAdSave();
+  }
+
+  private finishDailyChallengeRewardAdSave(): void {
+    const pending = this.pendingDailyChallengeRewardAd;
+    if (!pending) return;
+    const outcome = this.persistVerified(pending.candidateSave, pending.baselineSave);
+    if (outcome !== "committed") {
+      this.dailyChallengeFeedback = this.notifyButtonFeedback({ text: outcome === "unknown" ? "保存状态未知，请重试" : "保存失败，请重试", color: "#a5414b" });
+      this.playSound("blocked"); this.dirty = true; this.scheduleFrame(); return;
+    }
+    this.save = pending.candidateSave;
+    this.pendingDailyChallengeRewardAd = undefined;
+    if (pending.stage === "prepare") void this.watchDailyChallengeRewardAd(pending.requestId);
+    else if (pending.stage === "receipt") this.settleDailyChallengeRewardAd();
+    else if (pending.stage === "reward") {
+      this.dailyChallengeFeedback = this.notifyButtonFeedback({ text: "挑战次数 +1", color: "#1f8a3b" });
+      this.playSound("reward"); this.vibrate("light");
+    } else this.dailyChallengeFeedback = this.notifyButtonFeedback({ text: pending.message ?? "广告未完成", color: "#a5414b" });
+    this.dirty = true; this.scheduleFrame();
+  }
+
+  private async watchDailyChallengeRewardAd(requestId: string): Promise<void> {
+    if (this.dailyChallengeRewardAdRequestId) return;
+    this.dailyChallengeRewardAdRequestId = requestId;
+    this.syncMusic(); this.dirty = true; this.scheduleFrame();
+    let result: { status: string; requestId: string };
+    try { result = await this.host.showRewardedAd?.(requestId) ?? { status: "unavailable", requestId }; }
+    catch { result = { status: "error", requestId }; }
+    if (this.dailyChallengeRewardAdRequestId !== requestId) return;
+    this.dailyChallengeRewardAdRequestId = undefined;
+    const request = this.save.dailyChallengeRewardAd?.pending;
+    if (!request || request.id !== requestId) { this.syncMusic(); return; }
+    const completed = result.requestId === requestId && result.status === "completed";
+    const baselineSave = this.cloneSave(this.save);
+    const candidateSave = this.cloneSave(baselineSave);
+    candidateSave.dailyChallengeRewardAd = completed
+      ? confirmDailyChallengeRewardAd(baselineSave.dailyChallengeRewardAd, requestId, Date.now()).state
+      : cancelDailyChallengeRewardAd(baselineSave.dailyChallengeRewardAd, requestId).state;
+    this.pendingDailyChallengeRewardAd = {
+      stage: completed ? "receipt" : "cancel", requestId, baselineSave, candidateSave,
+      message: completed ? undefined : (result.status === "cancelled" ? "广告已取消" : "广告未完成"),
+    };
+    this.finishDailyChallengeRewardAdSave();
+    this.syncMusic();
+  }
+
+  private settleDailyChallengeRewardAd(): void {
+    const baselineSave = this.cloneSave(this.save);
+    // A completed receipt may be recovered after Beijing midnight. Reconcile
+    // the challenge day before depositing the bonus so the old-day receipt is
+    // credited to the current day instead of being discarded on the next read.
+    const reconciled = reconcileDailyChallengeState(
+      baselineSave.dailyChallenge, new Date(), baselineSave.highestLevel, LEVELS,
+    );
+    const dayKey = reconciled.dayKey;
+    const completed = completeDailyChallengeRewardAd(baselineSave.dailyChallengeRewardAd, dayKey, Date.now());
+    if (completed.status !== "rewarded") return;
+    const candidateSave = this.cloneSave(baselineSave);
+    candidateSave.dailyChallenge = reconciled;
+    candidateSave.dailyChallengeRewardAd = completed.state;
+    this.pendingDailyChallengeRewardAd = {
+      stage: "reward", requestId: completed.request?.id ?? "", baselineSave, candidateSave,
+    };
+    this.finishDailyChallengeRewardAdSave();
+  }
+
+  private recoverDailyChallengeRewardAd(): void {
+    if (!this.storageBaselineReady || !this.appVisible || this.dailyChallengeRewardAdRequestId
+      || this.pendingWelfareSave || this.welfareAdRequestId || this.lifeRefillAdTransactionActive()
+      || this.boosterRewardAdTransactionActive()) return;
+    if (this.pendingDailyChallengeRewardAd) {
+      if (this.screen !== "dailyChallenge") this.openDailyChallenge();
+      return;
+    }
+    const request = this.save.dailyChallengeRewardAd?.pending;
+    if (!request) return;
+    if (this.screen !== "dailyChallenge") this.openDailyChallenge();
+    if (request.phase === "completed") this.settleDailyChallengeRewardAd();
+    else {
+      const baselineSave = this.cloneSave(this.save);
+      const candidateSave = this.cloneSave(baselineSave);
+      candidateSave.dailyChallengeRewardAd = cancelDailyChallengeRewardAd(baselineSave.dailyChallengeRewardAd, request.id).state;
+      this.pendingDailyChallengeRewardAd = { stage: "cancel", requestId: request.id, baselineSave, candidateSave, message: "广告未完成" };
+      this.finishDailyChallengeRewardAdSave();
+    }
+  }
+
+  private dailyChallengeNextAttemptMs(nowMs = Date.now()): number {
+    const state = this.dailyChallengeState(new Date(nowMs));
+    return state.attemptsRemaining >= DAILY_CHALLENGE_MAX_ATTEMPTS
+      ? 0 : millisecondsUntilNextDailyChallengeDay(new Date(nowMs));
+  }
+
+  private dailyChallengeHasNotification(): boolean {
+    if (!this.featureUnlocked("dailyChallenge")) return false;
+    const state = this.dailyChallengeState();
+    return this.dailyChallengeAttemptsRemaining(state) > 0 && DAILY_CHALLENGE_DIFFICULTIES.some((difficulty) => !state.completed[difficulty]);
+  }
+
+  private dailyChallengeResetCountdown(date = new Date()): string {
+    const seconds = Math.max(0, Math.ceil(millisecondsUntilNextDailyChallengeDay(date) / 1000));
+    return `${String(Math.floor(seconds / 3600)).padStart(2, "0")}:${String(Math.floor(seconds / 60) % 60).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+  }
+
+  private openDailyChallenge(): void {
+    if (!this.requireFeature("dailyChallenge")) return;
+    this.dailyChallengeFeedback = undefined;
+    this.dailyChallengeState();
+    this.screen = "dailyChallenge";
+    this.requestDailyChallengeArt();
+    this.playSound("button");
+    this.dirty = true;
+    this.scheduleFrame();
+  }
+
+  private closeDailyChallenge(): void {
+    this.closePopup("dailyChallenge", () => {
+      this.dailyChallengeFeedback = undefined;
+      this.releaseDailyChallengeArt();
+      this.screen = "home";
+      this.playSound("button");
+      this.dirty = true;
+      this.scheduleFrame();
+    });
+  }
+
+  private startDailyChallenge(difficulty: DailyChallengeDifficulty): void {
+    if (!this.requireFeature("dailyChallenge")) return;
+    const previousModel = this.model;
+    const previousScreen = this.screen;
+    const now = Date.now();
+    const baseline = this.cloneSave(this.save);
+    const state = reconcileDailyChallengeState(baseline.dailyChallenge, new Date(now), baseline.highestLevel);
+    if (state.completed[difficulty]) {
+      this.dailyChallengeFeedback = this.notifyButtonFeedback({ text: "今日已挑战成功，北京时间00:00重置", color: "#65717d" });
+      this.playSound("blocked");
+      this.dirty = true;
+      this.scheduleFrame();
+      return;
+    }
+    const assignment = getDailyChallengeAssignment(state, difficulty);
+    const source = assignment && getDailyChallengeSourceLevel(state, difficulty);
+    const adaptedSource = assignment && source ? cloneDailyChallengeLevel(assignment) : undefined;
+    if (!assignment || !source || !adaptedSource) {
+      this.dailyChallengeFeedback = this.notifyButtonFeedback({ text: "当前阶段暂无可用关卡", color: "#a5414b" });
+      this.playSound("blocked");
+      this.dirty = true;
+      this.scheduleFrame();
+      return;
+    }
+    const attempt = consumeDailyChallengeAttempt(state, now);
+    const rewardAdState = normalizeDailyChallengeRewardAd(baseline.dailyChallengeRewardAd, state.dayKey);
+    const bonusAttempt = !attempt.accepted
+      ? consumeDailyChallengeRewardAttempt(rewardAdState, state.dayKey)
+      : { state: rewardAdState, accepted: false, attemptsRemaining: dailyChallengeRewardAttempts(rewardAdState, state.dayKey) };
+    if (!attempt.accepted && !bonusAttempt.accepted) {
+      this.dailyChallengeFeedback = this.notifyButtonFeedback({ text: "今日次数已用完，北京时间00:00重置", color: "#a5414b" });
+      this.playSound("blocked");
+      this.dirty = true;
+      this.scheduleFrame();
+      return;
+    }
+    const candidate = this.cloneSave(baseline);
+    candidate.dailyChallenge = attempt.accepted ? attempt.state : state;
+    candidate.dailyChallengeRewardAd = bonusAttempt.state;
+    // The challenge consumes its own attempt but must not move campaign
+    // progress or charge a campaign life. The active-run marker lets the
+    // settlement path distinguish this source level from a normal campaign.
+    const returnLevelId = candidate.currentLevel;
+    candidate.currentLevel = returnLevelId;
+    const outcome = this.persistVerified(candidate, baseline);
+    if (outcome !== "committed") {
+      this.dailyChallengeFeedback = this.notifyButtonFeedback({ text: "挑战次数保存失败，请重试", color: "#a5414b" });
+      this.playSound("blocked");
+      this.dirty = true;
+      this.scheduleFrame();
+      return;
+    }
+    this.save = candidate;
+    this.dailyChallengeFeedback = undefined;
+    this.loadLevel(source.id, false, false, adaptedSource, true);
+    // loadLevel intentionally clears the run journal. Restore a challenge
+    // journal after it loads the immutable source level and preserve campaign
+    // selection for the return path.
+    this.save.currentLevel = returnLevelId;
+    this.save.activeRun = {
+      ...this.createRunJournal(source.id),
+      returnLevelId,
+      daily: true,
+      dailyDayKey: state.dayKey,
+      dailyChallengeDifficulty: difficulty,
+      dailyChallengeSourceLevelId: source.id,
+      dailyChallengeOwner: getDailyChallengeRunOwner(state, difficulty),
+      lifeStarted: true,
+    };
+    this.persist();
+    this.dailyChallengePendingDifficulty = difficulty;
+    const preparedModel = this.model;
+    if (this.popupEntrance?.snapshot().some(entry => entry.key === "dailyChallenge")) {
+      this.model = previousModel;
+      this.screen = previousScreen;
+    }
+    this.closePopup("dailyChallenge", () => {
+      this.model = preparedModel;
+      this.screen = "playing";
+      this.releaseDailyChallengeArt();
+      this.updateBoosterUnlockGuide(0);
+    });
+    this.playSound("button");
+    this.dirty = true;
+    this.scheduleFrame();
+  }
+
+  private dailyChallengeRunInfo(): { difficulty: DailyChallengeDifficulty; sourceLevelId: number; returnLevelId: number } | undefined {
+    const run = this.save.activeRun;
+    if (!run?.daily || !run.dailyChallengeDifficulty || !run.dailyChallengeSourceLevelId) return undefined;
+    return {
+      difficulty: run.dailyChallengeDifficulty,
+      sourceLevelId: run.dailyChallengeSourceLevelId,
+      returnLevelId: run.returnLevelId,
+    };
+  }
+
+  /** Restarting a daily board consumes another daily attempt and never starts
+   * a campaign life or changes the campaign level pointer. */
+  private restartDailyChallenge(): void {
+    if (!this.requireFeature("dailyChallenge")) return;
+    const previousModel = this.model;
+    const previousScreen = this.screen;
+    const info = this.dailyChallengeRunInfo();
+    if (!info) {
+      const levelId = this.model.level.id;
+      this.closePopup(["pause", "failed"], () => this.loadLevel(levelId, true));
+      return;
+    }
+    const now = Date.now();
+    const baseline = this.cloneSave(this.save);
+    const state = reconcileDailyChallengeState(baseline.dailyChallenge, new Date(now), baseline.highestLevel, LEVELS, baseline.activeRun);
+    if (state.completed[info.difficulty]) {
+      this.dailyChallengeFeedback = this.notifyButtonFeedback({ text: "今日已挑战成功，北京时间00:00重置", color: "#65717d" });
+      this.playSound("blocked");
+      this.dirty = true;
+      this.scheduleFrame();
+      return;
+    }
+    const assignment = getDailyChallengeAssignment(state, info.difficulty);
+    const source = getDailyChallengeSourceLevel(state, info.difficulty);
+    const adaptedSource = assignment && source ? cloneDailyChallengeLevel(assignment) : undefined;
+    if (!assignment || !source || !adaptedSource) {
+      this.dailyChallengeFeedback = this.notifyButtonFeedback({ text: "当前阶段暂无可用关卡", color: "#a5414b" });
+      this.playSound("blocked");
+      this.dirty = true;
+      this.scheduleFrame();
+      return;
+    }
+    const attempt = consumeDailyChallengeAttempt(state, now);
+    const rewardAdState = normalizeDailyChallengeRewardAd(baseline.dailyChallengeRewardAd, state.dayKey);
+    const bonusAttempt = !attempt.accepted
+      ? consumeDailyChallengeRewardAttempt(rewardAdState, state.dayKey)
+      : { state: rewardAdState, accepted: false, attemptsRemaining: dailyChallengeRewardAttempts(rewardAdState, state.dayKey) };
+    if (!attempt.accepted && !bonusAttempt.accepted) {
+      this.dailyChallengeFeedback = this.notifyButtonFeedback({ text: "今日次数已用完，北京时间00:00重置", color: "#a5414b" });
+      this.playSound("blocked");
+      this.dirty = true;
+      this.scheduleFrame();
+      return;
+    }
+    const candidate = this.cloneSave(baseline);
+    candidate.dailyChallenge = attempt.accepted ? attempt.state : state;
+    candidate.dailyChallengeRewardAd = bonusAttempt.state;
+    candidate.activeRun = undefined;
+    candidate.currentLevel = info.returnLevelId;
+    if (this.persistVerified(candidate, baseline) !== "committed") {
+      this.dailyChallengeFeedback = this.notifyButtonFeedback({ text: "挑战次数保存失败，请重试", color: "#a5414b" });
+      this.playSound("blocked");
+      this.dirty = true;
+      this.scheduleFrame();
+      return;
+    }
+    this.save = candidate;
+    this.dailyChallengeFeedback = undefined;
+    this.loadLevel(source.id, false, false, adaptedSource, true);
+    this.save.currentLevel = info.returnLevelId;
+    this.save.activeRun = {
+      ...this.createRunJournal(source.id),
+      returnLevelId: info.returnLevelId,
+      daily: true,
+      dailyDayKey: state.dayKey,
+      dailyChallengeDifficulty: info.difficulty,
+      dailyChallengeSourceLevelId: source.id,
+      dailyChallengeOwner: getDailyChallengeRunOwner(state, info.difficulty),
+      lifeStarted: true,
+    };
+    this.persist();
+    this.resetPuzzlePresentation();
+    this.dailyChallengePendingDifficulty = info.difficulty;
+    const preparedModel = this.model;
+    if (this.popupEntrance?.snapshot().some(entry => entry.key === "pause" || entry.key === "failed")) {
+      this.model = previousModel;
+      this.screen = previousScreen;
+    }
+    this.closePopup(["pause", "failed"], () => {
+      this.model = preparedModel;
+      this.screen = "playing";
+      this.releaseDailyChallengeArt();
+    });
+    this.playSound("button");
+    this.dirty = true;
+    this.scheduleFrame();
+  }
+
+  /** Leave a daily challenge without refunding its already-consumed attempt
+   * or any booster. The campaign pointer returns to the level it had before
+   * entering the challenge. */
+  private leaveDailyChallengeRun(): void {
+    const info = this.dailyChallengeRunInfo();
+    if (!info) {
+      const levelId = this.model.level.id;
+      this.closePopup(["pause", "failed"], () => this.loadLevel(levelId, false));
+      return;
+    }
+    const candidate = this.cloneSave(this.save);
+    candidate.activeRun = undefined;
+    candidate.currentLevel = info.returnLevelId;
+    if (this.persistVerified(candidate, this.save) !== "committed") {
+      this.playSound("blocked");
+      this.dirty = true;
+      this.scheduleFrame();
+      return;
+    }
+    this.save = candidate;
+    this.closePopup(["pause", "failed"], () => {
+      this.loadLevel(info.returnLevelId, false);
+      this.dailyChallengePendingDifficulty = undefined;
+      this.screen = "home";
+    });
+    this.playSound("button");
+    this.dirty = true;
+    this.scheduleFrame();
+  }
+
   private openDailyTasks(): void {
+    if (!this.requireFeature("dailyTasks")) return;
     this.ensureDailyTaskCycle();
     this.dailyTaskFeedback = undefined;
     this.screen = "dailyTasks";
@@ -6690,19 +10159,22 @@ export class ColorEscapeGame {
   }
 
   private closeDailyTasks(): void {
-    this.cancelDailyTaskRefreshWatch();
-    this.releaseDailyTaskArt();
-    this.dailyTaskFeedback = undefined;
-    this.screen = "home";
-    this.playSound("button");
-    this.dirty = true;
-    this.scheduleFrame();
+    this.closePopup("dailyTasks", () => {
+      this.cancelDailyTaskRefreshWatch();
+      this.releaseDailyTaskArt();
+      this.dailyTaskFeedback = undefined;
+      this.screen = "home";
+      this.playSound("button");
+      this.dirty = true;
+      this.scheduleFrame();
+    });
   }
 
   private claimDailyTaskReward(id: DailyTaskId | "bonus"): void {
+    if (!this.pendingDailyTaskClaim && !this.requireFeature("dailyTasks")) return;
     const pending = this.pendingDailyTaskClaim;
     if (pending && (pending.id !== id || pending.dayKey !== this.save.dailyTaskProgress.dayKey)) {
-      this.dailyTaskFeedback = { text: this.dailyText("claimUnknown"), color: "#a8671a" };
+      this.dailyTaskFeedback = this.notifyButtonFeedback({ text: this.dailyText("claimUnknown"), color: "#a8671a" });
       this.playSound("blocked");
       return;
     }
@@ -6727,7 +10199,7 @@ export class ColorEscapeGame {
       rewardCoins = result.rewardCoins;
       rewardInspiration = result.rewardInspiration;
       if (rewardCoins > 0 && candidate.coins + rewardCoins > 999999) {
-        this.dailyTaskFeedback = { text: this.dailyText("coinsFull"), color: "#a5414b" };
+        this.dailyTaskFeedback = this.notifyButtonFeedback({ text: this.dailyText("coinsFull"), color: "#a5414b" });
         this.playSound("blocked");
         this.vibrate("light");
         return;
@@ -6756,10 +10228,10 @@ export class ColorEscapeGame {
     const outcome = this.persistVerified(candidate, baseline);
     if (outcome !== "committed") {
       if (outcome === "rejected") this.pendingDailyTaskClaim = undefined;
-      this.dailyTaskFeedback = {
+      this.dailyTaskFeedback = this.notifyButtonFeedback({
         text: this.dailyText(outcome === "unknown" ? "claimUnknown" : "claimFailed"),
         color: "#a5414b",
-      };
+      });
       this.playSound("blocked");
       this.vibrate("light");
       this.dirty = true;
@@ -6778,17 +10250,18 @@ export class ColorEscapeGame {
     const rewardSource = this.dailyTaskRewardSource(id);
     if (rewardCoins > 0) this.beginHomeCoinFlight(rewardCoins, rewardSource);
     if (rewardInspiration > 0) this.beginInspirationFlight(rewardInspiration, rewardSource);
-    this.playSound("reward");
+    this.playSound("gold");
     this.vibrate("light");
     this.dirty = true;
     this.scheduleFrame();
   }
 
   private activateDailyTask(id: DailyTaskId): void {
+    if (!this.pendingDailyTaskClaim && !this.requireFeature("dailyTasks")) return;
     if (this.pendingDailyTaskClaim) {
       if (this.pendingDailyTaskClaim.id === id) this.claimDailyTaskReward(id);
       else {
-        this.dailyTaskFeedback = { text: this.dailyText("claimUnknown"), color: "#a5414b" };
+        this.dailyTaskFeedback = this.notifyButtonFeedback({ text: this.dailyText("claimUnknown"), color: "#a5414b" });
         this.playSound("blocked");
         this.vibrate("light");
         this.dirty = true;
@@ -6803,11 +10276,30 @@ export class ColorEscapeGame {
       return;
     }
     if (!entry.completed) {
-      this.cancelDailyTaskRefreshWatch();
-      this.releaseDailyTaskArt();
-      this.dailyTaskFeedback = undefined;
-      this.screen = "home";
-      this.beginSelectedChallenge();
+      this.closePopup("dailyTasks", () => {
+        this.cancelDailyTaskRefreshWatch();
+        this.releaseDailyTaskArt();
+        this.dailyTaskFeedback = undefined;
+        this.screen = "home";
+        // Daily tasks always send the player into the highest unlocked
+        // mainline level. The home screen may still be showing an older level
+        // that the player browsed to, so do not reuse the current model here.
+        // A temporary test session is a Web-only authoring mode; restore its
+        // durable baseline before entering the real campaign.
+        const temporarySession = this.temporaryLevelTestSession;
+        if (temporarySession) {
+          this.temporaryLevelTestSession = undefined;
+          this.temporaryLevelSelector = undefined;
+          this.save = this.cloneSave(temporarySession.baselineSave);
+          this.updateCanvasLanguage();
+        }
+        const highestLevel = Math.max(1, Math.min(LEVELS.length,
+          Math.floor(Number(this.save.highestLevel) || 1)));
+        if (temporarySession || this.model.level.id !== highestLevel || this.save.currentLevel !== highestLevel) {
+          this.loadLevel(highestLevel, false);
+        }
+        this.beginSelectedChallenge();
+      });
       return;
     }
     this.playSound("button");
@@ -6818,6 +10310,7 @@ export class ColorEscapeGame {
   }
 
   private achievementHasNotification(): boolean {
+    if (!this.featureUnlocked("achievements")) return false;
     return hasClaimableAchievements(this.save, this.save.achievementProgress);
   }
 
@@ -6884,7 +10377,8 @@ export class ColorEscapeGame {
     // Resolve overlapping touch padding by nearest centre, not catalog order.
     // Both press and release dispatch use this exact same resolution.
     return this.achievementVisibleEntries()
-      .filter(({ index }) => {
+      .filter(({ entry, index }) => {
+        if (entry.claimed) return false;
         const rect = this.achievementClaimRect(index);
         return rect.width > 0 && rect.height > 0 && this.interactionHit(point, rect, { bounds });
       })
@@ -6920,9 +10414,10 @@ export class ColorEscapeGame {
   }
 
   private claimAchievement(id: AchievementId): void {
+    if (!this.pendingAchievementClaim && !this.requireFeature("achievements")) return;
     const pending = this.pendingAchievementClaim;
     if (pending && pending.id !== id) {
-      this.achievementFeedback = { text: this.tr("achievement.claimUnknown"), color: "#ffbd78" };
+      this.achievementFeedback = this.notifyButtonFeedback({ text: this.tr("achievement.claimUnknown"), color: "#ffbd78" });
       this.playSound("blocked");
       return;
     }
@@ -6935,7 +10430,7 @@ export class ColorEscapeGame {
     const entryIndex = entries.findIndex((candidate) => candidate.id === id);
     const rewardSource = pending?.rewardSource ?? this.achievementRewardSource(entryIndex);
     if (!pending && this.save.coins + entry!.rewardCoins > 999999) {
-      this.achievementFeedback = { text: this.tr("achievement.coinsFull"), color: "#ffbd78" };
+      this.achievementFeedback = this.notifyButtonFeedback({ text: this.tr("achievement.coinsFull"), color: "#ffbd78" });
       this.playSound("blocked");
       this.vibrate("light");
       return;
@@ -6956,10 +10451,10 @@ export class ColorEscapeGame {
     const outcome = this.persistVerified(candidate, baseline);
     if (outcome !== "committed") {
       if (outcome === "rejected") this.pendingAchievementClaim = undefined;
-      this.achievementFeedback = {
+      this.achievementFeedback = this.notifyButtonFeedback({
         text: outcome === "unknown" ? this.tr("achievement.claimUnknown") : this.tr("achievement.claimFailed"),
         color: "#ff9a86",
-      };
+      });
       this.playSound("blocked");
       this.vibrate("light");
       this.dirty = true;
@@ -6969,13 +10464,10 @@ export class ColorEscapeGame {
 
     this.save = candidate;
     this.pendingAchievementClaim = undefined;
-    this.achievementFeedback = {
-      text: this.tr("achievement.claimSuccess", { amount: rewardCoins }),
-      color: "#78f5a6",
-    };
+    this.achievementFeedback = undefined;
     this.emitBurst(rewardSource.x, rewardSource.y, "#ffe15c", 12, 84);
     this.beginHomeCoinFlight(rewardCoins, rewardSource);
-    this.playSound("reward");
+    this.playSound("gold");
     this.vibrate("light");
     this.dirty = true;
     this.scheduleFrame();
@@ -7297,14 +10789,14 @@ export class ColorEscapeGame {
 
   private beginJourneyScroll(point: PointerSample): boolean {
     if (!this.artReady || !this.storageBaselineReady || this.screen !== "levels"
-      || this.navigationTransition || this.journeyPresentation || !this.formalPageReady("levels")) {
+      || this.navigationTransition || this.journeyPresentationBlocksInput() || !this.formalPageReady("levels")) {
       return false;
     }
     const viewport = homeArtRect(this.journeyScrollViewportArt());
     if (!inside(point.x, point.y, viewport)) return false;
     this.journeyScrollVelocity = 0;
     this.pointerNow = { x: point.x, y: point.y };
-    const nowMs = typeof performance !== "undefined" ? performance.now() : Date.now();
+    const nowMs = monotonicGameTime();
     this.journeyScrollGesture = {
       pointerId: point.id,
       startX: point.x,
@@ -7323,7 +10815,7 @@ export class ColorEscapeGame {
   private updateJourneyScroll(point: PointerSample): boolean {
     const gesture = this.journeyScrollGesture;
     if (!gesture || point.id !== gesture.pointerId) return false;
-    if (this.screen !== "levels" || this.journeyPresentation) {
+    if (this.screen !== "levels" || this.journeyPresentationBlocksInput()) {
       this.journeyScrollGesture = undefined;
       this.dirty = true;
       this.scheduleFrame();
@@ -7346,7 +10838,7 @@ export class ColorEscapeGame {
         bounds.min - JOURNEY_SCROLL_MAX_OVERSCROLL,
         Math.min(bounds.max + JOURNEY_SCROLL_MAX_OVERSCROLL, rubberOffset),
       );
-      const nowMs = typeof performance !== "undefined" ? performance.now() : Date.now();
+      const nowMs = monotonicGameTime();
       const elapsedSeconds = Math.max(0.001, (nowMs - gesture.lastTimeMs) / 1000);
       const sampleDelta = -(point.y - gesture.lastY) / HOME_ARTBOARD_SCALE;
       if (Math.abs(sampleDelta) > 0.01) {
@@ -7365,7 +10857,7 @@ export class ColorEscapeGame {
   }
 
   private updateJourneyScrollMotion(delta: number): void {
-    if (this.journeyScrollGesture || this.journeyPresentation || this.screen !== "levels" || this.navigationTransition) return;
+    if (this.journeyScrollGesture || this.journeyPresentationBlocksInput() || this.screen !== "levels" || this.navigationTransition) return;
     const bounds = this.journeyScrollBounds();
     const target = this.journeyScrollOffset < bounds.min
       ? bounds.min
@@ -7438,6 +10930,7 @@ export class ColorEscapeGame {
   }
 
   private requestJourneyPresentationArt(retry = false): void {
+    if (this.journeyPresentation?.sceneReveal) return;
     const art = this.formalPageArtFor("levels");
     const presentation = this.journeyPresentation;
     if (!presentation || art?.screen !== "levels") return;
@@ -7449,12 +10942,14 @@ export class ColorEscapeGame {
   }
 
   private journeyPresentationArtReady(): boolean {
+    if (this.journeyPresentation?.sceneReveal) return this.journeySceneArtReady();
     const art = this.formalPageArtFor("levels");
     return art?.screen === "levels" && Boolean(art.deferred.presentation)
       && Boolean(this.journeyPresentationRewardImage(art));
   }
 
   private journeyPresentationArtFailed(): boolean {
+    if (this.journeyPresentation?.sceneReveal) return this.journeyHomeThemeFailed;
     const art = this.formalPageArtFor("levels");
     if (art?.screen !== "levels") return this.formalPageFailed("levels");
     const event = this.journeyPresentation?.event;
@@ -7475,6 +10970,16 @@ export class ColorEscapeGame {
     return this.journeyScrollView().episodeRows.filter((row) => (
       art.deferred.failedEpisodeIndexes.includes(this.journeyEpisodeArtIndex(row.episode.index))
     ));
+  }
+
+  private journeyDestinationRetryRect(): Rect | undefined {
+    const art = this.formalPageArtFor("levels");
+    if (art?.screen !== "levels" || !art.deferred.destinationError) return undefined;
+    const row = this.journeyScrollView().entries.find((entry) => entry.kind === "finale");
+    if (!row) return undefined;
+    const placement = FORMAL_JOURNEY_LAYOUT.journeyContent.finaleImage;
+    return homeArtRect({ x: placement.x, y: row.y + placement.yOffset,
+      width: placement.width, height: placement.height });
   }
 
   private journeyEpisodeButtonArtRect(row: JourneyEpisodeScrollEntry): HomeArtPlacement {
@@ -7512,7 +11017,8 @@ export class ColorEscapeGame {
   }
 
   private requestJourneyHomeThemeArt(index: number): Promise<boolean> {
-    const episodeIndex = sanitizeJourneyEpisodeIndex(index, this.save.highestLevel);
+    this.journeyHomeThemeFailed = false;
+    const episodeIndex = sanitizeJourneyEpisodeIndex(index, this.save.highestLevel, this.save.rewardedLevels);
     if (episodeIndex === 1 && this.art.home) {
       ++this.journeyHomeThemeRequestToken;
       if (this.journeyHomeThemeArt) this.host.releaseImage?.(this.journeyHomeThemeArt);
@@ -7550,6 +11056,7 @@ export class ColorEscapeGame {
     }).catch(() => {
       if (token !== this.journeyHomeThemeRequestToken) return false;
       this.journeyHomeThemeLoading = false;
+      this.journeyHomeThemeFailed = true;
       this.dirty = true;
       this.scheduleFrame();
       return false;
@@ -7557,7 +11064,7 @@ export class ColorEscapeGame {
   }
 
   private loadJourneyHomeThemeCandidate(index: number): Promise<JourneyThemeArtCandidate | undefined> {
-    const episodeIndex = sanitizeJourneyEpisodeIndex(index, this.save.highestLevel);
+    const episodeIndex = sanitizeJourneyEpisodeIndex(index, this.save.highestLevel, this.save.rewardedLevels);
     const token = ++this.journeyHomeThemeRequestToken;
     if (episodeIndex === 1 && this.art.home) {
       this.journeyHomeThemeLoading = false;
@@ -7613,7 +11120,8 @@ export class ColorEscapeGame {
   }
 
   private selectJourneyEpisode(episode: JourneyEpisode): void {
-    if (episode.unlockLevel > this.save.highestLevel) {
+    if (!this.requireFeature("levels")) return;
+    if (!isJourneyEpisodeUnlocked(episode, this.save.highestLevel, this.save.rewardedLevels)) {
       this.playSound("blocked");
       this.vibrate("light");
       return;
@@ -7637,6 +11145,7 @@ export class ColorEscapeGame {
   }
 
   private openJourneyReward(reward: JourneyReward): void {
+    if (!this.requireFeature("levels")) return;
     if (this.pendingJourneyClaim && this.pendingJourneyClaim.eventLevel !== reward.level) {
       this.playSound("blocked");
       this.vibrate("light");
@@ -7671,6 +11180,7 @@ export class ColorEscapeGame {
   }
 
   private hasClaimableJourneyReward(): boolean {
+    if (!this.featureUnlocked("levels")) return false;
     return JOURNEY_MILESTONE_REWARDS.some((reward) => this.journeyRewardClaimable(reward));
   }
 
@@ -7684,15 +11194,156 @@ export class ColorEscapeGame {
       : undefined;
   }
 
+  private beginCollectionIntro(): boolean {
+    if(this.profilePage)return false;
+    if (this.featureUnlockGuide) return false;
+    if (this.collectionIntro) return true;
+    if (this.screen !== "home" || this.homeCoinFlight || this.directLevelTransition
+      || this.navigationTransition || this.lifeRefillOpen || this.journeyPresentation) return false;
+    if (!this.save.collectionIntroPending || this.save.collectionIntroShown) return false;
+    const item = MASTERPIECE_COLLECTION_CATALOG.find((card) => card.unlockLevel === 5);
+    if (!item) return false;
+    this.collectionIntro = { level: 5, itemId: item.id, age: 0 };
+    this.requestCollectionAlbumArtwork();
+    this.dirty = true;
+    this.scheduleFrame();
+    return true;
+  }
+
+  private suppliedRevealAssets(group: "painting" | "scene"): Readonly<Record<string, HTMLImageElement>> | undefined {
+    this.suppliedRevealArt ??= new SuppliedRevealArtStore(
+      async (path) => {
+        const image = await this.host.createImage(path);
+        this.artLoadedImageCount += 1;
+        return image;
+      },
+      (image) => this.host.releaseImage?.(image),
+      () => { this.dirty = true; this.scheduleFrame(); },
+    );
+    this.suppliedRevealArt.request(group);
+    return this.suppliedRevealArt.imageGroup(group);
+  }
+
+  private collectionIntroArtworkReady(): boolean {
+    const item = this.collectionIntro && findCollectionCatalogItem(this.collectionIntro.itemId);
+    return Boolean(item && this.collectionAlbumArtwork?.image(this.collectionAlbumAtlasIndex(item))
+      && this.suppliedRevealArt?.imageGroup("painting"));
+  }
+
+  private collectionIntroOnCurrentScreen(): boolean {
+    return Boolean(this.collectionIntro
+      && this.screen === (this.collectionIntro.unlockPreview ? "win" : this.collectionIntro.restoration ? "records" : "home"));
+  }
+
+  private collectionIntroReady(): boolean {
+    return Boolean(this.collectionIntro && this.collectionIntroOnCurrentScreen() && this.appVisible
+      && this.collectionIntroArtworkReady()
+      && (this.save.reducedMotion || this.collectionIntro.age >= COLLECTION_INTRO_DURATION));
+  }
+
+  private updateCollectionIntro(delta: number): void {
+    const intro = this.collectionIntro;
+    if (!intro || !this.collectionIntroOnCurrentScreen() || !this.appVisible || !this.collectionIntroArtworkReady()) return;
+    const age = this.save.reducedMotion ? COLLECTION_INTRO_DURATION
+      : Math.min(COLLECTION_INTRO_DURATION, intro.age + Math.max(0, delta));
+    if (age !== intro.age) {
+      intro.age = age;
+      this.dirty = true;
+    }
+  }
+
+  private finishCollectionIntro(openCollection: boolean): void {
+    if (!this.collectionIntro) return;
+    if (openCollection && !this.collectionIntroReady()) return;
+    if (this.collectionIntro.unlockPreview) {
+      // A preview acknowledges only this presentation, never ownership or a charge.
+      this.closePopup("collectionIntro", () => {
+        this.collectionIntro = undefined;
+        this.releaseCollectionAlbumArt();
+        this.dirty = true;
+        this.scheduleFrame();
+      });
+      this.playSound("button");
+      return;
+    }
+    if (this.collectionIntro.restoration) {
+      this.closePopup("collectionIntro", () => {
+      this.collectionIntro = undefined;
+      this.playSound("button");
+      this.requestCollectionAlbumArtwork();
+      this.dirty = true;
+      this.scheduleFrame();
+      });
+      return;
+    }
+    const unlockLevel = this.collectionIntro.level;
+    this.commitTransientAcknowledgement((candidate) => {
+      candidate.collectionIntroPending = false;
+      candidate.collectionIntroShown = true;
+    });
+    this.closePopup("collectionIntro", () => {
+    this.collectionIntro = undefined;
+    this.playSound("button");
+    if (openCollection) {
+      // The first masterpiece unlocks at Lv5; its catalog number is 1, not 5.
+      const item = MASTERPIECE_COLLECTION_CATALOG.find((card) => card.unlockLevel === unlockLevel);
+      this.collectionScrollOffset = 0;
+      this.collectionAlbumTab = "masterpieces";
+      this.collectionAlbumPage.masterpieces = item
+        ? Math.floor(MASTERPIECE_COLLECTION_CATALOG.indexOf(item) / COLLECTION_ALBUM_PAGE_SIZE) : 0;
+      this.collectionAlbumDetailId = item?.id;
+      this.collectionAlbumFeedback = undefined;
+      if (item) this.acknowledgeCollectionAlbumItem(item);
+      const progress = item ? this.collectionAlbumMasterpieceProgress(item) : undefined;
+      this.collectionRestorationGuide = item && progress?.blueprintUnlocked && !progress.restored
+        ? { itemId: item.id, age: 0 } : undefined;
+      this.screen = "records";
+      this.navigationTransition = undefined;
+      this.navigationPendingTarget = undefined;
+      // Publish the destination before requesting its deferred art.
+      this.setFormalPageIntent("records");
+    } else {
+      this.releaseCollectionAlbumArt();
+      this.beginPendingHomePresentation();
+    }
+    this.dirty = true;
+    this.scheduleFrame();
+    });
+  }
+
+  private collectionRestorationGuideEligible(): boolean {
+    const guide = this.collectionRestorationGuide;
+    if (!guide || !this.appVisible || this.screen !== "records" || this.navigationTransition
+      || this.collectionAlbumDetailId !== guide.itemId || !this.collectionAlbumArt) return false;
+    const item = findCollectionCatalogItem(guide.itemId);
+    if (!item || item.category !== "masterpiece"
+      || !this.collectionAlbumArtwork?.image(this.collectionAlbumAtlasIndex(item))) return false;
+    const progress = this.collectionAlbumMasterpieceProgress(item);
+    return progress?.blueprintUnlocked === true && !progress.restored
+      && this.save.collectionProgress.inspiration >= item.inspirationCost;
+  }
+
+  private beginPendingHomePresentation(): boolean {
+    if (this.featureUnlockGuide) return true;
+    if (this.beginCollectionIntro()) return true;
+    if (this.beginPendingJourneyPresentation()) return true;
+    return this.beginPendingFeatureGuide();
+  }
+
   private beginPendingJourneyPresentation(): boolean {
+    if(this.profilePage)return false;
+    if (this.featureUnlockGuide) return false;
     if (this.journeyPresentation) return true;
     // An earned introduction stays pending until the result action has returned
     // to Home (and its coin flight has finished). Never interrupt a board/result.
     if (this.screen !== "home" || this.homeCoinFlight || this.directLevelTransition
-      || this.navigationTransition || this.lifeRefillOpen) return false;
+      || this.navigationTransition || this.lifeRefillOpen || this.collectionIntro
+      || this.collectionRestorationGuide || this.temporaryLevelTestSession) return false;
     const event = findPendingJourneyEvent(
       this.save.highestLevel,
-      this.save.journeyProgress,
+      { ...this.save.journeyProgress, seenEpisodeUnlockLevels: [
+        ...this.save.journeyProgress.seenEpisodeUnlockLevels, ...(this.deferredHomeJourneyLevels ?? []),
+      ] },
       this.save.rewardedLevels,
     );
     if (!event) return false;
@@ -7704,10 +11355,19 @@ export class ColorEscapeGame {
     if (event.type === "milestone_reward") return false;
 
     this.journeyPresentation = { event, phase: "progress", age: 0, intent: "progress_event" };
+    // Historical unread introductions must never switch the player back to an old theme.
+    this.journeyPresentation.sceneReveal = event.episode.index === this.save.selectedJourneyEpisode;
     // Chapter unlocks belong on Home, not an automatic detour through Journey.
     this.navigationTransition = undefined;
     this.navigationPendingTarget = undefined;
-    this.setFormalPageIntent("levels");
+    if (this.journeyPresentation.sceneReveal) {
+      this.suppliedRevealAssets("scene");
+      if (!this.journeySceneArtReady() && !this.journeyHomeThemeLoading) {
+        void this.requestJourneyHomeThemeArt(this.save.selectedJourneyEpisode);
+      }
+    } else {
+      this.setFormalPageIntent("levels");
+    }
     this.lastFrame = 0;
     this.dirty = true;
     this.scheduleFrame();
@@ -7721,9 +11381,87 @@ export class ColorEscapeGame {
       && this.journeyPresentation.event.type === "episode_unlock";
   }
 
+  private journeySceneArtReady(): boolean {
+    const presentation = this.journeyPresentation;
+    if (!presentation?.sceneReveal || presentation.event.type !== "episode_unlock") return false;
+    const index = presentation.event.episode.index;
+    return index === this.save.selectedJourneyEpisode && !this.journeyHomeThemeLoading
+      && this.journeyHomeThemeIndex === index
+      && Boolean(index === 1 ? this.art.home : this.journeyHomeThemeArt)
+      && Boolean(this.suppliedRevealArt?.imageGroup("scene"));
+  }
+
+  private journeySceneArtFailed(): boolean {
+    return this.journeyHomeThemeFailed || this.suppliedRevealArt?.failed("scene") === true;
+  }
+
+  private journeySceneConfirmReady(): boolean {
+    return this.screen === "home" && this.appVisible && this.journeySceneArtReady()
+      && this.journeyPresentation?.phase === "overlay"
+      && this.journeyPresentation.age >= JOURNEY_SCENE_REVEAL_DURATION;
+  }
+
+  private journeySceneHudAlpha(): number {
+    const presentation = this.journeyPresentation;
+    if (this.screen !== "home" || !presentation?.sceneReveal || presentation.phase === "progress") return 1;
+    return presentation.phase === "claiming"
+      ? easeOutCubic(Math.min(1, presentation.age / JOURNEY_SCENE_RESTORE_DURATION))
+      : 1 - easeOutCubic(Math.min(1, presentation.age / JOURNEY_SCENE_REVEAL_DURATION));
+  }
+
+  private journeySceneLayout(): { primary: Rect; later: Rect } {
+    if (this.journeyPresentation?.sceneReveal && this.journeyPresentation.phase === "progress") {
+      return {
+        primary: { x: 120, y: 472, width: 256, height: 66 },
+        later: { x: 148, y: 558, width: 200, height: 42 },
+      };
+    }
+    const bottom = this.safeOffsets().bottom;
+    return {
+      primary: { x: 122, y: 839 - bottom, width: 252, height: 93 },
+      later: { x: 148, y: 992 - bottom, width: 200, height: 42 },
+    };
+  }
+
+  private journeySceneTitle(): string {
+    const event = this.journeyPresentation?.event;
+    return this.tr(event?.type === "episode_unlock" && event.episode.index > 10
+      ? "journey.chapterOpened" : "journey.sceneUnlocked");
+  }
+
+  private journeySceneName(): string {
+    const event = this.journeyPresentation?.event;
+    if (event?.type !== "episode_unlock") return "";
+    return this.tr(`journey.sceneName${this.journeyEpisodeArtIndex(event.episode.index) + 1}` as TranslationKey);
+  }
+
   private updateJourneyPresentation(delta: number): void {
     const presentation = this.journeyPresentation;
     if (!presentation) return;
+    if (presentation.sceneReveal) {
+      if (!this.appVisible || this.screen !== "home" || this.homeCoinFlight
+        || this.collectionIntro || this.navigationTransition || this.lifeRefillOpen) return;
+      if (presentation.phase === "progress") {
+        if (!this.journeySceneArtReady()) return;
+        this.closePopup("journeySceneLoading", () => {
+          if (this.journeyPresentation !== presentation) return;
+          presentation.phase = "overlay";
+          presentation.age = this.save.reducedMotion ? JOURNEY_SCENE_REVEAL_DURATION : 0;
+          this.playSound("reward");
+        });
+      } else if (presentation.phase === "overlay") {
+        presentation.age = Math.min(JOURNEY_SCENE_REVEAL_DURATION, presentation.age + delta);
+      } else {
+        presentation.age = Math.min(JOURNEY_SCENE_RESTORE_DURATION, presentation.age + delta);
+        if (this.save.reducedMotion || presentation.age >= JOURNEY_SCENE_RESTORE_DURATION) {
+          this.suppliedRevealArt?.dispose("scene");
+          this.journeyPresentation = undefined;
+          if (!this.beginPendingHomePresentation()) this.releaseFormalPageArt();
+        }
+      }
+      this.dirty = true;
+      return;
+    }
     this.requestJourneyPresentationArt();
     if (presentation.intent === "theme_selection") return;
     if (presentation.phase === "progress") {
@@ -7743,9 +11481,16 @@ export class ColorEscapeGame {
       this.dirty = true;
       return;
     }
-    if (presentation.phase !== "claiming") return;
-    presentation.age = Math.min(JOURNEY_REWARD_FLIGHT_DURATION, presentation.age + delta);
-    if (presentation.age >= JOURNEY_REWARD_FLIGHT_DURATION) {
+    if (presentation.phase !== "claiming" || !this.appVisible) return;
+    const coins = presentation.event.type === "milestone_reward" && presentation.event.reward.kind === "coins";
+    if (coins && this.homeCoinFlight) {
+      // The shared flight owns the full stagger/arrival/settle timeline.
+      presentation.age = this.homeCoinFlight.age;
+      return;
+    }
+    if (!coins) presentation.age = Math.min(JOURNEY_REWARD_FLIGHT_DURATION, presentation.age + delta);
+    if (coins || presentation.age >= JOURNEY_REWARD_FLIGHT_DURATION) {
+      if (!coins && presentation.event.type === "milestone_reward") this.playSound("itemArrival");
       this.journeyPresentation = undefined;
       if (presentation.intent === "reward_inspection") {
         // A reward opened from the Journey map returns to that exact map
@@ -7756,9 +11501,15 @@ export class ColorEscapeGame {
       // A partially migrated or long-unopened save can contain more than one
       // earned Journey event. Continue in chronological order instead of
       // leaving an invisible pending reward behind on Home.
-      if (!this.beginPendingJourneyPresentation()) this.releaseFormalPageArt();
+      if (this.screen === "home" && !this.beginPendingHomePresentation()) this.releaseFormalPageArt();
     }
     this.dirty = true;
+  }
+
+  private journeyPresentationBlocksInput(): boolean {
+    const presentation = this.journeyPresentation;
+    return Boolean(presentation && !(presentation.phase === "claiming"
+      && presentation.event.type === "milestone_reward"));
   }
 
   private updateDirectLevelTransition(delta: number): void {
@@ -7793,12 +11544,18 @@ export class ColorEscapeGame {
       this.directLevelTransition = undefined;
       const intro = getScheduledFeatureIntro(this.model.level.id);
       if (intro && !this.save.featureSeen.includes(intro.kind)) this.screen = "feature";
+      else this.updateBoosterUnlockGuide(0);
     }
     this.dirty = true;
   }
 
   private homeCoinTarget(): { x: number; y: number } {
-    const icon = homeArtRect(HOME_ART_LAYOUT.coinIcon);
+    if (this.screen === "supply") {
+      const rect = homeArtRect(this.welfareLayout().resourceIcons.coins);
+      return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
+    }
+    const icon = homeArtRect(this.screen === "levels" ? JOURNEY_COIN_WALLET.icon
+      : { ...HOME_ART_LAYOUT.coinIcon, x: HOME_ART_LAYOUT.coinIcon.x + HOME_RESOURCE_SHIFT_X });
     return {
       x: icon.x + icon.width / 2,
       y: icon.y + icon.height / 2 + this.safeOffsets().top,
@@ -7806,6 +11563,10 @@ export class ColorEscapeGame {
   }
 
   private inspirationTarget(): { x: number; y: number } {
+    if (this.screen === "supply") {
+      const rect = homeArtRect(this.welfareLayout().resourceIcons.inspiration);
+      return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
+    }
     const placement = homeNavigationIconPlacement("records", "home");
     const rect = homeArtRect(placement);
     return {
@@ -7814,13 +11575,26 @@ export class ColorEscapeGame {
     };
   }
 
+  private clearHomeCoinFlight(): void {
+    this.homeCoinFlights = [];
+    this.releaseUnusedInspirationFlightArt();
+  }
+
+  private releaseUnusedInspirationFlightArt(): void {
+    if (this.homeCoinFlights?.some((flight) => flight.kind === "inspiration")) return;
+    if (this.inspirationFlightArt && this.inspirationFlightArt !== this.dailyTaskInspirationArt) {
+      this.host.releaseImage?.(this.inspirationFlightArt);
+    }
+    this.inspirationFlightArt = undefined;
+  }
+
   private beginHomeCoinFlight(reward: number, start?: { x: number; y: number }): void {
     const safeReward = Math.max(0, Math.floor(reward));
     if (safeReward <= 0) {
-      this.beginPendingJourneyPresentation();
+      this.beginPendingHomePresentation();
       return;
     }
-    this.homeCoinFlight = {
+    (this.homeCoinFlights ??= []).push({
       kind: "coins",
       age: 0,
       reward: safeReward,
@@ -7830,7 +11604,7 @@ export class ColorEscapeGame {
       reducedMotion: this.save.reducedMotion,
       landedCount: 0,
       arrivalPulseAge: Number.POSITIVE_INFINITY,
-    };
+    });
     this.dirty = true;
     this.scheduleFrame();
   }
@@ -7838,7 +11612,7 @@ export class ColorEscapeGame {
   private beginInspirationFlight(reward: number, start?: { x: number; y: number }): void {
     const safeReward = Math.max(0, Math.floor(reward));
     if (safeReward <= 0) return;
-    this.homeCoinFlight = {
+    (this.homeCoinFlights ??= []).push({
       kind: "inspiration",
       age: 0,
       reward: safeReward,
@@ -7848,58 +11622,76 @@ export class ColorEscapeGame {
       reducedMotion: this.save.reducedMotion,
       landedCount: 0,
       arrivalPulseAge: Number.POSITIVE_INFINITY,
-    };
+    });
     // Keep the exact inspiration icon alive if the player closes the daily
     // popup while the flight is still in progress.
-    this.inspirationFlightArt = this.dailyTaskInspirationArt;
+    this.inspirationFlightArt ??= this.dailyTaskInspirationArt;
     this.dirty = true;
     this.scheduleFrame();
   }
 
   private updateHomeCoinFlight(delta: number): void {
-    const flight = this.homeCoinFlight;
-    if (!flight) return;
-    flight.age = Math.min(homeCoinFlightDuration(flight.reducedMotion), flight.age + delta);
-    flight.arrivalPulseAge += delta;
-    const landedCount = homeCoinLandedCount(flight.age, flight.reducedMotion);
-    if (landedCount > flight.landedCount) {
-      const target = flight.kind === "inspiration" ? this.inspirationTarget() : this.homeCoinTarget();
-      for (let index = flight.landedCount; index < landedCount; index += 1) {
-        this.emitBurst(target.x, target.y, "#ffd83d", flight.reducedMotion ? 3 : 7, 82, -18, 8);
-        this.playSound("reward");
-      }
-      flight.landedCount = landedCount;
-      flight.arrivalPulseAge = 0;
-      if (landedCount === homeCoinFlightTiming(flight.reducedMotion).coinCount) this.vibrate("light");
-    }
-    if (flight.age >= homeCoinFlightDuration(flight.reducedMotion)) {
-      this.homeCoinFlight = undefined;
-      if (flight.kind === "inspiration" && this.inspirationFlightArt) {
-        if (this.inspirationFlightArt !== this.dailyTaskInspirationArt) {
-          this.host.releaseImage?.(this.inspirationFlightArt);
+    if (!this.homeCoinFlight || !this.appVisible) return;
+    for (const flight of this.homeCoinFlights) {
+      flight.age = Math.min(homeCoinFlightDuration(flight.reducedMotion), flight.age + delta);
+      flight.arrivalPulseAge += delta;
+      const landedCount = homeCoinLandedCount(flight.age, flight.reducedMotion);
+      if (landedCount > flight.landedCount) {
+        const target = flight.kind === "inspiration" ? this.inspirationTarget() : this.homeCoinTarget();
+        for (let index = flight.landedCount; index < landedCount; index += 1) {
+          this.playSound("itemArrival");
+          this.emitBurst(target.x, target.y, "#ffd83d", flight.reducedMotion ? 3 : 7, 82, -18, 8);
         }
-        this.inspirationFlightArt = undefined;
+        flight.landedCount = landedCount;
+        flight.arrivalPulseAge = 0;
+        if (landedCount === homeCoinFlightTiming(flight.reducedMotion).coinCount) this.vibrate("light");
       }
-      this.beginPendingJourneyPresentation();
+    }
+    if (!this.pendingButtonPress && this.activePointer === undefined) {
+      this.homeCoinFlights = this.homeCoinFlights.filter((flight) => flight.age < homeCoinFlightDuration(flight.reducedMotion));
+      this.releaseUnusedInspirationFlightArt();
+      if (!this.homeCoinFlight) this.beginPendingHomePresentation();
     }
     this.dirty = true;
   }
 
+  private displayedRewardBalance(kind: HomeCoinFlight["kind"], balance: number): number {
+    // The save already includes every committed reward. Hide only each batch's
+    // unlanded share, so later claims neither jump the balance nor reset it.
+    const unlanded = (this.homeCoinFlights ?? []).reduce((total, flight) => {
+      if (flight.kind !== kind) return total;
+      return total + flight.endCoins - displayedCoinBalance(
+        flight.startCoins, flight.endCoins, flight.landedCount,
+        homeCoinFlightTiming(flight.reducedMotion).coinCount,
+      );
+    }, 0);
+    return Math.max(0, Math.min(balance, balance - unlanded));
+  }
+
   private displayedHomeCoins(): number {
-    const flight = this.homeCoinFlight;
-    if (!flight || flight.kind !== "coins") return this.save.coins;
-    return displayedCoinBalance(
-      flight.startCoins,
-      flight.endCoins,
-      flight.landedCount,
-      homeCoinFlightTiming(flight.reducedMotion).coinCount,
-    );
+    return this.displayedRewardBalance("coins", this.save.coins);
   }
 
   private homeCoinPulseScale(): number {
-    const age = this.homeCoinFlight?.arrivalPulseAge;
-    if (age === undefined || !Number.isFinite(age) || age >= 0.18) return 1;
-    return 1 + Math.sin((age / 0.18) * Math.PI) * 0.15;
+    return (this.homeCoinFlights ?? []).reduce((scale, flight) => {
+      const age = flight.arrivalPulseAge;
+      if (flight.kind !== "coins" || !Number.isFinite(age) || age >= 0.18) return scale;
+      return Math.max(scale, 1 + Math.sin((age / 0.18) * Math.PI) * 0.15);
+    }, 1);
+  }
+
+  private homeCoinFlightEvidence(flight: HomeCoinFlight): Record<string, unknown> {
+    return {
+      ...flight,
+      duration: homeCoinFlightDuration(flight.reducedMotion),
+      coinCount: homeCoinFlightTiming(flight.reducedMotion).coinCount,
+      displayedCoins: this.displayedHomeCoins(),
+      target: flight.kind === "inspiration" ? this.inspirationTarget() : this.homeCoinTarget(),
+      start: flight.start ?? { x: LOGICAL_WIDTH * 0.52, y: LOGICAL_HEIGHT * 0.615 },
+      coins: Array.from({ length: homeCoinFlightTiming(flight.reducedMotion).coinCount }, (_, index) => ({
+        index, progress: homeCoinLocalProgress(flight.age, index, flight.reducedMotion),
+      })),
+    };
   }
 
   private directTransitionBoardOffset(): number {
@@ -7910,11 +11702,20 @@ export class ColorEscapeGame {
 
   private deferJourneyPresentation(): void {
     const presentation = this.journeyPresentation;
-    if (!presentation || presentation.phase !== "progress") return;
-    // The event remains absent from the claim/seen ledgers. A deferred reward
-    // stays visibly claimable from its Journey icon instead of being consumed.
-    this.loadLevel(this.save.currentLevel, false);
-    this.playSound("button");
+    if (!presentation || (presentation.phase !== "progress"
+      && !(presentation.phase === "overlay" && presentation.intent === "progress_event" && !this.journeyPresentationArtReady()))) return;
+    const returnLevelId = this.save.currentLevel;
+    this.closePopup(["journeySceneLoading", "journeyPresentation"], () => {
+      if (this.journeyPresentation !== presentation) return;
+      (this.deferredHomeJourneyLevels ??= new Set()).add(presentation.event.level);
+      // The event remains absent from the claim/seen ledgers. A deferred reward
+      // stays visibly claimable from its Journey icon instead of being consumed.
+      this.loadLevel(returnLevelId, false);
+      // Skip only the explicitly deferred scene; later scenes still precede
+      // the feature guide, without acknowledging either one automatically.
+      this.beginPendingHomePresentation();
+      this.playSound("button");
+    });
   }
 
   private dismissJourneyPresentation(): void {
@@ -7922,30 +11723,34 @@ export class ColorEscapeGame {
     if (!presentation || presentation.phase !== "overlay") return;
     if (!this.journeyPresentationArtReady() && presentation.intent === "progress_event") {
       // Closing a loading introduction uses Later without acknowledging it.
-      presentation.phase = "progress";
       this.deferJourneyPresentation();
       return;
     }
     if (presentation.intent === "theme_selection") {
       if (this.pendingJourneyThemeSelection) {
-        presentation.error = this.tr("journey.applyUnknown");
+        presentation.error = this.notifyButtonFeedback(this.tr("journey.applyUnknown"));
         this.playSound("blocked");
         this.vibrate("light");
         this.dirty = true;
         this.scheduleFrame();
         return;
       }
-      this.journeyPresentation = undefined;
-      void this.requestJourneyHomeThemeArt(this.save.selectedJourneyEpisode);
+      presentation.themeApplying = false;
+      const episodeIndex = this.save.selectedJourneyEpisode;
+      this.closePopup("journeyPresentation", () => {
+        if (this.journeyPresentation !== presentation) return;
+        this.journeyPresentation = undefined;
+        void this.requestJourneyHomeThemeArt(episodeIndex);
+      });
       this.playSound("button");
       this.dirty = true;
       this.scheduleFrame();
       return;
     }
     if (this.pendingJourneyClaim?.eventLevel === presentation.event.level) {
-      presentation.error = presentation.event.type === "episode_unlock"
+      presentation.error = this.notifyButtonFeedback(presentation.event.type === "episode_unlock"
         ? this.tr("journey.confirmUnknown")
-        : this.tr("journey.claimUnknown");
+        : this.tr("journey.claimUnknown"));
       this.playSound("blocked");
       this.vibrate("light");
       this.dirty = true;
@@ -7953,7 +11758,9 @@ export class ColorEscapeGame {
       return;
     }
     if (presentation.intent === "reward_inspection") {
-      this.journeyPresentation = undefined;
+      this.closePopup("journeyPresentation", () => {
+        if (this.journeyPresentation === presentation) this.journeyPresentation = undefined;
+      });
       this.playSound("button");
       this.dirty = true;
       this.scheduleFrame();
@@ -7967,14 +11774,18 @@ export class ColorEscapeGame {
     }
     // A reward close is non-destructive: leave its ledger entry untouched so
     // entering Journey later presents the same claim again.
-    this.journeyPresentation = undefined;
-    this.releaseFormalPageArt();
+    this.closePopup("journeyPresentation", () => {
+      if (this.journeyPresentation !== presentation) return;
+      this.journeyPresentation = undefined;
+      this.releaseFormalPageArt();
+    });
     this.playSound("button");
     this.dirty = true;
     this.scheduleFrame();
   }
 
   private completeJourneyThemeSelection(presentation: JourneyPresentation): void {
+    if (!this.pendingJourneyThemeSelection && !this.requireFeature("levels")) return;
     if (presentation.intent !== "theme_selection"
       || presentation.phase !== "overlay"
       || presentation.event.type !== "episode_unlock"
@@ -7987,6 +11798,7 @@ export class ColorEscapeGame {
 
     void this.loadJourneyHomeThemeCandidate(episode.index).then((themeCandidate) => {
       if (this.journeyPresentation !== presentation
+        || !presentation.themeApplying
         || presentation.intent !== "theme_selection"
         || presentation.event.type !== "episode_unlock") {
         this.releaseJourneyHomeThemeCandidate(themeCandidate);
@@ -7997,7 +11809,7 @@ export class ColorEscapeGame {
         && (episode.index === 1 ? Boolean(this.art.home) : Boolean(themeCandidate.image));
       if (!themeReady) {
         this.releaseJourneyHomeThemeCandidate(themeCandidate);
-        presentation.error = this.tr("journey.backgroundLoadFailed");
+        presentation.error = this.notifyButtonFeedback(this.tr("journey.backgroundLoadFailed"));
         this.playSound("blocked");
         this.vibrate("light");
         this.dirty = true;
@@ -8020,9 +11832,9 @@ export class ColorEscapeGame {
       if (outcome !== "committed") {
         this.releaseJourneyHomeThemeCandidate(themeCandidate);
         if (outcome === "rejected") this.pendingJourneyThemeSelection = undefined;
-        presentation.error = outcome === "unknown"
+        presentation.error = this.notifyButtonFeedback(outcome === "unknown"
           ? this.tr("journey.applyUnknown")
-          : this.tr("journey.applyFailed");
+          : this.tr("journey.applyFailed"));
         this.playSound("blocked");
         this.vibrate("light");
         this.dirty = true;
@@ -8035,13 +11847,16 @@ export class ColorEscapeGame {
       this.pendingJourneyThemeSelection = undefined;
       this.refreshLifeState();
       this.scheduleLifeRefreshWatch();
-      this.journeyPresentation = undefined;
-      this.journeyScrollVelocity = 0;
-      this.navigationTransition = undefined;
-      this.navigationPendingTarget = undefined;
-      this.screen = "home";
-      this.lastFrame = 0;
-      this.releaseFormalPageArt();
+      this.closePopup("journeyPresentation", () => {
+        if (this.journeyPresentation !== presentation) return;
+        this.journeyPresentation = undefined;
+        this.journeyScrollVelocity = 0;
+        this.navigationTransition = undefined;
+        this.navigationPendingTarget = undefined;
+        this.screen = "home";
+        this.lastFrame = 0;
+        this.releaseFormalPageArt();
+      });
       this.playSound("reward");
       this.vibrate("light");
       this.dirty = true;
@@ -8052,11 +11867,13 @@ export class ColorEscapeGame {
   private completeJourneyPresentation(): void {
     const presentation = this.journeyPresentation;
     if (!presentation || presentation.phase !== "overlay") return;
+    if (presentation.sceneReveal && !this.journeySceneConfirmReady()) return;
     if (presentation.intent === "theme_selection") {
       this.completeJourneyThemeSelection(presentation);
       return;
     }
     if (presentation.intent === "reward_inspection") {
+      if (!this.pendingJourneyClaim && !this.requireFeature("levels")) return;
       if (presentation.event.type !== "milestone_reward"
         || !this.journeyRewardEarned(presentation.event.reward)) {
         this.playSound("blocked");
@@ -8103,7 +11920,7 @@ export class ColorEscapeGame {
         const nowMs = Date.now();
         candidate.lifeState = reconcileLifeState(candidate.lifeState, nowMs);
         if (reward.kind === "coins" && candidate.coins + reward.amount > 999999) {
-          presentation.error = this.tr("journey.coinsFull");
+          presentation.error = this.notifyButtonFeedback(this.tr("journey.coinsFull"));
           presentation.blockedGrant = true;
           this.playSound("blocked");
           this.vibrate("light");
@@ -8112,7 +11929,7 @@ export class ColorEscapeGame {
         }
         if ((reward.kind === "time" || reward.kind === "rocket" || reward.kind === "pulse")
           && candidate.boosters[reward.kind] + reward.amount > SUPPLY_ITEMS[reward.kind].maxStock) {
-          presentation.error = this.tr("journey.boosterFull");
+          presentation.error = this.notifyButtonFeedback(this.tr("journey.boosterFull"));
           presentation.blockedGrant = true;
           this.playSound("blocked");
           this.vibrate("light");
@@ -8148,11 +11965,11 @@ export class ColorEscapeGame {
     const outcome = this.persistVerified(candidate, baseline);
     if (outcome !== "committed") {
       if (outcome === "rejected") this.pendingJourneyClaim = undefined;
-      presentation.error = outcome === "unknown"
+      presentation.error = this.notifyButtonFeedback(outcome === "unknown"
         ? presentation.event.type === "episode_unlock"
           ? this.tr("journey.confirmUnknown")
           : this.tr("journey.claimUnknown")
-        : this.tr("journey.claimFailed");
+        : this.tr("journey.claimFailed"));
       presentation.blockedGrant = false;
       this.playSound("blocked");
       this.vibrate("light");
@@ -8163,29 +11980,56 @@ export class ColorEscapeGame {
     this.pendingJourneyClaim = undefined;
     this.scheduleLifeRefreshWatch();
     presentation.error = undefined;
-    presentation.phase = "claiming";
-    presentation.age = 0;
-    this.playSound("reward");
+    const rewardCoins = candidate.coins - baseline.coins;
+    this.closePopup("journeyPresentation", () => {
+      if (this.journeyPresentation !== presentation) return;
+      presentation.phase = "claiming";
+      presentation.age = 0;
+      if (presentation.event.type === "milestone_reward" && presentation.event.reward.kind === "coins") {
+        const start = homeArtRect({ ...JOURNEY_PRESENTATION_LAYOUT.rewardCenter, width: 0, height: 0 });
+        this.beginHomeCoinFlight(rewardCoins, { x: start.x, y: start.y });
+      }
+    });
+    this.playSound(presentation.event.type === "milestone_reward" ? "gold" : "reward");
     this.vibrate("light");
     this.dirty = true;
     this.scheduleFrame();
   }
 
   private handleDown(point: PointerSample): void {
-    if (this.directLevelTransition || this.homeCoinFlight) return;
+    // Final-size hit areas become available when the short entrance settles.
+    if (this.popupEntrance.active) return;
+    if(this.currentProfileScroll()?.gesture) return;
+    if(this.leagueScroll.gesture) return;
+    if (this.directLevelTransition) return;
     if (this.pendingButtonPress) return;
     if (this.leaderboardScrollGesture) return;
     if (this.journeyScrollGesture) return;
     if (this.collectionScrollGesture) return;
     if (this.achievementScrollGesture) return;
+    if (this.welfareScrollGesture) return;
     // The board drag owns the gesture stream until its matching pointer ends.
-    // In particular, a second finger must not press pause, undo, or a booster
+    // In particular, a second finger must not press pause or a booster
     // while the first finger is still moving a block.
     if (this.activePointer !== undefined) return;
+    const profileScroll=this.currentProfileScroll();
+    if(profileScroll && this.profileArt && !this.pendingProfileSave
+      && profileScroll.begin(point.id,point.x,point.y,monotonicGameTime(),PROFILE_CATALOG_RECT,profileCatalogMaxScroll(this.profilePage!))){
+      this.profileScrollTarget=this.profileTargetAt(point);
+      this.dirty=true;this.scheduleFrame();return;
+    }
+    if(this.screen === "league" && this.leagueArtStore?.art && this.save.league && !this.save.league.pending && this.leagueIntroPage===undefined && !this.leagueInfo && !this.leagueChallengeNotice && !this.leaguePersistence
+      && (!this.leagueAvatarArtStore || this.leagueAvatarArtStore.art)
+      && this.leagueScroll.begin(point.id,point.x,point.y,monotonicGameTime())) { this.dirty=true; this.scheduleFrame(); return; }
     const target = this.buttonReleaseTargetAt(point);
+    if (target?.key.startsWith("welfare.") && this.beginWelfareScroll(point)) {
+      this.pendingButtonPress = { ...target, pointerId: point.id, screen: this.screen, inside: true };
+      this.dirty = true; this.scheduleFrame(); return;
+    }
     const journeyNodeTarget = target?.key.startsWith("journeyNode.") === true
       || target?.key.startsWith("journeyReward.") === true
       || target?.key.startsWith("journeyEpisodeArtRetry.") === true
+      || target?.key === "journeyDestinationArtRetry"
       || target?.key.startsWith("journeyEpisode.") === true;
     const collectionCardTarget = target?.key.startsWith("collection.") === true;
     const achievementClaimTarget = target?.key.startsWith("achievementClaim.") === true;
@@ -8238,6 +12082,7 @@ export class ColorEscapeGame {
       this.executePointerDown(point);
       return;
     }
+    if (this.beginWelfareScroll(point)) return;
     if (this.beginJourneyScroll(point)) return;
     if (this.beginLeaderboardScroll(point)) return;
     if (this.beginCollectionScroll(point)) return;
@@ -8246,6 +12091,24 @@ export class ColorEscapeGame {
   }
 
   private executePointerDown(point: PointerSample): void {
+    const previous = this.buttonSoundContext;
+    this.buttonSoundContext = previous || Boolean(this.buttonReleaseTargetAt(point));
+    try {
+      this.executePointerAction(point);
+    } finally {
+      this.buttonSoundContext = previous;
+    }
+  }
+
+  private executePointerAction(point: PointerSample): void {
+    if (this.pendingRankingSave && this.storageBaselineReady && this.artReady) {
+      this.finishRankingSave();
+      if (this.pendingRankingSave) {
+        if (this.mainNavigationInteractive()) this.handleMainNavigation(point);
+        return;
+      }
+    }
+    if ((this.screen === "league" || this.screen === "leagueResult") && this.storageBaselineReady && this.artReady) { this.handleLeaguePointer(point); return; }
     if (!this.artReady) {
       if (this.artLoadError && this.interactionHit(point, this.startupRetryRect())) {
         this.retryStartupArt();
@@ -8260,6 +12123,21 @@ export class ColorEscapeGame {
       }
       return;
     }
+    if (this.welfareTransactionActive()) {
+      if (this.screen === "supply") {
+        if (!this.formalPageReady("supply")) {
+          if (this.formalPageFailed("supply") && this.interactionHit(point, BUTTONS.formalPageRetry))
+            this.retryFormalPageArt("supply");
+        } else this.handleWelfarePointer(point);
+      }
+      return;
+    }
+    // A rewarded-video receipt owns the save until it is either settled or
+    // explicitly cancelled. The only allowed input while a save acknowledgement
+    // is unknown is tapping the same ad button to retry that exact candidate.
+    if (this.lifeRefillAdTransactionActive() && !this.lifeRefillOpen) return;
+    if (this.boosterRewardAdTransactionActive() && this.screen !== "boosterPurchase") return;
+    if (this.dailyChallengeRewardAdTransactionActive() && this.screen !== "dailyChallenge") return;
     this.dirty = true;
     this.scheduleFrame();
     // A second finger may still reach the platform host while one drag owns
@@ -8271,18 +12149,53 @@ export class ColorEscapeGame {
       this.ensureCampaignLifeStarted();
       return;
     }
+    if (this.screen === "boosterPurchase") {
+      const key = this.boosterPurchaseTargets().find(([, rect]) => this.interactionHit(point, rect))?.[0];
+      if (key === "boosterPurchase.ad") this.startBoosterRewardAd();
+      else if (key === "boosterPurchase.buy") this.buyBoosterBundle();
+      else if (key === "boosterPurchase.close") this.closeBoosterPurchase();
+      else if (key === "boosterPurchase.artRetry") this.requestBoosterPurchaseArt();
+      return;
+    }
     if (this.lifeRefillOpen) {
-      if (this.lifeRefillQuote().missingLives > 0 && this.interactionHit(point, BUTTONS.lifeRefillBuy)) this.buyLifeRefill();
-      else if (!this.pendingLifeRefill && this.interactionHit(point, BUTTONS.lifeRefillDismiss)) {
-        this.lifeRefillOpen = false;
-        this.releaseLifeRefillArt();
-        this.playableClockSlices.reset();
-        this.lastFrame = 0;
-        this.playSound("button");
+      this.handleLifeRefillPointer(point);
+      return;
+    }
+    if (this.profilePage) { this.handleProfilePointer(point); return; }
+    if (this.featureUnlockGuide) {
+      const key = this.featureGuideTargets().find(([, rect]) => this.interactionHit(point, rect))?.[0];
+      if (key === "featureGuide.look") this.advanceFeatureUnlockGuide();
+      else if (key === "featureGuide.entry") this.finishFeatureUnlockGuide(true);
+      else if (key === "featureGuide.retry") this.finishFeatureUnlockGuide(this.pendingFeatureGuideAck?.open ?? false);
+      else if (key === "featureGuide.artRetry") this.requestFeatureUnlockArt();
+      return;
+    }
+    if (this.collectionIntro) {
+      if (this.collectionIntroReady() && this.interactionHit(point, COLLECTION_INTRO_LAYOUT.primary)) {
+        this.finishCollectionIntro(true);
+      } else if (this.interactionHit(point, COLLECTION_INTRO_LAYOUT.later)) {
+        this.finishCollectionIntro(false);
+      } else if (this.collectionAlbumItemArtworkFailed(findCollectionCatalogItem(this.collectionIntro.itemId))
+        && this.interactionHit(point, COLLECTION_INTRO_LAYOUT.retry)) {
+        this.requestCollectionAlbumArtwork(true);
       }
       return;
     }
-    if (this.journeyPresentation) {
+    if (this.journeyPresentation && this.journeyPresentationBlocksInput()) {
+      if (this.journeyPresentation.sceneReveal) {
+        const layout = this.journeySceneLayout();
+        if (this.journeySceneConfirmReady() && this.interactionHit(point, layout.primary)) {
+          this.completeJourneyPresentation();
+        } else if (this.journeyPresentation.phase === "progress") {
+          if (this.journeySceneArtFailed() && this.interactionHit(point, layout.primary)) {
+            this.suppliedRevealArt?.request("scene", true);
+            void this.requestJourneyHomeThemeArt(this.save.selectedJourneyEpisode);
+          } else if (this.interactionHit(point, layout.later)) {
+            this.deferJourneyPresentation();
+          }
+        }
+        return;
+      }
       if (this.journeyPresentation.phase === "overlay") {
         if (this.interactionHit(point, BUTTONS.journeyPresentationClose)) {
           this.dismissJourneyPresentation();
@@ -8312,14 +12225,14 @@ export class ColorEscapeGame {
       if (this.screen === "supply" && this.interactionHit(point, this.supplyBuyRect(pending.kind))) {
         this.buySupply(pending.kind);
       } else {
-        this.supplyFeedback = { text: this.tr("shop.previousPurchasePending"), color: "#ffcf70" };
+        this.supplyFeedback = this.notifyButtonFeedback({ text: this.tr("shop.previousPurchasePending"), color: "#ffcf70" });
         this.playSound("blocked");
       }
       this.dirty = true;
       this.scheduleFrame();
       return;
     }
-    if (this.temporaryLevelSelector) {
+    if (!IS_WECHAT_BUILD && this.temporaryLevelSelector) {
       this.handleTemporaryLevelSelector(point);
       this.dirty = true;
       this.scheduleFrame();
@@ -8328,7 +12241,8 @@ export class ColorEscapeGame {
     if (this.screen === "updates") {
       if (this.interactionHit(point, BUTTONS.modalPrimary, { anchorY: "end" })) {
         this.acknowledgeUpdateNotice();
-        this.screen = this.updateReturnScreen;
+        const returnScreen = this.updateReturnScreen;
+        this.closePopup("updates", () => { this.screen = returnScreen; });
         this.playSound("button");
       }
       return;
@@ -8336,6 +12250,12 @@ export class ColorEscapeGame {
     if (this.screen === "home" && this.updateToastVisible
       && this.interactionHit(point, this.offsetRect(BUTTONS.updateToast, 0, this.safeOffsets().top))) {
       this.openUpdateNotice("home");
+      return;
+    }
+    if (this.boosterUnlockGuide && this.screen === "playing") {
+      if (this.boosterUnlockGuideEligible() && this.interactionHit(point, this.boosterUnlockGuideCloseRect())) {
+        this.continueBoosterUnlockGuide();
+      }
       return;
     }
     if (this.boosterUnlockToast && this.boosterUnlockToastEligible()
@@ -8382,6 +12302,8 @@ export class ColorEscapeGame {
       const safe = this.safeOffsets();
       const bottom = safe.bottom;
       const cardOffset = this.homeCardOffset(bottom);
+      if(this.interactionHit(point,this.offsetRect(PROFILE_HOME_RECT,0,safe.top))){this.openProfile();return;}
+      if (this.featureUnlocked("league") && this.interactionHit(point, BUTTONS.homeLeague)) { this.openLeague(); return; }
       if (this.updateToastVisible && this.interactionHit(point, this.offsetRect(BUTTONS.updateToast, 0, safe.top))) {
         this.openUpdateNotice("home");
         return;
@@ -8393,12 +12315,8 @@ export class ColorEscapeGame {
       } else if (this.interactionHit(point, this.offsetRect(BUTTONS.homeSettings, 0, safe.top), { anchorY: "end" })) {
         this.screen = "settings";
         this.playSound("button");
-      } else if (this.interactionHit(point, BUTTONS.homeMusic)) {
-        this.screen = "musicLibrary";
-        this.musicLibraryScrollOffset = 0;
-        void this.requestMusicLibraryArt();
-        this.playSound("button");
       } else if (this.interactionHit(point, BUTTONS.homeAchievements)) {
+        if (!this.requireFeature("achievements")) return;
         const firstClaimable = this.achievementEntries().findIndex(({ claimable }) => claimable);
         this.achievementScrollOffset = firstClaimable >= 0
           ? Math.min(this.achievementMaxScrollOffset(), firstClaimable * ACHIEVEMENT_LAYOUT.rowPitch)
@@ -8409,12 +12327,15 @@ export class ColorEscapeGame {
         this.playSound("button");
       } else if (this.interactionHit(point, this.dailyTaskHomeEntryRect())) {
         this.openDailyTasks();
+      } else if (this.featureUnlocked("dailyChallenge") && this.interactionHit(point, homeArtRect(DAILY_CHALLENGE_LAYOUT.entry))) {
+        this.openDailyChallenge();
       } else if (this.interactionHit(point, this.offsetRect(BUTTONS.homeSupply, 0, safe.top), { anchorY: "end" })) {
+        if (!this.requireFeature("supply")) return;
         this.supplyFeedback = undefined;
         this.screen = "supply";
         this.setFormalPageIntent("supply");
         this.playSound("button");
-      } else if (this.interactionHit(point, BUTTONS.temporaryLevelSelector)) {
+      } else if (!IS_WECHAT_BUILD && this.interactionHit(point, BUTTONS.temporaryLevelSelector)) {
         this.openTemporaryLevelSelector();
       } else if (this.interactionHit(point, this.offsetRect(BUTTONS.homePlay, 0, -bottom))) {
         this.playSound("button");
@@ -8422,12 +12343,16 @@ export class ColorEscapeGame {
       } else if (this.model.level.id > 1
         && this.interactionHit(point, this.offsetRect(BUTTONS.homePrev, 0, cardOffset))) {
         const previousLevel = this.model.level.id;
-        this.loadLevel(this.model.level.id - 1, false);
+        this.loadLevel(this.temporaryLevelTestSession
+          ? getAdjacentTemporaryTestLevelId(this.model.level.id, -1)
+          : this.model.level.id - 1, false);
         if (this.model.level.id !== previousLevel) this.playSound("button");
-      } else if (this.model.level.id < this.save.highestLevel
+      } else if (this.canBrowseNextHomeLevel()
         && this.interactionHit(point, this.offsetRect(BUTTONS.homeNext, 0, cardOffset))) {
         const previousLevel = this.model.level.id;
-        this.loadLevel(this.model.level.id + 1, false);
+        this.loadLevel(this.temporaryLevelTestSession
+          ? getAdjacentTemporaryTestLevelId(this.model.level.id, 1)
+          : this.model.level.id + 1, false);
         if (this.model.level.id !== previousLevel) this.playSound("button");
       }
       return;
@@ -8476,6 +12401,13 @@ export class ColorEscapeGame {
         return;
       }
       for (const [index, entry] of MUSIC_CATALOG.entries()) {
+        if (this.musicTrackIsUnlocked(entry, index)
+          && this.interactionHit(point, this.musicLibraryHeartRect(index))) {
+          this.toggleMusicFavorite(entry.id);
+          return;
+        }
+      }
+      for (const [index, entry] of MUSIC_CATALOG.entries()) {
         if (this.interactionHit(point, this.musicLibraryRowRect(index))) {
           this.selectMusicTrack(entry.id);
           return;
@@ -8496,14 +12428,17 @@ export class ColorEscapeGame {
       if (this.collectionAlbumDetailId) {
         if (this.interactionHit(point, layout.detail.close.hit)) {
           if (this.pendingCollectionRestoration) {
-            this.collectionAlbumFeedback = { text: this.albumText("saveFailed"), color: "#a5414b" };
+            this.collectionAlbumFeedback = this.notifyButtonFeedback({ text: this.albumText("saveFailed"), color: "#a5414b" });
             this.playSound("blocked");
             this.dirty = true;
             this.scheduleFrame();
             return;
           }
-          this.collectionAlbumDetailId = undefined;
-          this.collectionAlbumFeedback = undefined;
+          this.closePopup("collection.detail", () => {
+            this.collectionAlbumDetailId = undefined;
+            this.collectionRestorationGuide = undefined;
+            this.collectionAlbumFeedback = undefined;
+          });
           this.playSound("button");
         } else if (this.collectionAlbumItemArtworkFailed(findCollectionCatalogItem(this.collectionAlbumDetailId))
           && this.interactionHit(point, layout.detail.artwork)) {
@@ -8562,7 +12497,7 @@ export class ColorEscapeGame {
       }
       if (this.interactionHit(point, this.dailyTaskCloseRect())) {
         if (this.pendingDailyTaskClaim) {
-          this.dailyTaskFeedback = { text: this.dailyText("claimUnknown"), color: "#a5414b" };
+          this.dailyTaskFeedback = this.notifyButtonFeedback({ text: this.dailyText("claimUnknown"), color: "#a5414b" });
           this.playSound("blocked");
         } else {
           this.closeDailyTasks();
@@ -8570,6 +12505,7 @@ export class ColorEscapeGame {
         return;
       }
       for (const task of this.dailyTaskSummary().tasks) {
+        if (task.claimed) continue;
         const rect = this.dailyTaskClaimRect(task.id);
         if (!rect || !this.interactionHit(point, rect)) continue;
         this.activateDailyTask(task.id);
@@ -8580,15 +12516,53 @@ export class ColorEscapeGame {
       }
       return;
     }
+    if (this.screen === "dailyChallenge") {
+      if (this.dailyChallengeRewardAdTransactionActive()) {
+        if (this.pendingDailyChallengeRewardAd && !this.dailyChallengeRewardAdRequestId) {
+          const state = this.dailyChallengeState();
+          const retryRowAd = this.dailyChallengeAdRowIndices(state)
+            .some((index) => this.interactionHit(point, homeArtRect(dailyChallengeRowButtonRect(index))));
+          if (retryRowAd) this.startDailyChallengeRewardAd();
+        }
+        return undefined;
+      }
+      if (this.interactionHit(point, homeArtRect(DAILY_CHALLENGE_LAYOUT.close))) {
+        this.closeDailyChallenge();
+        return;
+      }
+      // Loading/error placeholders must not consume an attempt through the
+      // difficulty buttons underneath them. Closing still allows a retry.
+      if (!this.dailyChallengeArt) return;
+      const state = this.dailyChallengeState();
+      for (const [index, difficulty] of DAILY_CHALLENGE_DIFFICULTIES.entries()) {
+        if (state.completed[difficulty]) continue;
+        if (!this.interactionHit(point, homeArtRect(dailyChallengeRowButtonRect(index)))) continue;
+        if (this.dailyChallengeAttemptsRemaining(state) <= 0
+          && getDailyChallengeAssignment(state, difficulty)) {
+          this.startDailyChallengeRewardAd();
+        } else if (this.dailyChallengeAttemptsRemaining(state) <= 0) {
+          this.dailyChallengeFeedback = this.notifyButtonFeedback({ text: "今日次数已用完，北京时间00:00重置", color: "#a5414b" });
+          this.playSound("blocked");
+        } else {
+          this.startDailyChallenge(difficulty);
+        }
+        this.dirty = true;
+        this.scheduleFrame();
+        return;
+      }
+      return;
+    }
     if (this.screen === "achievements") {
       if (this.interactionHit(point, BUTTONS.achievementClose)) {
         if (this.pendingAchievementClaim) {
-          this.achievementFeedback = { text: this.tr("achievement.claimUnknown"), color: "#ffbd78" };
+          this.achievementFeedback = this.notifyButtonFeedback({ text: this.tr("achievement.claimUnknown"), color: "#ffbd78" });
           this.playSound("blocked");
         } else {
-          this.achievementScrollGesture = undefined;
-          this.releaseAchievementArt();
-          this.screen = "home";
+          this.closePopup("achievements", () => {
+            this.achievementScrollGesture = undefined;
+            this.releaseAchievementArt();
+            this.screen = "home";
+          });
           this.playSound("button");
         }
         return;
@@ -8606,7 +12580,7 @@ export class ColorEscapeGame {
     }
     if (this.screen === "settings") {
       if (this.interactionHit(point, BUTTONS.menuBack)) {
-        this.screen = "home";
+        this.closePopup("settings", () => { this.screen = "home"; });
         this.playSound("button");
         return;
       }
@@ -8618,9 +12592,9 @@ export class ColorEscapeGame {
       }
       if (this.interactionHit(point, BUTTONS.settingsLanguage)) {
         this.languageSaveFailed = false;
-        this.screen = "language";
+        this.closePopup("settings", () => { this.screen = "language"; });
         this.playSound("button");
-      } else if (this.interactionHit(point, BUTTONS.settingsReset)) {
+      } else if (!IS_WECHAT_BUILD && this.interactionHit(point, BUTTONS.settingsReset)) {
         this.resetSaveFailed = false;
         this.screen = "resetConfirm";
         this.playSound("button");
@@ -8630,14 +12604,16 @@ export class ColorEscapeGame {
     if (this.screen === "language") {
       if (this.interactionHit(point, BUTTONS.languageBack)) {
         if (this.pendingLanguageSelection) {
-          this.languageSaveFailed = true;
+          this.languageSaveFailed = true; this.showButtonHint(this.tr("settings.languageSaveFailed"));
           this.playSound("blocked");
           this.dirty = true;
           this.scheduleFrame();
           return;
         }
-        this.languageSaveFailed = false;
-        this.screen = "settings";
+        this.closePopup("language", () => {
+          this.languageSaveFailed = false;
+          this.screen = "settings";
+        });
         this.playSound("button");
         return;
       }
@@ -8649,25 +12625,21 @@ export class ColorEscapeGame {
       return;
     }
     if (this.screen === "resetConfirm") {
+      if (IS_WECHAT_BUILD) return;
       if (this.interactionHit(point, BUTTONS.modalPrimary, { anchorY: "end" })) {
         this.resetProgress();
       } else if (this.interactionHit(point, BUTTONS.modalSecondary, { anchorY: "start" })) {
-        this.resetSaveFailed = false;
-        this.screen = "settings";
+        this.closePopup("resetConfirm", () => {
+          this.resetSaveFailed = false;
+          this.screen = "settings";
+        });
         this.playSound("button");
       }
       return;
     }
-    if (this.screen === "supply") {
-      for (const kind of SUPPLY_ORDER) {
-        if (this.interactionHit(point, this.supplyBuyRect(kind))) {
-          this.buySupply(kind);
-          return;
-        }
-      }
-      return;
-    }
+    if (this.screen === "supply") { this.handleWelfarePointer(point); return; }
     if (this.screen === "leaderboard") {
+      if (this.rankingSaveRejected || !this.save.mainlineRanking?.province) this.beginRankingPage();
       if (this.interactionHit(point, BUTTONS.leaderboardWeekly)) {
         this.leaderboardMode = "weekly";
         this.leaderboardScrollView("weekly");
@@ -8684,6 +12656,16 @@ export class ColorEscapeGame {
       return;
     }
     if (this.screen === "levels") {
+      const destinationRetry = this.journeyDestinationRetryRect();
+      if (destinationRetry && this.interactionHit(point, destinationRetry, { bounds: this.journeyScrollView().viewport })) {
+        const art = this.formalPageArtFor("levels");
+        if (art?.screen === "levels") {
+          void art.deferred.requestDestination(true).catch(() => {});
+          this.dirty = true;
+          this.scheduleFrame();
+        }
+        return;
+      }
       const retry = this.failedVisibleJourneyEpisodes().find((row) => (
         this.interactionHit(point, this.journeyEpisodeRetryRect(row), { bounds: this.journeyScrollView().viewport })
       ));
@@ -8728,15 +12710,17 @@ export class ColorEscapeGame {
             ].slice(0, 64);
           });
         }
-        if (!usesImmediatePlayableClock(this.model.level)) this.model.startCountdown();
-        this.playableClockSlices.reset();
-        this.lastFrame = 0;
-        this.screen = "playing";
+        this.closePopup("feature", () => {
+          if (!usesImmediatePlayableClock(this.model.level)) this.model.startCountdown();
+          this.screen = "playing";
+          this.updateBoosterUnlockGuide(0);
+        });
         this.playSound("button");
       }
       return;
     }
     if (this.screen === "paused") {
+      if (!this.pauseUnlocked()) return;
       if (this.interactionHit(point, PAUSE_SETTING_RECTS.sound)) {
         this.toggleSetting("sound");
       } else if (this.interactionHit(point, PAUSE_SETTING_RECTS.haptic)) {
@@ -8744,15 +12728,27 @@ export class ColorEscapeGame {
       } else if (this.interactionHit(point, PAUSE_SETTING_RECTS.reducedMotion)) {
         this.toggleSetting("reducedMotion");
       } else if (this.interactionHit(point, BUTTONS.pauseResume)) {
-        this.screen = "playing";
-        this.lastFrame = 0;
-        this.playableClockSlices.reset();
+        this.closePopup("pause", () => {
+          this.screen = "playing";
+          this.syncMusic();
+        });
         this.playSound("button");
       } else if (this.interactionHit(point, BUTTONS.pauseRestart)) {
-        this.loadLevel(this.model.level.id, true);
+        if (this.leagueRun) this.startLeaguePrototype();
+        else if (this.dailyChallengeRunInfo()) this.restartDailyChallenge();
+        else {
+          if (!this.canStartCampaignAttempt()) return;
+          const levelId = this.model.level.id;
+          this.closePopup("pause", () => this.loadLevel(levelId, true));
+        }
         this.playSound("button");
       } else if (this.interactionHit(point, BUTTONS.pauseHome)) {
-        this.loadLevel(this.model.level.id, false);
+        if (this.leagueRun) this.returnFromLeaguePrototype();
+        else if (this.dailyChallengeRunInfo()) this.leaveDailyChallengeRun();
+        else {
+          const levelId = this.model.level.id;
+          this.closePopup("pause", () => this.loadLevel(levelId, false));
+        }
         this.playSound("button");
       }
       return;
@@ -8768,25 +12764,58 @@ export class ColorEscapeGame {
       return;
     }
     if (this.screen === "win") {
-      if (this.interactionHit(point, BUTTONS.winPrimary)) {
+      if (this.interactionHit(point, this.dailyChallengeWin ? homeArtRect(DAILY_SUCCESS_LAYOUT.continueButton) : BUTTONS.winPrimary)) {
+        if (this.beginMasterpieceUnlockPreview()) return;
         const reward = this.winCoinReward;
-        this.loadLevel(this.save.currentLevel, false);
-        this.beginHomeCoinFlight(reward);
+        const dailyWin = this.dailyChallengeWin;
+        const levelId = this.save.currentLevel;
+        this.closePopup("win", () => {
+          if (dailyWin) {
+            this.dailyChallengeWin = undefined;
+            this.loadLevel(levelId, false);
+            this.screen = this.featureUnlocked("dailyChallenge") ? "dailyChallenge" : "home";
+            if (reward > 0) this.beginHomeCoinFlight(reward);
+          } else {
+            this.returnHomeFromMainlineWin();
+            this.beginHomeCoinFlight(reward);
+          }
+        });
         this.playSound("button");
-      } else if (this.interactionHit(point, BUTTONS.winClose)) {
-        this.loadLevel(this.save.currentLevel, false);
-        this.beginPendingJourneyPresentation();
+      } else if (this.interactionHit(point, this.dailyChallengeWin ? homeArtRect(DAILY_SUCCESS_LAYOUT.close) : BUTTONS.winClose)) {
+        if (this.beginMasterpieceUnlockPreview()) return;
+        const dailyWin = this.dailyChallengeWin;
+        const levelId = this.save.currentLevel;
+        this.closePopup("win", () => {
+          if (dailyWin) {
+            this.dailyChallengeWin = undefined;
+            this.loadLevel(levelId, false);
+            this.screen = this.featureUnlocked("dailyChallenge") ? "dailyChallenge" : "home";
+          } else {
+            this.returnHomeFromMainlineWin();
+            this.beginPendingHomePresentation();
+          }
+        });
         this.playSound("button");
       }
       return;
     }
     if (this.screen === "failed") {
       if (this.interactionHit(point, BUTTONS.failedReplay)) {
-        if (!this.canStartCampaignAttempt()) return;
-        this.loadLevel(this.model.level.id, true);
+        if(this.leagueRun){this.startLeaguePrototype();return;}
+        if (this.dailyChallengeRunInfo()) this.restartDailyChallenge();
+        else {
+          if (!this.canStartCampaignAttempt()) return;
+          const levelId = this.model.level.id;
+          this.closePopup("failed", () => this.loadLevel(levelId, true));
+        }
         this.playSound("button");
       } else if (this.interactionHit(point, BUTTONS.failedHome)) {
-        this.loadLevel(this.model.level.id, false);
+        if (this.leagueRun) this.returnFromLeaguePrototype();
+        else if (this.dailyChallengeRunInfo()) this.leaveDailyChallengeRun();
+        else {
+          const levelId = this.model.level.id;
+          this.closePopup("failed", () => this.loadLevel(levelId, false));
+        }
         this.playSound("button");
       }
       return;
@@ -8797,56 +12826,23 @@ export class ColorEscapeGame {
     if (this.activePointer !== undefined) return;
     this.exitFailure = undefined;
 
-    if (this.interactionHit(point, BUTTONS.undo)) {
-      this.dragVisual = undefined;
-      if (this.model.undo()) {
-        const action = this.undoActions.pop();
-        if (action?.booster) {
-          this.refundBooster(action.booster);
-          this.showBoosterFeedback(
-            this.tr("gameplay.booster.refunded", { item: this.boosterName(action.booster) }),
-            "#70f0b4",
-          );
-          this.persist();
-        }
-        // Earlier clears can still be animating when the latest move is
-        // undone. Keep their owners; remove only events absent after restore.
-        const pendingExits = new Set(this.model.snapshot().pendingExitAnimations ?? []);
-        this.particles = this.particles.filter((particle) => (
-          particle.exitAnimationId != null && pendingExits.has(particle.exitAnimationId)
-        ));
-        this.exitGhosts = this.exitGhosts.filter((ghost) => (
-          ghost.exitAnimationOwner === this.model && ghost.exitAnimationId != null
-          && pendingExits.has(ghost.exitAnimationId)
-        ));
-        this.exitPulses = [];
-        this.generatorSpawnAnimations = [];
-        this.mechanicPulses = [];
-        this.revisedTransitions = [];
-        this.exitFailure = undefined;
-        this.boardShakeTime = 0;
-        this.pendingCelebration = 0;
-        this.noClearMoveStreak = 0;
-        this.strategyNudgeAcknowledged = false;
-        this.strategyFollowupAvailableAt = undefined;
-        this.strategyFollowupAction = undefined;
-        this.strategyFollowupDrags = 0;
-        this.strategyRescueDrags = 0;
-        this.playSound("button");
-        this.vibrate("light");
-      } else {
-        this.showHudFeedback(this.tr("gameplay.undo.none"), "#aaa5ce");
-        this.playSound("blocked");
-      }
-      return;
-    }
-    if (this.interactionHit(point, BUTTONS.pause)) {
+    if (this.pauseUnlocked() && this.interactionHit(point, BUTTONS.pause)) {
       this.dragVisual = undefined;
       this.screen = "paused";
+      // Update the scene before playing the button feedback. Otherwise a
+      // host that keeps the last challenge track alive can leave music
+      // running under the pause panel.
+      this.syncMusic();
       this.playSound("button");
       return;
     }
-    if (this.pendingCelebration > 0 || this.hasActiveMechanicMotion()) return;
+    if (this.rocketFlight || this.pendingCelebration > 0 || this.hasActiveMechanicMotion()) return;
+    // The pulse has already applied its real effect. A board gesture may finish
+    // the visual flourish early; it must not make Lv10's thawed block wait.
+    if (this.pulseAnimation?.isVisible
+      && ![BUTTONS.time, BUTTONS.rocket, BUTTONS.pulse].some(rect => this.interactionHit(point, rect))) {
+      this.finishPulsePresentation();
+    }
     if (this.hasInitialRevisedRegionPresentation() || this.revisedArtLoading) return;
     if (this.interactionHit(point, BUTTONS.time)) { this.useBooster("time"); return; }
     if (this.interactionHit(point, BUTTONS.rocket)) { this.useBooster("rocket"); return; }
@@ -8859,46 +12855,11 @@ export class ColorEscapeGame {
       return;
     }
     if (this.boosterTarget === "rocket") {
-      if (this.model.clone().removeBlockWithBooster(block.id).ok && !this.ensureCampaignLifeStarted()) return;
-      const ghost = JSON.parse(JSON.stringify(block)) as BlockState;
-      const before = this.model.snapshot();
-      this.model.beginAction();
-      const result = this.model.removeBlockWithBooster(block.id);
-      if (result.ok) {
-        this.strategyFollowupAvailableAt = undefined;
-        this.strategyFollowupAction = undefined;
-        this.strategyFollowupDrags = 0;
-        this.emitMechanicFeedback(before, this.model.snapshot(), this.exitToMechanicDelay());
-        this.spendBooster("rocket");
-        this.commitAction("rocket");
-        this.emitBlockParticles(block, result.color!, "top", 26, false, undefined, result.exitAnimationId);
-        this.exitGhosts.push({
-          mode: "rocket",
-          block: ghost,
-          side: "top",
-          age: 0,
-          duration: this.save.reducedMotion ? 0.12 : 0.3,
-          exitAnimationId: result.exitAnimationId,
-          exitAnimationOwner: this.model,
-          exitCompletionDuration: this.save.reducedMotion ? 0.12 : 0.3,
-        });
-        this.playSound("rocket");
-        this.vibrate("medium");
-        this.persist();
-        this.showBoosterFeedback(this.tr("gameplay.booster.rocketFired"), "#ffcc55");
-        if (result.complete) {
-          const completed = this.model.snapshot();
-          this.completionMetrics = this.captureCompletionMetrics(completed);
-          this.requestWinArt();
-          this.pendingCelebration = 0.42;
-        }
-        this.boosterTarget = undefined;
-      } else {
-        this.model.cancelAction();
+      if (!this.model.isBlockActive(block)) {
         this.showBoosterFeedback(this.tr("gameplay.booster.blockStillFrozen"), "#ff7d8d");
         this.playSound("ice");
         this.vibrate("light");
-      }
+      } else this.beginRocketFlight(block);
       this.selectionAssist = undefined;
       return;
     }
@@ -8911,7 +12872,7 @@ export class ColorEscapeGame {
 
     const board = this.boardLayout();
     const strategyNudge = this.strategyNudgeOrigins();
-    const strategyNudgeTarget = strategyNudge?.origins.at(-1);
+    const strategyNudgeTarget = strategyNudge?.origins[strategyNudge.origins.length - 1];
     this.strategyNudgeDrag = strategyNudge?.block.id === block.id && strategyNudgeTarget
       ? {
         blockId: block.id,
@@ -8998,6 +12959,13 @@ export class ColorEscapeGame {
   }
 
   private handleMove(point: PointerSample): void {
+    if (this.welfareScrollGesture) { this.updateWelfareScroll(point); return; }
+    const profileScroll=this.currentProfileScroll();
+    if(profileScroll?.gesture){
+      if(profileScroll.move(point.id,point.x,point.y,monotonicGameTime(),profileCatalogMaxScroll(this.profilePage!))){this.dirty=true;this.scheduleFrame();}
+      return;
+    }
+    if(this.leagueScroll.move(point.id,point.y,monotonicGameTime())) {this.dirty=true;this.scheduleFrame();return;}
     if (this.journeyScrollGesture) {
       if (point.id !== this.journeyScrollGesture.pointerId) return;
       this.updateJourneyScroll(point);
@@ -9187,6 +13155,25 @@ export class ColorEscapeGame {
   }
 
   private handleUp(point: PointerSample): void {
+    if (this.welfareScrollGesture) {
+      if (this.welfareScrollGesture.pointerId !== point.id) return;
+      this.updateWelfareScroll(point);
+      const moved = this.welfareScrollGesture.moved;
+      this.welfareScrollGesture = undefined;
+      if (moved || !this.pendingButtonPress) { this.dirty = true; this.scheduleFrame(); return; }
+    }
+    const profileScroll=this.currentProfileScroll();
+    if(profileScroll?.gesture){
+      const result=profileScroll.end(point.id,point.x,point.y,monotonicGameTime(),profileCatalogMaxScroll(this.profilePage!),this.save.reducedMotion);
+      if(result.handled){
+        const select=result.tap && this.profileScrollTarget && this.profileScrollTarget===this.profileTargetAt(point);
+        this.profileScrollTarget=undefined;
+        if(select)this.handleProfilePointer(point);
+        this.dirty=true;this.scheduleFrame();
+      }
+      return;
+    }
+    if(this.leagueScroll.end(point.id,point.y,monotonicGameTime(),this.save.reducedMotion)) {this.dirty=true;this.scheduleFrame();return;}
     if (this.journeyScrollGesture) {
       if (point.id !== this.journeyScrollGesture.pointerId) return;
       this.updateJourneyScroll(point);
@@ -9346,6 +13333,9 @@ export class ColorEscapeGame {
       const committed = this.commitAction();
       if (committed) {
         if (followupWasReady) this.strategyFollowupAction = undefined;
+        // Only a completed non-clearing drag breaks the chain. Intermediate
+        // cells within an eventual exit, invalid taps and waiting do not.
+        this.comboAnimation?.breakChain();
         this.noClearMoveStreak += 1;
         if (reachedGuidedTarget) {
           if (guidedDrag?.reason === "followup") {
@@ -9391,6 +13381,12 @@ export class ColorEscapeGame {
   }
 
   private handleCancel(point: PointerSample): void {
+    if (this.welfareScrollGesture?.pointerId === point.id) {
+      this.welfareScrollGesture = undefined; this.pendingButtonPress = undefined;
+      this.dirty = true; this.scheduleFrame(); return;
+    }
+    if(this.currentProfileScroll()?.gesture?.id===point.id){this.cancelProfileScroll();this.dirty=true;this.scheduleFrame();return;}
+    if(this.leagueScroll.gesture?.id===point.id){this.leagueScroll.cancel();this.dirty=true;this.scheduleFrame();return;}
     if (this.journeyScrollGesture?.pointerId === point.id) {
       this.journeyScrollGesture = undefined;
       this.journeyScrollVelocity = 0;
@@ -9460,7 +13456,258 @@ export class ColorEscapeGame {
     this.scheduleFrame();
   }
 
+  private rocketTargetBlockIds(): string[] {
+    const snapshot = this.model.snapshot();
+    if (snapshot.complete || snapshot.failed) return [];
+    // Match removeBlockWithBooster, not exit reachability. Frozen, locked and
+    // still-hidden cargo must not become highlighted/selectable targets.
+    return snapshot.blocks.filter(block => this.model.isBlockActive(block) && this.isBlockCoverCleared(block)).map(block => block.id);
+  }
+
+  private isBlockCoverCleared(block: BlockState): boolean {
+    const opening = this.revisedTransitions.find(item => item.targetId === block.shutterId
+      && (item.kind === "shutter" || item.kind === "lift"));
+    return !opening || sampleRevisedRegionAnimation(opening.kind as "shutter" | "lift", opening.age, this.save.reducedMotion).coverFraction === 0;
+  }
+
+  private beginRocketFlight(block: BlockState): boolean {
+    if (this.rocketFlight || this.screen !== "playing" || !this.appVisible
+      || !this.boosterUnlocked("rocket") || this.availableRocketStock() <= 0
+      || !this.isBlockCoverCleared(block) || !this.model.clone().removeBlockWithBooster(block.id).ok) return false;
+    if (!this.ensureCampaignLifeStarted()) return false;
+    const board = this.boardLayout();
+    const cells = this.model.blockCells(block);
+    const cx = cells.reduce((sum, [x]) => sum + x + 0.5, 0) / cells.length;
+    const cy = cells.reduce((sum, [, y]) => sum + y + 0.5, 0) / cells.length;
+    // An L/C-shaped block's centroid can be in a hole: aim at the nearest
+    // actual occupied cell so the rocket always meets the visible material.
+    const [tx, ty] = cells.reduce((best, cell) =>
+      Math.hypot(cell[0] + 0.5 - cx, cell[1] + 0.5 - cy)
+        < Math.hypot(best[0] + 0.5 - cx, best[1] + 0.5 - cy) ? cell : best);
+    const icon = gameplayArtRect(GAMEPLAY_ART_LAYOUT.boosters[1].icon);
+    this.rocketFlight = {
+      owner: this.model, blockId: block.id, blockPosition: { x: block.x, y: block.y }, age: 0,
+      duration: this.save.reducedMotion ? ROCKET_REDUCED_FLIGHT_DURATION : ROCKET_FLIGHT_DURATION,
+      source: { x: icon.x + icon.width / 2, y: icon.y + icon.height / 2 },
+      target: { x: board.innerX + (tx + 0.5) * board.cell, y: board.innerY + (ty + 0.5) * board.cell },
+    };
+    this.boosterTarget = undefined;
+    this.boosterFeedback = undefined;
+    this.selectionAssist = undefined;
+    // The target click launches the missile; impact must not replay its sound.
+    this.playSound("rocket");
+    this.dirty = true;
+    this.scheduleFrame();
+    return true;
+  }
+
+  private updateRocketFlight(delta: number): void {
+    const snapshot = this.model.readStatus();
+    if (snapshot.failed || (this.screen !== "playing" && this.screen !== "paused" && this.screen !== "boosterPurchase")) {
+      this.rocketFlight = undefined;
+      this.rocketImpact = undefined;
+      return;
+    }
+    if (this.rocketFlight && (this.rocketFlight.owner !== this.model || snapshot.complete)) this.rocketFlight = undefined;
+    if (this.screen !== "playing" || !this.appVisible || this.boosterUnlockGuide
+      || this.pendingLifeStart || this.lifeRefillOpen || this.directLevelTransition) return;
+    const dt = Number.isFinite(delta) ? Math.max(0, delta) : 0;
+    if (this.rocketImpact) {
+      this.rocketImpact.age += dt;
+      if (this.rocketImpact.age >= ROCKET_SHATTER_DURATION) this.rocketImpact = undefined;
+    }
+    const flight = this.rocketFlight;
+    if (!flight) return;
+    const block = this.model.getBlock(flight.blockId);
+    if (!block || !this.model.isBlockActive(block)
+      || block.x !== flight.blockPosition.x || block.y !== flight.blockPosition.y) {
+      this.rocketFlight = undefined;
+      return;
+    }
+    flight.age += dt;
+    if (flight.age < flight.duration) return;
+    // Clear ownership before applying side effects: neither re-entry nor a
+    // later frame can fire the same missile twice.
+    this.rocketFlight = undefined;
+    this.impactRocket(flight.blockId, flight.target, flight.blockPosition);
+  }
+
+  private impactRocket(blockId: string, target?: { x: number; y: number }, expectedPosition?: { x: number; y: number }): void {
+    if (!this.advanceRevisedClockBeforeMutation() || !this.boosterUnlocked("rocket")
+      || this.availableRocketStock() <= 0) return;
+    const block = this.model.getBlock(blockId);
+    if (!block || !this.model.isBlockActive(block)
+      || (expectedPosition && (block.x !== expectedPosition.x || block.y !== expectedPosition.y))) return;
+    const ghost = JSON.parse(JSON.stringify(block)) as BlockState;
+    const before = this.model.snapshot();
+    this.model.beginAction();
+    const result = this.model.removeBlockWithBooster(block.id);
+    if (!result.ok) { this.model.cancelAction(); return; }
+    this.leagueRun?.recordRemoval(result, Date.now());
+    this.strategyFollowupAvailableAt = undefined;
+    this.strategyFollowupAction = undefined;
+    this.strategyFollowupDrags = 0;
+    this.emitMechanicFeedback(before, this.model.snapshot(), this.exitToMechanicDelay());
+    this.spendBooster("rocket");
+    this.commitAction("rocket");
+    this.emitRocketClearEffect(block, result.color!);
+    if (target && this.rocketImpact) this.rocketImpact.target = { ...target };
+    const duration = this.save.reducedMotion ? ROCKET_REDUCED_SHATTER_DURATION : ROCKET_SHATTER_DURATION;
+    this.exitGhosts.push({ mode: "rocket", block: ghost, side: "top", age: 0, duration,
+      exitAnimationId: result.exitAnimationId, exitAnimationOwner: this.model, exitCompletionDuration: duration });
+    this.vibrate("medium");
+    this.persist();
+    this.boosterFeedback = undefined;
+    if (this.model.level.rocketRescue?.targetBlockId === block.id) this.rocketRescueGuide = undefined;
+    if (this.model.level.pulseRescue?.targetBlockId === block.id) this.pulseRescueGuide = undefined;
+    if (result.complete) {
+      this.resetCountdownWarning();
+      this.completionMetrics = this.captureCompletionMetrics(this.model.snapshot());
+      this.mainlineRankingCompletedAtMs ??= Date.now();
+      if (!this.leagueRun) this.requestWinArt();
+      this.pendingCelebration = duration + 0.12;
+    }
+    this.dirty = true;
+    this.scheduleFrame();
+  }
+
+  private pulseAnimationGeometry() {
+    const board = this.boardLayout();
+    const icon = gameplayArtRect(GAMEPLAY_ART_LAYOUT.boosters[2].icon);
+    const width = this.model.level.width * board.cell;
+    const height = this.model.level.height * board.cell;
+    const rim = board.cell * 0.6;
+    return {
+      source: { x: icon.x + icon.width / 2, y: icon.y + icon.height / 2 },
+      center: { x: board.innerX + width / 2, y: board.innerY + height / 2 },
+      board: { x: board.innerX - rim, y: board.innerY - rim, width: width + 2 * rim, height: height + 2 * rim },
+    };
+  }
+
+  private collectPulseTargets(before: PuzzleSnapshot, after: PuzzleSnapshot): PulseTarget[] {
+    const board = this.boardLayout();
+    const targets: PulseTarget[] = [];
+    for (const block of before.blocks) {
+      const remaining = after.blocks.find(item => item.id === block.id)?.frozen;
+      if (remaining == null || remaining >= block.frozen) continue;
+      targets.push({ id: block.id, kind: "block", previous: block.frozen, remaining,
+        rects: block.shape.map(([dx, dy]) => ({ x: board.innerX + (block.x + dx) * board.cell,
+          y: board.innerY + (block.y + dy) * board.cell, width: board.cell, height: board.cell })) });
+    }
+    for (const gate of [...before.gates, ...before.flipDoors]) {
+      const remaining = [...after.gates, ...after.flipDoors].find(item => item.id === gate.id)?.frozen;
+      if (remaining == null || remaining >= gate.frozen) continue;
+      targets.push({ id: gate.id, kind: "gate", previous: gate.frozen, remaining,
+        rects: gatePortals(before, gate).map(portal => this.gateRect(portal.side, portalTangentOffset(portal), portal.size, board, portal)) });
+    }
+    for (const region of before.shutters) {
+      const remaining = after.shutters.find(item => item.id === region.id)?.count;
+      if (remaining == null || remaining >= region.count) continue;
+      targets.push({ id: region.id, kind: "shutter", previous: region.count, remaining,
+        rects: [projectShutterVisualRect(region.x, region.y, region.width, region.height, board)] });
+    }
+    return targets;
+  }
+
+  private pulseArrival(target: PulseTarget): number {
+    const geometry = this.pulseAnimationGeometry();
+    return pulseTargetArrival(target, geometry.center, Math.hypot(geometry.board.width / 2, geometry.board.height / 2), this.save.reducedMotion);
+  }
+
+  private beginPulsePresentation(before: PuzzleSnapshot, after: PuzzleSnapshot): void {
+    const targets = this.collectPulseTargets(before, after);
+    this.pulseAnimation.trigger(targets);
+    this.pulseAnimationOwner = this.model;
+    const previousPulses = new Set(this.mechanicPulses);
+    const previousTransitions = new Set(this.revisedTransitions);
+    // Counts already changed once in PuzzleModel. Only their existing visual
+    // responses wait for the wave; this never reruns thawAll or grants time.
+    this.emitMechanicFeedback(before, after, this.save.reducedMotion ? 0 : PULSE_RELEASE_TIME);
+    this.pulsePresentationPulses = this.mechanicPulses.filter(item => !previousPulses.has(item));
+    this.pulsePresentationTransitions = this.revisedTransitions.filter(item => !previousTransitions.has(item));
+    for (const pulse of this.pulsePresentationPulses) {
+      const target = targets.find(item => item.id === pulse.targetId && item.kind === pulse.target);
+      if (target && !pulse.presented) pulse.age = -(pulse.delay = this.pulseArrival(target));
+      // One compact sweep shake instead of accumulating one shake per device.
+      pulse.shakeDuration = 0;
+    }
+    for (const transition of this.pulsePresentationTransitions) {
+      const target = targets.find(item => item.id === transition.targetId && item.kind === "shutter");
+      if (target) transition.age = -this.pulseArrival(target);
+    }
+    this.dirty = true;
+    this.scheduleFrame();
+  }
+
+  private updatePulseAnimation(delta: number): void {
+    if (!this.pulseAnimation?.isVisible) return;
+    const snapshot = this.model.readStatus();
+    const terminal = this.pulseAnimationOwner !== this.model || snapshot.complete || snapshot.failed
+      || !["playing", "paused", "boosterPurchase"].includes(this.screen);
+    if (terminal) {
+      // Never let this board's delayed thaw/open feedback leak into a new or
+      // failed board. Other independent feedback keeps its own ownership.
+      const ownedPulses = new Set(this.pulsePresentationPulses);
+      const ownedTransitions = new Set(this.pulsePresentationTransitions);
+      this.mechanicPulses = this.mechanicPulses.filter(item => !ownedPulses.has(item));
+      this.revisedTransitions = this.revisedTransitions.filter(item => !ownedTransitions.has(item));
+    }
+    const active = this.screen === "playing" && this.appVisible && !this.boosterUnlockGuide
+      && !this.pendingLifeStart && !this.lifeRefillOpen && !this.directLevelTransition;
+    this.pulseAnimation.update(delta, active, terminal, this.save.reducedMotion);
+    if (!this.pulseAnimation.isVisible) {
+      this.pulseAnimationOwner = undefined;
+      this.pulsePresentationPulses = [];
+      this.pulsePresentationTransitions = [];
+    }
+  }
+
+  private updateComboAnimation(delta: number): void {
+    if (!this.comboAnimation) return;
+    if (this.comboAnimationOwner !== this.model || this.model.readStatus().failed
+      || !["playing", "paused", "boosterPurchase"].includes(this.screen)) {
+      this.comboAnimation.clear();
+      this.comboAnimationOwner = undefined;
+      return;
+    }
+    const active = this.screen === "playing" && this.appVisible && !this.boosterUnlockGuide
+      && !this.pendingLifeStart && !this.lifeRefillOpen && !this.directLevelTransition;
+    // This advances praise lifetimes only; the streak has no timeout.
+    this.comboAnimation.update(delta, active, this.save.reducedMotion);
+  }
+
+  private finishPulsePresentation(): void {
+    if (!this.pulseAnimation?.isVisible) return;
+    // A player can immediately grab a thawed block. Resolve only this use's
+    // delayed visuals, never advance the model or other in-flight effects.
+    for (const pulse of this.pulsePresentationPulses) {
+      if (pulse.age < 0) { pulse.age = 0; this.presentMechanicPulse(pulse); }
+    }
+    for (const transition of this.pulsePresentationTransitions) {
+      if (transition.age < 0) transition.age = 0;
+    }
+    this.pulseAnimation.reset();
+    this.pulseAnimationOwner = undefined;
+    this.pulsePresentationPulses = [];
+    this.pulsePresentationTransitions = [];
+    this.dirty = true;
+  }
+
+  private pulseVisualSnapshot(snapshot: PuzzleSnapshot): PuzzleSnapshot {
+    if (!this.pulseAnimation?.isVisible || this.pulseAnimationOwner !== this.model) return snapshot;
+    const sample = this.pulseAnimation.sample(this.save.reducedMotion);
+    const waiting = sample.targets.filter(target => sample.age < this.pulseArrival(target));
+    const previous = (kind: PulseTarget["kind"], id: string, actual: number): number =>
+      waiting.find(target => target.kind === kind && target.id === id)?.previous ?? actual;
+    return { ...snapshot,
+      gates: snapshot.gates.map(gate => ({ ...gate, frozen: previous("gate", gate.id, gate.frozen) })),
+      flipDoors: snapshot.flipDoors.map(gate => ({ ...gate, frozen: previous("gate", gate.id, gate.frozen) })),
+      shutters: snapshot.shutters.map(region => ({ ...region, count: previous("shutter", region.id, region.count) })),
+    };
+  }
+
   private useBooster(kind: Booster): void {
+    if (this.screen !== "playing" || !this.appVisible || this.rocketFlight || this.pulseAnimation?.isVisible) return;
     if (!this.advanceRevisedClockBeforeMutation()) return;
     if (!this.boosterUnlocked(kind)) {
       this.boosterTarget = undefined;
@@ -9472,18 +13719,17 @@ export class ColorEscapeGame {
       this.playSound("blocked");
       return;
     }
+    const available = kind === "rocket"
+      ? this.availableRocketStock()
+      : kind === "pulse" ? this.availablePulseStock() : this.save.boosters[kind];
+    if (available <= 0) {
+      this.boosterTarget = undefined;
+      this.openBoosterPurchase(kind);
+      return;
+    }
     if (kind === "time" && (this.model.snapshot().timeFreezeSeconds ?? 0) > 0) {
       this.boosterTarget = undefined;
       this.showBoosterFeedback(this.tr("gameplay.booster.timeFull"), "#66d8ff");
-      this.playSound("blocked");
-      return;
-    }
-    if (this.save.boosters[kind] <= 0) {
-      this.boosterTarget = undefined;
-      this.showBoosterFeedback(
-        this.tr("gameplay.booster.depleted", { item: this.boosterName(kind) }),
-        "#ff7d8d",
-      );
       this.playSound("blocked");
       return;
     }
@@ -9494,6 +13740,10 @@ export class ColorEscapeGame {
       return;
     }
     this.boosterTarget = undefined;
+    const pulseRescueTarget = kind === "pulse"
+      ? this.model.level.pulseRescue?.targetBlockId
+        && this.model.getBlock(this.model.level.pulseRescue.targetBlockId)?.frozen === 1
+      : false;
     const preview = this.model.clone();
     const wouldChange = kind === "time" ? preview.freezeTime(TIME_FREEZE_SECONDS) : preview.thawAll(2);
     if (wouldChange && !this.ensureCampaignLifeStarted()) return;
@@ -9508,17 +13758,23 @@ export class ColorEscapeGame {
         this.strategyFollowupAction = undefined;
         this.strategyFollowupDrags = 0;
       }
-      if (kind === "pulse") this.emitMechanicFeedback(before, this.model.snapshot());
       this.spendBooster(kind);
-      this.commitAction(kind);
+      const committed = this.commitAction(kind);
+      if (committed && kind === "pulse") this.beginPulsePresentation(before, this.model.snapshot());
+      if (committed && !this.save.boosterUsageSeen.includes(kind)) {
+        this.save.boosterUsageSeen = [...this.save.boosterUsageSeen, kind];
+      }
+      if (committed && kind === "time") {
+        this.freezeUsageGuide = undefined;
+        this.timeFreezeAnimation?.trigger();
+        this.playSound("time");
+      }
+      if (committed && kind === "pulse" && pulseRescueTarget) this.pulseRescueGuide = undefined;
       this.persist();
-      this.playSound(kind === "time" ? "time" : kind === "pulse" ? "pulse" : "booster");
+      if (committed && kind !== "time") this.playSound(kind === "pulse" ? "pulse" : "booster");
       this.vibrate("light");
-      if (kind === "pulse") this.emitBurst(248, 560, "#72f6ff", 28, 150);
-      this.showBoosterFeedback(
-        kind === "time" ? this.tr("gameplay.booster.timeAdded") : this.tr("gameplay.booster.mechanismReduced"),
-        kind === "time" ? "#66d8ff" : "#bd91ff",
-      );
+      // The sweep and real per-mechanism deltas replace the old generic burst/toast.
+      this.boosterFeedback = undefined;
     } else {
       this.model.cancelAction();
       this.showBoosterFeedback(
@@ -9534,20 +13790,18 @@ export class ColorEscapeGame {
     const committed = this.model.commitAction(booster == null);
     if (committed) {
       this.captureGeneratorSpawns(before, this.model.snapshot());
-      this.undoActions.push({ booster });
-      if (this.undoActions.length > 20) this.undoActions.shift();
     }
     return committed;
   }
 
   private showBoosterFeedback(text: string, color: string): void {
-    this.boosterFeedback = { text, color, age: 0, duration: 0.9 };
+    this.boosterFeedback = this.notifyButtonFeedback({ text, color, age: 0, duration: 0.9 });
     this.dirty = true;
     this.scheduleFrame();
   }
 
   private showHudFeedback(text: string, color: string): void {
-    this.hudFeedback = { text, color, age: 0, duration: 0.9 };
+    this.hudFeedback = this.notifyButtonFeedback({ text, color, age: 0, duration: 0.9 });
     this.dirty = true;
     this.scheduleFrame();
   }
@@ -9711,6 +13965,7 @@ export class ColorEscapeGame {
     const visual = this.dragVisual?.blockId === block.id ? this.dragVisual : undefined;
     const before = this.model.snapshot();
     const result = this.model.tryExit(this.selectedId, side);
+    this.leagueRun?.recordRemoval(result,Date.now());
     if (!result.ok) return;
     if (before.levelId === 1 && !this.save.featureSeen.includes("basics")) {
       this.commitTransientAcknowledgement((candidate) => {
@@ -9732,6 +13987,18 @@ export class ColorEscapeGame {
     const mechanismSource = resolvedPortal
       ? gatePortalExitLaneCenter(resolvedPortal.portal, exitCells, this.boardLayout())
       : undefined;
+    const board = this.boardLayout();
+    const source = mechanismSource ?? {
+      x: board.innerX + exitCells.reduce((sum, [x]) => sum + x + 0.5, 0) / exitCells.length * board.cell,
+      y: board.innerY + exitCells.reduce((sum, [, y]) => sum + y + 0.5, 0) / exitCells.length * board.cell,
+    };
+    this.comboAnimationOwner = this.model;
+    // A shell peel is one successful exit too. Count here exactly once,
+    // independently of model counters, effect completion and booster removals.
+    this.comboAnimation?.recordExit({
+      x: source.x + (side === "left" ? 0.6 : side === "right" ? -0.6 : 0) * board.cell,
+      y: source.y + (side === "top" ? 0.6 : side === "bottom" ? -0.6 : 0) * board.cell,
+    });
     const mechanicDelay = result.layerRemoved || this.save.reducedMotion
       ? this.exitToMechanicDelay()
       : GATE_EXIT_MECHANIC_DELAY;
@@ -9820,7 +14087,10 @@ export class ColorEscapeGame {
     // `tryExit` mutates the board before the action is committed. Capture the
     // final drag count after commit so the move-star condition includes the
     // exit that actually cleared the last block.
-    if (result.complete) this.completionMetrics = this.captureCompletionMetrics(this.model.snapshot());
+    if (result.complete) {
+      this.completionMetrics = this.captureCompletionMetrics(this.model.snapshot());
+      this.mainlineRankingCompletedAtMs ??= Date.now();
+    }
     this.playSound(result.layerRemoved ? "shell" : "exit");
     this.vibrate(result.layerRemoved ? "light" : "medium");
     this.selectedId = undefined;
@@ -9851,11 +14121,98 @@ export class ColorEscapeGame {
     this.blockerFocusTime = 0;
     this.grabFeedbackTime = 0;
     if (result.complete) {
+      this.resetCountdownWarning();
       this.pendingCelebration = this.save.reducedMotion ? 0.24 : GATE_EXIT_TOTAL_DURATION;
       // Lv1-4 flow directly into the next challenge and never needs result art.
       // Later levels preload the result while the final block finishes exiting.
-      if (!shouldDirectAdvanceAfterClear(this.model.level.id, LEVELS.length)) this.requestWinArt();
+      if (!this.leagueRun && !shouldDirectAdvanceAfterClear(this.model.level.id, LEVELS.length)) this.requestWinArt();
     }
+  }
+
+  private resetPuzzlePresentation(): void {
+    if (this.pendingBoosterPurchase) return;
+    this.boardGeometryCache = undefined;
+    this.comboAnimation?.clear();
+    this.comboAnimationOwner = undefined;
+    this.timeFreezeAnimation?.reset();
+    this.pulseAnimation?.reset();
+    this.pulseAnimationOwner = undefined;
+    this.pulsePresentationPulses = [];
+    this.pulsePresentationTransitions = [];
+    this.rocketFlight = undefined;
+    this.rocketImpact = undefined;
+    this.pendingButtonPress = undefined;
+    this.selectedId = undefined;
+    this.activePointer = undefined;
+    this.selectionAssist = undefined;
+    this.dragVisual = undefined;
+    this.strategyNudgeDrag = undefined;
+    this.strategyFollowupAvailableAt = undefined;
+    this.strategyFollowupAction = undefined;
+    this.strategyFollowupDrags = 0;
+    this.strategyRescueDrags = 0;
+    this.boosterTarget = undefined;
+    this.boosterFeedback = undefined;
+    this.hudFeedback = undefined;
+    this.supplyFeedback = undefined;
+    this.blockedBlockId = undefined;
+    this.blockedFeedbackTime = 0;
+    this.blockerFocusBlockId = undefined;
+    this.blockerFocusTime = 0;
+    this.grabFeedbackTime = 0;
+    this.noClearMoveStreak = 0;
+    this.strategyNudgeAcknowledged = false;
+    this.earnedStars = 0;
+    this.winCoinReward = 0;
+    this.clearMainlineRankChange();
+    this.masterpieceUnlockPresentation = undefined;
+    this.masterpieceUnlockArtwork?.dispose();
+    this.masterpieceUnlockArtwork = undefined;
+    this.dailyChallengeWin = undefined;
+    this.assistedClear = false;
+    this.pendingSettlement = undefined;
+    this.pendingSettlementAbandon = undefined;
+    this.pendingLifeStart = undefined;
+    this.pendingSupplyPurchase = undefined;
+    this.pendingBoosterPurchase = undefined;
+    this.boosterPurchase = undefined;
+    this.releaseBoosterPurchaseArt();
+    this.pendingJourneyClaim = undefined;
+    this.pendingAchievementClaim = undefined;
+    this.pendingDailyTaskClaim = undefined;
+    this.pendingCollectionRestoration = undefined;
+    this.pendingJourneyThemeSelection = undefined;
+    this.boosterUnlockToast = undefined;
+    this.boosterUnlockGuide = undefined;
+    this.freezeUsageGuide = undefined;
+    this.freezeUsageGuideShownThisRun = false;
+    this.rocketRescueGuide = undefined;
+    this.pulseRescueGuide = undefined;
+    this.settlementSaveFailed = false;
+    this.settlementFailureKind = undefined;
+    this.settlementSaveAttempts = 0;
+    this.particles = [];
+    this.exitGhosts = [];
+    this.exitPulses = [];
+    this.generatorSpawnAnimations = [];
+    this.exitFailure = undefined;
+    this.revisedTransitions = [];
+    this.mechanicPulses = [];
+    this.boardShakeTime = 0;
+    this.pendingCelebration = 0;
+    this.resetCountdownWarning();
+    this.runElapsedSeconds = 0;
+    this.completionMetrics = undefined;
+    this.mainlineRankingCompletedAtMs = undefined;
+    this.winStarConditions = undefined;
+    this.journeyPresentation = undefined;
+    this.achievementScrollGesture = undefined;
+    this.achievementFeedback = undefined;
+    this.collectionAlbumDetailId = undefined;
+    this.collectionAlbumFeedback = undefined;
+    this.navigationTransition = undefined;
+    this.navigationPendingTarget = undefined;
+    this.dailyChallengePendingDifficulty = undefined;
   }
 
   private captureCompletionMetrics(snapshot: ReturnType<PuzzleModel["snapshot"]>): CompletionMetrics {
@@ -9872,6 +14229,8 @@ export class ColorEscapeGame {
 
   private createPendingSettlement(): PendingSettlement {
     const snapshot = this.model.snapshot();
+    const dailyRun = this.dailyChallengeRunInfo();
+    if (dailyRun) return this.createDailyChallengeSettlement(dailyRun.difficulty, snapshot);
     const levelKey = String(this.model.level.id);
     const candidateSave = this.cloneSave(this.save);
     candidateSave.lifeState = completeLifeAttempt(candidateSave.lifeState, Date.now());
@@ -9882,11 +14241,25 @@ export class ColorEscapeGame {
     const earnedStars = starEvaluation.earnedStars;
     const previousBestStars = candidateSave.bestStars[levelKey] ?? 0;
     candidateSave.bestStars[levelKey] = Math.max(previousBestStars, earnedStars);
+    if (!this.temporaryLevelTestSession) {
+      const completedAtMs = this.mainlineRankingCompletedAtMs ?? Date.now();
+      candidateSave.mainlineRanking = recordMainlineRankingStars(
+        normalizeMainlineRankingProgress(candidateSave.mainlineRanking, completedAtMs, candidateSave.playerProfile?.joinedAt),
+        previousBestStars, candidateSave.bestStars[levelKey], completedAtMs);
+    }
+    if (earnedStars >= previousBestStars) {
+      candidateSave.bestStarConditions[levelKey] = { stars: earnedStars, moves: starEvaluation.moves, elapsedSeconds: starEvaluation.elapsedSeconds };
+    }
     const previousMoves = candidateSave.bestMoves[levelKey];
     if (!assistedClear && (!previousMoves || snapshot.moves < previousMoves)) candidateSave.bestMoves[levelKey] = snapshot.moves;
     const firstClearReward = !candidateSave.rewardedLevels.includes(this.model.level.id);
+    candidateSave.playerProfile ??= normalizePlayerProfile(undefined);
+    completeProfileAttempt(candidateSave.playerProfile, this.model.level.id, firstClearReward);
     if (firstClearReward) {
       candidateSave.rewardedLevels.push(this.model.level.id);
+      if (this.model.level.id === 5 && !candidateSave.collectionIntroShown) {
+        candidateSave.collectionIntroPending = true;
+      }
     }
     const inspirationReward = collectionInspirationForResult(
       this.model.level.id,
@@ -9907,6 +14280,19 @@ export class ColorEscapeGame {
     const coinReward = getCompletionCoinReward(firstClearReward);
     candidateSave.coins += coinReward;
 
+    const deferredRocketSpent = this.model.level.id === 7 && candidateSave.activeRun?.levelId === 7
+      ? candidateSave.activeRun.boosterSpent.rocket
+      : 0;
+    if (deferredRocketSpent > 0) {
+      candidateSave.boosters.rocket = Math.max(0, candidateSave.boosters.rocket - deferredRocketSpent);
+    }
+    const deferredPulseSpent = this.model.level.id === 10 && candidateSave.activeRun?.levelId === 10
+      ? candidateSave.activeRun.boosterSpent.pulse
+      : 0;
+    if (deferredPulseSpent > 0) {
+      candidateSave.boosters.pulse = Math.max(0, candidateSave.boosters.pulse - deferredPulseSpent);
+    }
+
     const previousHighestLevel = candidateSave.highestLevel;
     const nextLevel = Math.min(LEVELS.length, this.model.level.id + 1);
     const advancesJourney = firstClearReward
@@ -9915,21 +14301,35 @@ export class ColorEscapeGame {
     if (advancesJourney) {
       candidateSave.highestLevel = nextLevel;
       candidateSave.currentLevel = nextLevel;
+      const unlockedEpisode = JOURNEY_EPISODES.find((episode) => episode.index > 1
+        && episode.unlockLevel === this.model.level.id);
+      if (!this.temporaryLevelTestSession && unlockedEpisode) {
+        // Select only a newly unlocked chapter, preserving manual choices on other wins.
+        candidateSave.selectedJourneyEpisode = unlockedEpisode.index;
+      }
     }
     const boostersUsed = candidateSave.activeRun
       ? Object.values(candidateSave.activeRun.boosterSpent).reduce((sum, count) => sum + count, 0)
       : 0;
-    candidateSave.dailyTaskProgress = applyDailyTaskRun(
-      reconcileDailyTaskProgress(candidateSave.dailyTaskProgress, new Date(), candidateSave.highestLevel),
-      {
+    // Check the committed progress before this win: the first Lv5 completion
+    // opens Daily Tasks, but its earlier play must not become task credit.
+    const dailyTasksWereUnlocked = this.featureUnlocked("dailyTasks");
+    candidateSave.dailyTaskProgress = reconcileDailyTaskProgress(
+      candidateSave.dailyTaskProgress, new Date(), candidateSave.highestLevel, dailyTasksWereUnlocked);
+    if (dailyTasksWereUnlocked) {
+      candidateSave.dailyTaskProgress = applyDailyTaskRun(candidateSave.dailyTaskProgress, {
         completedLevels: 1,
         earnedStars,
         perfectClears: earnedStars >= 3 ? 1 : 0,
         boosterFreeClears: boostersUsed === 0 ? 1 : 0,
         boostersUsed,
-      },
-    );
+      });
+    }
     candidateSave.activeRun = undefined;
+    if (!this.temporaryLevelTestSession) {
+      candidateSave.league = reconcileLeagueAccount(candidateSave, isFeatureUnlocked("league", candidateSave), Date.now(), Math.floor(Math.random() * 0x7fffffff)).league;
+      candidateSave.featureGuideProgress = queueFeatureUnlockGuides(this.save.featureGuideProgress, this.save, candidateSave);
+    }
     return {
       candidateSave,
       baselineSave: this.cloneSave(this.save),
@@ -9947,7 +14347,58 @@ export class ColorEscapeGame {
     };
   }
 
+  private createDailyChallengeSettlement(
+    difficulty: DailyChallengeDifficulty,
+    snapshot: ReturnType<PuzzleModel["snapshot"]>,
+  ): PendingSettlement {
+    const baselineSave = this.cloneSave(this.save);
+    const candidateSave = this.cloneSave(this.save);
+    const activeDayKey = baselineSave.activeRun?.daily && baselineSave.activeRun.dailyDayKey === baselineSave.dailyChallenge.dayKey
+      ? baselineSave.dailyChallenge.dayKey
+      : undefined;
+    const state = activeDayKey
+      ? candidateSave.dailyChallenge
+      : reconcileDailyChallengeState(candidateSave.dailyChallenge, new Date(), candidateSave.highestLevel);
+    const completion = completeDailyChallenge(state, difficulty);
+    candidateSave.dailyChallenge = completion.state;
+    if (completion.firstCompletion) {
+      candidateSave.coins = Math.min(Number.MAX_SAFE_INTEGER, candidateSave.coins + completion.reward.coins);
+      candidateSave.collectionProgress = {
+        ...candidateSave.collectionProgress,
+        inspiration: Math.min(
+          Number.MAX_SAFE_INTEGER,
+          candidateSave.collectionProgress.inspiration + completion.reward.inspiration,
+        ),
+      };
+    }
+    // A daily result is not a campaign clear: keep level pointers, stars,
+    // campaign rewards, lives and daily-task progress unchanged.
+    candidateSave.activeRun = undefined;
+    const elapsedSeconds = this.runElapsedSeconds > 0 ? this.runElapsedSeconds : this.captureCompletionMetrics(snapshot).elapsedSeconds;
+    const reward = completion.firstCompletion ? completion.reward : { coins: 0, inspiration: 0 };
+    return {
+      candidateSave,
+      baselineSave,
+      presentation: {
+        assistedClear: Object.values(baselineSave.activeRun?.boosterSpent ?? {}).some((count) => count > 0),
+        earnedStars: 0,
+        coinReward: reward.coins,
+        moves: snapshot.moves,
+        elapsedSeconds,
+        moveTarget: 0,
+        timeTargetSeconds: this.model.level.timeSeconds,
+        moveAchieved: false,
+        timeAchieved: true,
+      },
+    };
+  }
+
   private beginCelebration(): void {
+    this.comboAnimation?.clear();
+    this.comboAnimationOwner = undefined;
+    if(this.leagueRun) { this.finishLeaguePrototype(); return; }
+    this.resetCountdownWarning();
+    const dailyRun = this.dailyChallengeRunInfo();
     const pending = this.pendingSettlement ?? this.createPendingSettlement();
     this.pendingSettlement = pending;
     this.settlementSaveAttempts += 1;
@@ -9964,10 +14415,30 @@ export class ColorEscapeGame {
     }
 
     this.save = pending.candidateSave;
+    this.masterpieceUnlockPresentation = !dailyRun && !this.temporaryLevelTestSession ? {
+      progress: deriveMasterpieceUnlockProgress({
+        beforeRewardedLevels: pending.baselineSave.rewardedLevels,
+        afterRewardedLevels: pending.candidateSave.rewardedLevels,
+        settledLevelId: this.model.level.id,
+        catalog: MASTERPIECE_COLLECTION_CATALOG,
+      }),
+      age: 0,
+    } : undefined;
+    // Compare both snapshots at the same wall-clock instant, so hourly bot
+    // growth cannot be mistaken for progress earned by this completion.
+    this.mainlineRankChange = !dailyRun && !this.temporaryLevelTestSession
+      ? this.mainlineRankChangeForSettlement(pending.baselineSave, pending.candidateSave, Date.now())
+      : undefined;
+    this.leaderboardSnapshotCache = undefined;
+    this.rankingVisitClockMs = undefined;
+    if (this.save.selectedJourneyEpisode !== pending.baselineSave.selectedJourneyEpisode) {
+      // Preload during the win screen, after progress and theme selection are committed.
+      void this.requestJourneyHomeThemeArt(this.save.selectedJourneyEpisode);
+    }
     this.assistedClear = pending.presentation.assistedClear;
     this.earnedStars = pending.presentation.earnedStars;
     this.winCoinReward = pending.presentation.coinReward;
-    this.winStarConditions = {
+    this.winStarConditions = dailyRun ? undefined : {
       passed: true,
       moves: pending.presentation.moves,
       elapsedSeconds: pending.presentation.elapsedSeconds,
@@ -9982,37 +14453,61 @@ export class ColorEscapeGame {
     this.settlementSaveFailed = false;
     this.settlementFailureKind = undefined;
     const clearedLevel = this.model.level.id;
-    if (shouldDirectAdvanceAfterClear(clearedLevel, LEVELS.length)) {
-      this.screen = "playing";
-      this.directLevelTransition = {
-        fromLevel: clearedLevel,
-        toLevel: clearedLevel + 1,
-        age: 0,
-        reducedMotion: this.save.reducedMotion,
-        switched: false,
-      };
-      this.releaseWinArt();
-    } else {
-      this.screen = "win";
-      this.winGlowAge = 0;
-      this.requestWinArt();
-    }
-    this.playSound("win");
-    this.vibrate("medium");
-    if (!this.directLevelTransition) {
-      const burstCount = 7;
-      for (let index = 0; index < burstCount; index += 1) {
-        const x = 50 + Math.random() * 396;
-        const y = 230 + Math.random() * 420;
-        this.emitBurst(
-          x,
-          y,
-          COLOR_STYLE[(["red", "blue", "green", "yellow", "purple", "pink"] as BlockColor[])[index % 6]].base,
-          22,
-          220,
-        );
+    const homeLevelId = this.save.currentLevel;
+    const temporaryTest = Boolean(this.temporaryLevelTestSession);
+    const reducedMotion = this.save.reducedMotion;
+    this.closePopup("settlementFailed", () => {
+      if (dailyRun) {
+        this.dailyChallengeWin = {
+          difficulty: dailyRun.difficulty,
+          coins: pending.presentation.coinReward,
+          inspiration: pending.candidateSave.collectionProgress.inspiration - pending.baselineSave.collectionProgress.inspiration,
+        };
+        this.screen = "win";
+        this.winGlowAge = 0;
+        this.requestWinArt();
+      } else if (clearedLevel === 5 && !temporaryTest
+        && pending.baselineSave.highestLevel <= 5 && !pending.baselineSave.rewardedLevels.includes(5)) {
+        // End the introductory run only after its result is durably committed.
+        // Reuse Home's reward flight and saved masterpiece reveal; no Lv6 start.
+        this.loadLevel(homeLevelId, false);
+        this.beginHomeCoinFlight(pending.presentation.coinReward);
+      } else if (shouldDirectAdvanceAfterClear(clearedLevel, LEVELS.length)) {
+        this.screen = "playing";
+        this.directLevelTransition = {
+          fromLevel: clearedLevel,
+          toLevel: clearedLevel + 1,
+          age: 0,
+          reducedMotion,
+          switched: false,
+        };
+        this.releaseWinArt();
+      } else {
+        this.screen = "win";
+        this.winGlowAge = 0;
+        this.requestWinArt();
       }
-    }
+      this.playSound("win");
+      if (pending.candidateSave.coins > pending.baselineSave.coins
+        || pending.candidateSave.collectionProgress.inspiration > pending.baselineSave.collectionProgress.inspiration) {
+        this.playSound("gold");
+      }
+      this.vibrate("medium");
+      if (!this.directLevelTransition) {
+        const burstCount = 7;
+        for (let index = 0; index < burstCount; index += 1) {
+          const x = 50 + Math.random() * 396;
+          const y = 230 + Math.random() * 420;
+          this.emitBurst(
+            x,
+            y,
+            COLOR_STYLE[(["red", "blue", "green", "yellow", "purple", "pink"] as BlockColor[])[index % 6]].base,
+            22,
+            220,
+          );
+        }
+      }
+    });
   }
 
   private abandonFailedSettlement(): void {
@@ -10043,7 +14538,7 @@ export class ColorEscapeGame {
     this.pendingSettlementAbandon = undefined;
     this.settlementSaveFailed = false;
     this.settlementFailureKind = undefined;
-    this.loadLevel(returnLevelId, false);
+    this.closePopup("settlementFailed", () => this.loadLevel(returnLevelId, false));
     this.playSound("button");
   }
 
@@ -10068,11 +14563,9 @@ export class ColorEscapeGame {
     const blocks = snapshot.blocks;
     const visibleBlocks = blocks.filter((block) => {
       if (!isMechanismBlockVisible(snapshot, block)) return false;
-      const opening = this.revisedTransitions.find((item) => item.targetId === block.shutterId
-        && (item.kind === "shutter" || item.kind === "lift"));
       // Other blocks and the current held gesture stay usable. Only grabbing
       // the newly revealed cohort waits until its physical cover has cleared.
-      return !opening || sampleRevisedRegionAnimation(opening.kind as "shutter" | "lift", opening.age, this.save.reducedMotion).coverFraction === 0;
+      return this.isBlockCoverCleared(block);
     });
     const depthOrderedVisibleBlocks = orderBlocksByDepth(visibleBlocks, (block) => (
       block.id === this.dragVisual?.blockId
@@ -10190,11 +14683,20 @@ export class ColorEscapeGame {
     if (!(level.generators?.length)) return { top: 0, right: 0, bottom: 0, left: 0 };
     const insets = { ...GAMEPLAY_BOARD_RIM_VISUAL_INSETS };
     for (const generator of level.generators ?? []) {
-      const bounds = this.generatorRimGeometry(generator).visualBounds;
+      const geometry = this.generatorRimGeometry(generator);
+      const bounds = geometry.visualBounds;
       insets.left = Math.max(insets.left, -bounds.x);
       insets.top = Math.max(insets.top, -bounds.y);
       insets.right = Math.max(insets.right, bounds.x + bounds.width - level.width);
       insets.bottom = Math.max(insets.bottom, bounds.y + bounds.height - level.height);
+      if (this.dailyChallengeRunInfo() || this.dailyChallengeWin) {
+        const vertical = geometry.anchor.quarterTurns === 1 || geometry.anchor.quarterTurns === 3;
+        const image = vertical
+          ? this.art.videoParity?.sideGeneratorVertical ?? this.art.videoParity?.sideGenerator
+          : this.art.videoParity?.sideGenerator;
+        if (image) includeDailyGeneratorSpriteInsets(insets, geometry, level.width, level.height,
+          image.naturalWidth || image.width, image.naturalHeight || image.height);
+      }
     }
     return insets;
   }
@@ -10207,6 +14709,7 @@ export class ColorEscapeGame {
       level.height,
       boosterTop,
       this.generatorVisualInsets(),
+      Boolean(level.generators?.length && (this.dailyChallengeRunInfo() || this.dailyChallengeWin)),
     );
     const { cell, innerWidth, innerHeight, innerX, innerY, visualBottom } = fitted;
     return {
@@ -10263,24 +14766,68 @@ export class ColorEscapeGame {
   }
 
   private buttonReleaseTargetAt(point: PointerSample): ButtonReleaseTarget | undefined {
+    if (this.popupEntrance.active) return undefined;
     const target = (key: string, rect: Rect, options: HitTargetOptions = {}) => (
       this.buttonReleaseTarget(point, key, rect, options)
     );
     if (!this.artReady) {
       return this.artLoadError ? target("startupRetry", this.startupRetryRect()) : undefined;
     }
+    if (!this.storageBaselineReady) return target("modalPrimary", BUTTONS.modalPrimary, { anchorY: "end" });
+    if (this.welfareTransactionActive()) {
+      if (this.screen === "supply" && !this.formalPageReady("supply"))
+        return this.formalPageFailed("supply") ? target("formalPageRetry", BUTTONS.formalPageRetry) : undefined;
+      const hit = this.screen === "supply" ? this.welfareTargets().find(([, rect]) => inside(point.x, point.y, rect)) : undefined;
+      return hit ? { key: hit[0], hit: hit[1] } : undefined;
+    }
     let matched: ButtonReleaseTarget | undefined;
+    if(this.profilePage){for(const [key,rect] of profileTargets(this.profileView())){
+      const hit=key.startsWith("profile.select.")?(inside(point.x,point.y,rect)?{key,hit:rect}:undefined):target(key,rect,this.profileHitOptions(key));
+      if(hit)return hit;
+    }return undefined;}
 
     if (!this.storageBaselineReady) {
       return target("modalPrimary", BUTTONS.modalPrimary, { anchorY: "end" });
     }
+    if (this.screen === "boosterPurchase") {
+      for (const [key, rect] of this.boosterPurchaseTargets()) {
+        const hit = target(key, rect); if (hit) return hit;
+      }
+      return undefined;
+    }
+    if (this.featureUnlockGuide) {
+      for (const [key, rect] of this.featureGuideTargets()) {
+        const hit = target(key, rect); if (hit) return hit;
+      }
+      return undefined;
+    }
+    if (this.screen === "league" || this.screen === "leagueResult") {
+      for (const [key, rect] of this.leagueTargets()) { const hit = target(key, rect); if (hit) return hit; }
+      return undefined;
+    }
     if (this.pendingLifeStart) return undefined;
     if (this.lifeRefillOpen) {
-      return (this.lifeRefillQuote().missingLives > 0 ? target("lifeRefillBuy", BUTTONS.lifeRefillBuy) : undefined)
-        ?? (!this.pendingLifeRefill ? target("lifeRefillDismiss", BUTTONS.lifeRefillDismiss) : undefined);
+      for (const [key, rect] of this.lifeRefillTargets()) {
+        const hit = target(key, rect); if (hit) return hit;
+      }
+      return undefined;
     }
-    if (this.directLevelTransition || this.homeCoinFlight) return undefined;
-    if (this.journeyPresentation) {
+    if (this.directLevelTransition) return undefined;
+    if (this.collectionIntro) {
+      return (this.collectionIntroReady() ? target("collectionIntroPrimary", COLLECTION_INTRO_LAYOUT.primary) : undefined)
+        ?? target("collectionIntroLater", COLLECTION_INTRO_LAYOUT.later)
+        ?? (this.collectionAlbumItemArtworkFailed(findCollectionCatalogItem(this.collectionIntro.itemId))
+          ? target("collectionIntroRetry", COLLECTION_INTRO_LAYOUT.retry) : undefined);
+    }
+    if (this.journeyPresentation && this.journeyPresentationBlocksInput()) {
+      if (this.journeyPresentation.sceneReveal) {
+        const layout = this.journeySceneLayout();
+        return this.journeySceneConfirmReady() ? target("journeySceneConfirm", layout.primary)
+          : this.journeyPresentation.phase === "progress"
+            ? (this.journeySceneArtFailed() ? target("journeySceneRetry", layout.primary) : undefined)
+              ?? target("journeySceneLater", layout.later)
+            : undefined;
+      }
       if (this.journeyPresentation.phase === "overlay") {
         return target("journeyPresentationClose", BUTTONS.journeyPresentationClose)
           ?? (!this.journeyPresentationArtReady()
@@ -10300,7 +14847,7 @@ export class ColorEscapeGame {
         ? target(`supply.${this.pendingSupplyPurchase.kind}`, this.supplyBuyRect(this.pendingSupplyPurchase.kind))
         : undefined;
     }
-    if (this.temporaryLevelSelector) {
+    if (!IS_WECHAT_BUILD && this.temporaryLevelSelector) {
       const layout = this.temporaryLevelSelectorLayout();
       matched = target("temporaryLevel.close", layout.close);
       if (matched) return matched;
@@ -10329,6 +14876,9 @@ export class ColorEscapeGame {
       matched = target("updateToast", this.offsetRect(BUTTONS.updateToast, 0, this.safeOffsets().top));
       if (matched) return matched;
     }
+    if (this.boosterUnlockGuide && this.screen === "playing") {
+      return this.boosterUnlockGuideCanContinue() ? target("boosterUnlockGuideClose", this.boosterUnlockGuideCloseRect()) : undefined;
+    }
     if (this.boosterUnlockToast && this.boosterUnlockToastEligible()) {
       matched = target("boosterUnlockToast", this.boosterUnlockToastRect());
       if (matched) return matched;
@@ -10354,6 +14904,7 @@ export class ColorEscapeGame {
         if (matched) return matched;
       }
     }
+    if(this.screen==="home"){matched=target("homeProfile",this.offsetRect(PROFILE_HOME_RECT,0,this.safeOffsets().top));if(matched)return matched;}
     if (this.navigationTransition) return undefined;
 
     const formalScreen = this.formalPageForScreen();
@@ -10368,17 +14919,18 @@ export class ColorEscapeGame {
       const homeTargets: Array<[string, Rect, HitTargetOptions?]> = [
         ["homeLife", this.offsetRect(BUTTONS.homeLife, 0, safe.top)],
         ["homeSettings", this.offsetRect(BUTTONS.homeSettings, 0, safe.top), { anchorY: "end" }],
-        ["homeMusic", BUTTONS.homeMusic],
         ["homeAchievements", BUTTONS.homeAchievements],
         ["homeMissions", this.dailyTaskHomeEntryRect()],
         ["homeSupply", this.offsetRect(BUTTONS.homeSupply, 0, safe.top), { anchorY: "end" }],
-        ["temporaryLevel.open", BUTTONS.temporaryLevelSelector],
         ["homePlay", this.offsetRect(BUTTONS.homePlay, 0, -safe.bottom)],
       ];
+      if (!IS_WECHAT_BUILD) homeTargets.splice(5, 0, ["temporaryLevel.open", BUTTONS.temporaryLevelSelector]);
+      if (this.featureUnlocked("league")) homeTargets.push(["homeLeague", BUTTONS.homeLeague]);
+      if (this.featureUnlocked("dailyChallenge")) homeTargets.push(["homeDailyChallenge", homeArtRect(DAILY_CHALLENGE_LAYOUT.entry)]);
       if (this.model.level.id > 1) {
         homeTargets.push(["homePrev", this.offsetRect(BUTTONS.homePrev, 0, this.homeCardOffset(safe.bottom))]);
       }
-      if (this.model.level.id < this.save.highestLevel) {
+      if (this.canBrowseNextHomeLevel()) {
         homeTargets.push(["homeNext", this.offsetRect(BUTTONS.homeNext, 0, this.homeCardOffset(safe.bottom))]);
       }
       for (const [key, rect, options] of homeTargets) {
@@ -10390,6 +14942,12 @@ export class ColorEscapeGame {
     if (this.screen === "musicLibrary") {
       matched = target("musicClose", BUTTONS.musicClose);
       if (matched) return matched;
+      for (const [index, entry] of MUSIC_CATALOG.entries()) {
+        if (this.musicTrackIsUnlocked(entry, index)) {
+          matched = target(`musicFavorite.${entry.id}`, this.musicLibraryHeartRect(index));
+          if (matched) return matched;
+        }
+      }
       for (const [index, entry] of MUSIC_CATALOG.entries()) {
         matched = target(`music.${entry.id}`, this.musicLibraryRowRect(index));
         if (matched) return matched;
@@ -10403,6 +14961,7 @@ export class ColorEscapeGame {
         return this.dailyTaskArtError ? target("dailyTaskRetry", this.dailyTaskRetryRect()) : undefined;
       }
       for (const task of this.dailyTaskSummary().tasks) {
+        if (task.claimed) continue;
         const rect = this.dailyTaskClaimRect(task.id);
         if (!rect) continue;
         matched = target(`dailyTaskClaim.${task.id}`, rect);
@@ -10411,6 +14970,27 @@ export class ColorEscapeGame {
       return this.dailyTaskSummary().bonusClaimed
         ? undefined
         : target("dailyTaskBonus", this.dailyTaskBonusClaimRect());
+    }
+    if (this.screen === "dailyChallenge") {
+      if (this.dailyChallengeRewardAdTransactionActive()) {
+        if (this.pendingDailyChallengeRewardAd && !this.dailyChallengeRewardAdRequestId) {
+          const retryState = this.dailyChallengeState();
+          for (const index of this.dailyChallengeAdRowIndices(retryState)) {
+            matched = target(`dailyChallenge.ad.${index}`, homeArtRect(dailyChallengeRowButtonRect(index)));
+            if (matched) return matched;
+          }
+        }
+        return undefined;
+      }
+      matched = target("dailyChallengeClose", homeArtRect(DAILY_CHALLENGE_LAYOUT.close));
+      if (matched) return matched;
+      const state = this.dailyChallengeState();
+      for (const [index, difficulty] of DAILY_CHALLENGE_DIFFICULTIES.entries()) {
+        if (state.completed[difficulty]) continue;
+        matched = target(`dailyChallenge.${difficulty}`, homeArtRect(dailyChallengeRowButtonRect(index)));
+        if (matched) return matched;
+      }
+      return undefined;
     }
     if (this.screen === "records") {
       const layout = this.collectionAlbumLayout();
@@ -10466,7 +15046,7 @@ export class ColorEscapeGame {
         if (matched) return matched;
       }
       return target("settingsLanguage", BUTTONS.settingsLanguage)
-        ?? target("settingsReset", BUTTONS.settingsReset);
+        ?? (!IS_WECHAT_BUILD ? target("settingsReset", BUTTONS.settingsReset) : undefined);
     }
     if (this.screen === "language") {
       matched = target("languageBack", BUTTONS.languageBack);
@@ -10482,11 +15062,8 @@ export class ColorEscapeGame {
         ?? target("modalSecondary", BUTTONS.modalSecondary, { anchorY: "start" });
     }
     if (this.screen === "supply") {
-      for (const kind of SUPPLY_ORDER) {
-        matched = target(`supply.${kind}`, this.supplyBuyRect(kind));
-        if (matched) return matched;
-      }
-      return undefined;
+      const hit = this.welfareTargets().find(([, rect]) => inside(point.x, point.y, rect));
+      return hit ? { key: hit[0], hit: hit[1] } : undefined;
     }
     if (this.screen === "leaderboard") {
       return target("leaderboardWeekly", BUTTONS.leaderboardWeekly)
@@ -10496,6 +15073,11 @@ export class ColorEscapeGame {
     if (this.screen === "levels") {
       if (!inside(point.x, point.y, homeArtRect(this.journeyContentViewportArt()))) return undefined;
       const view = this.journeyScrollView();
+      const destinationRetry = this.journeyDestinationRetryRect();
+      if (destinationRetry) {
+        matched = target("journeyDestinationArtRetry", destinationRetry, { bounds: view.viewport });
+        if (matched) return matched;
+      }
       for (const row of this.failedVisibleJourneyEpisodes()) {
         matched = target(`journeyEpisodeArtRetry.${row.episode.index}`, this.journeyEpisodeRetryRect(row), { bounds: view.viewport });
         if (matched) return matched;
@@ -10521,6 +15103,7 @@ export class ColorEscapeGame {
       return target("featurePrimary", BUTTONS.featurePrimary);
     }
     if (this.screen === "paused") {
+      if (!this.pauseUnlocked()) return undefined;
       for (const kind of Object.keys(PAUSE_SETTING_RECTS) as SettingKind[]) {
         matched = target(`pause.${kind}`, PAUSE_SETTING_RECTS[kind]);
         if (matched) return matched;
@@ -10538,8 +15121,8 @@ export class ColorEscapeGame {
     }
     if (this.screen === "win") {
       if (!this.winArt && !this.winArtError) return undefined;
-      return target("modalPrimary", BUTTONS.winPrimary)
-        ?? target("modalSecondary", BUTTONS.winClose);
+      return target("modalPrimary", this.dailyChallengeWin ? homeArtRect(DAILY_SUCCESS_LAYOUT.continueButton) : BUTTONS.winPrimary)
+        ?? target("modalSecondary", this.dailyChallengeWin ? homeArtRect(DAILY_SUCCESS_LAYOUT.close) : BUTTONS.winClose);
     }
     if (this.screen === "failed") {
       return target("failedReplay", BUTTONS.failedReplay)
@@ -10548,8 +15131,7 @@ export class ColorEscapeGame {
     if (this.screen !== "playing" || this.model.snapshot().complete || this.activePointer !== undefined) {
       return undefined;
     }
-    matched = target("undo", BUTTONS.undo)
-      ?? target("pause", BUTTONS.pause);
+    matched = this.pauseUnlocked() ? target("pause", BUTTONS.pause) : undefined;
     if (matched) return matched;
     if (this.pendingCelebration > 0 || this.hasActiveMechanicMotion()) return undefined;
     return target("booster.time", BUTTONS.time)
@@ -10558,6 +15140,7 @@ export class ColorEscapeGame {
   }
 
   private interactionTargetEvidence(): Record<string, unknown> {
+    if (this.popupEntrance.active) return { targets: {}, popupEntrance: this.popupEntrance.snapshot() };
     const scale = this.viewportTransform().scale;
     const safe = this.safeOffsets();
     const targets: Record<string, { visual: Rect; hit: Rect; cssWidth: number; cssHeight: number }> = {};
@@ -10571,19 +15154,43 @@ export class ColorEscapeGame {
       };
     };
 
+    if(this.profilePage){for(const [key,rect] of profileTargets(this.profileView()))add(key,rect,this.profileHitOptions(key));return {targets};}
+    if(this.screen==="home")add("homeProfile",this.offsetRect(PROFILE_HOME_RECT,0,safe.top));
+    if (this.screen === "boosterPurchase") {
+      for (const [key, rect] of this.boosterPurchaseTargets()) add(key, rect);
+      return targets;
+    }
+    if (this.featureUnlockGuide) {
+      for (const [key, rect] of this.featureGuideTargets()) add(key, rect);
+      return targets;
+    }
+    if (this.boosterUnlockGuide && this.screen === "playing") {
+      if (this.boosterUnlockGuideCanContinue()) add("boosterUnlockGuideClose", this.boosterUnlockGuideCloseRect());
+      return targets;
+    }
+
+    if (this.collectionIntro) {
+      if (this.collectionIntroReady()) add("collectionIntroPrimary", COLLECTION_INTRO_LAYOUT.primary);
+      add("collectionIntroLater", COLLECTION_INTRO_LAYOUT.later);
+      if (this.collectionAlbumItemArtworkFailed(findCollectionCatalogItem(this.collectionIntro.itemId))) {
+        add("collectionIntroRetry", COLLECTION_INTRO_LAYOUT.retry);
+      }
+      return targets;
+    }
+
+    if (this.featureUnlocked("league")) add("homeLeague", BUTTONS.homeLeague);
+    if (this.screen === "league" || this.screen === "leagueResult") for (const [key, rect] of this.leagueTargets()) add(key, rect);
     add("homeSupply", this.offsetRect(BUTTONS.homeSupply, 0, safe.top), { anchorY: "end" });
     add("homeLife", this.offsetRect(BUTTONS.homeLife, 0, safe.top));
     if (this.lifeRefillOpen) {
-      if (this.lifeRefillQuote().missingLives > 0) add("lifeRefillBuy", BUTTONS.lifeRefillBuy);
-      if (!this.pendingLifeRefill) {
-        add("lifeRefillDismiss", BUTTONS.lifeRefillDismiss);
-      }
+      for (const [key, rect] of this.lifeRefillTargets()) add(key, rect);
     }
     add("homeSettings", this.offsetRect(BUTTONS.homeSettings, 0, safe.top), { anchorY: "end" });
     add("homeAchievements", BUTTONS.homeAchievements);
     add("homeMissions", this.dailyTaskHomeEntryRect());
-    add("temporaryLevel.open", BUTTONS.temporaryLevelSelector);
-    if (this.temporaryLevelSelector) {
+    if (this.featureUnlocked("dailyChallenge")) add("homeDailyChallenge", homeArtRect(DAILY_CHALLENGE_LAYOUT.entry));
+    if (!IS_WECHAT_BUILD) add("temporaryLevel.open", BUTTONS.temporaryLevelSelector);
+    if (!IS_WECHAT_BUILD && this.temporaryLevelSelector) {
       const layout = this.temporaryLevelSelectorLayout();
       add("temporaryLevel.close", layout.close);
       if (layout.canPrevious) add("temporaryLevel.previous", layout.previousPage);
@@ -10598,21 +15205,28 @@ export class ColorEscapeGame {
     add("homeNext", this.offsetRect(BUTTONS.homeNext, 0, this.homeCardOffset(safe.bottom)));
     add("menuBack", BUTTONS.menuBack);
     add("settingsLanguage", BUTTONS.settingsLanguage);
-    add("settingsReset", BUTTONS.settingsReset);
+    if (!IS_WECHAT_BUILD) add("settingsReset", BUTTONS.settingsReset);
     (Object.keys(SETTINGS_RECTS) as SettingKind[]).forEach((kind) => add(`settings.${kind}`, this.settingRect(kind)));
     add("languageBack", BUTTONS.languageBack);
     add("achievementClose", BUTTONS.achievementClose);
     if (this.achievementArtError) add("achievementRetry", homeArtRect(ACHIEVEMENT_LAYOUT.retry));
     this.achievementVisibleEntries().forEach(({ entry, index }) => {
+      if (entry.claimed) return;
       const rect = this.achievementClaimRect(index);
       if (rect.width > 0 && rect.height > 0) add(`achievementClaim.${entry.id}`, rect, { bounds: this.achievementViewportRect() });
     });
     add("dailyTaskClose", this.dailyTaskCloseRect());
     this.dailyTaskSummary().tasks.forEach((task) => {
+      if (task.claimed) return;
       const rect = this.dailyTaskClaimRect(task.id);
       if (rect) add(`dailyTaskClaim.${task.id}`, rect);
     });
     if (!this.dailyTaskSummary().bonusClaimed) add("dailyTaskBonus", this.dailyTaskBonusClaimRect());
+    add("dailyChallengeClose", homeArtRect(DAILY_CHALLENGE_LAYOUT.close));
+    DAILY_CHALLENGE_DIFFICULTIES.forEach((difficulty, index) => {
+      if (this.save.dailyChallenge.completed[difficulty]) return;
+      add(`dailyChallenge.${difficulty}`, homeArtRect(dailyChallengeRowButtonRect(index)));
+    });
     const albumLayout = this.collectionAlbumLayout();
     if (this.screen === "mechanismGuide") add("mechanismGuideClose", this.mechanismGuideLayout().close.visual);
     add("collectionAlbumTab.levels", albumLayout.tabs.levels.visual);
@@ -10636,7 +15250,7 @@ export class ColorEscapeGame {
       `language.${entry.language}`,
       LANGUAGE_OPTION_RECTS[entry.language],
     ));
-    SUPPLY_ORDER.forEach((kind) => add(`supply.${kind}`, this.supplyBuyRect(kind)));
+    if (this.screen === "supply") this.welfareTargets().forEach(([key, rect]) => add(key, rect));
     add("leaderboardWeekly", BUTTONS.leaderboardWeekly);
     add("leaderboardWorld", BUTTONS.leaderboardWorld);
     add("leaderboardCountry", BUTTONS.leaderboardCountry);
@@ -10657,26 +15271,29 @@ export class ColorEscapeGame {
     this.failedVisibleJourneyEpisodes().forEach((row) => {
       add(`journeyEpisodeArtRetry.${row.episode.index}`, this.journeyEpisodeRetryRect(row), { bounds: journeyView.viewport });
     });
+    const destinationRetry = this.journeyDestinationRetryRect();
+    if (destinationRetry) add("journeyDestinationArtRetry", destinationRetry, { bounds: journeyView.viewport });
     this.collectionScrollView().entries.forEach((entry) => {
       if (this.collectionEntryIsInteractive(entry)) {
         add(`collection.${entry.item.id}`, this.collectionCardRectForEntry(entry), { bounds: this.collectionScrollView().viewport });
       }
     });
     MAIN_NAVIGATION.forEach((_, index) => add(`navigation.${index}`, this.mainNavigationRect(index)));
-    add("updateToast", this.offsetRect(BUTTONS.updateToast, 0, safe.top));
-    add("boosterUnlockToast", this.boosterUnlockToastRect());
-    add("undo", BUTTONS.undo);
-    add("pause", BUTTONS.pause);
+    if (this.updateToastVisible) add("updateToast", this.offsetRect(BUTTONS.updateToast, 0, safe.top));
+    if (this.boosterUnlockToast && this.boosterUnlockToastEligible()) add("boosterUnlockToast", this.boosterUnlockToastRect());
+    if (this.pauseUnlocked()) add("pause", BUTTONS.pause);
     add("booster.time", BUTTONS.time);
     add("booster.rocket", BUTTONS.rocket);
     add("booster.pulse", BUTTONS.pulse);
     (Object.keys(PAUSE_SETTING_RECTS) as SettingKind[]).forEach((kind) => add(`pause.${kind}`, PAUSE_SETTING_RECTS[kind]));
-    add("pauseResume", BUTTONS.pauseResume);
-    add("pauseRestart", BUTTONS.pauseRestart);
-    add("pauseHome", BUTTONS.pauseHome);
+    if (this.pauseUnlocked()) {
+      add("pauseResume", BUTTONS.pauseResume);
+      add("pauseRestart", BUTTONS.pauseRestart);
+      add("pauseHome", BUTTONS.pauseHome);
+    }
     if (this.screen === "win") {
-      add("modalPrimary", BUTTONS.winPrimary);
-      add("modalSecondary", BUTTONS.winClose);
+      add("modalPrimary", this.dailyChallengeWin ? homeArtRect(DAILY_SUCCESS_LAYOUT.continueButton) : BUTTONS.winPrimary);
+      add("modalSecondary", this.dailyChallengeWin ? homeArtRect(DAILY_SUCCESS_LAYOUT.close) : BUTTONS.winClose);
     } else if (this.screen === "feature") {
       add("featurePrimary", BUTTONS.featurePrimary);
     } else if (this.screen === "failed") {
@@ -10686,7 +15303,14 @@ export class ColorEscapeGame {
       add("modalPrimary", BUTTONS.modalPrimary, { anchorY: "end" });
       add("modalSecondary", BUTTONS.modalSecondary, { anchorY: "start" });
     }
-    if (this.journeyPresentation?.phase === "overlay") {
+    if (this.journeyPresentation?.sceneReveal) {
+      const layout = this.journeySceneLayout();
+      if (this.journeySceneConfirmReady()) add("journeySceneConfirm", layout.primary);
+      else if (this.journeyPresentation.phase === "progress") {
+        if (this.journeySceneArtFailed()) add("journeySceneRetry", layout.primary);
+        add("journeySceneLater", layout.later);
+      }
+    } else if (this.journeyPresentation?.phase === "overlay") {
       if (!this.journeyPresentationArtReady() && this.journeyPresentationArtFailed()) {
         add("journeyPresentationArtRetry", BUTTONS.formalPageRetry);
       } else if (this.journeyPresentationArtReady() && this.journeyPresentationRewardReadOnlyText() === undefined) {
@@ -10758,6 +15382,18 @@ export class ColorEscapeGame {
     const cap = this.save.reducedMotion ? 90 : 260;
     if (this.particles.length > cap) this.particles.splice(0, this.particles.length - cap);
     return duration;
+  }
+
+  private emitRocketClearEffect(block: BlockState, color: BlockColor): void {
+    const board = this.boardLayout();
+    const cells = this.model.blockCells(block);
+    const centerX = board.innerX + (cells.reduce((sum, [x]) => sum + x + 0.5, 0) / cells.length) * board.cell;
+    const centerY = board.innerY + (cells.reduce((sum, [, y]) => sum + y + 0.5, 0) / cells.length) * board.cell;
+    // The intact block is shattered in-place by its owned ghost. These small
+    // crumbs supplement its real texture fragments after the missile hits.
+    this.emitBurst(centerX, centerY, COLOR_STYLE[color].base, 12, 118);
+    this.emitBlockParticles(block, color, "top", 12, true, { x: centerX, y: centerY });
+    this.rocketImpact = { age: 0, target: { x: centerX, y: centerY } };
   }
 
   private emitGateExitFragments(ghost: ExitGhost, count: number): void {
@@ -11162,7 +15798,7 @@ export class ColorEscapeGame {
 
   private updateParticles(delta: number): void {
     for (const particle of this.particles) {
-      if ((particle.exitAnimationId || particle.exitFragment) && (this.screen !== "playing" || !this.appVisible)) continue;
+      if ((particle.exitAnimationId || particle.exitFragment) && (this.screen !== "playing" || !this.appVisible || this.boosterUnlockGuide)) continue;
       particle.life -= delta;
       particle.x += particle.vx * delta;
       particle.y += particle.vy * delta;
@@ -11176,7 +15812,7 @@ export class ColorEscapeGame {
 
   private updateExitGhosts(delta: number): void {
     // Pausing/freezing a view must also pause the gameplay event it owns.
-    if (this.screen !== "playing" || !this.appVisible) return;
+    if (this.screen !== "playing" || !this.appVisible || this.boosterUnlockGuide) return;
     for (const ghost of this.exitGhosts) {
       ghost.age += delta;
       if (ghost.exitAnimationId && !ghost.exitCompletionDone
@@ -11213,13 +15849,13 @@ export class ColorEscapeGame {
   }
 
   private updateExitPulses(delta: number): void {
-    if (this.screen !== "playing" || !this.appVisible) return;
+    if (this.screen !== "playing" || !this.appVisible || this.boosterUnlockGuide) return;
     for (const pulse of this.exitPulses) pulse.age += delta;
     this.exitPulses = this.exitPulses.filter((pulse) => pulse.age < pulse.duration);
   }
 
   private updateMechanicPulses(delta: number): void {
-    if (this.screen !== "playing" || !this.appVisible) return;
+    if (this.screen !== "playing" || !this.appVisible || this.boosterUnlockGuide) return;
     for (const pulse of this.mechanicPulses) {
       pulse.age += delta;
       if (pulse.age >= 0) this.presentMechanicPulse(pulse);
@@ -11247,6 +15883,8 @@ export class ColorEscapeGame {
   }
 
   private render(): void {
+    this.syncRevisedMechanismArtPlan();
+    this.popupEntrance.beginFrame();
     this.featureIntroIconArt.sync(this.screen === "feature" ? getScheduledFeatureIntro(this.model.level.id)?.kind : undefined);
     const viewport = this.host.viewport();
     const { scale, offsetX, offsetY } = this.viewportTransform();
@@ -11259,7 +15897,7 @@ export class ColorEscapeGame {
     ctx.fillRect(0, 0, this.host.canvas.width, this.host.canvas.height);
     const updateOverHome = this.screen === "updates" && this.updateReturnScreen === "home";
     const updateOverSettings = this.screen === "updates" && this.updateReturnScreen === "settings";
-    const nativeHomeBackdrop = this.screen === "home" || this.screen === "achievements" || this.screen === "dailyTasks"
+    const nativeHomeBackdrop = this.screen === "home" || this.screen === "achievements" || this.screen === "dailyTasks" || this.screen === "dailyChallenge"
       || this.screen === "settings" || this.screen === "musicLibrary" || this.screen === "resetConfirm"
       || updateOverHome || updateOverSettings;
     const backdrop = nativeHomeBackdrop ? undefined : this.art.gameplayBackground;
@@ -11278,8 +15916,9 @@ export class ColorEscapeGame {
     // complete shell so a slow deferred image can never reach drawImage as an
     // undefined source (including debug/test level switches during startup).
     if (!this.artReady) {
-      if (this.art.home) this.drawHome();
+      if (this.art.home && !(this.startupEntryPending && this.shouldAutoEnterEarlyCampaign())) this.drawHome();
       this.drawStartupStatus();
+      this.popupEntrance.endFrame();
       return;
     }
 
@@ -11291,7 +15930,9 @@ export class ColorEscapeGame {
         this.drawHome();
         this.drawSettings();
       }
-    } else if (this.screen === "home") this.drawHome();
+    } else if (this.screen === "home") { this.drawHome(); if(this.profilePage)this.drawProfile(); }
+    else if (this.screen === "league") this.drawLeaguePage();
+    else if (this.screen === "leagueResult") this.drawLeagueRunResult();
     else if (this.screen === "achievements") {
       this.drawHome();
       this.drawAchievements();
@@ -11304,16 +15945,17 @@ export class ColorEscapeGame {
       this.drawHome();
       this.drawDailyTasks();
     }
+    else if (this.screen === "dailyChallenge") {
+      this.drawHome();
+      this.drawDailyChallenge();
+    }
     else if (this.screen === "supply") this.drawSupply();
     else if (this.screen === "leaderboard") this.drawLeaderboard();
     else if (this.screen === "settings" || this.screen === "resetConfirm") {
       this.drawHome();
       this.drawSettings();
     }
-    else if (this.screen === "musicLibrary") {
-      this.drawHome();
-      this.drawMusicLibrary();
-    }
+    else if (this.screen === "musicLibrary") this.drawHome();
     else if (this.screen === "language") {
       this.drawHome();
       this.drawLanguagePicker();
@@ -11323,40 +15965,94 @@ export class ColorEscapeGame {
     else {
       this.drawHud();
       ctx.save();
-      const transitionOffsetX = this.directTransitionBoardOffset();
-      if (transitionOffsetX) ctx.translate(transitionOffsetX, 0);
-      if (this.boardShakeTime > 0 && !this.save.reducedMotion) {
-        const strength = Math.min(1, this.boardShakeTime / 0.18);
-        ctx.translate(Math.sin(this.elapsed * 92) * strength * 2.8, Math.cos(this.elapsed * 77) * strength * 1.8);
-      }
+      // Reference motion belongs to the playfield; timer, coins and booster
+      // buttons stay still, so their hit targets never move under the finger.
+      const boardOffset = this.boardPresentationOffset();
+      ctx.translate(boardOffset.x, boardOffset.y);
       this.drawBoard();
       this.drawMechanicPulses();
       this.drawExitFailure();
+      if (this.rocketImpact) drawRocketImpact(ctx, this.rocketImpact.target, this.rocketImpact.age, this.save.reducedMotion);
       ctx.restore();
       this.drawBoosters();
+      this.drawFreezeUsageGuide();
+      this.drawRocketRescueGuide();
+      this.drawPulseRescueGuide();
     }
-    if ((this.screen === "home" || this.screen === "dailyTasks" || this.screen === "achievements")
+    if ((this.screen === "home" || this.screen === "levels" || this.screen === "dailyTasks" || this.screen === "dailyChallenge" || this.screen === "achievements" || this.screen === "supply")
       && this.homeCoinFlight) this.drawHomeCoinFlight();
     this.drawParticles(false);
-    if (this.boosterUnlockToast && this.boosterUnlockToastEligible()) this.drawBoosterUnlockToast();
-    if (this.temporaryLevelSelector) this.drawTemporaryLevelSelector();
-    if (this.screen === "paused") this.drawPause();
+    if (this.mainlineRankChangeEligible()) this.withHomeArtboard(() => this.drawMainlineRankChange());
+    if (this.screen === "playing" || this.screen === "paused" || this.screen === "boosterPurchase") this.drawComboPresentation();
+    if (this.screen === "playing" || this.screen === "paused" || this.screen === "boosterPurchase") this.drawTimeFreezeEffect();
+    if (this.screen === "playing" || this.screen === "paused" || this.screen === "boosterPurchase") this.drawRocketPresentation();
+    if (this.screen === "playing" || this.screen === "paused" || this.screen === "boosterPurchase") this.drawPulsePresentation();
+    if (this.boosterUnlockGuide && this.boosterUnlockGuideEligible()) this.drawBoosterUnlockGuide();
+    else if (this.boosterUnlockToast && this.boosterUnlockToastEligible()) this.drawBoosterUnlockToast();
+    if (this.collectionIntro && !this.collectionIntro.unlockPreview) this.drawCollectionIntro();
+    if (!IS_WECHAT_BUILD && this.temporaryLevelSelector) this.drawTemporaryLevelSelector();
+    if (this.screen === "paused" && this.pauseUnlocked()) this.drawPause();
     if (this.screen === "feature") this.drawFeature();
     if (this.screen === "win") this.drawWin();
+    if (this.collectionIntro?.unlockPreview) this.drawCollectionIntro();
     if (this.screen === "failed") this.drawFailed();
     if (this.screen === "settlementFailed") this.drawSettlementFailed();
     if (this.screen === "updates") this.drawUpdateNotice();
-    if (this.screen === "resetConfirm") this.drawResetConfirm();
-    if (this.isHomeEpisodeUnlockPending() && !this.formalPageReady("levels")) {
+    if (!IS_WECHAT_BUILD && this.screen === "resetConfirm") this.drawResetConfirm();
+    if (this.journeyPresentation?.sceneReveal && this.screen === "home") {
+      this.drawJourneySceneReveal();
+    } else if (this.isHomeEpisodeUnlockPending() && !this.formalPageReady("levels")) {
       this.drawFormalPageLoading("levels");
     }
-    if (this.journeyPresentation && this.journeyPresentation.phase !== "progress"
+    if (this.journeyPresentation && !this.journeyPresentation.sceneReveal && this.journeyPresentation.phase !== "progress"
       && (this.screen === "home"
         || (this.screen === "levels" && this.journeyPresentation.intent !== "progress_event"))) {
       this.drawJourneyPresentationOverlay();
     }
     if (this.lifeRefillOpen) this.drawLifeRefill();
+    if (this.screen === "boosterPurchase") this.drawBoosterPurchase();
+    if (this.featureUnlockGuide) this.drawFeatureUnlockGuide();
     if (!this.storageBaselineReady) this.drawStorageUnavailable();
+    if (this.buttonHints?.length) this.drawButtonHints();
+    this.popupEntrance.endFrame();
+  }
+
+  private withPopupEntrance(key: string, bounds: Rect, draw: () => void, identity?: unknown): void {
+    // Lightweight UI unit fixtures may omit the entrance controller; drawing
+    // directly keeps the renderer deterministic while the real game always
+    // supplies the controller.
+    if (!this.popupEntrance) { draw(); return; }
+    this.popupEntrance.draw(this.ctx, key, bounds, draw, this.save.reducedMotion, identity);
+  }
+
+  private closePopup(keys: string | readonly string[], finalize: () => void): void {
+    const closing = typeof keys === "string" ? [keys] : keys;
+    if (closing.includes("profile.rename") || closing.includes("profile")) {
+      this.closeProfileInput?.();
+      this.closeProfileInput = undefined;
+      this.profileInputAfterEntrance = false;
+    }
+    const buttonSoundContext = this.buttonSoundContext;
+    const finish = () => {
+      const previousSoundContext = this.buttonSoundContext;
+      this.buttonSoundContext = previousSoundContext || buttonSoundContext;
+      try {
+        finalize();
+        this.playableClockSlices?.reset();
+        this.lastFrame = 0;
+        this.dirty = true;
+        this.scheduleFrame();
+      } finally {
+        this.buttonSoundContext = previousSoundContext;
+      }
+    };
+    // No visible layer (including headless business fixtures) needs no delay.
+    if (!this.popupEntrance?.startExit(closing, finish, this.save.reducedMotion)) finish();
+    else {
+      this.pendingButtonPress = undefined;
+      this.dirty = true;
+      this.scheduleFrame();
+    }
   }
 
   private drawStartupStatus(): void {
@@ -11418,12 +16114,255 @@ export class ColorEscapeGame {
 
   private drawHome(drawNavigation = true): void {
     if (this.art.home) this.drawGeneratedHome(drawNavigation);
+    const rect = this.offsetRect(PROFILE_HOME_RECT, 0, this.safeOffsets().top);
+    const profile = this.save.playerProfile;
+    this.ctx.save();this.ctx.globalAlpha*=this.journeySceneHudAlpha();
+    this.drawPressable("homeProfile", rect, () => {
+      drawProfileAvatar(this.ctx, this.homeProfileArt, profile?.avatar ?? 0, profile?.frame ?? 0, rect);
+      if(this.profileNotifications().hasUnread)this.drawDiscoveryBadge(profileNotificationDotRect(rect,22));
+    });
+    this.ctx.restore();
+  }
+
+  private profileNotifications(): { unreadAvatars: boolean[]; unreadFrames: boolean[]; hasUnread: boolean } {
+    const progress=this.temporaryLevelTestSession?.baselineSave ?? this.save,profile=this.save.playerProfile;
+    const unreadAvatars=Array.from({length:PROFILE_AVATAR_COUNT},(_,i)=>Boolean(profile && profileAppearanceUnread("avatar",i,profile,progress)));
+    const unreadFrames=Array.from({length:PROFILE_FRAME_COUNT},(_,i)=>Boolean(profile && profileAppearanceUnread("frame",i,profile,progress)));
+    return {unreadAvatars,unreadFrames,hasUnread:unreadAvatars.some(Boolean)||unreadFrames.some(Boolean)};
+  }
+
+  private profileView(): ProfileView {
+    const progress=this.temporaryLevelTestSession?.baselineSave ?? this.save;
+    return { page: this.profilePage ?? "stats", profile: this.save.playerProfile!,
+      renameReturnPage: this.profileRenameReturnPage,
+      ...this.profileNotifications(),
+      draftAvatar: this.profileDraftAvatar, draftFrame: this.profileDraftFrame, name: this.profileDraftName,
+      coins: this.save.coins, highest: Math.max(0, ...this.save.rewardedLevels), english: this.save.language === "en",
+      totalStars: this.totalStars(), levelRank: this.featureUnlocked("leaderboard") ? this.leaderboardSnapshot("world").player.rank : null,
+      scrollOffset: this.currentProfileScroll()?.offset ?? 0,
+      saveEnabled: profileAppearanceUnlocked("avatar",this.profileDraftAvatar,progress)
+        && profileAppearanceUnlocked("frame",this.profileDraftFrame,progress),
+      unlockedAvatars: Array.from({length:PROFILE_AVATAR_COUNT},(_,i)=>profileAppearanceUnlocked("avatar",i,this.temporaryLevelTestSession?.baselineSave ?? this.save)),
+      unlockedFrames: Array.from({length:PROFILE_FRAME_COUNT},(_,i)=>profileAppearanceUnlocked("frame",i,this.temporaryLevelTestSession?.baselineSave ?? this.save)),
+      pending: Boolean(this.pendingProfileSave), feedback: this.profileFeedback, loading: !this.profileArt };
+  }
+
+  private requestProfileArt(): void {
+    if (this.profileArt || this.profileArtLoading) return;
+    const token = ++this.profileArtRequestToken;
+    if (this.profileArtError) this.profileFeedback = undefined;
+    this.profileArtLoading = true; this.profileArtError = false;
+    const keys = Object.keys(PROFILE_SUPPLIED_ART) as ProfileSuppliedArtKey[];
+    const paths = [...keys.map(key => PROFILE_SUPPLIED_ART[key]), ...PROFILE_AVATAR_PATHS, ...PROFILE_FRAME_PATHS];
+    void this.loadImages(paths).then(images => {
+      if(token !== this.profileArtRequestToken || !this.profilePage){for(const image of images)this.host.releaseImage?.(image);return;}
+      const ui = Object.fromEntries(keys.map((key, index) => [key, images[index]])) as ProfileSuppliedArt;
+      const endAvatars=keys.length+PROFILE_AVATAR_COUNT,endFrames=endAvatars+PROFILE_FRAME_COUNT;
+      this.profileArt = { ui, header:ui.titleZh, panel:ui.statsPanel, save:ui.saveButton, edit:ui.editName, coin:ui.coin,
+        avatars:images.slice(keys.length,endAvatars), frames:images.slice(endAvatars,endFrames),
+        stats:[ui.statHighest,ui.statStars,ui.statRank] };
+    }).catch(() => {
+      if(token !== this.profileArtRequestToken)return;
+      this.profileArtError=true;this.profileFeedback=this.notifyButtonFeedback(this.save.language==="en"?"Tap to retry loading":"点击重试加载");
+    }).finally(()=>{
+      if(token !== this.profileArtRequestToken)return;
+      this.profileArtLoading=false;this.dirty=true;this.scheduleFrame();
+    });
+  }
+
+  private requestHomeProfileArt(): void {
+    const p=this.save.playerProfile;if(!p)return;
+    const revision=++this.homeProfileArtRevision;
+    void this.loadImages([profileAvatarPath(p.avatar),profileFramePath(p.frame)]).then(images=>{
+      if(revision!==this.homeProfileArtRevision){for(const image of images)this.host.releaseImage?.(image);return;}
+      if(this.homeProfileArt)for(const image of [...this.homeProfileArt.avatars,...this.homeProfileArt.frames])if(image)this.host.releaseImage?.(image);
+      const avatars:HTMLImageElement[]=[],frames:HTMLImageElement[]=[];avatars[p.avatar]=images[0];frames[p.frame]=images[1];
+      this.homeProfileArt={avatars,frames};this.dirty=true;this.scheduleFrame();
+    }).catch(()=>{});
+  }
+
+  private releaseProfileArt(): void {
+    this.profileGrayImages.clear();
+    this.profileArtRequestToken += 1;
+    this.profileArtLoading = false;
+    this.profileArtError = false;
+    if(!this.profileArt)return;
+    const a=this.profileArt;
+    // Compatibility fields alias the supplied UI handles; release each owned image once.
+    for(const image of new Set([a.header,a.panel,a.save,a.edit,a.coin,...a.avatars,...a.frames,...a.stats,...Object.values(a.ui ?? {})]))this.host.releaseImage?.(image);
+    this.profileArt=undefined;
+  }
+
+  private openProfile(): void {
+    this.save.playerProfile ??= normalizePlayerProfile(undefined);
+    this.profileDraftAvatar = this.save.playerProfile.avatar;
+    this.profileDraftFrame = this.save.playerProfile.frame;
+    this.profileDraftName = this.save.playerProfile.name;
+    this.profileScrolls.avatar.reset();this.profileScrolls.frame.reset();this.profileScrollTarget=undefined;
+    this.profileFeedback=undefined;this.profilePage="stats";this.requestProfileArt();
+  }
+
+  private openProfileNameInput(): void {
+    if(this.pendingProfileSave || !this.host.openTextInput)return;
+    this.closeProfileInput?.();
+    const t=this.viewportTransform(),box=this.host.canvas.getBoundingClientRect?.() ?? {x:0,y:0};
+    this.closeProfileInput=this.host.openTextInput({value:this.profileDraftName,maxLength:16,rect:{
+      x:box.x+t.offsetX+PROFILE_INPUT_RECT.x*t.scale,y:box.y+t.offsetY+PROFILE_INPUT_RECT.y*t.scale,
+      width:PROFILE_INPUT_RECT.width*t.scale,height:PROFILE_INPUT_RECT.height*t.scale},onChange:value=>{
+        this.profileDraftName=value;this.profileFeedback=undefined;this.dirty=true;this.scheduleFrame();
+      }});
+  }
+
+  private acknowledgeProfileAppearance(kind: ProfileAppearanceKind, index: number): void {
+    // Do not create a higher-priority save candidate while another action owns storage.
+    if(!this.storageBaselineReady || this.pendingProfileSave || this.pendingRankingSave
+      || this.pendingSettlement || this.pendingSettlementAbandon || this.pendingFeatureGuideAck
+      || this.leagueTransaction?.pending || this.pendingLifeStart || this.pendingLifeRefill
+      || this.pendingBoosterPurchase || this.pendingSupplyPurchase || this.pendingJourneyClaim
+      || this.pendingAchievementClaim || this.pendingDailyTaskClaim || this.pendingCollectionRestoration
+      || this.pendingJourneyThemeSelection || this.pendingLanguageSelection || this.welfareTransactionActive()
+      || this.lifeRefillAdTransactionActive() || this.boosterRewardAdTransactionActive()
+      || this.dailyChallengeRewardAdTransactionActive())return;
+    const progress=this.temporaryLevelTestSession?.baselineSave ?? this.save,profile=this.save.playerProfile;
+    if(!profile || !profileAppearanceUnread(kind,index,profile,progress))return;
+    const baselineSave=this.cloneSave(this.save),candidateSave=this.cloneSave(baselineSave);
+    if(!markProfileAppearanceSeen(candidateSave.playerProfile!,kind,index,progress))return;
+    // Acknowledgement saves only the viewed item; equipping still requires Save.
+    this.pendingProfileSave={candidateSave,baselineSave,rename:false,seenOnly:true};
+    this.commitProfile(false);
+  }
+
+  private commitProfile(rename: boolean): void {
+    this.cancelProfileScroll();
+    this.closeProfileInput?.();this.closeProfileInput=undefined;
+    if(!this.pendingProfileSave){
+      const baselineSave=this.cloneSave(this.save),candidateSave=this.cloneSave(baselineSave);
+      const p=candidateSave.playerProfile ??= normalizePlayerProfile(undefined);
+      if(rename){const name=cleanProfileName(this.profileDraftName);
+        if(!name || name===p.name){this.profileFeedback=this.notifyButtonFeedback(this.save.language==="en"?"Enter a different name":"请输入不同的昵称");return;}
+        if(candidateSave.coins<PROFILE_RENAME_PRICE){this.profileFeedback=this.notifyButtonFeedback(this.save.language==="en"?"Not enough coins":"金币不足");return;}
+        p.name=name;candidateSave.coins-=PROFILE_RENAME_PRICE;
+      }else{
+        const progress=this.temporaryLevelTestSession?.baselineSave ?? baselineSave;
+        if(!profileAppearanceUnlocked("avatar",this.profileDraftAvatar,progress)||!profileAppearanceUnlocked("frame",this.profileDraftFrame,progress)){
+          this.profileFeedback=this.notifyButtonFeedback(this.save.language==="en"?"Appearance is locked":"该外观尚未解锁");return;
+        }
+        p.avatar=this.profileDraftAvatar;p.frame=this.profileDraftFrame;
+        markProfileAppearanceSeen(p,"avatar",p.avatar,progress);
+        markProfileAppearanceSeen(p,"frame",p.frame,progress);
+      }
+      this.pendingProfileSave={candidateSave,baselineSave,rename};
+    }
+    const pending=this.pendingProfileSave,outcome=this.persistVerified(pending.candidateSave,pending.baselineSave);
+    if(outcome!=="committed"){
+      if(outcome==="rejected")this.pendingProfileSave=undefined;
+      this.profileFeedback=this.notifyButtonFeedback(this.save.language==="en"?"Save unconfirmed. Tap to retry":"保存未确认，请重试");return;
+    }
+    this.save=pending.candidateSave;this.pendingProfileSave=undefined;this.profileFeedback=undefined;
+    if(pending.seenOnly){
+      this.dirty=true;this.scheduleFrame();this.scheduleLifeRefreshWatch();return;
+    }
+    this.leaderboardSnapshotCache = undefined;
+    this.requestHomeProfileArt();
+    this.profileDraftName=this.save.playerProfile!.name;
+    if(pending.rename)this.closePopup("profile.rename",()=>{this.profilePage=this.profileRenameReturnPage;});
+    else {
+      this.profileDraftAvatar=this.save.playerProfile!.avatar;this.profileDraftFrame=this.save.playerProfile!.frame;
+      this.profileFeedback=this.notifyButtonFeedback(this.save.language==="en"?"Saved successfully":"保存成功");
+    }
+    this.scheduleLifeRefreshWatch();this.playSound("button");
+  }
+
+  private currentProfileScroll(): ProfileScroll | undefined {
+    return this.profilePage === "avatar" || this.profilePage === "frame" ? this.profileScrolls[this.profilePage] : undefined;
+  }
+
+  private cancelProfileScroll(): void {
+    this.profileScrolls?.avatar.cancel();this.profileScrolls?.frame.cancel();this.profileScrollTarget=undefined;
+  }
+
+  private profileHitOptions(key: string): HitTargetOptions {
+    if(key.startsWith("profile.select."))return {minimumCssSize:1,bounds:PROFILE_CATALOG_RECT};
+    if(this.profilePage==="stats" && (key==="profile.editName" || key==="profile.copy"))
+      return {bounds:PROFILE_STATS_ACTION_BOUNDS[key]};
+    return {};
+  }
+
+  private profileTargetAt(point: PointerSample): string | undefined {
+    return profileTargets(this.profileView()).find(([key,rect])=>key.startsWith("profile.select.")
+      ?inside(point.x,point.y,rect):this.interactionHit(point,rect,this.profileHitOptions(key)))?.[0];
+  }
+
+  private handleProfilePointer(point: PointerSample): void {
+    const key=this.profileTargetAt(point);
+    if(key && !this.pendingProfileSave)this.profileFeedback=undefined;
+    if(this.profileArtError){this.requestProfileArt();if(key!=="profile.close")return;}
+    if(key==="profile.retry")this.commitProfile(this.pendingProfileSave?.rename ?? false);
+    else if(key==="profile.close"){this.cancelProfileScroll();this.closePopup(["profile.rename","profile"],()=>{this.profilePage=undefined;this.releaseProfileArt();});}
+    else if(key==="profile.edit")this.profilePage="avatar";
+    else if(key==="profile.copy")void this.host.copyText?.(this.save.playerProfile!.id).then(ok=>{
+      this.profileFeedback=this.notifyButtonFeedback(this.save.language==="en"?(ok?"ID copied":"Unable to copy"):(ok?"ID已复制":"复制失败"));this.dirty=true;this.scheduleFrame();});
+    else if(key==="profile.avatarTab"){this.cancelProfileScroll();this.profilePage="avatar";}
+    else if(key==="profile.frameTab"){this.cancelProfileScroll();this.profilePage="frame";}
+    else if(key?.startsWith("profile.select.")){
+      const i=Number(key.split(".").pop()),kind=this.profilePage==="frame"?"frame":"avatar";
+      if(kind==="frame")this.profileDraftFrame=i;else this.profileDraftAvatar=i;
+      this.acknowledgeProfileAppearance(kind,i);
+    }
+    else if(key==="profile.editName"){
+      this.cancelProfileScroll();this.profileRenameReturnPage=this.profilePage==="stats"?"stats":"avatar";
+      this.profilePage="rename";this.profileDraftName=this.save.playerProfile!.name;this.profileInputAfterEntrance=true;
+    }
+    else if(key==="profile.cancelRename" || key==="profile.cancelRenameBottom"){this.closePopup("profile.rename",()=>{this.profilePage=this.profileRenameReturnPage;});}
+    else if(key==="profile.input")this.openProfileNameInput();
+    else if(key==="profile.rename")this.commitProfile(true);
+    else if(key==="profile.save")this.commitProfile(false);
+  }
+
+  private drawProfile(): void {
+    drawPlayerProfile(this.ctx,this.profileView(),this.profileArt,(key,rect,draw)=>{
+      this.drawPressable(key,{x:rect.x/PROFILE_SCALE,y:(rect.y-PROFILE_OFFSET_Y)/PROFILE_SCALE,width:rect.width/PROFILE_SCALE,height:rect.height/PROFILE_SCALE},draw);
+    }, { popup: (key, bounds, draw) => this.withPopupEntrance(key, bounds, draw),
+      notificationDot: rect => this.drawDiscoveryBadge(rect),
+      lockedImage: image => this.profileGrayImages.get(image) });
+  }
+
+  private drawRankingAvatar(art: ProfileAvatarArt | undefined, avatar: number, frame: number, rect: Rect): void {
+    const size = Math.min(rect.width, rect.height);
+    drawProfileAvatar(this.ctx, art, avatar, frame, {
+      x: rect.x + (rect.width - size) / 2, y: rect.y + (rect.height - size) / 2, width: size, height: size,
+    });
+  }
+
+  private drawLeagueRankingAvatar(avatar: number, player: boolean, rect: Rect): void {
+    const profile = this.save.playerProfile;
+    this.drawRankingAvatar(this.leagueAvatarArtStore?.art,
+      player ? profile?.avatar ?? 0 : avatar % PROFILE_AVATAR_PATHS.length,
+      player ? profile?.frame ?? 0 : 0, rect);
+  }
+
+  private drawLeaguePage(): void {
+    const view: LeagueView = { state: this.save.league, now: Date.now(), scroll: this.leagueScroll.offset, tier: this.leagueTier, tierPosition: this.leagueTierPosition(),
+      playerLevel: this.save.currentLevel,
+      info: this.leagueInfo, introPage: this.leagueIntroPage, challengeNotice: this.leagueChallengeNotice, persistence: this.leaguePersistence, action: this.leagueAction, artError: this.leagueArtStore?.error || this.leagueAvatarArtStore?.error,
+      settlementArtError: this.leagueSettlementArtStore?.error };
+    drawLeague(this.ctx, view, {
+      popup: (key, bounds, draw) => this.withPopupEntrance(key, bounds, draw),
+      button: (key, rect, text, color = "#7562c8") => this.drawButton(key, rect, text, color, "#352878", 23),
+      pressable: (key, rect, draw) => this.drawPressable(key, rect, draw),
+      drawAvatar: (avatar, player, rect) => this.drawLeagueRankingAvatar(avatar, player, rect),
+      art: this.leagueAvatarArtStore && !this.leagueAvatarArtStore.art ? undefined : this.leagueArtStore?.art,
+      settlementArt: this.leagueSettlementArtStore?.art,
+    });
   }
 
   private drawHomeCoinFlight(): void {
-    const flight = this.homeCoinFlight;
-    if (!flight) return;
+    for (const flight of this.homeCoinFlights ?? []) this.drawRewardFlight(flight);
+  }
+
+  private drawRewardFlight(flight: HomeCoinFlight): void {
     const timing = homeCoinFlightTiming(flight.reducedMotion);
+    const supplyArt = this.screen === "supply" ? this.formalPageArtFor("supply") : undefined;
     const target = flight.kind === "inspiration" ? this.inspirationTarget() : this.homeCoinTarget();
     const offsets = [
       { x: -18, y: 10 },
@@ -11454,10 +16393,17 @@ export class ColorEscapeGame {
       ctx.scale(flip, 1);
       ctx.shadowColor = "#ffd536";
       ctx.shadowBlur = 8 + progress * 10;
+      const shopFlightArt = supplyArt?.screen === "supply"
+        ? (flight.kind === "inspiration" ? supplyArt.ui.resourceInspiration : supplyArt.ui.resourceCoins) : undefined;
       const inspirationArt = flight.kind === "inspiration"
-        ? this.inspirationFlightArt ?? this.dailyTaskInspirationArt
+        ? this.inspirationFlightArt ?? this.dailyTaskInspirationArt ?? (supplyArt?.screen === "supply" ? supplyArt.inspiration : undefined)
         : undefined;
-      if (inspirationArt) {
+      if (shopFlightArt) {
+        const scale = size / Math.max(shopFlightArt.naturalWidth || shopFlightArt.width, shopFlightArt.naturalHeight || shopFlightArt.height);
+        const width = (shopFlightArt.naturalWidth || shopFlightArt.width) * scale;
+        const height = (shopFlightArt.naturalHeight || shopFlightArt.height) * scale;
+        ctx.drawImage(shopFlightArt, -width / 2, -height / 2, width, height);
+      } else if (inspirationArt) {
         ctx.drawImage(inspirationArt, -size / 2, -size / 2, size, size);
       } else {
         this.drawSystemIcon(0, 0, 0, size);
@@ -11479,6 +16425,183 @@ export class ColorEscapeGame {
     }
   }
 
+  private drawCollectionIntro(): void {
+    const intro = this.collectionIntro;
+    if (!intro || !this.collectionIntroOnCurrentScreen()) return;
+    const item = findCollectionCatalogItem(intro.itemId);
+    if (!item) return;
+    const layout = COLLECTION_INTRO_LAYOUT;
+    const ctx = this.ctx;
+    const supplied = this.suppliedRevealAssets("painting");
+    const ready = this.collectionIntroReady();
+    const loaded = this.collectionIntroArtworkReady();
+    const age = this.save.reducedMotion && loaded ? COLLECTION_INTRO_DURATION : intro.age;
+    const turn = clampUnit((age - 0.36) / 0.52);
+    const front = turn >= 0.5;
+    const scale = 1;
+    const centerX = layout.artwork.x + layout.artwork.width / 2;
+    const centerY = layout.artwork.y + layout.artwork.height / 2;
+    this.drawDim(0.84, "#08050d");
+    this.withPopupEntrance("collectionIntro", { x: 54, y: 193, width: 419, height: 610 }, () => {
+
+      // The reference is a short card-back / turn / glint reveal. The actual
+      // picture comes from our own collection atlas, never from the video.
+      ctx.save();
+      const halo = ctx.createRadialGradient(centerX, centerY, 40, centerX, centerY, 292);
+      halo.addColorStop(0, "rgba(191,135,255,.34)");
+      halo.addColorStop(0.65, "rgba(117,66,192,.16)");
+      halo.addColorStop(1, "rgba(77,32,121,0)");
+      ctx.fillStyle = halo;
+      ctx.fillRect(0, centerY - 292, LOGICAL_WIDTH, 584);
+      ctx.restore();
+      if (supplied) this.drawCollectionImageContained(supplied.banner, layout.banner);
+      const titleImage = intro.unlockPreview && supplied
+        ? this.save.language === "zh-CN" ? supplied.titleZh : this.save.language === "en" ? supplied.titleEn : undefined
+        : undefined;
+      if (titleImage) {
+        this.drawCollectionImageContained(titleImage, this.save.language === "en" ? layout.titleEn : layout.titleZh);
+      } else {
+        this.label(this.albumText(intro.unlockPreview ? "masterpieceUnlocked" : "introNewMasterpiece"), layout.title.x, layout.title.y,
+          layout.title.size, "#fff7c9", "center", 950, "#713bad", 4, layout.title.maxWidth);
+      }
+
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      ctx.scale(scale * Math.max(0.035, Math.abs(Math.cos(turn * Math.PI))), scale);
+      ctx.translate(-centerX, -centerY);
+      const frame = { x: layout.artwork.x - 10, y: layout.artwork.y - 10,
+        width: layout.artwork.width + 20, height: layout.artwork.height + 20 };
+      const gold = ctx.createLinearGradient(frame.x, frame.y, frame.x + frame.width, frame.y + frame.height);
+      gold.addColorStop(0, "#fff3b7");
+      gold.addColorStop(0.3, "#cf963d");
+      gold.addColorStop(0.55, "#fff1b3");
+      gold.addColorStop(1, "#b9782c");
+      ctx.shadowColor = "rgba(255,211,124,.28)";
+      ctx.shadowBlur = 22;
+      ctx.fillStyle = gold;
+      ctx.beginPath();
+      traceRoundedRect(ctx, frame.x, frame.y, frame.width, frame.height, 24);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.strokeStyle = "#5d3c2b";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      if (front) {
+        this.drawCollectionAlbumArtwork(item, layout.artwork, "preview");
+      } else {
+        const back = ctx.createLinearGradient(layout.artwork.x, layout.artwork.y, layout.artwork.x, layout.artwork.y + layout.artwork.height);
+        back.addColorStop(0, "#493279");
+        back.addColorStop(1, "#23183f");
+        ctx.fillStyle = back;
+        ctx.beginPath();
+        traceRoundedRect(ctx, layout.artwork.x, layout.artwork.y, layout.artwork.width, layout.artwork.height, 17);
+        ctx.fill();
+        ctx.strokeStyle = "rgba(255,230,162,.65)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        traceRoundedRect(ctx, layout.artwork.x + 14, layout.artwork.y + 14,
+          layout.artwork.width - 28, layout.artwork.height - 28, 12);
+        ctx.stroke();
+        const icon = this.art.homeUi?.collectionAlbumEntry;
+        if (icon) this.drawCollectionImageContained(icon, { x: centerX - 65, y: centerY - 79, width: 130, height: 142 });
+        this.label(this.albumText("masterpieceCollection"), centerX, centerY + 109,
+          23, "#f7e3a1", "center", 850, "#20102e", 2, 276);
+      }
+
+      if (front && !this.save.reducedMotion && age < 1.4) {
+        ctx.save();
+        ctx.beginPath();
+        traceRoundedRect(ctx, layout.artwork.x, layout.artwork.y, layout.artwork.width, layout.artwork.height, 17);
+        ctx.clip();
+        const flash = 0.52 * (1 - clampUnit((age - 0.62) / 0.48));
+        ctx.fillStyle = `rgba(255,250,222,${flash})`;
+        ctx.fillRect(layout.artwork.x, layout.artwork.y, layout.artwork.width, layout.artwork.height);
+        const glintX = layout.artwork.x - 110 + clampUnit((age - 0.64) / 0.68) * (layout.artwork.width + 220);
+        const shine = ctx.createLinearGradient(glintX - 65, 0, glintX + 65, 0);
+        shine.addColorStop(0, "rgba(255,249,211,0)");
+        shine.addColorStop(0.5, "rgba(255,249,211,.42)");
+        shine.addColorStop(1, "rgba(255,249,211,0)");
+        ctx.fillStyle = shine;
+        ctx.fillRect(glintX - 65, layout.artwork.y, 130, layout.artwork.height);
+        ctx.restore();
+      }
+      ctx.restore();
+
+      if (front && !this.save.reducedMotion && age < COLLECTION_INTRO_DURATION) {
+        const progress = clampUnit((age - 0.62) / 1.18);
+        ctx.save();
+        const sparkleAlpha = ctx.globalAlpha;
+        for (let index = 0; index < 16; index += 1) {
+          const angle = index * Math.PI * 2 / 16 + 0.12;
+          const distance = 154 + progress * (40 + (index % 3) * 13);
+          const x = centerX + Math.cos(angle) * distance;
+          const y = centerY + Math.sin(angle) * distance;
+          const radius = (index % 3 === 0 ? 7 : 4) * (1 - progress * 0.7);
+          ctx.globalAlpha = sparkleAlpha * Math.sin(progress * Math.PI) * 0.9;
+          ctx.fillStyle = index % 2 ? "#fff8dd" : "#ffd97a";
+          ctx.beginPath();
+          ctx.moveTo(x, y - radius);
+          ctx.lineTo(x + radius * 0.5, y);
+          ctx.lineTo(x, y + radius);
+          ctx.lineTo(x - radius * 0.5, y);
+          ctx.closePath();
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+      if (front) {
+        this.label(this.collectionAlbumItemTitle(item), layout.name.x, layout.name.y,
+          layout.name.size, "#ffffff", "center", 900, "#27211d", 3, layout.name.maxWidth);
+        if (!(intro.unlockPreview && item.category === "masterpiece")) {
+          this.label(this.albumText(intro.restoration ? "collected" : "introRestoreHint"), layout.hint.x, layout.hint.y,
+            layout.hint.size, "#fff6a2", "center", 750, "#5b35c2", 2, layout.hint.maxWidth);
+        }
+      } else if (!loaded) {
+        this.label(this.tr(this.collectionAlbumItemArtworkFailed(item) ? "page.retryLoad" : "common.loading"),
+          layout.name.x, layout.name.y, 22, "#fff3cf", "center", 850, "#2a163e", 2, layout.name.maxWidth);
+      }
+      if (ready) {
+        if (supplied) {
+          this.drawPressable("collectionIntroPrimary", layout.primary, () => {
+            this.drawCollectionImageContained(supplied.button, layout.primary);
+            this.label(this.tr("settlement.continue"), layout.primary.x + layout.primary.width / 2,
+              layout.primary.y + layout.primary.height * 0.51, 42, "#ffffff", "center", 900, "#1d5418", 3, layout.primary.width - 40);
+          });
+        } else this.drawButton("collectionIntroPrimary", layout.primary, this.tr("settlement.continue"), "#43dc38", "#0a8122", 33);
+      }
+      this.drawPressable("collectionIntroLater", layout.later, () => {
+        const close = supplied?.close ?? this.art.pauseSettings?.close;
+        if (close) this.drawCollectionImageContained(close, layout.later);
+        else this.label("×", layout.later.x + 20, layout.later.y + 20, 34, "#e8dafa", "center", 800);
+      });
+    }, intro);
+  }
+
+  /** Home-artboard coordinates, relative to the resource row's shift and safe inset. */
+  private drawHomeCoinResource(): void {
+    const ui = this.art.homeUi;
+    if (!ui) return;
+    const ctx = this.ctx;
+    const coinPulseScale = this.homeCoinPulseScale();
+    ctx.drawImage(ui.resourcePanel, HOME_ART_LAYOUT.coinPanel.x, HOME_ART_LAYOUT.coinPanel.y);
+    ctx.save();
+    ctx.translate(
+      HOME_ART_LAYOUT.coinIcon.x + HOME_ART_LAYOUT.coinIcon.width / 2,
+      HOME_ART_LAYOUT.coinIcon.y + HOME_ART_LAYOUT.coinIcon.height / 2,
+    );
+    ctx.scale(coinPulseScale, coinPulseScale);
+    ctx.drawImage(ui.coinIcon, -HOME_ART_LAYOUT.coinIcon.width / 2, -HOME_ART_LAYOUT.coinIcon.height / 2);
+    ctx.restore();
+    ctx.drawImage(ui.addButton, HOME_ART_LAYOUT.coinAdd.x, HOME_ART_LAYOUT.coinAdd.y);
+    ctx.save();
+    ctx.translate(HOME_TYPOGRAPHY.coin.x, HOME_TYPOGRAPHY.coin.y);
+    ctx.scale(coinPulseScale, coinPulseScale);
+    this.label(`${this.displayedHomeCoins()}`, 0, 0, HOME_TYPOGRAPHY.coin.size,
+      "#723515", "center", 950, undefined, 0, HOME_TYPOGRAPHY.coin.maxWidth);
+    ctx.restore();
+  }
+
   private drawGeneratedHome(drawNavigation = true): void {
     const ctx = this.ctx;
     const safe = this.safeOffsets();
@@ -11498,88 +16621,66 @@ export class ColorEscapeGame {
         ctx.drawImage(this.art.home!, HOME_ART_LAYOUT.background.x, HOME_ART_LAYOUT.background.y);
       }
 
+      // Reveal the full scene while its controls fade at fixed positions.
+      ctx.save();
+      ctx.globalAlpha *= this.journeySceneHudAlpha();
       ctx.drawImage(ui.topHeader, HOME_ART_LAYOUT.header.x, HOME_ART_LAYOUT.header.y);
 
       ctx.save();
-      ctx.translate(0, topOffset);
+      ctx.translate(HOME_RESOURCE_SHIFT_X, topOffset);
       this.drawPressable("homeSupply", { x: 16, y: 47, width: 196, height: 64 }, () => {
-        ctx.drawImage(ui.resourcePanel, HOME_ART_LAYOUT.coinPanel.x, HOME_ART_LAYOUT.coinPanel.y);
-        const coinPulseScale = this.homeCoinPulseScale();
-        ctx.save();
-        ctx.translate(
-          HOME_ART_LAYOUT.coinIcon.x + HOME_ART_LAYOUT.coinIcon.width / 2,
-          HOME_ART_LAYOUT.coinIcon.y + HOME_ART_LAYOUT.coinIcon.height / 2,
-        );
-        ctx.scale(coinPulseScale, coinPulseScale);
-        ctx.drawImage(ui.coinIcon, -HOME_ART_LAYOUT.coinIcon.width / 2, -HOME_ART_LAYOUT.coinIcon.height / 2);
-        ctx.restore();
-        ctx.drawImage(ui.addButton, HOME_ART_LAYOUT.coinAdd.x, HOME_ART_LAYOUT.coinAdd.y);
-        ctx.save();
-        ctx.translate(HOME_TYPOGRAPHY.coin.x, HOME_TYPOGRAPHY.coin.y);
-        ctx.scale(coinPulseScale, coinPulseScale);
+        this.drawHomeCoinResource();
+      });
+      this.drawPressable("homeLife", HOME_ART_LAYOUT.lifeControl, () => {
+        ctx.drawImage(ui.resourcePanel, HOME_ART_LAYOUT.lifePanel.x, HOME_ART_LAYOUT.lifePanel.y);
+        ctx.drawImage(ui.heartIcon, HOME_ART_LAYOUT.heartIcon.x, HOME_ART_LAYOUT.heartIcon.y);
+        ctx.drawImage(ui.addButton, HOME_ART_LAYOUT.lifeAdd.x, HOME_ART_LAYOUT.lifeAdd.y);
         this.label(
-          `${this.displayedHomeCoins()}`,
-          0,
-          0,
-          HOME_TYPOGRAPHY.coin.size,
+          this.lifeHeaderText(),
+          HOME_TYPOGRAPHY.life.x,
+          HOME_TYPOGRAPHY.life.y,
+          HOME_TYPOGRAPHY.life.size,
           "#723515",
           "center",
           950,
           undefined,
           0,
-          HOME_TYPOGRAPHY.coin.maxWidth,
+          HOME_TYPOGRAPHY.life.maxWidth,
         );
-        ctx.restore();
       });
-      ctx.drawImage(ui.resourcePanel, HOME_ART_LAYOUT.lifePanel.x, HOME_ART_LAYOUT.lifePanel.y);
-      ctx.drawImage(ui.heartIcon, HOME_ART_LAYOUT.heartIcon.x, HOME_ART_LAYOUT.heartIcon.y);
-      this.drawPressable("homeLife", HOME_ART_LAYOUT.lifePanel, () => {
-        ctx.drawImage(ui.addButton, HOME_ART_LAYOUT.lifeAdd.x, HOME_ART_LAYOUT.lifeAdd.y);
-      });
+      ctx.translate(-HOME_RESOURCE_SHIFT_X, 0);
       this.drawPressable("homeSettings", HOME_ART_LAYOUT.settings, () => {
         ctx.drawImage(ui.settingsButton, HOME_ART_LAYOUT.settings.x, HOME_ART_LAYOUT.settings.y);
       });
-      const lifeText = this.lifeHeaderText();
-      const compactLifeStatus = lifeText !== this.tr("common.full");
-      this.label(
-        lifeText,
-        HOME_TYPOGRAPHY.life.x,
-        HOME_TYPOGRAPHY.life.y,
-        compactLifeStatus ? HOME_TYPOGRAPHY.life.statusSize : HOME_TYPOGRAPHY.life.size,
-        "#723515",
-        "center",
-        950,
-        undefined,
-        0,
-        compactLifeStatus ? HOME_TYPOGRAPHY.life.statusMaxWidth : HOME_TYPOGRAPHY.life.maxWidth,
-      );
       ctx.restore();
 
       if (ui.achievementEntry) {
         const placement = HOME_ART_LAYOUT.achievementEntry;
+        ctx.save();
+        if (!this.featureUnlocked("achievements")) ctx.globalAlpha *= 0.4;
         this.drawPressable("homeAchievements", placement, () => {
-          ctx.drawImage(ui.achievementEntry, placement.x, placement.y);
+          this.drawCollectionImageContained(ui.achievementEntry, placement);
         });
+        ctx.restore();
+        this.drawFeatureLockBadge("achievements", placement);
+        this.drawHomeEntryName(placement, this.tr("achievement.entry"));
         if (this.achievementHasNotification()) {
           this.drawDiscoveryBadge({ x: placement.x + placement.width - 28, y: placement.y - 9, width: NOTIFICATION_DOT_SIZE, height: NOTIFICATION_DOT_SIZE });
         }
       }
 
-      this.drawPressable("homeMusic", { x: 580, y: 500, width: 118, height: 118 }, () => {
-        const entryArt = this.musicEntryArt ?? this.musicLibraryArt?.entry;
-        if (entryArt) ctx.drawImage(entryArt, 580, 500, 118, 118);
-      });
-
-      const testEntry = TEMPORARY_LEVEL_SELECTOR_HOME_ART_RECT;
-      this.drawTemporaryLevelButton(
-        "temporaryLevel.open",
-        testEntry,
-        this.temporaryLevelTestSession
-          ? this.temporaryLevelText(`测试中 Lv${this.model.level.id}`, `TEST Lv${this.model.level.id}`)
-          : this.temporaryLevelText("临时测试选关", "TEST LEVEL"),
-        this.temporaryLevelTestSession ? "primary" : "secondary",
-        24,
-      );
+      if (!IS_WECHAT_BUILD) {
+        const testEntry = TEMPORARY_LEVEL_SELECTOR_HOME_ART_RECT;
+        this.drawTemporaryLevelButton(
+          "temporaryLevel.open",
+          testEntry,
+          this.temporaryLevelTestSession
+            ? this.temporaryLevelText(`测试中 Lv${this.model.level.id}`, `TEST Lv${this.model.level.id}`)
+            : this.temporaryLevelText("临时测试选关", "TEST LEVEL"),
+          this.temporaryLevelTestSession ? "primary" : "secondary",
+          24,
+        );
+      }
 
       ctx.save();
       ctx.translate(0, -bottomOffset);
@@ -11622,22 +16723,228 @@ export class ColorEscapeGame {
         );
       });
       ctx.restore();
+      ctx.restore();
     });
+    ctx.save();
+    ctx.globalAlpha *= this.journeySceneHudAlpha();
     this.drawDailyTaskHomeEntry();
+    this.drawLeagueHomeEntry();
+    this.drawDailyChallengeHomeEntry();
     if (drawNavigation) this.drawMainNavigation("home");
     if (this.updateToastVisible && !this.homeCoinFlight) this.drawUpdateToast(safe.top);
+    ctx.restore();
   }
 
+
+  private drawFeatureUnlockGuide(): void {
+    const guide = this.featureUnlockGuide;
+    if (!guide || this.screen !== "home") return;
+    if (guide.phase === "reveal") { this.drawFeatureUnlockCard(); return; }
+    const ctx = this.ctx;
+    const target = this.featureGuideTargetRect()!;
+    const hole = { x: Math.max(3, target.x + 3), y: target.y + 2,
+      width: target.width - 6, height: Math.min(target.height - 4, LOGICAL_HEIGHT - target.y - 5) };
+    ctx.save();
+    ctx.fillStyle = "rgba(12, 7, 31, .78)";
+    ctx.beginPath(); ctx.rect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
+    traceRoundedRect(ctx, hole.x, hole.y, hole.width, hole.height, 16);
+    ctx.fill("evenodd");
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = "#ffe87c";
+    ctx.shadowColor = "#ffcd46";
+    ctx.shadowBlur = this.save.reducedMotion ? 0 : 10 + 5 * Math.sin(guide.age * 5);
+    ctx.beginPath(); traceRoundedRect(ctx, hole.x, hole.y, hole.width, hole.height, 16); ctx.stroke();
+    ctx.restore();
+    // The same entry remains the only target if its acknowledgement needs retrying.
+    const end = { x: target.x + target.width * 0.38, y: target.y + target.height * 0.3 };
+    this.drawTapGuideHand({ blockId: guide.feature, origins: [], points: [end, end], start: end, end }, 68, guide.age);
+  }
+
+  private drawFeatureUnlockCard(): void {
+    const guide = this.featureUnlockGuide;
+    if (!guide || guide.phase !== "reveal" || this.screen !== "home") return;
+    const ctx = this.ctx, layout = FEATURE_UNLOCK_LAYOUT, art = this.featureUnlockArt;
+    this.drawDim(0.82, "#100a28");
+    if (!art) {
+      const text = layout.lookText;
+      this.label(this.tr(this.featureUnlockArtError ? "page.retryLoad" : "page.loading"),
+        text.x, text.y, 24, "#ffffff", "center", 900, undefined, 0, text.maxWidth);
+      return;
+    }
+    const icon = guide.feature === "leaderboard" ? art.rankIcon : this.featureGuideIcon(guide.feature);
+    this.withPopupEntrance("featureUnlock", layout.panel, () => {
+      this.drawCollectionImageContained(art.panel, layout.panel);
+      const title = this.save.language === "zh-CN" ? art.titleZh : this.save.language === "en" ? art.titleEn : undefined;
+      if (title) this.drawCollectionImageContained(title, this.save.language === "en" ? layout.titleEn : layout.titleZh);
+      else this.label(this.tr("featureGuide.title"), layout.title.x, layout.title.y, layout.title.size,
+        "#fff6c5", "center", 950, "#7952ca", 4, layout.title.maxWidth);
+      ctx.save();
+      ctx.beginPath();
+      traceRoundedRect(ctx, layout.content.x, layout.content.y, layout.content.width, layout.content.height, 30 * layout.scale);
+      ctx.clip();
+      this.drawCollectionImageContained(art.glow, layout.glow);
+      ctx.restore();
+      const progress = this.save.reducedMotion ? 1 : clampUnit(guide.age / 0.65);
+      const pop = 0.7 + easeOutCubic(progress) * 0.3 + Math.sin(progress * Math.PI) * 0.11;
+      const placement = guide.feature === "leaderboard" ? layout.rankIcon : layout.icon;
+      if (icon) this.drawCollectionImageContained(icon, {
+        x: placement.x + placement.width * (1 - pop) / 2, y: placement.y + placement.height * (1 - pop) / 2,
+        width: placement.width * pop, height: placement.height * pop,
+      });
+      this.drawCollectionImageContained(art.sparkles, layout.sparkles);
+      const name = this.tr(`featureGuide.${guide.feature}.name`);
+      const shortName = (this.save.language === "zh-CN" || this.save.language === "zh-TW") && name.length <= 2;
+      this.drawCollectionImageContained(art.nameLeft, shortName ? layout.nameLeft : layout.wideNameLeft);
+      this.drawCollectionImageContained(art.nameRight, shortName ? layout.nameRight : layout.wideNameRight);
+      const nameText = shortName ? layout.name : layout.wideName;
+      this.label(name, nameText.x, nameText.y, nameText.size, "#ffffff", "center", 950,
+        "#7952ef", 5 * layout.scale, nameText.maxWidth);
+      this.drawCollectionImageContained(art.divider, layout.divider);
+      const description = layout.description;
+      this.wrapText(this.tr(`featureGuide.${guide.feature}.description`),
+        description.x, description.y, description.maxWidth, 26 * layout.scale, description.size,
+        "#ffffff", "center", undefined, 0, layout.content.y + layout.content.height - 4 * layout.scale);
+      if (!this.featureUnlockGuideReady()) return;
+      this.drawPressable(guide.persistence ? "featureGuide.retry" : "featureGuide.look", layout.look, () => {
+        this.drawCollectionImageContained(art.button, layout.look);
+        const text = layout.lookText;
+        this.label(guide.persistence ? this.tr("common.retry") : this.tr("featureGuide.look"), text.x, text.y,
+          text.size, "#ffffff", "center", 950, "#895621", 3 * layout.scale, text.maxWidth);
+      });
+    }, guide);
+  }
+
+  private drawFeatureLockBadge(feature: FeatureId, placement: Rect): void {
+    if (this.featureUnlocked(feature)) return;
+    const image = this.art.homeUi?.featureLock;
+    if (!image) return;
+    // The supplied 720px reference uses one native 60x74 lock centred on each
+    // disabled icon. Unlock requirements remain available through its tap hint.
+    const width = Math.min(60, placement.width * 0.72);
+    const height = width * 74 / 60;
+    this.drawCollectionImageContained(image, {
+      x: placement.x + (placement.width - width) / 2,
+      y: placement.y + (placement.height - height) / 2,
+      width, height,
+    });
+  }
+
+  private showButtonHint(text: string, feature?: FeatureId): void {
+    if (!text.trim()) return;
+    const hints = this.buttonHints ??= [];
+    hints.push({ text, feature, ...createStackedHintMotion(hints[hints.length - 1], this.save.reducedMotion) });
+    if (this.save.reducedMotion) this.buttonHints = advanceStackedHints(hints, 0, true);
+    this.dirty = true;
+    this.scheduleFrame();
+  }
+
+  /** Publish at the action boundary, while retaining each flow's existing state. */
+  private notifyButtonFeedback<T extends string | { text: string } | undefined>(feedback: T): T {
+    if (feedback) this.showButtonHint(typeof feedback === "string" ? feedback : feedback.text);
+    return feedback;
+  }
+
+  private notifySaveFeedback<T extends "unknown" | "rejected" | undefined>(outcome: T): T {
+    if (outcome) this.showButtonHint(this.tr(outcome === "unknown" ? "shop.saveUnknown" : "shop.saveFailed"));
+    return outcome;
+  }
+
+  private updateButtonHints(delta: number): void {
+    if (!this.buttonHints?.length || !this.appVisible) return;
+    this.buttonHints = advanceStackedHints(this.buttonHints, delta, this.save.reducedMotion);
+    this.dirty = true;
+  }
+
+  private drawButtonHints(): void {
+    for (const feedback of this.buttonHints ?? []) {
+      this.drawButtonHint(feedback.text, LOGICAL_HEIGHT * 0.4 + feedback.offsetY, stackedHintBackgroundAlpha(feedback));
+    }
+  }
+
+  private drawButtonHint(text: string, centerY: number, backgroundAlpha = 1): void {
+    const ctx = this.ctx;
+    const { width, height } = STACKED_HINT_GEOMETRY;
+    ctx.save();
+    ctx.globalAlpha *= backgroundAlpha;
+    if (this.art.lockedHintPanel) {
+      ctx.drawImage(this.art.lockedHintPanel, 52, centerY - height / 2, width, height);
+    }
+    ctx.restore();
+    ctx.save();
+    ctx.font = canvasFont(900, 22);
+    const wide = ctx.measureText(text).width > 354;
+    ctx.font = canvasFont(900, 18);
+    const multiline = wide && ctx.measureText(text).width > 354;
+    ctx.restore();
+    if (multiline) this.wrapText(text, 248, centerY - 10, 354, 20, 18,
+      "#ffffff", "center", "#191919", 2, centerY + height / 2 - 2);
+    else this.label(text, 248, centerY, wide ? 18 : 22, "#ffffff", "center", 900, "#191919", 2, 354);
+  }
+
+  private drawHomeEntryName(placement: Rect, name: string): void {
+    this.label(name, placement.x + placement.width / 2, placement.y + placement.height + 18,
+      24, "#fff8df", "center", 900, "#54335f", 3, placement.width + 8);
+  }
 
   private drawDailyTaskHomeEntry(): void {
     const ui = this.art.homeUi;
     if (!ui) return;
     const placement = DAILY_TASK_LAYOUT.homeEntry;
     this.withHomeArtboard(() => {
+      this.ctx.save();
+      if (!this.featureUnlocked("dailyTasks")) this.ctx.globalAlpha *= 0.4;
       this.drawPressable("homeMissions", placement, () => {
-        this.ctx.drawImage(ui.dailyTaskEntry, placement.x, placement.y);
+        this.drawCollectionImageContained(ui.dailyTaskEntry, placement);
       });
+      this.ctx.restore();
+      this.drawFeatureLockBadge("dailyTasks", placement);
+      this.drawHomeEntryName(placement, this.dailyText("entry"));
       if (this.dailyTaskHasNotification()) {
+        this.drawDiscoveryBadge({ x: placement.x + placement.width - 28, y: placement.y - 9, width: NOTIFICATION_DOT_SIZE, height: NOTIFICATION_DOT_SIZE });
+      }
+    });
+  }
+
+  private drawLeagueHomeEntry(): void {
+    const ui = this.art.homeUi;
+    if (!ui || !this.featureUnlocked("league")) return;
+    const placement = HOME_ART_LAYOUT.leagueEntry;
+    this.withHomeArtboard(() => {
+      this.ctx.save();
+      this.drawPressable("homeLeague", placement, () => {
+        this.drawCollectionImageContained(ui.sideEntryBase, placement);
+        this.drawCollectionImageContained(ui.leagueEntry, {
+          x: placement.x + 14, y: placement.y + 14, width: 90, height: 90,
+        });
+      });
+      this.ctx.restore();
+      const season = this.save.league?.season;
+      this.drawHomeEntryName(placement, "荣耀联赛");
+      const status = !season ? "开启联赛"
+        : this.save.league?.pending || Date.now() >= season.endMs ? "可结算"
+        : leagueCountdown(season.endMs, Date.now()).replace("天 ", "天");
+      this.label(status, placement.x + placement.width / 2, placement.y + placement.height + 43,
+        16, "#fff3c5", "center", 800, "#54335f", 2, placement.width);
+    });
+  }
+
+  /** Independent entry for the daily challenge; daily tasks keep their own
+   * calendar entry so the two systems cannot accidentally share state. */
+  private drawDailyChallengeHomeEntry(): void {
+    const ui = this.art.homeUi;
+    if (!ui || !this.featureUnlocked("dailyChallenge")) return;
+    const placement = DAILY_CHALLENGE_LAYOUT.entry;
+    this.withHomeArtboard(() => {
+      this.ctx.save();
+      this.drawPressable("homeDailyChallenge", placement, () => {
+        this.drawCollectionImageContained(ui.sideEntryBase, placement);
+        this.drawCollectionImageContained(ui.dailyChallengeEntry, {
+          x: placement.x + 14, y: placement.y + 14, width: 90, height: 90,
+        });
+      });
+      this.ctx.restore();
+      this.drawHomeEntryName(placement, "每日挑战");
+      if (this.dailyChallengeHasNotification()) {
         this.drawDiscoveryBadge({ x: placement.x + placement.width - 28, y: placement.y - 9, width: NOTIFICATION_DOT_SIZE, height: NOTIFICATION_DOT_SIZE });
       }
     });
@@ -11685,16 +16992,17 @@ export class ColorEscapeGame {
         );
       });
       const navigationIcons = {
-        shop: ui.shopIcon,
-        leaderboard: ui.leaderboardIcon,
+        shop: this.featureUnlocked("supply") ? ui.shopIcon : ui.shopIconLocked,
+        leaderboard: this.featureUnlocked("leaderboard") ? ui.leaderboardIcon : ui.leaderboardIconLocked,
         home: ui.homeIcon,
-        journey: ui.journeyIcon,
+        journey: this.featureUnlocked("levels") ? ui.journeyIcon : ui.journeyIconLocked,
         collection: ui.collectionIcon,
       } as const;
       for (const [index, tab] of HOME_NAVIGATION_LAYOUT.entries()) {
         const icon = navigationIcons[tab.icon];
         const placement = homeNavigationIconPlacement(tab.screen, selected);
         const tabRect = homeNavigationTabPlacement(tab.screen, selected);
+        const feature = this.navigationFeature(tab.screen);
         this.drawPressable(`navigation.${index}`, tabRect, () => {
           ctx.save();
           ctx.translate(placement.x, placement.y);
@@ -11704,6 +17012,7 @@ export class ColorEscapeGame {
           ctx.scale(placement.scale, placement.scale);
           ctx.drawImage(icon, 0, 0);
           ctx.restore();
+          if (feature) this.drawFeatureLockBadge(feature, placement);
         });
       }
       this.drawPressable(selectedKey, selectedRect, () => {
@@ -11760,7 +17069,7 @@ export class ColorEscapeGame {
         this.ctx.drawImage(ui.arrowLeft, HOME_ART_LAYOUT.previousLevel.x, HOME_ART_LAYOUT.previousLevel.y);
       });
     }
-    if (this.model.level.id < this.save.highestLevel) {
+    if (this.canBrowseNextHomeLevel()) {
       this.drawPressable("homeNext", HOME_ART_LAYOUT.nextLevel, () => {
         this.ctx.drawImage(ui.arrowRight, HOME_ART_LAYOUT.nextLevel.x, HOME_ART_LAYOUT.nextLevel.y);
       });
@@ -11806,11 +17115,16 @@ export class ColorEscapeGame {
       return;
     }
 
-    if (this.screen === "levels") {
-      void art.deferred.requestEpisodes(this.journeyEpisodeIndexesInView(0.75)).catch(() => { /* local chapter retry */ });
-    }
     const ctx = this.ctx;
     const journeyView = this.journeyScrollView();
+    if (this.screen === "levels") {
+      // Render the map shell first. Optional scenes never hold up navigation,
+      // rewards, or scrolling, and failed art is retried only by an explicit tap.
+      if (journeyView.entries.some((entry) => entry.kind === "finale")) {
+        void art.deferred.requestDestination().catch(() => { /* local destination retry */ });
+      }
+      void art.deferred.requestEpisodes(this.journeyEpisodeIndexesInView(0.75)).catch(() => { /* local chapter retry */ });
+    }
     const presentation = this.journeyPresentation;
     const progressDuration = this.save.reducedMotion ? JOURNEY_PROGRESS_REDUCED_DURATION : JOURNEY_PROGRESS_DURATION;
     const progress = presentation?.phase === "progress"
@@ -11872,17 +17186,15 @@ export class ColorEscapeGame {
             && progress >= 0.66;
           const completed = claimed.has(entry.levelId) || reachedDuringPresentation;
           const active = entry.levelId === anchorRewardLevel;
-          // The active milestone card reports the player's live Journey level
-          // (Lv16 in the supplement) while retaining the milestone's reward
-          // identity and selection behavior underneath.
-          const displayedLevel = entry.levelId === anchorRewardLevel ? anchorLevel : entry.levelId;
+          // A reward card names its required clear, independently of the
+          // player's current position on the Journey map.
           this.drawPressable(`journeyNode.${index}`, this.journeyNodeArtRect(entry), () => {
             if (active) {
               ctx.drawImage(art.levelCardActiveLeft, card.x - 9, card.y - 7);
             }
             ctx.drawImage(art.levelCardLeft, card.x, card.y);
             this.label(
-              this.tr("common.level"),
+              this.tr("journey.completeLevelLabel"),
               layout.typography.levelLabel.x,
               card.y + layout.typography.levelLabel.centerYOffset,
               layout.typography.levelLabel.size,
@@ -11891,9 +17203,10 @@ export class ColorEscapeGame {
               850,
               undefined,
               0,
+              card.width - 24,
             );
             this.label(
-              `${displayedLevel}`,
+              `${entry.levelId}`,
               layout.typography.levelNumber.x,
               card.y + layout.typography.levelNumber.centerYOffset,
               layout.typography.levelNumber.size,
@@ -11949,7 +17262,7 @@ export class ColorEscapeGame {
 
         if (entry.kind === "episode") {
           const episode = entry.episode;
-          const unlocked = episode.unlockLevel <= this.save.highestLevel;
+          const unlocked = isJourneyEpisodeUnlocked(episode, this.save.highestLevel, this.save.rewardedLevels);
           const selected = this.save.selectedJourneyEpisode === episode.index;
           const imagePlacement = layout.journeyContent.episodeImage;
           const imageIndex = this.journeyEpisodeArtIndex(episode.index);
@@ -11985,19 +17298,19 @@ export class ColorEscapeGame {
           }
           ctx.restore();
           if (!unlocked && image) {
-            ctx.drawImage(
-              art.lockedShade,
-              imagePlacement.x,
-              entry.y + imagePlacement.yOffset,
-            );
-            const lock = layout.journeyContent.episodeLock;
-            ctx.drawImage(
-              art.lock,
-              imagePlacement.x + lock.xOffset,
-              entry.y + imagePlacement.yOffset + lock.yOffset,
-              lock.width,
-              lock.height,
-            );
+            // The supplied hint overlays the actual locked scene. Its sample
+            // level is only typography reference; retain this episode's rule.
+            const hintWidth = imagePlacement.width;
+            const hintHeight = hintWidth * 57 / 478;
+            const hintY = entry.y + imagePlacement.yOffset + imagePlacement.height * 0.69;
+            if (this.art.lockedHintPanel) {
+              ctx.drawImage(this.art.lockedHintPanel, imagePlacement.x, hintY, hintWidth, hintHeight);
+            } else {
+              ctx.fillStyle = "rgba(12,20,12,.48)";
+              ctx.fillRect(imagePlacement.x, hintY, hintWidth, hintHeight);
+            }
+            this.label(this.tr("journey.completeLevel", { level: episode.unlockLevel }),
+              imagePlacement.x + hintWidth / 2, hintY + hintHeight / 2, 23, "#ffffff", "center", 900, undefined, 0, hintWidth - 20);
           }
           const range = layout.journeyContent.episodeRange;
           ctx.drawImage(art.episodeRangePanel, range.x, entry.y + range.yOffset);
@@ -12033,7 +17346,7 @@ export class ColorEscapeGame {
               );
             } else {
               this.label(
-                this.tr("journey.level", { level: episode.unlockLevel }),
+                this.tr("journey.completeLevel", { level: episode.unlockLevel }),
                 layout.typography.episodeButton.x,
                 entry.y + layout.typography.episodeButton.centerYOffset,
                 layout.typography.episodeButton.size,
@@ -12042,6 +17355,7 @@ export class ColorEscapeGame {
                 950,
                 "#145c1d",
                 4,
+                button.width - 12,
               );
             }
           });
@@ -12049,6 +17363,7 @@ export class ColorEscapeGame {
         }
 
         const finale = layout.journeyContent.finaleImage;
+        const destination = art.deferred.destination;
         const finished = this.save.rewardedLevels.includes(LEVELS.length);
         this.label(
           this.tr("journey.finaleTitle"),
@@ -12062,14 +17377,22 @@ export class ColorEscapeGame {
           5,
         );
         ctx.save();
-        if (!finished) {
+        if (!finished && destination) {
           ctx.filter = "grayscale(1) brightness(.62)";
           ctx.globalAlpha = 0.9;
         }
-        ctx.drawImage(art.destination, finale.x, entry.y + finale.yOffset, finale.width, finale.height);
+        if (destination) {
+          ctx.drawImage(destination, finale.x, entry.y + finale.yOffset, finale.width, finale.height);
+        } else {
+          this.label(this.tr(art.deferred.destinationError ? "page.retryLoad" : "page.loading"),
+            finale.x + finale.width / 2, entry.y + finale.yOffset + finale.height / 2,
+            26, "#fffaf3", "center", 850, "#352080", 3, finale.width - 12);
+        }
         ctx.restore();
-        if (!finished) this.drawSystemIcon(11, 360, entry.y + 225, 62, 0.96);
-        else ctx.drawImage(art.rewards.complete, 319, entry.y + 330, 82, 73);
+        if (destination) {
+          if (!finished) this.drawSystemIcon(11, 360, entry.y + 225, 62, 0.96);
+          else ctx.drawImage(art.rewards.complete, 319, entry.y + 330, 82, 73);
+        }
         this.label(
           finished ? this.tr("journey.complete") : this.tr("journey.level", { level: LEVELS.length }),
           layout.typography.finaleLevel.x,
@@ -12089,10 +17412,32 @@ export class ColorEscapeGame {
       }
       ctx.restore();
       ctx.drawImage(art.topHeader, layout.topHeader.x, layout.topHeader.y);
-      ctx.drawImage(art.titlePanel, layout.titlePanel.x, layout.titlePanel.y);
-      ctx.drawImage(art.title, layout.title.x, layout.title.y);
+      if (this.homeCoinFlights?.some((flight) => flight.kind === "coins")) this.drawJourneyCoinWallet();
+      else {
+        ctx.drawImage(art.titlePanel, layout.titlePanel.x, layout.titlePanel.y);
+        ctx.drawImage(art.title, layout.title.x, layout.title.y);
+      }
     });
     if (drawNavigation) this.drawMainNavigation("levels");
+  }
+
+  private drawJourneyCoinWallet(): void {
+    const ui = this.art.homeUi;
+    if (!ui) return;
+    const ctx = this.ctx;
+    const { panel, icon, text } = JOURNEY_COIN_WALLET;
+    const pulse = this.homeCoinPulseScale();
+    ctx.save();
+    ctx.translate(0, this.safeOffsets().top / HOME_ARTBOARD_SCALE);
+    ctx.drawImage(ui.resourcePanel, panel.x, panel.y, panel.width, panel.height);
+    ctx.save();
+    ctx.translate(icon.x + icon.width / 2, icon.y + icon.height / 2);
+    ctx.scale(pulse, pulse);
+    ctx.drawImage(ui.coinIcon, -icon.width / 2, -icon.height / 2, icon.width, icon.height);
+    ctx.restore();
+    this.label(`${this.displayedHomeCoins()}`, text.x, text.y, HOME_TYPOGRAPHY.coin.size * pulse,
+      "#723515", "center", 950, undefined, 0, 136);
+    ctx.restore();
   }
 
   private journeyPresentationRewardImage(art: FormalJourneyArt): HTMLImageElement | undefined {
@@ -12122,10 +17467,71 @@ export class ColorEscapeGame {
     });
   }
 
+  private drawJourneySceneReveal(): void {
+    const presentation = this.journeyPresentation;
+    if (!presentation?.sceneReveal || presentation.event.type !== "episode_unlock") return;
+    const ctx = this.ctx;
+    const layout = this.journeySceneLayout();
+    const supplied = this.suppliedRevealAssets("scene");
+    const waiting = presentation.phase === "progress";
+    const reveal = presentation.phase === "claiming" ? 1
+      : easeOutCubic(Math.min(1, presentation.age / JOURNEY_SCENE_REVEAL_DURATION));
+    const alpha = waiting ? 1 : presentation.phase === "claiming"
+      ? 1 - this.journeySceneHudAlpha() : reveal;
+    ctx.save();
+    ctx.globalAlpha *= alpha;
+    if (waiting) {
+      ctx.fillStyle = "rgba(15,30,27,0.22)";
+      ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
+      this.withPopupEntrance("journeySceneLoading", popupBounds({ x: 54, y: 350, width: 388, height: 270 }, layout.primary, layout.later), () => {
+      this.drawChromePanel(54, 350, 388, 270, 26);
+      this.label(this.tr(this.journeySceneArtFailed() ? "journey.backgroundLoadFailed" : "page.loading"),
+        248, 420, 20, "#fff4ce", "center", 850, "#23382b", 3, 334);
+      if (this.journeySceneArtFailed()) {
+        this.drawButton("journeySceneRetry", layout.primary, this.tr("page.retryLoad"), "#43dc38", "#0a8122", 25);
+      }
+      this.drawPressable("journeySceneLater", layout.later, () => {
+        this.label(this.tr("journey.sceneLater"), 248, layout.later.y + 29, 21,
+          "#ffffff", "center", 800, "#23382b", 3, layout.later.width);
+      });
+      }, presentation);
+      ctx.restore();
+      return;
+    }
+
+    const top = this.safeOffsets().top;
+    const offset = this.save.reducedMotion ? 0 : 16 * (1 - reveal);
+    const titleImage = presentation.event.episode.index <= 10 && supplied
+      ? this.save.language === "zh-CN" ? supplied.titleZh : this.save.language === "en" ? supplied.titleEn : undefined
+      : undefined;
+    if (titleImage) {
+      const titleWidth = this.save.language === "en" ? 426 : 318;
+      this.drawCollectionImageContained(titleImage, { x: 248 - titleWidth / 2, y: top + 85 + offset,
+        width: titleWidth, height: this.save.language === "en" ? 82 : 69 });
+    } else {
+      this.label(this.journeySceneTitle(), 248, top + 120 + offset, 34,
+        "#fff0bd", "center", 900, "#8b4b26", 4, 428);
+    }
+    this.label(this.journeySceneName(), 248, top + 207 + offset, 74,
+      "#fff4c2", "center", 1000, "#8b4b26", 7, 416);
+
+    if (supplied) {
+      this.drawPressable("journeySceneConfirm", layout.primary, () => {
+        this.drawCollectionImageContained(supplied.button, layout.primary);
+        this.label(this.tr("journey.sceneConfirm"), 248, layout.primary.y + layout.primary.height * 0.48,
+          39, "#ffffff", "center", 900, "#36691f", 4, layout.primary.width - 42);
+      });
+    } else this.drawButton("journeySceneConfirm", layout.primary, this.tr("journey.sceneConfirm"), "#43dc38", "#0a8122", 33);
+    ctx.restore();
+  }
+
   private drawJourneyPresentationOverlay(): void {
     const presentation = this.journeyPresentation;
     const art = this.formalPageArtFor("levels");
     if (!presentation || !art || art.screen !== "levels") return;
+    // Coins are rendered by the same five-coin flight as campaign rewards.
+    if (presentation.phase === "claiming" && presentation.event.type === "milestone_reward"
+      && presentation.event.reward.kind === "coins") return;
     this.requestJourneyPresentationArt();
     const popup = art.deferred.presentation;
     const event = presentation.event;
@@ -12137,6 +17543,7 @@ export class ColorEscapeGame {
       this.ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
       this.ctx.restore();
       const panel = homeArtRect(layout.panel);
+      this.withPopupEntrance("journeyPresentation", homeArtRect(popupBounds(layout.panel, layout.close)), () => {
       this.drawChromePanel(panel.x, panel.y, panel.width, panel.height, 36);
       this.label(this.tr(this.journeyPresentationArtFailed() ? "page.loadFailed" : "page.loading"),
         LOGICAL_WIDTH / 2, 493, 22, "#fff4c7", "center", 900, "#4f218f", 3, 285);
@@ -12144,6 +17551,7 @@ export class ColorEscapeGame {
       if (this.journeyPresentationArtFailed()) {
         this.drawButton("journeyPresentationArtRetry", BUTTONS.formalPageRetry, this.tr("page.retryLoad"), "#43dc38", "#0a8122", 22);
       }
+      }, presentation);
       return;
     }
     const imageWidth = (image.naturalWidth || image.width) * HOME_ARTBOARD_SCALE;
@@ -12188,6 +17596,7 @@ export class ColorEscapeGame {
     this.ctx.fillStyle = layout.overlay.color;
     this.ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
     this.ctx.restore();
+    this.withPopupEntrance("journeyPresentation", homeArtRect(popupBounds(layout.panel, layout.close)), () => {
     this.withHomeArtboard(() => {
       const episodeUnlock = event.type === "episode_unlock";
       this.ctx.drawImage(popup.panel, layout.panel.x, layout.panel.y);
@@ -12223,7 +17632,7 @@ export class ColorEscapeGame {
         const width = image.naturalWidth || image.width;
         const height = image.naturalHeight || image.height;
         this.ctx.drawImage(image, layout.rewardCenter.x - width / 2, layout.rewardCenter.y - height / 2);
-        this.label(this.tr("journey.level", { level: event.level }), layout.typography.level.x, layout.typography.level.y, layout.typography.level.size, layout.typography.level.fill, "center", 750);
+        this.label(this.tr("journey.completeLevel", { level: event.level }), layout.typography.level.x, layout.typography.level.y, layout.typography.level.size, layout.typography.level.fill, "center", 750, undefined, 0, layout.panel.width - 60);
         this.label(this.journeyPresentationRewardText(), layout.typography.name.x, layout.typography.name.y, layout.typography.name.size, layout.typography.name.fill, "center", 950, layout.typography.name.stroke, layout.typography.name.lineWidth);
       }
       const readOnlyText = this.journeyPresentationRewardReadOnlyText(presentation);
@@ -12262,11 +17671,8 @@ export class ColorEscapeGame {
           );
         });
       }
-      if (presentation.error) {
-        const error = layout.typography.error;
-        this.label(presentation.error, error.x, error.y, error.size, error.fill, "center", 900, error.stroke, error.lineWidth);
-      }
     });
+    }, presentation);
   }
 
   private drawRecords(drawNavigation = true): void {
@@ -12397,172 +17803,12 @@ export class ColorEscapeGame {
       if (drawNavigation) this.drawMainNavigation("supply");
       return;
     }
-
-    const ctx = this.ctx;
-    const ui = this.art.homeUi;
-    this.drawFormalPageReference(art.reference, () => {
-      FORMAL_SHOP_LAYOUT.referenceCleanup.forEach(({ source, target }) => {
-        ctx.drawImage(
-          art.reference,
-          source.x,
-          source.y,
-          source.width,
-          source.height,
-          target.x,
-          target.y,
-          target.width,
-          target.height,
-        );
-      });
-      if (this.save.language !== "en") {
-        ctx.fillStyle = "#4f2dc8";
-        ctx.fillRect(300, 102, 120, 53);
-        this.label(this.tr("shop.title"), 360, 130, 42, "#fffaf3", "center", 950, "#352080", 5, 190);
-      }
-
-      if (ui) {
-        ctx.drawImage(ui.resourcePanel, FORMAL_SHOP_LAYOUT.coinPanel.x, FORMAL_SHOP_LAYOUT.coinPanel.y);
-        ctx.drawImage(ui.coinIcon, FORMAL_SHOP_LAYOUT.coinIcon.x, FORMAL_SHOP_LAYOUT.coinIcon.y);
-        const coinText = FORMAL_SHOP_LAYOUT.typography.coin;
-        this.label(
-          `${this.save.coins}`,
-          coinText.x,
-          coinText.y,
-          coinText.size,
-          "#723515",
-          "center",
-          950,
-          undefined,
-          0,
-          coinText.maxWidth,
-        );
-      }
-
-      SUPPLY_ORDER.forEach((kind, index) => {
-        const item = SUPPLY_ITEMS[kind];
-        const row = FORMAL_SHOP_LAYOUT.rows[index];
-        const stock = this.save.boosters[kind];
-        const unlocked = this.boosterUnlocked(kind);
-        const full = stock >= item.maxStock;
-        const affordable = unlocked && this.save.coins >= item.price;
-
-        // The supplied composite contains placeholder copy. Its card shell is
-        // the only formal shell exported, so clear only the flat, editable text
-        // wells before painting live inventory/economy values over it.
-        ctx.fillStyle = "#fdedd4";
-        ctx.fillRect(258, row.card.y + 58, 397, 132);
-        ctx.fillStyle = "#409af5";
-        ctx.fillRect(64, row.card.y + 229, 350, 78);
-        ctx.fillRect(row.buy.x - 7, row.buy.y - 7, row.buy.width + 14, row.buy.height + 14);
-
-        ctx.drawImage(art.boosterTile, row.tile.x, row.tile.y);
-        ctx.save();
-        ctx.globalAlpha = unlocked ? 1 : 0.48;
-        ctx.drawImage(art.boosterIcons[kind], row.icon.x, row.icon.y);
-        ctx.restore();
-        this.label(
-          this.boosterEffect(kind),
-          FORMAL_SHOP_LAYOUT.typography.effect.x,
-          row.effectY,
-          FORMAL_SHOP_LAYOUT.typography.effect.size,
-          "#fff8ee",
-          "left",
-          700,
-          "#5d2615",
-          3,
-          FORMAL_SHOP_LAYOUT.typography.effect.maxWidth,
-        );
-        this.label(
-          unlocked
-            ? this.tr("shop.inventory", { count: stock, max: item.maxStock })
-            : this.tr("shop.unlocksAtLevel", { level: item.unlockLevel }),
-          FORMAL_SHOP_LAYOUT.typography.stock.x,
-          row.stockY,
-          FORMAL_SHOP_LAYOUT.typography.stock.size,
-          unlocked ? "#fff8ee" : "#d6c8c2",
-          "left",
-          700,
-          unlocked ? "#5d2615" : "#765d56",
-          3,
-          FORMAL_SHOP_LAYOUT.typography.stock.maxWidth,
-        );
-        this.label(
-          this.boosterName(kind),
-          FORMAL_SHOP_LAYOUT.typography.title.x,
-          row.titleY,
-          FORMAL_SHOP_LAYOUT.typography.title.size,
-          "#ffffff",
-          "left",
-          950,
-          "#263f88",
-          4,
-          285,
-        );
-
-        this.drawPressable(`supply.${kind}`, row.buy, () => {
-          ctx.save();
-          ctx.globalAlpha = !unlocked || full ? 0.58 : affordable ? 1 : 0.68;
-          ctx.drawImage(art.buyButton, row.buy.x, row.buy.y);
-          ctx.restore();
-          if (!unlocked) {
-            this.label(
-              this.tr("common.lvNumber", { level: item.unlockLevel }),
-              row.buy.x + row.buy.width / 2,
-              row.buy.y + FORMAL_SHOP_LAYOUT.typography.buy.centerYOffset,
-              FORMAL_SHOP_LAYOUT.typography.buy.lockedSize,
-              "#ffffff",
-              "center",
-              900,
-              "#1a6f19",
-              3,
-            );
-          } else if (full) {
-            this.label(
-              this.tr("shop.full"),
-              row.buy.x + row.buy.width / 2,
-              row.buy.y + FORMAL_SHOP_LAYOUT.typography.buy.centerYOffset,
-              FORMAL_SHOP_LAYOUT.typography.buy.fullSize,
-              "#ffffff",
-              "center",
-              950,
-              "#1a6f19",
-              3,
-            );
-          } else {
-            ctx.save();
-            ctx.globalAlpha = affordable ? 1 : 0.62;
-            ctx.drawImage(art.priceCoin, row.buy.x + 28, row.buy.y + 19);
-            this.label(
-              `${item.price}`,
-              row.buy.x + FORMAL_SHOP_LAYOUT.typography.buy.priceXOffset,
-              row.buy.y + FORMAL_SHOP_LAYOUT.typography.buy.centerYOffset,
-              FORMAL_SHOP_LAYOUT.typography.buy.priceSize,
-              "#ffffff",
-              "center",
-              950,
-              "#1a6f19",
-              3,
-            );
-            ctx.restore();
-          }
-        });
-      });
-
-      if (this.supplyFeedback) {
-        const feedbackText = FORMAL_SHOP_LAYOUT.typography.feedback;
-        this.label(
-          this.supplyFeedback.text,
-          feedbackText.x,
-          feedbackText.y,
-          feedbackText.size,
-          this.supplyFeedback.color,
-          "center",
-          900,
-          "#2d155f",
-          4,
-        );
-      }
-    });
+    this.withHomeArtboard(() => drawWelfareStation(this.ctx, this.welfareView(), {
+      art: art.ui,
+      icons: { coins: art.priceCoin, inspiration: art.inspiration, life: art.life,
+        ...art.boosterIcons },
+      pressable: (key, rect, draw) => this.drawPressable(key, rect, draw),
+    }));
     if (drawNavigation) this.drawMainNavigation("supply");
   }
 
@@ -12575,54 +17821,22 @@ export class ColorEscapeGame {
     }
 
     const ctx = this.ctx;
-    const ui = this.art.homeUi;
     const modes: Array<{ mode: LeaderboardMode; key: string; label: string }> = [
       { mode: "weekly", key: "leaderboardWeekly", label: this.tr("leaderboard.weekly") },
-      { mode: "world", key: "leaderboardWorld", label: this.tr("leaderboard.world") },
       { mode: "country", key: "leaderboardCountry", label: this.tr("leaderboard.country") },
+      { mode: "world", key: "leaderboardWorld", label: this.tr("leaderboard.world") },
     ];
     const snapshot = this.leaderboardSnapshot();
-    const allEntries = snapshot.entries;
+    const allEntries = snapshot.totalPlayers ? metaLeaderboardDisplayEntries(snapshot) : [];
     const view = this.leaderboardScrollView();
     const leaders = allEntries.slice(0, 3);
     const layout = FORMAL_LEADERBOARD_LAYOUT;
-    const drawContainedCentered = (image: HTMLImageElement, placement: HomeArtPlacement): void => {
-      const width = image.naturalWidth || image.width;
-      const height = image.naturalHeight || image.height;
-      const scale = Math.min(placement.width / width, placement.height / height);
-      const drawWidth = width * scale;
-      const drawHeight = height * scale;
-      ctx.drawImage(
-        image,
-        placement.x + (placement.width - drawWidth) / 2,
-        placement.y + (placement.height - drawHeight) / 2,
-        drawWidth,
-        drawHeight,
-      );
-    };
 
     this.drawFormalPageReference(art.background, () => {
       ctx.drawImage(art.topHeader, layout.topHeader.x, layout.topHeader.y);
       ctx.drawImage(art.titlePanel, layout.titlePanel.x, layout.titlePanel.y);
       if (this.save.language === "en") ctx.drawImage(art.title, layout.title.x, layout.title.y);
       else this.label(this.tr("leaderboard.title"), 360, 142, 42, "#fffaf3", "center", 950, "#352080", 6, 294);
-      if (ui) {
-        ctx.drawImage(ui.resourcePanel, FORMAL_SHOP_LAYOUT.coinPanel.x, FORMAL_SHOP_LAYOUT.coinPanel.y);
-        ctx.drawImage(ui.coinIcon, FORMAL_SHOP_LAYOUT.coinIcon.x, FORMAL_SHOP_LAYOUT.coinIcon.y);
-        const coinText = layout.typography.coin;
-        this.label(
-          `${this.save.coins}`,
-          coinText.x,
-          coinText.y,
-          coinText.size,
-          "#723515",
-          "center",
-          950,
-          undefined,
-          0,
-          coinText.maxWidth,
-        );
-      }
       ctx.drawImage(art.tabsFrame, layout.tabsFrame.x, layout.tabsFrame.y);
       modes.forEach(({ mode, key, label }, index) => {
         const rect = layout.tabs[index];
@@ -12639,6 +17853,7 @@ export class ColorEscapeGame {
             900,
             "#3d2368",
             3,
+            rect.width - 14,
           );
         });
       });
@@ -12646,7 +17861,7 @@ export class ColorEscapeGame {
       ctx.drawImage(art.podium, layout.podium.x, layout.podium.y);
       leaders.forEach((entry, index) => {
         const slot = layout.podiumSlots[index];
-        drawContainedCentered(art.avatars[entry.avatar], slot.avatar);
+        this.drawRankingAvatar(art, entry.avatar, entry.frame, slot.avatar);
         ctx.drawImage(art.podiumNameplates[index], slot.nameplate.x, slot.nameplate.y);
         ctx.drawImage(art.podiumMedals[index], slot.medal.x, slot.medal.y);
         this.label(
@@ -12672,7 +17887,7 @@ export class ColorEscapeGame {
       if (!view.totalEntries) {
         ctx.drawImage(art.row, rowTemplate.x, rowTemplate.y);
         this.label(
-          this.tr("leaderboard.noData"),
+          snapshot.totalPlayers ? this.tr("leaderboard.noData") : this.tr("leaderboard.preparing"),
           layout.typography.empty.x,
           rowTemplate.y + layout.typography.empty.rowYOffset,
           layout.typography.empty.size,
@@ -12726,7 +17941,7 @@ export class ColorEscapeGame {
             3,
           );
         }
-        drawContainedCentered(art.avatars[entry.avatar], avatar);
+        this.drawRankingAvatar(art, entry.avatar, entry.frame, avatar);
         ctx.drawImage(art.levelPill, levelPill.x, levelPill.y);
         ctx.drawImage(art.star, star.x, star.y);
         const nameCenter = layout.rowNameCenters[slotIndex] + rowShift;
@@ -12766,7 +17981,7 @@ export class ColorEscapeGame {
       const playerStar = offsetPlacement(layout.playerStar);
       ctx.drawImage(art.playerRow, playerRow.x, playerRow.y);
       this.label(
-        `${player.rank}`,
+        player.rank ? `${player.rank}` : "—",
         layout.typography.rowRank.x,
         layout.playerRankCenterY + playerOffsetY,
         layout.typography.rowRank.size,
@@ -12776,7 +17991,7 @@ export class ColorEscapeGame {
         "#2a1b11",
         3,
       );
-      drawContainedCentered(art.avatars[player.avatar], playerAvatar);
+      this.drawRankingAvatar(art, player.avatar, player.frame, playerAvatar);
       ctx.drawImage(art.playerLevelPill, playerLevelPill.x, playerLevelPill.y);
       ctx.drawImage(art.star, playerStar.x, playerStar.y);
       this.label(
@@ -12872,7 +18087,6 @@ export class ColorEscapeGame {
         sourceY += Math.max(0, sourceCropHeight - nextHeight) * variation;
         sourceCropHeight = nextHeight;
       }
-      ctx.globalAlpha = 1;
       ctx.drawImage(
         image,
         sourceX,
@@ -12884,7 +18098,6 @@ export class ColorEscapeGame {
         rect.width,
         rect.height,
       );
-      ctx.globalAlpha = 1;
     }
 
     if (state === "locked" && this.collectionAlbumArt) {
@@ -12901,6 +18114,22 @@ export class ColorEscapeGame {
     const scale = Math.min(rect.width / width, rect.height / height);
     this.ctx.drawImage(image, rect.x + (rect.width - width * scale) / 2,
       rect.y + (rect.height - height * scale) / 2, width * scale, height * scale);
+  }
+
+  /** Draw a replaceable UI plate without changing its authored aspect ratio. */
+  private drawImageCover(image: HTMLImageElement, rect: Rect): void {
+    const width = image.naturalWidth || image.width;
+    const height = image.naturalHeight || image.height;
+    const scale = Math.max(rect.width / width, rect.height / height);
+    const drawWidth = width * scale;
+    const drawHeight = height * scale;
+    this.ctx.save();
+    this.ctx.beginPath();
+    this.ctx.rect(rect.x, rect.y, rect.width, rect.height);
+    this.ctx.clip();
+    this.ctx.drawImage(image, rect.x + (rect.width - drawWidth) / 2,
+      rect.y + (rect.height - drawHeight) / 2, drawWidth, drawHeight);
+    this.ctx.restore();
   }
 
   private drawCollectionAlbumCard(item: CollectionCatalogItem, rect: Rect): void {
@@ -12977,8 +18206,9 @@ export class ColorEscapeGame {
     ctx.save();
     ctx.fillStyle = "rgba(10, 7, 34, .66)";
     ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
-    ctx.drawImage(art.detailPanel, detail.panel.x, detail.panel.y, detail.panel.width, detail.panel.height);
     ctx.restore();
+    this.withPopupEntrance("collection.detail", popupBounds(detail.panel, detail.close.visual), () => {
+    ctx.drawImage(art.detailPanel, detail.panel.x, detail.panel.y, detail.panel.width, detail.panel.height);
     this.label(this.collectionAlbumItemTitle(item),
       detail.title.x + detail.title.width / 2, detail.title.y + detail.title.height / 2,
       COLLECTION_ALBUM_TYPOGRAPHY.detailTitle * scale, "#4e2bcc", "center", 950,
@@ -12992,26 +18222,45 @@ export class ColorEscapeGame {
     const masterpiece = item.category === "masterpiece" ? this.collectionAlbumMasterpieceProgress(item) : undefined;
     // The detail reference previews the full picture even before unlocking;
     // its caption and action, not a second lock overlay, express ownership.
-    this.drawCollectionAlbumArtwork(item, detail.artwork, "full");
+    const artwork = item.category === "level"
+      ? { x: detail.artwork.x + 66 * scale, y: detail.artwork.y - 10 * scale, width: 340 * scale, height: 340 * scale }
+      : detail.artwork;
+    this.drawCollectionAlbumArtwork(item, artwork, "full");
     const centerX = detail.body.x + detail.body.width / 2;
     const bodyFont = COLLECTION_ALBUM_TYPOGRAPHY.detailBody * scale;
-    let enabled = false;
+    const unlockHintY = detail.body.y + 90 * scale;
     let actionText = "";
     if (item.category === "level") {
-      const condition = level?.obtained
-        ? this.albumText("bestStars")
-        : this.albumText("unlockAfterLevel", { level: item.unlockLevel });
-      this.label(condition, centerX, detail.body.y + (level?.obtained ? 30 : 70) * scale, bodyFont,
+      const conditionY = level?.obtained ? detail.artwork.y + 368 * scale : unlockHintY;
+      this.label(level?.obtained ? this.albumText("bestStars") : this.albumText("unlockAfterLevel", { level: item.unlockLevel }), centerX, conditionY, bodyFont,
         "#4e2bcc", "center", 950, undefined, 0, detail.body.width);
-      if (level?.obtained) {
-        for (let index = 0; index < 3; index += 1) {
-          this.drawCollectionImageContained(index < level.frameStars ? art.starFilled : art.starEmpty, {
-            x: centerX + (index * 50 - 69) * scale, y: detail.body.y + 56 * scale,
-            width: 38 * scale, height: 38 * scale,
+      // Locked level cards only show their unlock requirement. Star targets are
+      // intentionally withheld until the artwork has been obtained.
+      if (level?.obtained === true) {
+        const spec = LEVELS.find((entry) => entry.id === item.levelId);
+        if (spec) {
+          const targets = levelStarTargets(spec);
+          const status = collectionStarStatus(spec, this.save.bestStars[String(item.levelId)] ?? 0,
+            this.save.bestStarConditions[String(item.levelId)]);
+          const captions = [this.albumText("starClear"), this.albumText("starMoves", { amount: targets.moveTarget }),
+            this.albumText("starTime", { amount: targets.timeTargetSeconds })];
+          status.forEach((achieved, index) => {
+            const x = detail.body.x;
+            const y = conditionY + (36 + index * 64) * scale;
+            const width = detail.body.width;
+            ctx.save();
+            ctx.fillStyle = achieved === false ? "#fbe3d6" : "#e5daf6";
+            ctx.beginPath();
+            traceRoundedRect(ctx, x, y, width, 56 * scale, 18 * scale);
+            ctx.fill();
+            ctx.restore();
+            this.drawCollectionImageContained(achieved === true ? art.starFilled : art.starEmpty,
+              { x: x + 12 * scale, y: y + 9 * scale, width: 38 * scale, height: 38 * scale });
+            this.label(captions[index], x + 64 * scale, y + 28 * scale,
+              22 * scale, "#4e2bcc", "left", 900, undefined, 0, width - 80 * scale);
           });
         }
       }
-      enabled = level?.obtained === true;
       actionText = this.albumText("replayLevel");
     } else {
       this.label(`${this.albumText("artist")}：${item.defaultArtistZh}`,
@@ -13024,21 +18273,15 @@ export class ColorEscapeGame {
         : masterpiece?.blueprintUnlocked ? ""
           : this.albumText("unlockAfterLevel", { level: item.unlockLevel });
       if (condition) {
-        this.label(condition, centerX, detail.body.y + 83 * scale, bodyFont,
+        this.label(condition, centerX, masterpiece?.restored ? detail.body.y + 83 * scale : unlockHintY, bodyFont,
           "#4e2bcc", "center", 950, undefined, 0, detail.body.width);
       }
-      enabled = this.collectionAlbumDetailActionVisible() && this.save.collectionProgress.inspiration >= item.inspirationCost;
       actionText = this.albumText("restoreAction");
-    }
-    if (this.collectionAlbumFeedback) {
-      this.label(this.collectionAlbumFeedback.text, centerX, detail.body.y + 127 * scale,
-        21 * scale, this.collectionAlbumFeedback.color, "center", 900, undefined, 0, detail.body.width);
     }
     if (this.collectionAlbumDetailActionVisible()) {
       this.drawPressable("collectionAlbumDetailPrimary", detail.primaryAction.visual, () => {
         const button = detail.primaryAction.visual;
         ctx.save();
-        ctx.globalAlpha = enabled ? 1 : .6;
         this.drawCollectionImageContained(art.suppliedTabBlue, button);
         if (item.category === "masterpiece") {
           this.drawCollectionImageContained(art.inspiration, detail.restorationIcon);
@@ -13058,6 +18301,7 @@ export class ColorEscapeGame {
         }
       });
     }
+    });
   }
 
   private drawCollectionPage(drawNavigation = true): void {
@@ -13067,21 +18311,51 @@ export class ColorEscapeGame {
     if (drawNavigation) this.drawMainNavigation("records");
     const detailItem = this.collectionAlbumDetailId ? findCollectionCatalogItem(this.collectionAlbumDetailId) : undefined;
     if (detailItem) this.drawCollectionAlbumDetail(this.collectionAlbumLayout(), detailItem);
+    this.drawCollectionRestorationGuide();
+  }
+
+  private drawCollectionRestorationGuide(): void {
+    const guide = this.collectionRestorationGuide;
+    if (this.popupEntrance.active || !guide || !this.collectionRestorationGuideEligible()) return;
+    const layout = this.collectionAlbumLayout();
+    const target = layout.detail.primaryAction.visual;
+    const ctx = this.ctx;
+    ctx.save();
+    ctx.strokeStyle = "#ffe65f";
+    ctx.lineWidth = 4;
+    ctx.shadowColor = "#ffb52e";
+    ctx.shadowBlur = this.save.reducedMotion ? 0 : 12;
+    ctx.globalAlpha = this.save.reducedMotion ? 1 : 0.8 + Math.sin(guide.age * 6) * 0.2;
+    ctx.beginPath();
+    traceRoundedRect(ctx, target.x - 4, target.y - 4, target.width + 8, target.height + 8, 22);
+    ctx.stroke();
+    ctx.restore();
+    // Leave the existing save-failure feedback unobscured so retries stay clear.
+    if (!this.collectionAlbumFeedback) {
+      this.label(this.albumText("restoreGuideHint"), layout.detail.body.x + layout.detail.body.width / 2,
+        target.y + target.height + 26 * layout.artTransform.scale, 25 * layout.artTransform.scale,
+        "#4e2bcc", "center", 950, undefined, 0, layout.detail.body.width);
+    }
+    const end = { x: target.x + target.width * 0.78, y: target.y + target.height * 0.58 };
+    this.drawTapGuideHand({ blockId: guide.itemId, origins: [], points: [end, end], start: end, end },
+      100 * layout.artTransform.scale, guide.age);
   }
 
   private drawMechanismGuide(): void {
     const ctx = this.ctx;
     const layout = this.mechanismGuideLayout();
     this.drawDim(0.74, "#130c29");
-    ctx.save();
-    ctx.translate(layout.offsetX, layout.offsetY);
-    ctx.scale(layout.scale, layout.scale);
-    this.drawRecords(false);
-    ctx.restore();
-    this.drawPressable("mechanismGuideClose", layout.close.visual, () => {
-      const art = this.formalPageArtFor("records");
-      const close = art?.screen === "records" ? art.close : this.collectionAlbumArt?.detailClose ?? this.art.pauseSettings?.close;
-      if (close) this.drawCollectionImageContained(close, layout.close.visual);
+    this.withPopupEntrance("mechanismGuide", popupBounds(layout.panel, layout.close.visual), () => {
+      ctx.save();
+      ctx.translate(layout.offsetX, layout.offsetY);
+      ctx.scale(layout.scale, layout.scale);
+      this.drawRecords(false);
+      ctx.restore();
+      this.drawPressable("mechanismGuideClose", layout.close.visual, () => {
+        const art = this.formalPageArtFor("records");
+        const close = art?.screen === "records" ? art.close : this.collectionAlbumArt?.detailClose ?? this.art.pauseSettings?.close;
+        if (close) this.drawCollectionImageContained(close, layout.close.visual);
+      });
     });
   }
 
@@ -13248,160 +18522,284 @@ export class ColorEscapeGame {
     const layout = DAILY_TASK_LAYOUT;
     const typography = layout.typography;
     this.drawDim(layout.overlay.alpha, layout.overlay.color);
-    this.withHomeArtboard(() => {
-      const art = this.dailyTaskArt;
-      ctx.drawImage(art?.panel ?? chrome.panel, layout.panel.x, layout.panel.y);
-      this.label(this.dailyText("title"), layout.title.x, layout.title.y,
-        layout.title.size, "#ffffff", "center", 950, "#7852cb", 2, layout.title.maxWidth);
+    this.withPopupEntrance("dailyTasks", homeArtRect(popupBounds(layout.panel, layout.close)), () => {
+      this.withHomeArtboard(() => {
+        const art = this.dailyTaskArt;
+        ctx.drawImage(art?.panel ?? chrome.panel, layout.panel.x, layout.panel.y);
+        this.label(this.dailyText("title"), layout.title.x, layout.title.y,
+          layout.title.size, "#ffffff", "center", 950, "#7852cb", 2, layout.title.maxWidth);
 
-      if (!art) {
-        this.label(
-          this.dailyTaskArtError ? this.tr("page.loadFailed") : this.tr("page.loading"),
-          360, 660, 26, "#88584d", "center", 850, undefined, 0, 420,
-        );
-        if (this.dailyTaskArtError) {
-          const retry = { x: 226, y: 680, width: 268, height: 82 };
-          this.drawPressable("dailyTaskRetry", retry, () => {
-            this.drawButtonChrome(retry, 0, false);
-            this.label(this.tr("page.retryLoad"), 360, 722, 25, "#ffffff", "center", 950, "#176e21", 3, 220);
+        if (!art) {
+          this.label(
+            this.dailyTaskArtError ? this.tr("page.loadFailed") : this.tr("page.loading"),
+            360, 660, 26, "#88584d", "center", 850, undefined, 0, 420,
+          );
+          if (this.dailyTaskArtError) {
+            const retry = { x: 226, y: 680, width: 268, height: 82 };
+            this.drawPressable("dailyTaskRetry", retry, () => {
+              this.drawButtonChrome(retry, 0, false);
+              this.label(this.tr("page.retryLoad"), 360, 722, 25, "#ffffff", "center", 950, "#176e21", 3, 220);
+            });
+          }
+          this.drawPressable("dailyTaskClose", layout.close, () => {
+            ctx.drawImage(chrome.close, layout.close.x, layout.close.y);
           });
+          return;
+        }
+
+        // The supplied PNGs contain their own outlines, highlights and shadows.
+        // Keep them at authored size; only the progress fill is clipped.
+        ctx.drawImage(art.summaryPanel, layout.summary.x, layout.summary.y);
+        ctx.drawImage(art.calendar, layout.summaryIcon.x, layout.summaryIcon.y);
+        this.label(
+          this.dailyText("summary", { completed: summary.completedCount, total: summary.tasks.length }),
+          layout.summaryText.x,
+          layout.summaryText.y + layout.summaryText.height / 2,
+          typography.summary, "#ffffff", "left", 950, "#6052cd", 2, layout.summaryText.width,
+        );
+
+        const drawProgress = (rect: Rect, progress: number, text: string): void => {
+          ctx.drawImage(art.progressTrack, rect.x, rect.y);
+          const clamped = Math.max(0, Math.min(1, progress));
+          if (clamped > 0) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(rect.x + 4, rect.y + 4, art.progressFill.width * clamped, art.progressFill.height);
+            ctx.clip();
+            ctx.drawImage(art.progressFill, rect.x + 4, rect.y + 4);
+            ctx.restore();
+          }
+          this.label(text, rect.x + rect.width / 2, rect.y + rect.height / 2,
+            typography.progress, "#ffffff", "center", 900, "#6b5046", 2, rect.width - 12);
+        };
+
+        const rows = dailyTaskRows(summary.tasks.map((task) => task.id));
+        summary.tasks.forEach((task, index) => {
+          const row = rows[index];
+          if (!row) return;
+          ctx.drawImage(art.taskRow, row.row.x, row.row.y);
+          const taskIcon = task.icon === "booster" ? art.taskBooster
+            : task.icon === "shield" ? art.taskShield
+              : task.icon === "flag" ? art.calendar : art.taskTrophy;
+          ctx.drawImage(taskIcon, row.icon.x, row.icon.y);
+          this.label(
+            this.dailyText(`task.${task.id}.title`),
+            row.title.x, row.title.y + row.title.height / 2,
+            typography.taskTitle, "#89574b", "left", 950, undefined, 0, row.title.width,
+          );
+          this.label(
+            this.dailyText(`task.${task.id}.description`, { target: task.target }),
+            row.description.x, row.description.y + row.description.height / 2,
+            typography.description, "#89574b", "left", 850, undefined, 0, row.description.width,
+          );
+          drawProgress(row.progress, task.target > 0 ? task.progress / task.target : 0,
+            `${task.progress}/${task.target}`);
+          if (task.claimed) {
+            this.drawCollectionImageContained(art.claimedCheck, row.claimedCheck);
+            return;
+          }
+          const rewardBadge = {
+            x: row.reward.x + 13,
+            y: row.reward.y + 4,
+            width: 96,
+            height: 23,
+          };
+          ctx.save();
+          ctx.fillStyle = "#79b9e4";
+          ctx.strokeStyle = "#4b8fbe";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          traceRoundedRect(ctx, rewardBadge.x, rewardBadge.y, rewardBadge.width, rewardBadge.height, 6);
+          ctx.fill();
+          ctx.stroke();
+          ctx.restore();
+          this.drawSystemIcon(0, rewardBadge.x + 3, rewardBadge.y + rewardBadge.height / 2, 31);
+          this.label(
+            this.dailyText("reward", { amount: task.rewardCoins }),
+            rewardBadge.x + 52, rewardBadge.y + rewardBadge.height / 2,
+            16, "#ffffff", "center", 950, "#4b7d9f", 1, 58,
+          );
+          this.drawPressable(`dailyTaskClaim.${task.id}`, row.claim, () => {
+            const button = task.completed ? art.buttonYellow : art.buttonGreen;
+            ctx.drawImage(button, row.claim.x, row.claim.y);
+            const text = task.claimable ? this.dailyText("claim") : this.dailyText("incomplete");
+            this.label(text, row.claim.x + row.claim.width / 2, row.claim.y + row.claim.height / 2,
+              typography.button, "#ffffff", "center", 950,
+              task.completed ? "#d19222" : "#398e18", 2, row.claim.width - 18);
+          });
+        });
+
+        ctx.drawImage(art.bonusPanel, layout.bonus.x, layout.bonus.y);
+        ctx.drawImage(art.chest, layout.bonusChest.x, layout.bonusChest.y);
+        this.label(this.dailyText("bonusTitle"), layout.bonusTitle.x,
+          layout.bonusTitle.y + layout.bonusTitle.height / 2,
+          typography.bonusTitle, "#89574b", "left", 950, undefined, 0, layout.bonusTitle.width);
+        drawProgress(layout.bonusTrack, summary.tasks.length ? summary.completedCount / summary.tasks.length : 0,
+          `${summary.completedCount}/${summary.tasks.length}`);
+        if (!summary.bonusClaimed) {
+          const inspirationReward = layout.bonusReward;
+          ctx.save();
+          ctx.fillStyle = "#79b9e4";
+          ctx.strokeStyle = "#4b8fbe";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          traceRoundedRect(ctx, inspirationReward.x, inspirationReward.y, inspirationReward.width, inspirationReward.height, 6);
+          ctx.fill();
+          ctx.stroke();
+          ctx.restore();
+          if (this.dailyTaskInspirationArt) {
+            ctx.drawImage(this.dailyTaskInspirationArt, inspirationReward.x + 1, inspirationReward.y + 1, 29, 29);
+          } else {
+            this.drawSystemIcon(0, inspirationReward.x + 17, inspirationReward.y + inspirationReward.height / 2, 25);
+          }
+          this.label(
+            this.dailyText("reward", { amount: summary.bonusRewardInspiration }),
+            inspirationReward.x + 50, inspirationReward.y + inspirationReward.height / 2,
+            15, "#ffffff", "center", 950, "#4b7d9f", 1, 42,
+          );
+          this.drawPressable("dailyTaskBonus", layout.bonusClaim, () => {
+            const button = summary.bonusClaimable ? art.buttonGreen : art.buttonGrey;
+            ctx.drawImage(button, layout.bonusClaim.x, layout.bonusClaim.y);
+            const text = this.dailyText("bonusOpen");
+            this.label(text, layout.bonusClaim.x + layout.bonusClaim.width / 2,
+              layout.bonusClaim.y + layout.bonusClaim.height / 2,
+              typography.button, "#ffffff", "center", 950, "#957156", 2, layout.bonusClaim.width - 18);
+          });
+        } else {
+          const resetText = this.dailyText("resetsIn", { time: this.dailyTaskResetCountdown() });
+          this.label(resetText, layout.reset.x + layout.reset.width / 2,
+            layout.reset.y + layout.reset.height / 2,
+            typography.reset, "#89574b",
+            "center", 900, undefined, 0, layout.reset.width);
         }
         this.drawPressable("dailyTaskClose", layout.close, () => {
-          ctx.drawImage(chrome.close, layout.close.x, layout.close.y);
-        });
-        return;
-      }
-
-      // The supplied PNGs contain their own outlines, highlights and shadows.
-      // Keep them at authored size; only the progress fill is clipped.
-      ctx.drawImage(art.summaryPanel, layout.summary.x, layout.summary.y);
-      ctx.drawImage(art.calendar, layout.summaryIcon.x, layout.summaryIcon.y);
-      this.label(
-        this.dailyText("summary", { completed: summary.completedCount, total: summary.tasks.length }),
-        layout.summaryText.x,
-        layout.summaryText.y + layout.summaryText.height / 2,
-        typography.summary, "#ffffff", "left", 950, "#6052cd", 2, layout.summaryText.width,
-      );
-
-      const drawProgress = (rect: Rect, progress: number, text: string): void => {
-        ctx.drawImage(art.progressTrack, rect.x, rect.y);
-        const clamped = Math.max(0, Math.min(1, progress));
-        if (clamped > 0) {
-          ctx.save();
-          ctx.beginPath();
-          ctx.rect(rect.x + 4, rect.y + 4, art.progressFill.width * clamped, art.progressFill.height);
-          ctx.clip();
-          ctx.drawImage(art.progressFill, rect.x + 4, rect.y + 4);
-          ctx.restore();
-        }
-        this.label(text, rect.x + rect.width / 2, rect.y + rect.height / 2,
-          typography.progress, "#ffffff", "center", 900, "#6b5046", 2, rect.width - 12);
-      };
-
-      const rows = dailyTaskRows(summary.tasks.map((task) => task.id));
-      summary.tasks.forEach((task, index) => {
-        const row = rows[index];
-        if (!row) return;
-        ctx.drawImage(art.taskRow, row.row.x, row.row.y);
-        const taskIcon = task.icon === "booster" ? art.taskBooster
-          : task.icon === "shield" ? art.taskShield
-            : task.icon === "flag" ? art.calendar : art.taskTrophy;
-        ctx.drawImage(taskIcon, row.icon.x, row.icon.y);
-        this.label(
-          this.dailyText(`task.${task.id}.title`),
-          row.title.x, row.title.y + row.title.height / 2,
-          typography.taskTitle, "#89574b", "left", 950, undefined, 0, row.title.width,
-        );
-        this.label(
-          this.dailyText(`task.${task.id}.description`, { target: task.target }),
-          row.description.x, row.description.y + row.description.height / 2,
-          typography.description, "#89574b", "left", 850, undefined, 0, row.description.width,
-        );
-        drawProgress(row.progress, task.target > 0 ? task.progress / task.target : 0,
-          `${task.progress}/${task.target}`);
-        const rewardBadge = {
-          x: row.reward.x + 13,
-          y: row.reward.y + 4,
-          width: 96,
-          height: 23,
-        };
-        ctx.save();
-        ctx.fillStyle = "#79b9e4";
-        ctx.strokeStyle = "#4b8fbe";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        traceRoundedRect(ctx, rewardBadge.x, rewardBadge.y, rewardBadge.width, rewardBadge.height, 6);
-        ctx.fill();
-        ctx.stroke();
-        ctx.restore();
-        this.drawSystemIcon(0, rewardBadge.x + 3, rewardBadge.y + rewardBadge.height / 2, 31);
-        this.label(
-          this.dailyText("reward", { amount: task.rewardCoins }),
-          rewardBadge.x + 52, rewardBadge.y + rewardBadge.height / 2,
-          16, "#ffffff", "center", 950, "#4b7d9f", 1, 58,
-        );
-        this.drawPressable(`dailyTaskClaim.${task.id}`, row.claim, () => {
-          const button = task.completed ? art.buttonYellow : art.buttonGreen;
-          ctx.drawImage(button, row.claim.x, row.claim.y);
-          const text = task.claimed ? this.dailyText("claimed")
-            : task.claimable ? this.dailyText("claim") : this.dailyText("incomplete");
-          this.label(text, row.claim.x + row.claim.width / 2, row.claim.y + row.claim.height / 2,
-            typography.button, "#ffffff", "center", 950,
-            task.completed ? "#d19222" : "#398e18", 2, row.claim.width - 18);
+          ctx.drawImage(art.close, layout.close.x, layout.close.y);
         });
       });
+    });
+  }
 
-      ctx.drawImage(art.bonusPanel, layout.bonus.x, layout.bonus.y);
-      ctx.drawImage(art.chest, layout.bonusChest.x, layout.bonusChest.y);
-      this.label(this.dailyText("bonusTitle"), layout.bonusTitle.x,
-        layout.bonusTitle.y + layout.bonusTitle.height / 2,
-        typography.bonusTitle, "#89574b", "left", 950, undefined, 0, layout.bonusTitle.width);
-      drawProgress(layout.bonusTrack, summary.tasks.length ? summary.completedCount / summary.tasks.length : 0,
-        `${summary.completedCount}/${summary.tasks.length}`);
-      if (!summary.bonusClaimed) {
-        const inspirationReward = layout.bonusReward;
-        ctx.save();
-        ctx.fillStyle = "#79b9e4";
-        ctx.strokeStyle = "#4b8fbe";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        traceRoundedRect(ctx, inspirationReward.x, inspirationReward.y, inspirationReward.width, inspirationReward.height, 6);
-        ctx.fill();
-        ctx.stroke();
-        ctx.restore();
-        if (this.dailyTaskInspirationArt) {
-          ctx.drawImage(this.dailyTaskInspirationArt, inspirationReward.x + 1, inspirationReward.y + 1, 29, 29);
+  private drawDailyChallenge(): void {
+    const ctx = this.ctx;
+    const layout = DAILY_CHALLENGE_LAYOUT;
+    const state = this.dailyChallengeState();
+    const art = this.dailyChallengeArt;
+    if (!art && !this.dailyChallengeArtLoading && !this.dailyChallengeArtError) this.requestDailyChallengeArt();
+    this.drawDim(layout.overlay.alpha, layout.overlay.color);
+    this.withPopupEntrance("dailyChallenge", homeArtRect(popupBounds(layout.panel, layout.close)), () => {
+      this.withHomeArtboard(() => {
+        if (art) {
+          this.drawCollectionImageContained(art.panelFrame, layout.panel);
         } else {
-          this.drawSystemIcon(0, inspirationReward.x + 17, inspirationReward.y + inspirationReward.height / 2, 25);
+          ctx.save();
+          ctx.fillStyle = "#ffffff";
+          ctx.strokeStyle = "#80929d";
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          traceRoundedRect(ctx, layout.panel.x, layout.panel.y, layout.panel.width, layout.panel.height, 25);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = "#3486fb";
+          ctx.fillRect(layout.header.x, layout.header.y, layout.header.width, layout.header.height);
+          ctx.restore();
         }
-        this.label(
-          this.dailyText("reward", { amount: summary.bonusRewardInspiration }),
-          inspirationReward.x + 50, inspirationReward.y + inspirationReward.height / 2,
-          15, "#ffffff", "center", 950, "#4b7d9f", 1, 42,
-        );
-        this.drawPressable("dailyTaskBonus", layout.bonusClaim, () => {
-          const button = summary.bonusClaimable ? art.buttonGreen : art.buttonGrey;
-          ctx.drawImage(button, layout.bonusClaim.x, layout.bonusClaim.y);
-          const text = this.dailyText("bonusOpen");
-          this.label(text, layout.bonusClaim.x + layout.bonusClaim.width / 2,
-            layout.bonusClaim.y + layout.bonusClaim.height / 2,
-            typography.button, "#ffffff", "center", 950, "#957156", 2, layout.bonusClaim.width - 18);
+        this.label("每日挑战", layout.title.x, layout.title.y, layout.title.size, "#ffffff", "center", 950, "#7250c4", 2, layout.title.maxWidth);
+
+        this.drawPressable("dailyChallengeClose", layout.close, () => {
+          if (art) this.drawCollectionImageContained(art.closeButton, layout.close);
+          else {
+            ctx.save();
+            ctx.strokeStyle = "#091c2c"; ctx.lineWidth = 7; ctx.lineCap = "round";
+            ctx.beginPath();
+            ctx.moveTo(layout.close.x + 15, layout.close.y + 15); ctx.lineTo(layout.close.x + 37, layout.close.y + 37);
+            ctx.moveTo(layout.close.x + 37, layout.close.y + 15); ctx.lineTo(layout.close.x + 15, layout.close.y + 37);
+            ctx.stroke();
+            ctx.restore();
+          }
         });
-      } else {
-        const resetText = this.dailyTaskFeedback?.text
-          ?? this.dailyText("resetsIn", { time: this.dailyTaskResetCountdown() });
-        this.label(resetText, layout.reset.x + layout.reset.width / 2,
-          layout.reset.y + layout.reset.height / 2,
-          typography.reset, this.dailyTaskFeedback?.color ?? "#89574b",
-          "center", 900, undefined, 0, layout.reset.width);
-      }
-      if (!summary.bonusClaimed && this.dailyTaskFeedback) {
-        this.label(this.dailyTaskFeedback.text, layout.reset.x + layout.reset.width / 2,
-          layout.reset.y + layout.reset.height / 2, typography.reset,
-          this.dailyTaskFeedback.color, "center", 900, undefined, 0, layout.reset.width);
-      }
-      this.drawPressable("dailyTaskClose", layout.close, () => {
-        ctx.drawImage(art.close, layout.close.x, layout.close.y);
+
+        if (art) {
+          this.drawCollectionImageContained(art.rewardBanner, layout.rewardBanner);
+        } else {
+          ctx.save();
+          ctx.fillStyle = "#e6d4a7";
+          ctx.beginPath();
+          traceRoundedRect(ctx, layout.rewardBanner.x, layout.rewardBanner.y, layout.rewardBanner.width, layout.rewardBanner.height, 13);
+          ctx.fill();
+          ctx.fillStyle = "#66502e";
+          ctx.fillRect(layout.attemptsPanel.x, layout.attemptsPanel.y, layout.attemptsPanel.width, layout.attemptsPanel.height);
+          ctx.restore();
+        }
+        this.label("剩余次数：", layout.attemptsTitle.x, layout.attemptsTitle.y, layout.attemptsTitle.size, "#975509", "left", 900);
+        this.label(`${this.dailyChallengeAttemptsRemaining(state)}`, layout.attemptsValue.x, layout.attemptsValue.y, layout.attemptsValue.size, "#975509", "center", 1000);
+        this.label(`距离重置：${this.dailyChallengeResetCountdown()}`, layout.reset.x, layout.reset.y, layout.reset.size, "#975509", "center", 900, undefined, 0, 460);
+
+        DAILY_CHALLENGE_DIFFICULTIES.forEach((difficulty, index) => {
+          const row = dailyChallengeRowRect(index);
+          const button = dailyChallengeRowButtonRect(index);
+          const assignment = getDailyChallengeAssignment(state, difficulty);
+          const exhausted = this.dailyChallengeAttemptsRemaining(state) <= 0;
+          const rowAd = exhausted && Boolean(assignment);
+          const disabled = exhausted || !assignment;
+          if (!art) {
+            ctx.save();
+            ctx.fillStyle = "#f5f8fb";
+            ctx.strokeStyle = "#b5c2ce";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            traceRoundedRect(ctx, row.x, row.y, row.width, row.height, 9);
+            ctx.fill(); ctx.stroke(); ctx.restore();
+          }
+          const badge = art && [art.difficultyDiamond, art.difficultyDiamond2, art.difficultyDiamond3][index];
+          if (badge) this.drawCollectionImageContained(badge, { x: row.x + 8, y: row.y + 14, width: 83, height: 93 });
+          else this.label(`${difficulty}`, row.x + 49.5, row.y + 51, 39, "#123b57", "center", 1000);
+          this.label("难度", row.x + 49.5, row.y + 74, 21, ["#20610e", "#731295", "#8d201b"][index], "center", 900);
+          const reward = DAILY_CHALLENGE_REWARDS[difficulty];
+          const rewardCards = [
+            { offset: 111, amount: reward.inspiration, image: art?.gemIcon, fallback: "灵感" },
+            { offset: 207, amount: reward.coins, image: art?.coinIcon, fallback: "金币" },
+          ];
+          for (const prize of rewardCards) {
+            const card = { x: row.x + prize.offset, y: row.y + 19, width: 84, height: 84 };
+            if (art) this.drawCollectionImageContained(art.rewardCard, card);
+            else {
+              ctx.save(); ctx.fillStyle = "#e2e7ff"; ctx.strokeStyle = "#75849b"; ctx.lineWidth = 2;
+              ctx.beginPath(); traceRoundedRect(ctx, card.x, card.y, card.width, card.height, 6); ctx.fill(); ctx.stroke(); ctx.restore();
+            }
+            if (prize.image) this.drawCollectionImageContained(prize.image, { x: card.x + 13, y: card.y + 4, width: 58, height: 58 });
+            else this.label(prize.fallback, card.x + 42, card.y + 32, 20, "#5b528e", "center", 900);
+            this.label(`${prize.amount}`, card.x + 61, card.y + 68, 23, "#ffffff", "center", 1000, "#4e5373", 3);
+            if (!state.rewarded[difficulty]) {
+              const tag = { x: card.x - 5, y: row.y + 10, width: 94, height: 36 };
+              if (art) this.drawCollectionImageContained(art.firstClearTag, tag);
+              this.label("首通", tag.x + tag.width / 2, tag.y + tag.height / 2, 20, "#fff9d0", "center", 950, "#bd5634", 1);
+            }
+          }
+          if (state.completed[difficulty]) {
+            if (art) this.drawCollectionImageContained(art.claimedCheck, dailyChallengeRowCompletedRect(index));
+            return;
+          }
+          this.drawPressable(`dailyChallenge.${difficulty}`, button, () => {
+            if (rowAd) this.drawDailyChallengeRewardAdVisual(`dailyChallenge.${difficulty}`, button, "挑战", false);
+            else if (art) this.drawCollectionImageContained(art.challengeButton, button);
+            else {
+              ctx.save();
+              ctx.fillStyle = disabled ? "#d2d5d7" : "#ffd147";
+              ctx.strokeStyle = disabled ? "#84929d" : "#a87927";
+              ctx.lineWidth = 3;
+              ctx.beginPath();
+              traceRoundedRect(ctx, button.x, button.y, button.width, button.height, 9);
+              ctx.fill(); ctx.stroke(); ctx.restore();
+            }
+            const text = !assignment ? "未解锁" : rowAd ? "看广告" : "挑战";
+            if (!rowAd) {
+              this.label(text, button.x + button.width / 2, button.y + button.height / 2, 35, "#ffffff", "center", 950, "#975509", 2, button.width - 14);
+            }
+          });
+        });
+        if (!art) {
+          this.label(this.dailyChallengeArtError ? "素材加载失败，关闭后重试" : "素材加载中…", 360, 1174, 18, "#8a5d83", "center", 800, undefined, 0, 500);
+        }
       });
     });
   }
@@ -13420,117 +18818,124 @@ export class ColorEscapeGame {
       Math.min(achievementScrollMaximum(entries.length), this.achievementScrollOffset),
     );
     this.drawDim(layout.overlay.alpha, layout.overlay.color);
-    this.withHomeArtboard(() => {
-      ctx.drawImage(art?.panel ?? chrome.panel, layout.panel.x, layout.panel.y);
-      this.label(this.tr("achievement.title"), layout.title.x, layout.title.y,
-        layout.title.size, "#ffffff", "center", 950, "#7852cb", 2, 330);
-      if (!art) {
-        this.label(this.achievementArtError ? this.tr("page.loadFailed") : this.tr("page.loading"),
-          360, 660, 26, "#88584d", "center", 850, undefined, 0, 420);
-        if (this.achievementArtError) {
-          this.drawPressable("achievementRetry", layout.retry, () => {
-            this.drawButtonChrome(layout.retry, 0, false);
-            this.label(this.tr("page.retryLoad"), 360, 722, 25, "#ffffff", "center", 950, "#176e21", 3, 220);
+    this.withPopupEntrance("achievements", homeArtRect(popupBounds(layout.panel, layout.close)), () => {
+      this.withHomeArtboard(() => {
+        ctx.drawImage(art?.panel ?? chrome.panel, layout.panel.x, layout.panel.y);
+        this.label(this.tr("achievement.title"), layout.title.x, layout.title.y,
+          layout.title.size, "#ffffff", "center", 950, "#7852cb", 2, 330);
+        if (!art) {
+          this.label(this.achievementArtError ? this.tr("page.loadFailed") : this.tr("page.loading"),
+            360, 660, 26, "#88584d", "center", 850, undefined, 0, 420);
+          if (this.achievementArtError) {
+            this.drawPressable("achievementRetry", layout.retry, () => {
+              this.drawButtonChrome(layout.retry, 0, false);
+              this.label(this.tr("page.retryLoad"), 360, 722, 25, "#ffffff", "center", 950, "#176e21", 3, 220);
+            });
+          }
+          this.drawPressable("achievementClose", layout.close, () => {
+            ctx.drawImage(chrome.close, layout.close.x, layout.close.y);
           });
+          return;
         }
-        this.drawPressable("achievementClose", layout.close, () => {
-          ctx.drawImage(chrome.close, layout.close.x, layout.close.y);
-        });
-        return;
-      }
 
-      // Supplied cutouts are drawn at native size. Progress fill is clipped,
-      // not stretched; the annotated reference is never a runtime texture.
-      ctx.drawImage(art.summaryPanel, layout.summary.x, layout.summary.y);
-      this.label(
-        `${this.tr("achievement.progress")} ${summary.completedAchievementCount}/${summary.entries.length}`,
-        layout.summary.x + layout.summary.width / 2, layout.summary.y + layout.summary.height / 2,
-        typography.summary, "#ffffff", "center", 950, "#6552cb", 2, layout.summary.width - 30,
-      );
-
-      const viewport = layout.viewport;
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(viewport.x, viewport.y, viewport.width, viewport.height);
-      ctx.clip();
-      entries.forEach((entry, index) => {
-        const row = achievementRowPlacement(index, this.achievementScrollOffset);
-        const background = achievementRowBackgroundPlacement(index, this.achievementScrollOffset, entry.claimable);
-        if (background.y + background.height <= viewport.y || background.y >= viewport.y + viewport.height) return;
-        const badge = achievementBadgePlacement(index, this.achievementScrollOffset);
-        const claim = achievementClaimPlacement(index, this.achievementScrollOffset);
-        const progress = entry.target > 0 ? Math.min(1, entry.progress / entry.target) : 0;
-        // Each supplied plate already contains its outline and drop shadow.
-        ctx.drawImage(entry.claimable ? art.rowActive : art.rowInactive, background.x, background.y);
-
-        ctx.drawImage(entry.completed ? art.medalActive : art.medalInactive, badge.x, badge.y);
-        const categoryName = this.tr(`achievement.${entry.category}.name` as TranslationKey);
-        const description = this.tr(
-          `achievement.${entry.category}.description` as TranslationKey, { target: entry.target },
+        // Supplied cutouts are drawn at native size. Progress fill is clipped,
+        // not stretched; the annotated reference is never a runtime texture.
+        ctx.drawImage(art.summaryPanel, layout.summary.x, layout.summary.y);
+        this.label(
+          `${this.tr("achievement.progress")} ${summary.completedAchievementCount}/${summary.entries.length}`,
+          layout.summary.x + layout.summary.width / 2, layout.summary.y + layout.summary.height / 2,
+          typography.summary, "#ffffff", "center", 950, "#6552cb", 2, layout.summary.width - 30,
         );
-        this.label(`${categoryName} ${ACHIEVEMENT_TIER_LABELS[entry.tier]}`,
-          row.x + 110, row.y + 21, typography.name, "#88564b", "left", 950, undefined, 0, 232);
-        this.label(description, row.x + 110, row.y + 48,
-          typography.description, "#88564b", "left", 800, undefined, 0, 232);
 
-        const barX = layout.progress.x;
-        const barY = row.y + layout.progress.y - layout.row.y;
-        ctx.drawImage(art.progressTrack, barX, barY);
-        if (progress > 0) {
+        const viewport = layout.viewport;
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(viewport.x, viewport.y, viewport.width, viewport.height);
+        ctx.clip();
+        entries.forEach((entry, index) => {
+          const row = achievementRowPlacement(index, this.achievementScrollOffset);
+          const background = achievementRowBackgroundPlacement(index, this.achievementScrollOffset, entry.claimable);
+          if (background.y + background.height <= viewport.y || background.y >= viewport.y + viewport.height) return;
+          const badge = achievementBadgePlacement(index, this.achievementScrollOffset);
+          const claim = achievementClaimPlacement(index, this.achievementScrollOffset);
+          const progress = entry.target > 0 ? Math.min(1, entry.progress / entry.target) : 0;
+          // Each supplied plate already contains its outline and drop shadow.
+          ctx.drawImage(entry.claimable ? art.rowActive : art.rowInactive, background.x, background.y);
+
+          ctx.drawImage(entry.completed ? art.medalActive : art.medalInactive, badge.x, badge.y);
+          const categoryName = this.tr(`achievement.${entry.category}.name` as TranslationKey);
+          const description = this.tr(
+            `achievement.${entry.category}.description` as TranslationKey, { target: entry.target },
+          );
+          this.label(`${categoryName} ${ACHIEVEMENT_TIER_LABELS[entry.tier]}`,
+            row.x + 110, row.y + 21, typography.name, "#88564b", "left", 950, undefined, 0, 232);
+          this.label(description, row.x + 110, row.y + 48,
+            typography.description, "#88564b", "left", 800, undefined, 0, 232);
+
+          const barX = layout.progress.x;
+          const barY = row.y + layout.progress.y - layout.row.y;
+          ctx.drawImage(art.progressTrack, barX, barY);
+          if (progress > 0) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(barX + 3, barY + 3, 223 * progress, 15);
+            ctx.clip();
+            ctx.drawImage(entry.completed ? art.progressFillGreen : art.progressFillBlue, barX + 3, barY + 3);
+            ctx.restore();
+          }
+          this.label(`${entry.progress}/${entry.target}`, barX + layout.progress.width / 2,
+            barY + layout.progress.height / 2, typography.progress, "#ffffff", "center", 950, "#705c52", 2);
+
+          if (entry.claimed) {
+            this.drawCollectionImageContained(
+              art.claimedCheck, achievementClaimedCheckPlacement(index, this.achievementScrollOffset),
+            );
+            return;
+          }
+          const reward = { ...layout.reward, y: layout.reward.y + index * layout.rowPitch - this.achievementScrollOffset };
           ctx.save();
+          ctx.fillStyle = "#79b9e4";
+          ctx.strokeStyle = "#4b8fbe";
+          ctx.lineWidth = 2;
           ctx.beginPath();
-          ctx.rect(barX + 3, barY + 3, 223 * progress, 15);
-          ctx.clip();
-          ctx.drawImage(entry.completed ? art.progressFillGreen : art.progressFillBlue, barX + 3, barY + 3);
+          traceRoundedRect(ctx, reward.x, reward.y, reward.width, reward.height, 6);
+          ctx.fill();
+          ctx.stroke();
+          ctx.restore();
+          this.drawSystemIcon(0, reward.x + 15, reward.y + reward.height / 2, 26);
+          this.label(
+            `+${entry.rewardCoins}`,
+            reward.x + 57, reward.y + reward.height / 2,
+            14, "#ffffff", "center", 950, "#4b7d9f", 1, 48,
+          );
+
+          this.drawPressable(`achievementClaim.${entry.id}`, claim, () => {
+            ctx.drawImage(entry.claimable ? art.buttonGreen : art.buttonGrey, claim.x, claim.y);
+            this.label(
+              entry.claimable ? this.tr("achievement.claim") : this.tr("achievement.locked"),
+              claim.x + claim.width / 2, claim.y + claim.height / 2,
+              typography.button, "#ffffff", "center", 950, entry.claimable ? "#3d8e18" : "#807970",
+              1.5, claim.width - 16,
+            );
+          });
+        });
+        ctx.restore();
+
+        const maxScroll = achievementScrollMaximum(entries.length);
+        if (maxScroll > 0) {
+          const thumbHeight = Math.max(54, viewport.height * viewport.height / (viewport.height + maxScroll));
+          const thumbY = viewport.y + (this.achievementScrollOffset / maxScroll) * (viewport.height - thumbHeight);
+          ctx.save();
+          ctx.fillStyle = "rgba(107, 84, 212, .35)";
+          ctx.beginPath();
+          traceRoundedRect(ctx, 620, thumbY, 4, thumbHeight, 2);
+          ctx.fill();
           ctx.restore();
         }
-        this.label(`${entry.progress}/${entry.target}`, barX + layout.progress.width / 2,
-          barY + layout.progress.height / 2, typography.progress, "#ffffff", "center", 950, "#705c52", 2);
 
-        const reward = { ...layout.reward, y: layout.reward.y + index * layout.rowPitch - this.achievementScrollOffset };
-        ctx.save();
-        ctx.fillStyle = "#79b9e4";
-        ctx.strokeStyle = "#4b8fbe";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        traceRoundedRect(ctx, reward.x, reward.y, reward.width, reward.height, 6);
-        ctx.fill();
-        ctx.stroke();
-        ctx.restore();
-        this.drawSystemIcon(0, reward.x + 15, reward.y + reward.height / 2, 26);
-        this.label(
-          `+${entry.rewardCoins}`,
-          reward.x + 57, reward.y + reward.height / 2,
-          14, "#ffffff", "center", 950, "#4b7d9f", 1, 48,
-        );
-
-        this.drawPressable(`achievementClaim.${entry.id}`, claim, () => {
-          ctx.drawImage(entry.claimable ? art.buttonGreen : art.buttonGrey, claim.x, claim.y);
-          this.label(
-            entry.claimed ? this.tr("achievement.claimed")
-              : entry.claimable ? this.tr("achievement.claim") : this.tr("achievement.locked"),
-            claim.x + claim.width / 2, claim.y + claim.height / 2,
-            typography.button, "#ffffff", "center", 950, entry.claimable ? "#3d8e18" : "#807970",
-            1.5, claim.width - 16,
-          );
+        this.drawPressable("achievementClose", layout.close, () => {
+          ctx.drawImage(art.close, layout.close.x, layout.close.y);
         });
-      });
-      ctx.restore();
-
-      const maxScroll = achievementScrollMaximum(entries.length);
-      if (maxScroll > 0) {
-        const thumbHeight = Math.max(54, viewport.height * viewport.height / (viewport.height + maxScroll));
-        const thumbY = viewport.y + (this.achievementScrollOffset / maxScroll) * (viewport.height - thumbHeight);
-        ctx.save();
-        ctx.fillStyle = "rgba(107, 84, 212, .35)";
-        ctx.beginPath();
-        traceRoundedRect(ctx, 620, thumbY, 4, thumbHeight, 2);
-        ctx.fill();
-        ctx.restore();
-      }
-
-      this.drawPressable("achievementClose", layout.close, () => {
-        ctx.drawImage(art.close, layout.close.x, layout.close.y);
       });
     });
   }
@@ -13540,66 +18945,70 @@ export class ColorEscapeGame {
     if (!art) return;
     const ctx = this.ctx;
     this.drawDim(PAUSE_SETTINGS_LAYOUT.overlay.alpha, PAUSE_SETTINGS_LAYOUT.overlay.color);
-    this.withHomeArtboard(() => {
-      ctx.drawImage(art.panel, PAUSE_SETTINGS_LAYOUT.panel.x, PAUSE_SETTINGS_LAYOUT.panel.y);
-      const titleText = PAUSE_SETTINGS_LAYOUT.typography.title;
-      this.label(
-        this.tr("settings.title"),
-        titleText.x,
-        titleText.settingsY,
-        titleText.size,
-        titleText.fill,
-        "center",
-        850,
-        titleText.stroke,
-        titleText.lineWidth,
-        330,
-      );
-      this.drawPauseSettingsRows("settings", art);
-      this.drawPressable("settingsLanguage", PAUSE_SETTINGS_LAYOUT.languageButton, () => {
-        ctx.drawImage(
-          art.replayButton,
-          PAUSE_SETTINGS_LAYOUT.languageButton.x,
-          PAUSE_SETTINGS_LAYOUT.languageButton.y,
-        );
+    this.withPopupEntrance("settings", homeArtRect(popupBounds(PAUSE_SETTINGS_LAYOUT.panel, PAUSE_SETTINGS_LAYOUT.close)), () => {
+      this.withHomeArtboard(() => {
+        ctx.drawImage(art.panel, PAUSE_SETTINGS_LAYOUT.panel.x, PAUSE_SETTINGS_LAYOUT.panel.y);
+        const titleText = PAUSE_SETTINGS_LAYOUT.typography.title;
         this.label(
-          this.tr("settings.language"),
-          PAUSE_SETTINGS_LAYOUT.typography.action.pauseX[0],
-          PAUSE_SETTINGS_LAYOUT.typography.action.y,
-          30,
-          "#fffdf5",
+          this.tr("settings.title"),
+          titleText.x,
+          titleText.settingsY,
+          titleText.size,
+          titleText.fill,
           "center",
-          900,
-          "#a85b10",
-          3,
-          PAUSE_SETTINGS_LAYOUT.languageButton.width - 30,
+          850,
+          titleText.stroke,
+          titleText.lineWidth,
+          330,
         );
-      });
-      this.drawPressable("settingsReset", PAUSE_SETTINGS_LAYOUT.settingsClearButton, () => {
-        this.drawNineSlice(
-          art.clearProgressButton,
-          PAUSE_SETTINGS_LAYOUT.settingsClearButton.x,
-          PAUSE_SETTINGS_LAYOUT.settingsClearButton.y,
-          PAUSE_SETTINGS_LAYOUT.settingsClearButton.width,
-          PAUSE_SETTINGS_LAYOUT.settingsClearButton.height,
-          38,
-          38,
-        );
-        this.label(
-          this.tr("settings.clearProgress"),
-          PAUSE_SETTINGS_LAYOUT.typography.action.pauseX[1],
-          PAUSE_SETTINGS_LAYOUT.typography.action.y,
-          26,
-          "#fffdf5",
-          "center",
-          900,
-          "#83161b",
-          3,
-          PAUSE_SETTINGS_LAYOUT.settingsClearButton.width - 28,
-        );
-      });
-      this.drawPressable("menuBack", PAUSE_SETTINGS_LAYOUT.close, () => {
-        ctx.drawImage(art.close, PAUSE_SETTINGS_LAYOUT.close.x, PAUSE_SETTINGS_LAYOUT.close.y);
+        this.drawPauseSettingsRows("settings", art);
+        this.drawPressable("settingsLanguage", PAUSE_SETTINGS_LAYOUT.languageButton, () => {
+          ctx.drawImage(
+            art.replayButton,
+            PAUSE_SETTINGS_LAYOUT.languageButton.x,
+            PAUSE_SETTINGS_LAYOUT.languageButton.y,
+          );
+          this.label(
+            this.tr("settings.language"),
+            PAUSE_SETTINGS_LAYOUT.typography.action.pauseX[0],
+            PAUSE_SETTINGS_LAYOUT.typography.action.y,
+            30,
+            "#fffdf5",
+            "center",
+            900,
+            "#a85b10",
+            3,
+            PAUSE_SETTINGS_LAYOUT.languageButton.width - 30,
+          );
+        });
+        if (!IS_WECHAT_BUILD && art.clearProgressButton) {
+          this.drawPressable("settingsReset", PAUSE_SETTINGS_LAYOUT.settingsClearButton, () => {
+            this.drawNineSlice(
+              art.clearProgressButton!,
+              PAUSE_SETTINGS_LAYOUT.settingsClearButton.x,
+              PAUSE_SETTINGS_LAYOUT.settingsClearButton.y,
+              PAUSE_SETTINGS_LAYOUT.settingsClearButton.width,
+              PAUSE_SETTINGS_LAYOUT.settingsClearButton.height,
+              38,
+              38,
+            );
+            this.label(
+              this.tr("settings.clearProgress"),
+              PAUSE_SETTINGS_LAYOUT.typography.action.pauseX[1],
+              PAUSE_SETTINGS_LAYOUT.typography.action.y,
+              26,
+              "#fffdf5",
+              "center",
+              900,
+              "#83161b",
+              3,
+              PAUSE_SETTINGS_LAYOUT.settingsClearButton.width - 28,
+            );
+          });
+        }
+        this.drawPressable("menuBack", PAUSE_SETTINGS_LAYOUT.close, () => {
+          ctx.drawImage(art.close, PAUSE_SETTINGS_LAYOUT.close.x, PAUSE_SETTINGS_LAYOUT.close.y);
+        });
       });
     });
   }
@@ -13613,6 +19022,22 @@ export class ColorEscapeGame {
     });
   }
 
+  private musicLibraryHeartArtRect(index: number): Rect {
+    const rowY = MUSIC_LAYOUT.rows.y + index * MUSIC_LAYOUT.rows.pitch - this.musicLibraryScrollOffset;
+    const visualX = MUSIC_LAYOUT.rows.x + (MUSIC_LAYOUT.rows.width * (1 - MUSIC_ROW_SCALE)) / 2;
+    const visualWidth = MUSIC_LAYOUT.rows.width * MUSIC_ROW_SCALE;
+    return {
+      x: visualX + visualWidth - 100 * MUSIC_ROW_SCALE,
+      y: rowY + 48 * MUSIC_ROW_SCALE,
+      width: 86 * MUSIC_ROW_SCALE,
+      height: 90 * MUSIC_ROW_SCALE,
+    };
+  }
+
+  private musicLibraryHeartRect(index: number): Rect {
+    return homeArtRect(this.musicLibraryHeartArtRect(index));
+  }
+
   private musicLibraryUnlockLevel(entry: MusicCatalogEntry, index: number): number {
     // The first four library cards follow the supplied reference contract.
     // Audio scene defaults remain catalog-driven; only the player-facing
@@ -13622,6 +19047,45 @@ export class ColorEscapeGame {
 
   private musicLibraryMaxScrollOffset(): number {
     return Math.max(0, (MUSIC_CATALOG.length - 4) * MUSIC_LAYOUT.rows.pitch);
+  }
+
+  private musicTrackIsUnlocked(entry: MusicCatalogEntry, index: number): boolean {
+    return this.save.highestLevel >= this.musicLibraryUnlockLevel(entry, index);
+  }
+
+  private musicTrackIsFavorite(track: MusicTrackId): boolean {
+    return !this.save.mutedMusicTracks.includes(track);
+  }
+
+  private musicPlaylistTracks(): MusicTrackId[] {
+    return MUSIC_CATALOG
+      .map((entry, index) => ({ entry, index }))
+      .filter(({ entry, index }) => this.musicTrackIsUnlocked(entry, index) && this.musicTrackIsFavorite(entry.id))
+      .map(({ entry }) => entry.id);
+  }
+
+  private toggleMusicFavorite(track: MusicTrackId): void {
+    const entryIndex = MUSIC_CATALOG.findIndex((entry) => entry.id === track);
+    const entry = entryIndex >= 0 ? MUSIC_CATALOG[entryIndex] : undefined;
+    if (!entry || !this.musicTrackIsUnlocked(entry, entryIndex)) {
+      this.playSound("blocked");
+      return;
+    }
+    const candidate = this.cloneSave(this.save);
+    const muted = new Set(candidate.mutedMusicTracks);
+    if (muted.has(track)) muted.delete(track);
+    else muted.add(track);
+    candidate.mutedMusicTracks = [...muted];
+    const outcome = this.persistVerified(candidate);
+    if (outcome !== "committed") {
+      this.playSound("blocked");
+      return;
+    }
+    this.save = candidate;
+    this.syncMusic();
+    this.playSound("button");
+    this.dirty = true;
+    this.scheduleFrame();
   }
 
   private selectMusicTrack(track: MusicTrackId): void {
@@ -13650,12 +19114,16 @@ export class ColorEscapeGame {
   }
 
   private stepMusicTrack(direction: -1 | 1): void {
-    const current = this.save.selectedMusicTrack ?? "menu";
+    const active = this.host.musicTransport().track;
+    const current = active && MUSIC_CATALOG.some((entry) => entry.id === active)
+      ? active
+      : (this.save.selectedMusicTrack ?? "menu");
     const currentIndex = Math.max(0, MUSIC_CATALOG.findIndex((entry) => entry.id === current));
     for (let offset = 1; offset <= MUSIC_CATALOG.length; offset += 1) {
       const index = (currentIndex + direction * offset + MUSIC_CATALOG.length) % MUSIC_CATALOG.length;
       const entry = MUSIC_CATALOG[index];
       if (this.save.highestLevel < this.musicLibraryUnlockLevel(entry, index)) continue;
+      if (!this.musicTrackIsFavorite(entry.id)) continue;
       this.selectMusicTrack(entry.id);
       return;
     }
@@ -13682,11 +19150,17 @@ export class ColorEscapeGame {
         return;
       }
 
-      const selectedTrack = this.save.selectedMusicTrack ?? "menu";
+      const playback = this.host.musicTransport();
+      // During playlist playback the host reports the active track. Use that
+      // live value for the player card while retaining the saved selection as
+      // the pre-playback fallback (before the audio context is created).
+      const activeTrack = playback.track && MUSIC_CATALOG.some((entry) => entry.id === playback.track)
+        ? playback.track
+        : undefined;
+      const selectedTrack = activeTrack ?? this.save.selectedMusicTrack ?? "menu";
       const selectedEntry = musicCatalogEntry(selectedTrack);
       const selectedIndex = Math.max(0, MUSIC_CATALOG.findIndex((entry) => entry.id === selectedEntry.id));
       const album = art.albums[selectedIndex % Math.max(1, art.albums.length)];
-      const playback = this.host.musicTransport();
       const position = playback.track === selectedTrack ? Math.max(0, playback.positionSeconds) : 0;
       const duration = playback.track === selectedTrack
         ? Math.max(0, playback.durationSeconds)
@@ -13761,6 +19235,32 @@ export class ColorEscapeGame {
         };
       };
 
+      // WeChat receives a compact copy of the music art so the optional
+      // subpackage stays within its byte budget. Keep authored crop rectangles
+      // in the same coordinate system by scaling them to the decoded bitmap.
+      const sourceCrop = (
+        image: HTMLImageElement,
+        sx: number,
+        sy: number,
+        sw: number,
+        sh: number,
+        designWidth: number,
+        designHeight: number,
+      ): { sx: number; sy: number; sw: number; sh: number; scaleX: number; scaleY: number } => {
+        const width = image.naturalWidth || image.width;
+        const height = image.naturalHeight || image.height;
+        const scaleX = width / designWidth;
+        const scaleY = height / designHeight;
+        return {
+          sx: sx * scaleX,
+          sy: sy * scaleY,
+          sw: sw * scaleX,
+          sh: sh * scaleY,
+          scaleX,
+          scaleY,
+        };
+      };
+
       const drawAspectFit = (
         image: HTMLImageElement,
         sx: number,
@@ -13821,18 +19321,20 @@ export class ColorEscapeGame {
       // The panel and header preserve the generated PNG aspect ratios. The
       // reference plate is not loaded or stretched; all live text and controls
       // are composed on top of these replaceable split assets.
+      const panelWidth = art.panel.naturalWidth || art.panel.width;
+      const panelHeight = art.panel.naturalHeight || art.panel.height;
       drawNineSlice(
         art.panel,
         0,
         0,
-        art.panel.naturalWidth || art.panel.width,
-        art.panel.naturalHeight || art.panel.height,
+        panelWidth,
+        panelHeight,
         MUSIC_LAYOUT.panel.x,
         MUSIC_LAYOUT.panel.y,
         MUSIC_LAYOUT.panel.width,
         MUSIC_LAYOUT.panel.height,
-        96,
-        96,
+        96 * panelWidth / 1024,
+        96 * panelHeight / 1536,
       );
       drawAspectFit(
         art.header,
@@ -13857,18 +19359,19 @@ export class ColorEscapeGame {
       // places dynamic album art and transport text on top of it.
       ctx.save();
       ctx.globalAlpha = 0.7;
+      const deckCrop = sourceCrop(art.deck, 51, 103, 2069, 501, 2172, 724);
       drawNineSlice(
         art.deck,
-        51,
-        103,
-        2069,
-        501,
+        deckCrop.sx,
+        deckCrop.sy,
+        deckCrop.sw,
+        deckCrop.sh,
         MUSIC_LAYOUT.player.x,
         MUSIC_LAYOUT.player.y + 13,
         MUSIC_LAYOUT.player.width,
         390,
-        140,
-        120,
+        deckCrop.scaleX * 140,
+        deckCrop.scaleY * 120,
       );
       ctx.restore();
       const vinylDraw = aspectFitRect(
@@ -13932,34 +19435,36 @@ export class ColorEscapeGame {
       this.label(selectedEntry.title, infoX, 342, 38, "#fffdf5", "left", 950, "#352078", 3, 310);
       this.label(selectedEntry.artist, infoX, 380, 24, "#d9d4ff", "left", 750, "#352078", 2, 310);
       const progressY = MUSIC_LAYOUT.progress.y - 16;
+      const progressTrackCrop = sourceCrop(art.progressTrack, 49, 236, 2073, 245, 2172, 724);
       drawHorizontalSlice(
         art.progressTrack,
-        49,
-        236,
-        2073,
-        245,
+        progressTrackCrop.sx,
+        progressTrackCrop.sy,
+        progressTrackCrop.sw,
+        progressTrackCrop.sh,
         MUSIC_LAYOUT.progress.x,
         progressY,
         MUSIC_LAYOUT.progress.width,
         32,
-        120,
+        progressTrackCrop.scaleX * 120,
       );
       if (progress > 0) {
         ctx.save();
         ctx.beginPath();
         ctx.rect(MUSIC_LAYOUT.progress.x, progressY, MUSIC_LAYOUT.progress.width * progress, 32);
         ctx.clip();
+        const progressFillCrop = sourceCrop(art.progressFill, 375, 356, 1005, 179, 1774, 887);
         drawHorizontalSlice(
           art.progressFill,
-          375,
-          356,
-          1005,
-          179,
+          progressFillCrop.sx,
+          progressFillCrop.sy,
+          progressFillCrop.sw,
+          progressFillCrop.sh,
           MUSIC_LAYOUT.progress.x,
           progressY,
           MUSIC_LAYOUT.progress.width,
           32,
-          90,
+          progressFillCrop.scaleX * 90,
         );
         ctx.restore();
       }
@@ -14001,32 +19506,34 @@ export class ColorEscapeGame {
         const selected = selectedTrack === entry.id;
         this.drawPressable("music." + entry.id, row, () => {
           if (selected) {
+            const selectedRowCrop = sourceCrop(art.rowSelected, 16, 127, 2141, 421, 2172, 724);
             drawHorizontalSlice(
               art.rowSelected,
-              16,
-              127,
-              2141,
-              421,
+              selectedRowCrop.sx,
+              selectedRowCrop.sy,
+              selectedRowCrop.sw,
+              selectedRowCrop.sh,
               rowVisual.x,
               rowVisual.y - 10,
               rowVisual.width,
               rowVisual.height + 20,
-              180,
+              selectedRowCrop.scaleX * 180,
             );
           } else {
             ctx.save();
             ctx.globalAlpha = 1;
+            const lockedRowCrop = sourceCrop(art.rowLocked, 27, 161, 2122, 394, 2172, 724);
             drawHorizontalSlice(
               art.rowLocked,
-              27,
-              161,
-              2122,
-              394,
+              lockedRowCrop.sx,
+              lockedRowCrop.sy,
+              lockedRowCrop.sw,
+              lockedRowCrop.sh,
               rowVisual.x,
               rowVisual.y,
               rowVisual.width,
               rowVisual.height,
-              180,
+              lockedRowCrop.scaleX * 180,
             );
             ctx.restore();
           }
@@ -14076,47 +19583,83 @@ export class ColorEscapeGame {
             0,
             250 * MUSIC_ROW_SCALE,
           );
-          // Locked rows use the wider pill from the reference plate so the
-          // lock glyph and the full unlock requirement remain readable.
-          const buttonWidth = (unlocked ? 140 : 214) * MUSIC_ROW_SCALE;
-          const button = {
-            x: unlocked
-              ? rowVisual.x + rowVisual.width - 224 * MUSIC_ROW_SCALE
-              : rowVisual.x + rowVisual.width - buttonWidth - 35 * MUSIC_ROW_SCALE,
-            y: rowVisual.y + 70 * MUSIC_ROW_SCALE,
-            width: buttonWidth,
-            height: 62 * MUSIC_ROW_SCALE,
-          };
-          if (unlocked && selected) {
-            ctx.save();
-            ctx.globalAlpha = 0.92;
-            drawAspectFit(art.statusUnlocked, 102, 67, 1968, 598, button.x, button.y, button.width, button.height);
-            ctx.restore();
+          if (unlocked) {
+            // Unlocked rows use the heart as a playlist toggle. The same
+            // generated heart art is reused in both states; dimming the
+            // inactive state keeps the off state visually clear without
+            // introducing a second bespoke asset.
+            const heart = this.art.homeUi?.heartIcon;
+            if (heart) {
+              const heartRect = this.musicLibraryHeartArtRect(index);
+              ctx.save();
+              ctx.globalAlpha = this.musicTrackIsFavorite(entry.id) ? 1 : 0.28;
+              const fittedHeart = aspectFitRect(
+                0,
+                0,
+                heart.naturalWidth || heart.width,
+                heart.naturalHeight || heart.height,
+                heartRect.x,
+                heartRect.y,
+                heartRect.width,
+                heartRect.height,
+              );
+              ctx.drawImage(
+                heart,
+                0,
+                0,
+                heart.naturalWidth || heart.width,
+                heart.naturalHeight || heart.height,
+                fittedHeart.x,
+                fittedHeart.y,
+                fittedHeart.width,
+                fittedHeart.height,
+              );
+              ctx.restore();
+            }
           } else {
+            // Locked rows retain the wider pill from the reference plate so
+            // the lock glyph and full unlock requirement remain readable.
+            const buttonWidth = 214 * MUSIC_ROW_SCALE;
+            const button = {
+              x: rowVisual.x + rowVisual.width - buttonWidth - 35 * MUSIC_ROW_SCALE,
+              y: rowVisual.y + 70 * MUSIC_ROW_SCALE,
+              width: buttonWidth,
+              height: 62 * MUSIC_ROW_SCALE,
+            };
             ctx.save();
             ctx.globalAlpha = 0.9;
-            drawAspectFit(art.statusLocked, 128, 214, 1518, 435, button.x, button.y, button.width, button.height);
+            const lockedStatusCrop = sourceCrop(art.statusLocked, 128, 214, 1518, 435, 1774, 887);
+            drawAspectFit(
+              art.statusLocked,
+              lockedStatusCrop.sx,
+              lockedStatusCrop.sy,
+              lockedStatusCrop.sw,
+              lockedStatusCrop.sh,
+              button.x,
+              button.y,
+              button.width,
+              button.height,
+            );
             ctx.restore();
-          }
-          this.label(
-            unlocked ? "已解锁" : "第" + unlockLevel + "关解锁",
-            unlocked ? button.x + button.width / 2 : button.x + button.width / 2 + 14,
-            button.y + 37 * MUSIC_ROW_SCALE,
-            (unlocked ? 20 : 22) * MUSIC_ROW_SCALE,
-            "#fffdfd",
-            "center",
-            900,
-            undefined,
-            0,
-            button.width - 12 * MUSIC_ROW_SCALE,
-          );
-          if (!unlocked) {
+            this.label(
+              "第" + unlockLevel + "关解锁",
+              button.x + button.width / 2 + 14,
+              button.y + 37 * MUSIC_ROW_SCALE,
+              22 * MUSIC_ROW_SCALE,
+              "#fffdfd",
+              "center",
+              900,
+              undefined,
+              0,
+              button.width - 12 * MUSIC_ROW_SCALE,
+            );
+            const lockCrop = sourceCrop(art.lock, 161, 45, 932, 1159, 1271, 1238);
             drawAspectFit(
               art.lock,
-              161,
-              45,
-              932,
-              1159,
+              lockCrop.sx,
+              lockCrop.sy,
+              lockCrop.sw,
+              lockCrop.sh,
               button.x + 12 * MUSIC_ROW_SCALE,
               button.y + 10 * MUSIC_ROW_SCALE,
               52 * MUSIC_ROW_SCALE,
@@ -14134,115 +19677,105 @@ export class ColorEscapeGame {
     if (!art) return;
     const ctx = this.ctx;
     this.drawDim(LANGUAGE_PICKER_LAYOUT.overlay.alpha, LANGUAGE_PICKER_LAYOUT.overlay.color);
-    this.withHomeArtboard(() => {
-      ctx.drawImage(art.panel, LANGUAGE_PICKER_LAYOUT.panel.x, LANGUAGE_PICKER_LAYOUT.panel.y);
-      const title = LANGUAGE_PICKER_LAYOUT.title;
-      this.label(
-        this.tr("settings.chooseLanguage"),
-        title.x,
-        title.y,
-        Math.min(title.size, 52),
-        title.fill,
-        "center",
-        850,
-        title.stroke,
-        title.lineWidth,
-        330,
-      );
-      GAME_LANGUAGE_METADATA.forEach((entry, index) => {
-        const option = LANGUAGE_PICKER_LAYOUT.options[index];
-        const selected = entry.language === this.save.language;
-        this.drawPressable(`language.${entry.language}`, option, () => {
-          ctx.drawImage(
-            selected ? art.homeButton : art.replayButton,
-            option.x,
-            option.y + 8,
-            option.width,
-            84,
-          );
-          this.label(
-            entry.nativeName,
-            option.x + option.width / 2 - (selected ? 8 : 0),
-            option.y + option.height / 2 + 1,
-            29,
-            "#fffdf5",
-            "center",
-            900,
-            selected ? "#176e21" : "#a85b10",
-            3,
-            option.width - (selected ? 62 : 30),
-          );
-          if (selected) {
+    this.withPopupEntrance("language", homeArtRect(popupBounds(LANGUAGE_PICKER_LAYOUT.panel, LANGUAGE_PICKER_LAYOUT.close)), () => {
+      this.withHomeArtboard(() => {
+        ctx.drawImage(art.panel, LANGUAGE_PICKER_LAYOUT.panel.x, LANGUAGE_PICKER_LAYOUT.panel.y);
+        const title = LANGUAGE_PICKER_LAYOUT.title;
+        this.label(
+          this.tr("settings.chooseLanguage"),
+          title.x,
+          title.y,
+          Math.min(title.size, 52),
+          title.fill,
+          "center",
+          850,
+          title.stroke,
+          title.lineWidth,
+          330,
+        );
+        GAME_LANGUAGE_METADATA.forEach((entry, index) => {
+          const option = LANGUAGE_PICKER_LAYOUT.options[index];
+          const selected = entry.language === this.save.language;
+          this.drawPressable(`language.${entry.language}`, option, () => {
+            ctx.drawImage(
+              selected ? art.homeButton : art.replayButton,
+              option.x,
+              option.y + 8,
+              option.width,
+              84,
+            );
             this.label(
-              "✓",
-              option.x + option.width - 29,
+              entry.nativeName,
+              option.x + option.width / 2 - (selected ? 8 : 0),
               option.y + option.height / 2 + 1,
               29,
-              "#ffffff",
+              "#fffdf5",
               "center",
-              1000,
-              "#176e21",
+              900,
+              selected ? "#176e21" : "#a85b10",
               3,
+              option.width - (selected ? 62 : 30),
             );
-          }
+            if (selected) {
+              this.label(
+                "✓",
+                option.x + option.width - 29,
+                option.y + option.height / 2 + 1,
+                29,
+                "#ffffff",
+                "center",
+                1000,
+                "#176e21",
+                3,
+              );
+            }
+          });
         });
-      });
-      if (this.languageSaveFailed) {
-        this.label(
-          this.tr("settings.languageSaveFailed"),
-          360,
-          451,
-          18,
-          "#ffcad0",
-          "center",
-          900,
-          "#7e1832",
-          3,
-          500,
-        );
-      }
-      this.drawPressable("languageBack", LANGUAGE_PICKER_LAYOUT.close, () => {
-        ctx.drawImage(art.close, LANGUAGE_PICKER_LAYOUT.close.x, LANGUAGE_PICKER_LAYOUT.close.y);
+        this.drawPressable("languageBack", LANGUAGE_PICKER_LAYOUT.close, () => {
+          ctx.drawImage(art.close, LANGUAGE_PICKER_LAYOUT.close.x, LANGUAGE_PICKER_LAYOUT.close.y);
+        });
       });
     });
   }
 
   private drawResetConfirm(): void {
+    if (IS_WECHAT_BUILD) return;
     this.drawDim();
-    this.drawModal(68, 252, 360, 660, this.tr("settings.clearTitle"));
-    this.label(this.tr("settings.clearIrreversible"), 248, 392, 31, "#ffbdc6", "center", 1000, "#7e1832", 5, 315);
-    this.wrapText(this.tr("settings.clearDescription"), 248, 477, 294, 34, 21, "#f3edff");
-    this.drawPill(112, 610, 272, 46, "rgba(31,19,90,.9)", "#786ed0", 23);
-    this.label(this.tr("settings.preferencesRetained"), 248, 639, 18, "#b9f5ff", "center", 850, undefined, 0, 250);
-    if (this.resetSaveFailed) {
-      this.label(this.tr("settings.clearFailed"), 248, 690, 17, "#ffb0bb", "center", 900, "#7e1832", 3, 310);
-    }
-    this.drawButton("modalPrimary", BUTTONS.modalPrimary, this.tr("settings.confirmClear"), "#ec6073", "#9d1f45", 28);
-    this.drawButton("modalSecondary", BUTTONS.modalSecondary, this.tr("common.cancel"), "#7562c8", "#352878", 22);
+    this.withPopupEntrance("resetConfirm", { x: 68, y: 216, width: 360, height: 696 }, () => {
+      this.drawModal(68, 252, 360, 660, this.tr("settings.clearTitle"));
+      this.label(this.tr("settings.clearIrreversible"), 248, 392, 31, "#ffbdc6", "center", 1000, "#7e1832", 5, 315);
+      this.wrapText(this.tr("settings.clearDescription"), 248, 477, 294, 34, 21, "#f3edff");
+      this.drawPill(112, 610, 272, 46, "rgba(31,19,90,.9)", "#786ed0", 23);
+      this.label(this.tr("settings.preferencesRetained"), 248, 639, 18, "#b9f5ff", "center", 850, undefined, 0, 250);
+      this.drawButton("modalPrimary", BUTTONS.modalPrimary, this.tr("settings.confirmClear"), "#ec6073", "#9d1f45", 28);
+      this.drawButton("modalSecondary", BUTTONS.modalSecondary, this.tr("common.cancel"), "#7562c8", "#352878", 22);
+    });
   }
 
   private drawUpdateNotice(): void {
     this.drawDim();
-    this.drawModal(68, 220, 360, 670, this.tr("update.title"));
-    this.drawOnboardingIcon(1, 248, 365, 106);
-    this.label(this.tr("update.date", { date: UPDATE_NOTICE.date }), 248, 446, 22, "#8beaff", "center", 900, "#32206b", 3);
-    const updateItems: readonly TranslationKey[] = [
-      "update.item.formalArt",
-      "update.item.clearerBoard",
-      "update.item.refreshedScreens",
-      "update.item.aspectRatio",
-    ];
-    updateItems.forEach((item, index) => {
-      const y = 510 + index * 62;
-      this.drawSystemIcon(1, 118, y, 28);
-      this.label(this.tr(item), 145, y + 7, 18, "#f5f0ff", "left", 800, undefined, 0, 280);
+    this.withPopupEntrance("updates", { x: 68, y: 184, width: 360, height: 706 }, () => {
+      this.drawModal(68, 220, 360, 670, this.tr("update.title"));
+      this.drawOnboardingIcon(1, 248, 365, 106);
+      this.label(this.tr("update.date", { date: UPDATE_NOTICE.date }), 248, 446, 22, "#8beaff", "center", 900, "#32206b", 3);
+      const updateItems: readonly TranslationKey[] = [
+        "update.item.formalArt",
+        "update.item.clearerBoard",
+        "update.item.refreshedScreens",
+        "update.item.aspectRatio",
+      ];
+      updateItems.forEach((item, index) => {
+        const y = 510 + index * 62;
+        this.drawSystemIcon(1, 118, y, 28);
+        this.label(this.tr(item), 145, y + 7, 18, "#f5f0ff", "left", 800, undefined, 0, 280);
+      });
+      this.drawButton("modalPrimary", BUTTONS.modalPrimary, this.tr("common.gotIt"), "#43dc38", "#0a8122", 28);
     });
-    this.drawButton("modalPrimary", BUTTONS.modalPrimary, this.tr("common.gotIt"), "#43dc38", "#0a8122", 28);
   }
 
   private drawPauseSettingsRows(prefix: "settings" | "pause", art: PauseSettingsArt): void {
     const rows: ReadonlyArray<{ kind: SettingKind; label: string; image: HTMLImageElement; enabled: boolean }> = [
-      { kind: "sound", label: this.tr("settings.music"), image: art.sound, enabled: this.save.sound },
+      { kind: "sound", label: this.tr("settings.music"), image: art.sound, enabled: this.save.music !== false },
       { kind: "haptic", label: this.tr("settings.haptics"), image: art.haptic, enabled: this.save.haptic },
       // The supplied third icon is a positive Effects state, whereas the save
       // stores the inverse accessibility preference (reducedMotion).
@@ -14274,11 +19807,127 @@ export class ColorEscapeGame {
     return Object.values(this.save.bestStars).reduce((sum, value) => sum + Math.max(0, Math.min(3, Number(value) || 0)), 0);
   }
 
+  private drawComboPresentation(): void {
+    if (!this.comboAnimation?.isVisible || this.comboAnimationOwner !== this.model) return;
+    const board = this.boardLayout();
+    const bounds = { x: board.innerX + 6, y: board.innerY + 6,
+      width: board.innerWidth - 12, height: board.innerHeight - 12 };
+    for (const sample of this.comboAnimation.samples(this.save.reducedMotion)) {
+      drawComboPraise(this.ctx, sample, bounds);
+    }
+  }
+
+  private boardPresentationOffset(): { x: number; y: number } {
+    let x = this.directTransitionBoardOffset(), y = 0;
+    if (this.rocketImpact) {
+      const shake = sampleRocketShake(this.rocketImpact.age, this.save.reducedMotion);
+      x += shake.x; y += shake.y;
+    }
+    if (this.pulseAnimation.isVisible) {
+      const shake = samplePulseShake(this.pulseAnimation.sample(this.save.reducedMotion).age, this.save.reducedMotion);
+      x += shake.x; y += shake.y;
+    }
+    if (this.boardShakeTime > 0 && !this.save.reducedMotion) {
+      const strength = Math.min(1, this.boardShakeTime / 0.18);
+      x += Math.sin(this.elapsed * 92) * strength * 2.8;
+      y += Math.cos(this.elapsed * 77) * strength * 1.8;
+    }
+    return { x, y };
+  }
+
+  private pulseHighlightRects(targets: readonly PulseTarget[]): Map<string, Rect[]> {
+    const board = this.boardLayout(), snapshot = this.model.snapshot();
+    return new Map(targets.map(target => {
+      let rects = target.rects;
+      if (target.kind === "block") {
+        const current = snapshot.blocks.find(block => block.id === target.id);
+        if (current) {
+          const block = this.mechanicVisualBlock(current), cells = this.model.blockCells(block);
+          const match = matchFormalBlockShapeForLevel(cells, this.model.level.id);
+          const image = match ? this.art.formalIceBlocks?.[match.shapeId] : undefined;
+          rects = projectPulseBlockRects(cells, match, board, image, this.art.formalIceCell);
+          const transform = this.blockInteractionTransform(block, board,
+            block.id === this.selectedId || block.id === this.dragVisual?.blockId);
+          rects = rects.map(rect => ({
+            x: transform.x + transform.centerX + (rect.x - transform.centerX) * transform.scale,
+            y: transform.y + transform.centerY + (rect.y - transform.centerY) * transform.scale,
+            width: rect.width * transform.scale, height: rect.height * transform.scale,
+          }));
+        }
+      } else if (target.kind === "gate") {
+        const gate = [...snapshot.gates, ...snapshot.flipDoors].find(gate => gate.id === target.id);
+        if (gate) rects = gatePortals(snapshot, gate).map(portal => {
+          const horizontal = portal.side === "top" || portal.side === "bottom";
+          const strips = horizontal ? this.art.iceStrips?.horizontal : this.art.iceStrips?.vertical;
+          return projectPulseGateRect(portal, board, strips?.[Math.min(3, portal.size) as NativeStripSpan]);
+        });
+      }
+      return [`${target.kind}:${target.id}`, rects];
+    }));
+  }
+
+  private drawPulsePresentation(): void {
+    const sample = this.pulseAnimation.sample(this.save.reducedMotion);
+    if (!sample.visible) return;
+    const highlights = this.pulseHighlightRects(sample.targets);
+    const offset = this.boardPresentationOffset();
+    drawPulseDim(this.ctx, sample.dimAlpha, { x: 0, y: 0, width: LOGICAL_WIDTH, height: LOGICAL_HEIGHT },
+      [...highlights.values()].flatMap(rects => rects.map(rect => ({ ...rect, x: rect.x + offset.x, y: rect.y + offset.y }))));
+    this.ctx.save();
+    try {
+      // Target outlines and number badges belong to the shaking playfield;
+      // the screen dim, HUD and actual booster buttons remain stationary.
+      this.ctx.translate(offset.x, offset.y);
+      drawPulseAnimation(this.ctx, sample, this.pulseAnimationGeometry(), this.art.gameplayUi?.boosterPulse, highlights);
+    } finally { this.ctx.restore(); }
+  }
+
+  private drawRocketPresentation(): void {
+    if (this.boosterTarget === "rocket" && !this.rocketFlight) {
+      const board = this.boardLayout();
+      const ids = new Set(this.rocketTargetBlockIds());
+      this.drawDim(0.82, "#080812");
+      const blocks = this.model.snapshot().blocks.filter(block => ids.has(block.id));
+      orderBlocksByDepth(blocks, block => block.y).forEach(block => {
+        const visual = this.mechanicVisualBlock(block);
+        this.drawBlock(visual, board, false);
+        if (this.art.formalSelectionFrame) this.drawFormalSelection(visual, this.model.blockCells(visual), board);
+      });
+      // Keep the selected button and existing cancel-by-tapping-it affordance
+      // readable. This overlay does not invent a new inventory/target rule.
+      this.drawBoosters();
+      this.drawRocketRescueGuide();
+    }
+    if (this.rocketFlight) {
+      drawRocketFlight(this.ctx, this.rocketFlight, this.art.gameplayUi?.boosterRocket, this.save.reducedMotion);
+    }
+  }
+
+  private drawTimeFreezeEffect(): void {
+    const sample = this.timeFreezeAnimation.sample(this.model.readStatus().timeFreezeSeconds, this.save.reducedMotion);
+    if (!sample.visible) return;
+    const viewport = this.host.viewport();
+    const transform = this.viewportTransform();
+    drawTimeFreezeAnimation(this.ctx, sample, {
+      viewport: {
+        x: -transform.offsetX / transform.scale,
+        y: -transform.offsetY / transform.scale,
+        width: viewport.width / transform.scale,
+        height: viewport.height / transform.scale,
+      },
+      source: gameplayArtRect(GAMEPLAY_ART_LAYOUT.boosters[0].icon),
+      timer: gameplayArtRect(GAMEPLAY_ART_LAYOUT.timer.panel),
+    }, { clock: this.art.gameplayUi?.boosterTime, ice: this.art.iceCover });
+  }
+
   private drawHud(): void {
     const ctx = this.ctx;
-    const snapshot = this.model.snapshot();
-    const timeFrozen = (snapshot.timeFreezeSeconds ?? 0) > 0;
-    const danger = snapshot.remainingSeconds <= 30 || this.model.level.difficulty === "super";
+    const snapshot = this.model.readStatus();
+    // Keep the warning palette suppressed through the short frost fade; this
+    // is presentation-only and does not extend the model's freeze balance.
+    const timeFrozen = (snapshot.timeFreezeSeconds ?? 0) > 0 || this.timeFreezeAnimation?.isVisible === true;
+    const danger = this.model.level.difficulty === "super";
+    const warning = this.countdownWarning.visual(snapshot, this.save.reducedMotion);
     const ui = this.art.gameplayUi;
     const homeUi = this.art.homeUi;
     if (homeUi) {
@@ -14287,17 +19936,24 @@ export class ColorEscapeGame {
       this.drawGameplayImage(homeUi.addButton, GAMEPLAY_ART_LAYOUT.coin.add);
     }
     if (ui) {
-      this.drawPressable("undo", BUTTONS.undo, () => {
-        ctx.save();
-        ctx.globalAlpha *= this.undoActions.length > 0 ? 1 : 0.48;
-        this.drawGameplayImage(ui.backButton, GAMEPLAY_ART_LAYOUT.back);
-        ctx.restore();
-      });
-      this.drawPressable("pause", BUTTONS.pause, () => {
-        this.drawGameplayImage(ui.pauseButton, GAMEPLAY_ART_LAYOUT.pause);
-      });
+      if (this.pauseUnlocked()) {
+        this.drawPressable("pause", BUTTONS.pause, () => {
+          this.drawGameplayImage(ui.pauseButton, GAMEPLAY_ART_LAYOUT.pause);
+        });
+      }
       this.drawGameplayImage(ui.levelPill, GAMEPLAY_ART_LAYOUT.level);
       this.drawGameplayImage(ui.timerPanel, GAMEPLAY_ART_LAYOUT.timer.panel);
+      if (!timeFrozen && warning.panelAlpha > 0) {
+        this.withGameplayArtboard(() => {
+          const panel = GAMEPLAY_ART_LAYOUT.timer.panel;
+          ctx.save();
+          ctx.globalAlpha *= warning.panelAlpha;
+          ctx.fillStyle = warning.panelColor;
+          traceRoundedRect(ctx, panel.x + 1, panel.y + 1, panel.width - 2, panel.height - 2, 16);
+          ctx.fill();
+          ctx.restore();
+        });
+      }
       this.drawGameplayImage(ui.timerIcon, GAMEPLAY_ART_LAYOUT.timer.icon);
     }
     this.withGameplayArtboard(() => {
@@ -14306,15 +19962,17 @@ export class ColorEscapeGame {
         GAMEPLAY_ART_LAYOUT.coin.label.x,
         GAMEPLAY_ART_LAYOUT.coin.label.y,
         GAMEPLAY_ART_LAYOUT.typography.coin,
-        "#6b3015",
+        "#723515",
         "center",
         950,
-        "#fff4d8",
-        2,
+        undefined,
+        0,
         GAMEPLAY_ART_LAYOUT.coin.label.maxWidth,
       );
       this.label(
-        this.tr("common.levelNumber", { level: this.model.level.id }).toUpperCase(),
+        this.leagueRun ? `联赛 · 第${this.leagueRun.attempt.level}关`
+          : this.dailyChallengeRunInfo() || (this.screen === "win" && this.dailyChallengeWin) ? "每日挑战"
+          : this.tr("common.levelNumber", { level: this.model.level.id }).toUpperCase(),
         GAMEPLAY_ART_LAYOUT.levelLabel.x,
         GAMEPLAY_ART_LAYOUT.levelLabel.y,
         GAMEPLAY_ART_LAYOUT.typography.level,
@@ -14324,55 +19982,31 @@ export class ColorEscapeGame {
         "#174c9a",
         3,
       );
+      ctx.save();
+      ctx.translate(GAMEPLAY_ART_LAYOUT.timer.label.x + (timeFrozen ? 0 : warning.digitOffsetX),
+        GAMEPLAY_ART_LAYOUT.timer.label.y + (timeFrozen ? 0 : warning.digitOffsetY));
+      ctx.scale(timeFrozen ? 1 : warning.digitScale, timeFrozen ? 1 : warning.digitScale);
       this.label(
         this.formatTime(snapshot.remainingSeconds),
-        GAMEPLAY_ART_LAYOUT.timer.label.x,
-        GAMEPLAY_ART_LAYOUT.timer.label.y,
+        0,
+        0,
         GAMEPLAY_ART_LAYOUT.typography.timer,
-        timeFrozen ? "#78efff" : danger ? "#ff8e9d" : "#ffffff",
+        timeFrozen ? "#eeffff" : warning.stage === "critical" ? "#ff3048"
+          : warning.stage === "warning" ? "#ffe0c4" : danger ? "#ff8e9d" : "#ffffff",
         "center",
         900,
         "#171044",
         3,
       );
-      if (timeFrozen) {
-        this.drawPill(450, 264, 186, 40, "#173f62", "#78efff", 18);
-        this.label(
-          this.tr("gameplay.timeFrozenStatus", { seconds: Math.ceil(snapshot.timeFreezeSeconds ?? 0) }),
-          543, 285, 20, "#b8f6ff", "center", 900, "#173652", 2, 166,
-        );
-      }
-    });
-    if (this.hudFeedback) {
-      const alpha = Math.min(1, (this.hudFeedback.duration - this.hudFeedback.age) / 0.16);
-      ctx.save();
-      ctx.globalAlpha = alpha;
-      this.drawPill(146, 211, 204, 40, "#171044", this.hudFeedback.color, 19);
-      this.label(this.hudFeedback.text, 248, 237, 17, "#fff9e8", "center", 900, "#24104d", 3);
       ctx.restore();
-    }
+    });
+    if(this.leagueRun) this.label(`本局积分 ${this.leagueRun.provisionalPoints} · 成功才入榜`,248,255,20,"#ffe0a0","center",900,"#173652",2,380);
   }
 
   private visibleFlipDoorsOnRim(
     snapshot: Pick<PuzzleSnapshot, "width" | "height" | "seams" | "gates" | "flipDoors">,
   ): PuzzleSnapshot["flipDoors"] {
-    const fixedRails = new Set(snapshot.gates.flatMap((gate) => gatePortalRailKeys(snapshot, gate)));
-    return snapshot.flipDoors.flatMap((door) => {
-      const authoredPortals = door.portals?.length ? door.portals : undefined;
-      const visiblePortals = gatePortals(snapshot, door).filter((portal) => (
-        gatePortalRailKeys(snapshot, { ...door, portals: [portal] })
-          .every((rail) => !fixedRails.has(rail))
-      ));
-      if (!visiblePortals.length) return [];
-      if (!authoredPortals) return [door];
-      return [{
-        ...door,
-        portals: visiblePortals.map((portal) => ({
-          ...portal,
-          origin: [...portal.origin] as Point,
-        })),
-      }];
-    });
+    return visibleFlipDoorsOnRim(snapshot);
   }
 
   private drawBoard(): void {
@@ -14380,36 +20014,20 @@ export class ColorEscapeGame {
     this.ensureFormalIceArtForCurrentLevel();
     const ctx = this.ctx;
     const board = this.boardLayout();
-    const snapshot = this.model.snapshot();
-    const playable = new Set(snapshot.playable.map(([x, y]) => `${x},${y}`));
-    const blocked = new Set(snapshot.blocked.map(([x, y]) => `${x},${y}`));
-    const isFloor = (x: number, y: number): boolean => playable.has(`${x},${y}`) && !blocked.has(`${x},${y}`);
+    const snapshot = this.pulseVisualSnapshot(this.model.snapshot());
     // Preserve each authored gate span even after retirement. Its neutral
     // replacement is drawn in the gate layer, so a two-cell exit stays a
     // two-cell rim instead of merging into a neighboring three-cell strip.
-    const gatesOwningRim = snapshot.gates;
     // A fixed exit owns its rail even when a source-authored flip door happens
     // to reuse the same span. PuzzleModel gives fixed exits the same priority;
     // mirroring that rule here prevents a flip-door overlay from hiding a
     // normal gate while still allowing every non-conflicting door to replace
     // the neutral rim below it.
-    const visibleFlipDoors = this.visibleFlipDoorsOnRim(snapshot);
-    const activeGeneratorGeometries = snapshot.generators
-      .filter((generator) => generator.remaining > 0 || this.activeGeneratorSpawn(generator.id) != null)
-      .map((generator) => ({
-        mount: generator.rimMount ?? "rim",
-        geometry: this.generatorRimGeometry(generator),
-      }));
-    const rim = buildBoardRimLayout(
-      snapshot.playable,
-      snapshot.blocked,
-      snapshot.width,
-      snapshot.height,
-      [...gatesOwningRim, ...visibleFlipDoors],
-      activeGeneratorGeometries.flatMap(({ mount, geometry }) => (
-        mount === "rim" ? geometry.reservedRails : []
-      )),
-      snapshot.seams,
+    const { isFloor, visibleFlipDoors, rim } = (this.boardGeometryCache ??= new BoardGeometryCache()).read(
+      this.model.level,
+      snapshot,
+      generatorId => this.activeGeneratorSpawn(generatorId) != null,
+      generator => this.generatorRimGeometry(generator),
     );
     const borderArt = this.art.boardRim;
     const authoredCell = 95;
@@ -14760,7 +20378,8 @@ export class ColorEscapeGame {
       this.ctx.restore();
       this.drawProgressionDevice("elevator", elevator.x, elevator.y, elevator.width, elevator.height, board);
     });
-    const strategyNudge = this.strategyNudgeGuideGeometry(board);
+    const pulseRescueActive = this.pulseRescueGuide != null && this.pulseRescueGuideEligible();
+    const strategyNudge = pulseRescueActive ? undefined : this.strategyNudgeGuideGeometry(board);
     const spawnVisuals = this.generatorSpawnAnimations.map((animation) => ({
       animation,
       state: this.generatorSpawnVisualState(animation),
@@ -14842,7 +20461,7 @@ export class ColorEscapeGame {
     const adaptiveBlocker = strategyNudge?.reason === "blocker"
       ? snapshot.blocks.find((block) => block.id === strategyNudge.blockId)
       : undefined;
-    const strategyFocusBlock = this.strategyFocusBlock();
+    const strategyFocusBlock = pulseRescueActive ? undefined : this.strategyFocusBlock();
     const focusedBlock = this.blockerFocusBlockId
       ? snapshot.blocks.find((block) => block.id === this.blockerFocusBlockId)
       : undefined;
@@ -14925,19 +20544,25 @@ export class ColorEscapeGame {
     });
 
     if (this.shouldShowBasicTutorial()) {
-      this.drawTutorialHand(board);
-      this.wrapText(
-        this.tr("gameplay.tutorial.dragToExit"),
-        248,
-        board.y + board.height + 42,
-        420,
-        24,
-        18,
-        "#fff4b7",
-        "center",
-        "#25135e",
-        4,
-      );
+      const tutorialGuide = this.drawTutorialHand(board);
+      if (tutorialGuide) {
+        // Keep the instruction in the same visual group as the supplied hand:
+        // it sits below the drag path instead of being detached below the board.
+        const guideCenterX = (tutorialGuide.start.x + tutorialGuide.end.x) / 2;
+        const textX = Math.max(210, Math.min(LOGICAL_WIDTH - 210, guideCenterX));
+        this.wrapText(
+          this.tr("gameplay.tutorial.dragToExit"),
+          textX,
+          tutorialGuide.start.y + 108,
+          420,
+          24,
+          18,
+          "#fff4b7",
+          "center",
+          "#25135e",
+          4,
+        );
+      }
     } else if (strategyNudge) {
       this.drawGuideHand(strategyNudge, 76);
       const y = Math.max(252, board.y - 58);
@@ -15236,7 +20861,7 @@ export class ColorEscapeGame {
       this.drawGateDecorations(side, offset, size, frozen, board, star, 1, portal, false);
       return;
     }
-    if (usesRevisedMechanisms(this.model.level) && ACTIVE_REVISED_MECHANISM_ART_PATHS.every((path) => this.revisedArt.has(path))) {
+    if (usesRevisedMechanisms(this.model.level) && missingMechanismArtPaths(this.model.level, this.revisedArt).length === 0) {
       this.drawGateDecorations(side, offset, size, frozen, board, star, 1, portal, false);
       return;
     }
@@ -16055,7 +21680,9 @@ export class ColorEscapeGame {
     return true;
   }
 
-  private applyBlockInteractionTransform(block: BlockState, board: BoardLayout, selected: boolean): void {
+  private blockInteractionTransform(block: BlockState, board: BoardLayout, selected: boolean): {
+    x: number; y: number; centerX: number; centerY: number; scale: number;
+  } {
     const cells = this.model.blockCells(block);
     const minX = Math.min(...cells.map(([x]) => x));
     const maxX = Math.max(...cells.map(([x]) => x));
@@ -16067,23 +21694,28 @@ export class ColorEscapeGame {
     const settleProgress = visual?.settling && visual.settleDuration > 0
       ? easeOutCubic(visual.settleElapsed / visual.settleDuration)
       : 0;
-    if (visual) this.ctx.translate((visual.x - block.x) * board.cell, (visual.y - block.y) * board.cell);
-    if (selected) this.ctx.translate(0, (this.save.reducedMotion ? -4 : -6) * (1 - settleProgress));
+    const x = visual ? (visual.x - block.x) * board.cell : 0;
+    let y = visual ? (visual.y - block.y) * board.cell : 0;
+    let scale = 1;
+    if (selected) y += (this.save.reducedMotion ? -4 : -6) * (1 - settleProgress);
     if (selected && !this.save.reducedMotion) {
       const settle = Math.max(0, Math.min(1, 1 - this.grabFeedbackTime / 0.12));
       const heldScale = 0.985 + (1 - (1 - settle) ** 3) * 0.035;
-      const scale = visual?.settling ? 1 + (heldScale - 1) * (1 - settleProgress) : heldScale;
-      this.ctx.translate(centerX, centerY);
-      this.ctx.scale(scale, scale);
-      this.ctx.translate(-centerX, -centerY);
+      scale *= visual?.settling ? 1 + (heldScale - 1) * (1 - settleProgress) : heldScale;
     }
     if (block.id === this.blockedBlockId && this.blockedFeedbackTime > 0) {
       const phase = 1 - this.blockedFeedbackTime / BLOCKED_FEEDBACK_DURATION;
-      const scale = 1 - Math.sin(phase * Math.PI) * 0.055;
-      this.ctx.translate(centerX, centerY);
-      this.ctx.scale(scale, scale);
-      this.ctx.translate(-centerX, -centerY);
+      scale *= 1 - Math.sin(phase * Math.PI) * 0.055;
     }
+    return { x, y, centerX, centerY, scale };
+  }
+
+  private applyBlockInteractionTransform(block: BlockState, board: BoardLayout, selected: boolean): void {
+    const transform = this.blockInteractionTransform(block, board, selected);
+    this.ctx.translate(transform.x, transform.y);
+    this.ctx.translate(transform.centerX, transform.centerY);
+    this.ctx.scale(transform.scale, transform.scale);
+    this.ctx.translate(-transform.centerX, -transform.centerY);
   }
 
   private drawSelectedBlockSelection(block: BlockState, board: BoardLayout): void {
@@ -16231,11 +21863,15 @@ export class ColorEscapeGame {
         );
       }
     }
-    this.drawBlockMechanicMarkers(block, cells, board);
+    this.drawBlockMechanicMarkers(block, cells, board, displayedFrozen <= 0);
+    if(this.leagueRun?.specialIds.has(block.id) && this.leagueArtStore?.art) {
+      const [x,y]=cells[0],size=board.cell*.42;
+      this.drawCollectionImageContained(this.leagueArtStore.art["score-token"],{x:board.innerX+x*board.cell+board.cell-size,y:board.innerY+y*board.cell,width:size,height:size});
+    }
     ctx.restore();
   }
 
-  private drawBlockMechanicMarkers(block: BlockState, cells: Point[], board: BoardLayout): void {
+  private drawBlockMechanicMarkers(block: BlockState, cells: Point[], board: BoardLayout, axisVisible: boolean): void {
     const art = this.art.videoParity;
     const lockTransition = this.revisedTransitions.find((item) => item.kind === "lock" && item.targetId === block.id);
     const pendingLock = lockTransition && !sampleRevisedKeyUnlock(lockTransition.age, this.save.reducedMotion).arrived
@@ -16250,9 +21886,11 @@ export class ColorEscapeGame {
     const centerX = board.innerX + (minX + maxX + 1) * board.cell / 2;
     const centerY = board.innerY + (minY + maxY + 1) * board.cell / 2;
     const keyLockCenterYOffset = keyLockMarkerVerticalOffset(board.cell);
+    const dailyMarkers = Boolean(this.dailyChallengeRunInfo() || this.dailyChallengeWin);
     const ctx = this.ctx;
 
-    const axisImage = block.movementAxis
+    // Keep the ice counter readable until its fracture animation releases it.
+    const axisImage = axisVisible && block.movementAxis
       ? this.revisedMechanismImage(REVISED_MECHANISM_ART_URLS.axis[block.movementAxis]) : undefined;
     if (axisImage) {
       // The supplied horizontal/vertical marks have distinct silhouettes: do
@@ -16260,7 +21898,7 @@ export class ColorEscapeGame {
       const scale = board.cell * 0.78 / Math.max(axisImage.width, axisImage.height);
       ctx.drawImage(axisImage, centerX - axisImage.width * scale / 2,
         centerY - axisImage.height * scale / 2, axisImage.width * scale, axisImage.height * scale);
-    } else if (block.movementAxis && art) {
+    } else if (axisVisible && block.movementAxis && art) {
       const size = board.cell * (cells.length === 1 ? 0.66 : 0.78);
       ctx.save();
       ctx.globalAlpha *= 0.96;
@@ -16273,43 +21911,56 @@ export class ColorEscapeGame {
     if (block.keyId && art) {
       const markerColor = keyLockMarkerColor(block.keyId, this.model.level);
       const keyImage = art.keyTokens[markerColor] ?? art.keyToken;
-      const height = board.cell * (block.movementAxis ? 0.48 : 0.66);
-      const width = height * markerAspectRatio(keyImage);
-      const x = board.innerX + (minX + 0.5) * board.cell;
-      const y = board.innerY + (maxY + 0.5) * board.cell + keyLockCenterYOffset;
+      const daily = dailyMarkers ? dailyKeyLockMarkerLayout(cells, board, "key", markerAspectRatio(keyImage), Boolean(block.movementAxis)) : undefined;
+      const height = daily?.image.height ?? board.cell * (block.movementAxis ? 0.48 : 0.66);
+      const width = daily?.image.width ?? height * markerAspectRatio(keyImage);
+      const x = daily?.anchor.x ?? board.innerX + (minX + 0.5) * board.cell;
+      const y = daily?.anchor.y ?? board.innerY + (maxY + 0.5) * board.cell + keyLockCenterYOffset;
+      if (daily) {
+        ctx.save(); ctx.beginPath();
+        ctx.rect(daily.clip.x, daily.clip.y, daily.clip.width, daily.clip.height); ctx.clip();
+      }
       ctx.drawImage(keyImage, x - width / 2, y - height / 2, width, height);
+      if (daily) ctx.restore();
     }
 
     if ((block.lockedBy || pendingLock) && art) {
       const remainingLockCount = pendingLock?.previousCount ?? block.lockCount ?? 1;
       const markerColor = pendingLock?.color ?? keyLockMarkerColor(block.lockedBy!, this.model.level);
       const lockImage = art.chainLocks[markerColor] ?? art.chainLock;
-      const height = board.cell * 0.78;
-      const width = height * markerAspectRatio(lockImage);
+      const daily = dailyMarkers ? dailyKeyLockMarkerLayout(cells, board, "lock", markerAspectRatio(lockImage)) : undefined;
+      const height = daily?.image.height ?? board.cell * 0.78;
+      const width = daily?.image.width ?? height * markerAspectRatio(lockImage);
+      if (daily) {
+        ctx.save(); ctx.beginPath();
+        ctx.rect(daily.clip.x, daily.clip.y, daily.clip.width, daily.clip.height); ctx.clip();
+      }
       ctx.save();
       ctx.shadowColor = "rgba(14,3,48,.88)";
       ctx.shadowBlur = board.cell * 0.12;
       ctx.drawImage(
         lockImage,
-        centerX - width / 2,
-        centerY + keyLockCenterYOffset - height / 2,
+        daily?.image.x ?? centerX - width / 2,
+        daily?.image.y ?? centerY + keyLockCenterYOffset - height / 2,
         width,
         height,
       );
       ctx.restore();
       this.label(
         `${remainingLockCount}`,
-        centerX,
-        centerY + keyLockCenterYOffset
+        daily?.count.x ?? centerX,
+        daily?.count.y ?? centerY + keyLockCenterYOffset
           + board.cell * (0.17 + KEY_LOCK_COUNT_VERTICAL_OFFSET_CELLS)
           + KEY_LOCK_COUNT_VERTICAL_OFFSET_PX,
-        Math.max(16, board.cell * 0.34),
+        daily?.count.size ?? Math.max(16, board.cell * 0.34),
         "white",
         "center",
         900,
         "#261350",
-        Math.max(2, board.cell * 0.045),
+        daily?.count.strokeWidth ?? Math.max(2, board.cell * 0.045),
+        daily?.count.maxWidth,
       );
+      if (daily) ctx.restore();
     }
 
     const markerRadius = Math.max(10, Math.min(20, board.cell * 0.255));
@@ -16521,18 +22172,11 @@ export class ColorEscapeGame {
     }
     const ctx = this.ctx;
     if (ghost.mode === "rocket") {
-      const progress = Math.min(1, ghost.age / ghost.duration);
-      const eased = 1 - (1 - progress) ** 3;
-      const distance = board.cell * 1.55 * eased;
-      const vector: Record<Side, readonly [number, number]> = {
-        top: [0, -distance], right: [distance, 0], bottom: [0, distance], left: [-distance, 0],
-      };
-      const alpha = progress < 0.24 ? 1 : Math.max(0, 1 - (progress - 0.24) / 0.62);
-      ctx.save();
-      ctx.globalAlpha = alpha;
-      ctx.translate(vector[ghost.side][0], vector[ghost.side][1]);
-      this.drawBlock(ghost.block, board, false);
-      ctx.restore();
+      const cells = this.model.blockCells(ghost.block).map(([x, y]) => ({
+        x: board.innerX + x * board.cell, y: board.innerY + y * board.cell, width: board.cell, height: board.cell,
+      }));
+      drawRocketShatter(ctx, ghost.age, ghost.duration, cells, this.save.reducedMotion,
+        () => this.drawBlock(ghost.block, board, false));
       return;
     }
 
@@ -17472,19 +23116,143 @@ export class ColorEscapeGame {
 
   private drawBoosters(): void {
     this.drawBooster(BUTTONS.time, 0, this.save.boosters.time, this.boosterTarget === "time", "time");
+    // Lv7 keeps its existing inventory display. Lv10 shows the remaining
+    // usable pulses immediately; its reservation is still charged only on win.
     this.drawBooster(BUTTONS.rocket, 1, this.save.boosters.rocket, this.boosterTarget === "rocket", "rocket");
-    this.drawBooster(BUTTONS.pulse, 2, this.save.boosters.pulse, this.boosterTarget === "pulse", "pulse");
-    const prompt = this.boosterFeedback ?? (this.boosterTarget === "rocket"
-      ? { text: this.tr("gameplay.booster.selectRocketTarget"), color: "#fff36b", age: 0, duration: 1 }
-      : undefined);
-    if (prompt) {
-      const alpha = this.boosterFeedback ? Math.min(1, (prompt.duration - prompt.age) / 0.16) : 1;
-      this.ctx.save();
-      this.ctx.globalAlpha = alpha;
-      this.drawPill(126, 846, 244, 42, "#171044", prompt.color, 20);
-      this.label(prompt.text, 248, 873, 18, "#fff9e8", "center", 900, "#2d1458", 3);
-      this.ctx.restore();
+    this.drawBooster(BUTTONS.pulse, 2, this.availablePulseStock(), this.boosterTarget === "pulse", "pulse");
+    if (this.boosterTarget === "rocket") {
+      // Target selection stays visible until a block is chosen, using the same hint artwork.
+      this.drawButtonHint(this.tr("gameplay.booster.selectRocketTarget"), 873);
     }
+  }
+
+  private drawFreezeUsageGuide(): void {
+    if (!this.freezeUsageGuide || !this.freezeUsageGuideEligible()) return;
+    const target = BUTTONS.time;
+    const pulse = this.save.reducedMotion ? 1 : 1 + Math.sin(this.elapsed * 6.4) * 0.08;
+    const ring = {
+      x: target.x - 7 * pulse,
+      y: target.y - 7 * pulse,
+      width: target.width + 14 * pulse,
+      height: target.height + 14 * pulse,
+    };
+    const ctx = this.ctx;
+    ctx.save();
+    ctx.globalAlpha = this.save.reducedMotion ? 0.9 : 0.72 + Math.sin(this.elapsed * 6.4) * 0.16;
+    ctx.strokeStyle = "#ffe65f";
+    ctx.lineWidth = 5;
+    ctx.shadowColor = "#ffb52e";
+    ctx.shadowBlur = 14;
+    ctx.beginPath();
+    traceRoundedRect(ctx, ring.x, ring.y, ring.width, ring.height, 24);
+    ctx.stroke();
+    ctx.restore();
+
+    this.drawGuideHand(this.freezeUsageGuideGeometry(), 76);
+  }
+
+  private drawRocketRescueGuide(): void {
+    const guide = this.rocketRescueGuide;
+    const geometry = this.rocketRescueGuideGeometry();
+    if (!guide || !geometry || !this.rocketRescueGuideEligible()) return;
+    const pulse = this.save.reducedMotion ? 1 : 1 + Math.sin(this.elapsed * 6.8) * 0.08;
+    const ctx = this.ctx;
+    const target = guide.phase === "booster"
+      ? BUTTONS.rocket
+      : (() => {
+        const block = this.model.getBlock(this.model.level.rocketRescue!.targetBlockId)!;
+        const board = this.boardLayout();
+        const minX = Math.min(...block.shape.map(([x]) => x));
+        const maxX = Math.max(...block.shape.map(([x]) => x));
+        const minY = Math.min(...block.shape.map(([, y]) => y));
+        const maxY = Math.max(...block.shape.map(([, y]) => y));
+        return {
+          x: board.innerX + (block.x + minX) * board.cell - 7 * pulse,
+          y: board.innerY + (block.y + minY) * board.cell - 7 * pulse,
+          width: (maxX - minX + 1) * board.cell + 14 * pulse,
+          height: (maxY - minY + 1) * board.cell + 14 * pulse,
+        };
+      })();
+    ctx.save();
+    ctx.globalAlpha = this.save.reducedMotion ? 0.9 : 0.74 + Math.sin(this.elapsed * 6.8) * 0.14;
+    ctx.strokeStyle = "#ffe65f";
+    ctx.lineWidth = 5;
+    ctx.shadowColor = "#ffb52e";
+    ctx.shadowBlur = 14;
+    ctx.beginPath();
+    traceRoundedRect(ctx, target.x, target.y, target.width, target.height, 22);
+    ctx.stroke();
+    ctx.restore();
+    this.drawTapGuideHand(geometry, 84, guide.age);
+  }
+
+  private drawPulseRescueGuide(): void {
+    const guide = this.pulseRescueGuide;
+    const geometry = this.pulseRescueGuideGeometry();
+    if (!guide || !geometry || !this.pulseRescueGuideEligible()) return;
+    const ctx = this.ctx;
+    const target = BUTTONS.pulse;
+    ctx.save();
+    ctx.globalAlpha = this.save.reducedMotion ? 0.9 : 0.74 + Math.sin(this.elapsed * 6.8) * 0.14;
+    ctx.strokeStyle = "#ffe65f";
+    ctx.lineWidth = 5;
+    ctx.shadowColor = "#ffb52e";
+    ctx.shadowBlur = 14;
+    ctx.beginPath();
+    traceRoundedRect(ctx, target.x, target.y, target.width, target.height, 22);
+    ctx.stroke();
+    ctx.restore();
+    // The pulse rescue cue is a tap instruction: place the index finger on
+    // the pulse button immediately and animate only the vertical press/release.
+    this.drawTapGuideHand(geometry, 76, guide.age);
+  }
+
+  private drawBoosterUnlockGuide(): void {
+    const guide = this.boosterUnlockGuide;
+    if (!guide) return;
+    const layout = BOOSTER_UNLOCK_GUIDE_LAYOUT, ctx = this.ctx;
+    const index = SUPPLY_ORDER.indexOf(guide.kind);
+    const slot = GAMEPLAY_ART_LAYOUT.boosters[index];
+    const target = { x: slot.icon.x + slot.icon.width / 2, y: slot.icon.y + slot.icon.height / 2, size: 94 };
+    const motion = sampleBoosterUnlockMotion(guide.age, guide.flightAge, layout.visual, target, this.save.reducedMotion);
+    this.drawDim(layout.overlay.alpha * motion.overlayAlpha, layout.overlay.color);
+    this.withHomeArtboard(() => {
+      const icon = (x: number, y: number, size: number, alpha = 1) => {
+        ctx.save();ctx.globalAlpha = alpha;
+        this.drawBoosterArtworkForKind(guide.kind, index, x - size / 2, y - size / 2, size, size);
+        ctx.restore();
+      };
+      if (motion.flight && this.art.gameplayUi) {
+        ctx.save();ctx.globalAlpha = motion.overlayAlpha;
+        const base = slot.base;
+        ctx.drawImage(this.art.gameplayUi.boosterBase, base.x, base.y);
+        icon(target.x, target.y, target.size);
+        ctx.restore();
+      }
+      const glowAlpha = motion.flight ? Math.max(0, 1 - (guide.flightAge ?? 0) / .65) : motion.contentAlpha;
+      drawBoosterUnlockGlow(ctx, layout.visual.x, layout.visual.y, guide.age, glowAlpha, motion.burst, this.save.reducedMotion);
+      ctx.save();ctx.globalAlpha = motion.contentAlpha;
+      this.label(`${this.tr("shop.newBoosterUnlocked")}!`, layout.title.x, layout.title.y, layout.title.size,
+        layout.title.fill, "center", 950, layout.title.stroke, layout.title.lineWidth, 600);
+      this.label(this.tr("journey.tapToContinue"), layout.hint.x, layout.hint.y, layout.hint.size,
+        layout.hint.fill, "center", 800, layout.hint.stroke, layout.hint.lineWidth, 450);
+      ctx.restore();
+      if (!motion.flight) icon(layout.visual.x, layout.visual.y, layout.visual.size * motion.iconScale, motion.contentAlpha);
+      for (const copy of motion.copies) {
+        if (copy.alpha > 0) icon(copy.x, copy.y, copy.size, copy.alpha);
+        if (copy.impact > 0) {
+          ctx.save();ctx.translate(target.x, target.y);ctx.scale(.35, .35);
+          drawBoosterUnlockGlow(ctx, 0, 0, (guide.flightAge ?? 0) * 2, copy.impact * .6, copy.impact);
+          ctx.restore();
+        }
+      }
+      ctx.save();ctx.globalAlpha = motion.contentAlpha;
+      const count = Math.max(0, Math.floor(this.save.boosters[guide.kind]));
+      const countY = layout.count.y - (guide.flightAge === undefined ? 0 : Math.min(1, guide.flightAge / .3) * 165);
+      this.label(String(count), layout.count.x, countY, layout.count.size * motion.numberScale,
+        "#fff9d9", "center", 900, undefined, 0, 240);
+      ctx.restore();
+    });
   }
 
   private drawBoosterUnlockToast(): void {
@@ -17506,7 +23274,14 @@ export class ColorEscapeGame {
       this.ctx.save();
       this.ctx.globalAlpha = alpha;
       this.ctx.drawImage(banner, rect.x, y, rect.width, rect.height);
-      this.drawBoosterArtwork(iconIndex, iconCenterX - iconSize / 2, iconCenterY - iconSize / 2, iconSize, iconSize);
+      this.drawBoosterArtworkForKind(
+        toast.kind,
+        iconIndex,
+        iconCenterX - iconSize / 2,
+        iconCenterY - iconSize / 2,
+        iconSize,
+        iconSize,
+      );
       this.label(this.tr("shop.newBoosterUnlocked"), rect.x + 125, y + 34, 14, "#78efff", "left", 900, "#17205f", 2, 285);
       this.label(this.boosterName(toast.kind), rect.x + 125, y + 67, 23, "#fff06d", "left", 900, "#31116f", 3, 285);
       this.label(this.boosterEffect(toast.kind), rect.x + 125, y + 96, 15, "#f7f5ff", "left", 800, "#171044", 2, 285);
@@ -17516,6 +23291,27 @@ export class ColorEscapeGame {
 
   private drawBoosterArtwork(iconIndex: number, x: number, y: number, width: number, height: number): boolean {
     return this.drawAtlasCell(this.art.boosters, iconIndex, ART_ATLASES.boosters, { x, y, width, height });
+  }
+
+  private drawBoosterArtworkForKind(kind: Booster, iconIndex: number, x: number, y: number, width: number, height: number): boolean {
+    const formalUi = this.art.gameplayUi;
+    const image = formalUi
+      ? ({ time: formalUi.boosterTime, rocket: formalUi.boosterRocket, pulse: formalUi.boosterPulse } as const)[kind]
+      : undefined;
+    if (!image) return this.drawBoosterArtwork(iconIndex, x, y, width, height);
+
+    // The unlock guide is drawn on the home artboard, so draw the same formal
+    // icon directly in its local box instead of applying gameplay coordinates.
+    // Preserve the source aspect ratio while matching the visual size used by
+    // the legacy atlas fallback.
+    const sourceWidth = image.naturalWidth || image.width;
+    const sourceHeight = image.naturalHeight || image.height;
+    if (!sourceWidth || !sourceHeight) return this.drawBoosterArtwork(iconIndex, x, y, width, height);
+    const scale = Math.min(width / sourceWidth, height / sourceHeight);
+    const drawWidth = sourceWidth * scale;
+    const drawHeight = sourceHeight * scale;
+    this.ctx.drawImage(image, x + (width - drawWidth) / 2, y + (height - drawHeight) / 2, drawWidth, drawHeight);
+    return true;
   }
 
   private drawBooster(rect: Rect, iconIndex: number, count: number, active: boolean, kind: Booster): void {
@@ -17529,12 +23325,16 @@ export class ColorEscapeGame {
       this.drawPressable(`booster.${kind}`, rect, () => {
         const ctx = this.ctx;
         ctx.save();
-        ctx.globalAlpha = unlocked ? enabled ? 1 : 0.5 : 0.32;
+        // Locked boosters stay fully visible; the lock and level label convey
+        // availability. Only a depleted, already unlocked stock dims its shell.
+        ctx.globalAlpha = !unlocked || enabled ? 1 : 0.5;
         ctx.shadowColor = active ? "#fff36b" : "rgba(5,2,32,.7)";
         ctx.shadowBlur = active ? 18 : 7;
         this.drawGameplayImage(formalUi.boosterBase, layout.base);
         ctx.shadowBlur = 0;
+        ctx.globalAlpha = 1;
         this.drawGameplayImage(icon, layout.icon);
+        ctx.globalAlpha = !unlocked || enabled ? 1 : 0.5;
         this.drawGameplayImage(formalUi.boosterCountBadge, layout.badge);
         if (unlocked) {
           if (count > 0) {
@@ -17560,7 +23360,7 @@ export class ColorEscapeGame {
           }
         } else {
           const center = gameplayArtRect(layout.badge);
-          this.drawSystemIcon(11, center.x + center.width / 2, center.y + center.height / 2, 20, 0.9);
+          this.drawSystemIcon(11, center.x + center.width / 2, center.y + center.height / 2, 20, 1);
           this.label(this.tr("common.lvNumber", { level: SUPPLY_ITEMS[kind].unlockLevel }), center.x + center.width / 2, center.y + center.height + 12, 11, "#ddd6ef", "center", 900);
         }
         ctx.restore();
@@ -17572,30 +23372,32 @@ export class ColorEscapeGame {
       ctx.save();
       ctx.shadowColor = active ? "#fff36b" : enabled ? "rgba(0,0,0,.6)" : "rgba(0,0,0,.35)";
       ctx.shadowBlur = active ? 16 : enabled ? 10 : 4;
-      ctx.globalAlpha = unlocked ? enabled ? 1 : 0.42 : 0.3;
-      this.drawButtonChrome(rect, enabled ? 0 : 1, false);
+      ctx.globalAlpha = !unlocked || enabled ? 1 : 0.42;
+      this.drawButtonChrome(rect, !unlocked || enabled ? 0 : 1, false);
       ctx.restore();
       ctx.save();
-      ctx.globalAlpha = unlocked ? enabled ? 1 : 0.34 : 0.22;
+      // Never dim the booster artwork itself.
+      ctx.globalAlpha = 1;
       this.drawBoosterArtwork(iconIndex, rect.x + 7, rect.y + 5, rect.width - 14, rect.height - 14);
       ctx.restore();
       ctx.save();
-      ctx.globalAlpha = unlocked ? enabled ? 1 : 0.5 : 0.42;
+      ctx.globalAlpha = !unlocked || enabled ? 1 : 0.5;
       this.drawChromePanel(rect.x + rect.width - 23, rect.y + rect.height - 22, 34, 34, 12, false);
       ctx.restore();
       if (unlocked) {
         this.label(`${count}`, rect.x + rect.width - 6, rect.y + rect.height + 2, 19, enabled ? "white" : "#c5c0d3", "center", 900);
       } else {
-        this.drawSystemIcon(11, rect.x + rect.width / 2, rect.y + rect.height / 2, 25, 0.88);
+        this.drawSystemIcon(11, rect.x + rect.width / 2, rect.y + rect.height / 2, 25, 1);
         this.label(this.tr("common.lvNumber", { level: SUPPLY_ITEMS[kind].unlockLevel }), rect.x + rect.width - 6, rect.y + rect.height - 1, 11, "#c5c0d3", "center", 900);
       }
     });
   }
 
-  private drawTutorialHand(board: BoardLayout): void {
+  private drawTutorialHand(board: BoardLayout): TutorialGuideGeometry | undefined {
     const guide = this.tutorialGuideGeometry(board);
-    if (!guide || guide.points.length < 2) return;
+    if (!guide || guide.points.length < 2) return undefined;
     this.drawGuideHand(guide, 88);
+    return guide;
   }
 
   private drawGuideHand(guide: TutorialGuideGeometry, size: number): void {
@@ -17621,14 +23423,55 @@ export class ColorEscapeGame {
     ctx.save();
     ctx.globalAlpha = motion.alpha;
     ctx.translate(x, y);
-    ctx.rotate(rotation);
-    this.drawOnboardingIcon(0, 0, 0, size);
+    this.drawGuideHandArtwork(size, rotation);
     ctx.restore();
+  }
+
+  private drawTapGuideHand(guide: TutorialGuideGeometry, size: number, age: number): void {
+    const motion = tutorialTapMotion(age, this.save.reducedMotion);
+    const ctx = this.ctx;
+    ctx.save();
+    ctx.globalAlpha = motion.alpha;
+    // Scale around the fingertip so a press never drifts horizontally. The
+    // guide's own age stops while paused or hidden.
+    ctx.translate(guide.end.x, guide.end.y - 9 + motion.offsetY);
+    ctx.scale(motion.scale, motion.scale);
+    this.drawGuideHandArtwork(size);
+    ctx.restore();
+  }
+
+  private drawGuideHandArtwork(size: number, fallbackRotation = 0): void {
+    this.ensureTutorialHand();
+    const hand = this.art.tutorialHand;
+    if (!hand) {
+      this.ctx.rotate(fallbackRotation);
+      this.drawOnboardingIcon(0, 0, 0, size);
+      return;
+    }
+    const width = hand.naturalWidth || hand.width;
+    const height = hand.naturalHeight || hand.height;
+    const scale = size / Math.max(width, height);
+    // Preserve the supplied pose and native aspect ratio. Origin is the tip
+    // of the diagonally up-left finger, shared by tap and drag guides.
+    this.ctx.drawImage(hand, -width * scale * 0.22, -height * scale * 0.07, width * scale, height * scale);
+  }
+
+  private ensureTutorialHand(): void {
+    if (this.art.tutorialHand || this.tutorialHandRequested) return;
+    this.tutorialHandRequested = true;
+    void this.loadImages([GAME_ART.ui.tutorialHand]).then(([hand]) => {
+      this.art.tutorialHand = hand;
+      this.dirty = true;
+      this.scheduleFrame();
+    }).catch(() => {
+      // Keep the existing atlas hand as a safe fallback if a platform asset
+      // load fails; the rescue flow itself must remain fully interactive.
+    });
   }
 
   private shouldShowBasicTutorial(): boolean {
     return this.model.level.id === 1
-      && !this.model.snapshot().started
+      && !this.model.readStatus().started
       && this.screen === "playing"
       && !this.save.featureSeen.includes("basics");
   }
@@ -17766,7 +23609,7 @@ export class ColorEscapeGame {
     const nudge = this.model.level.strategyNudge;
     if (nudge && this.strategyNudgeAcknowledged) return undefined;
     if (nudge && this.noClearMoveStreak >= nudge.afterMoves && !this.strategyNudgeAcknowledged) {
-      const target = nudge.path.at(-1);
+      const target = nudge.path[nudge.path.length - 1];
       if ((target && block.x === target[0] && block.y === target[1]) || this.strategyNudgeOrigins()) return undefined;
     }
     return block;
@@ -17806,7 +23649,7 @@ export class ColorEscapeGame {
     if (!art) return;
     const ctx = this.ctx;
     this.drawDim(PAUSE_SETTINGS_LAYOUT.overlay.alpha, PAUSE_SETTINGS_LAYOUT.overlay.color);
-    this.withHomeArtboard(() => {
+    this.withPopupEntrance("pause", homeArtRect(PAUSE_SETTINGS_LAYOUT.panel), () => this.withHomeArtboard(() => {
       ctx.drawImage(art.panel, PAUSE_SETTINGS_LAYOUT.panel.x, PAUSE_SETTINGS_LAYOUT.panel.y);
       const titleText = PAUSE_SETTINGS_LAYOUT.typography.title;
       this.label(
@@ -17855,7 +23698,7 @@ export class ColorEscapeGame {
       this.drawPressable("pauseResume", PAUSE_SETTINGS_LAYOUT.close, () => {
         ctx.drawImage(art.close, PAUSE_SETTINGS_LAYOUT.close.x, PAUSE_SETTINGS_LAYOUT.close.y);
       });
-    });
+    }));
   }
 
   private drawFeature(): void {
@@ -17870,7 +23713,7 @@ export class ColorEscapeGame {
     ctx.fillStyle = layout.overlay.color;
     ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
     ctx.restore();
-    this.withHomeArtboard(() => {
+    this.withPopupEntrance("feature", homeArtRect(layout.panel), () => this.withHomeArtboard(() => {
       ctx.drawImage(panelArt.panel, layout.panel.x, layout.panel.y);
       this.label(this.tr("feature.title"), layout.title.x, layout.title.y, layout.title.size, layout.title.fill, "center", 900, layout.title.stroke, layout.title.lineWidth, 430);
       if (this.featureIntroIconArt.image) {
@@ -17900,7 +23743,7 @@ export class ColorEscapeGame {
         const text = layout.feature.buttonText;
         this.label(this.tr(this.featureIntroIconArt.error ? "page.retryLoad" : "feature.confirm"), text.x, text.y, text.size, text.fill, "center", 900, text.stroke, text.lineWidth, layout.feature.button.width - 36);
       });
-    });
+    }));
   }
 
   private featureVisual(): { counter?: number; outerColor?: BlockColor; innerColor?: BlockColor } {
@@ -17938,20 +23781,25 @@ export class ColorEscapeGame {
 
   private drawWin(): void {
     const rewardAmount = this.winCoinReward;
+    const title = this.dailyChallengeWin ? "挑战成功" : this.tr("settlement.levelComplete");
     const art = this.winArt;
     if (!art) {
       if (!this.winArtLoading && !this.winArtError) this.requestWinArt();
       this.drawDim();
-      this.drawModal(68, 278, 360, 500, this.tr("settlement.levelComplete"));
-      this.label(this.winArtError ? this.tr("settlement.loadFailed") : this.tr("settlement.loading"), 248, 510, 22, "#fff4c7", "center", 900, "#4f218f", 4, 315);
-      if (this.winArtError) {
-        this.drawButton("modalPrimary", BUTTONS.winPrimary, this.winActionLabel(), "#43dc38", "#0a8122", 25);
-        this.drawRoundIcon("modalSecondary", BUTTONS.winClose, "×", "#e6515f");
-      }
+      this.withPopupEntrance("win", { x: 68, y: 278, width: 360, height: 500 }, () => {
+        this.drawModal(68, 278, 360, 500, title);
+        this.label(this.winArtError ? this.tr("settlement.loadFailed") : this.tr("settlement.loading"), 248, 510, 22, "#fff4c7", "center", 900, "#4f218f", 4, 315);
+        if (this.winArtError) {
+          this.drawButton("modalPrimary", BUTTONS.winPrimary, this.winActionLabel(), "#43dc38", "#0a8122", 25);
+          this.drawRoundIcon("modalSecondary", BUTTONS.winClose, "×", "#e6515f");
+        }
+      });
       return;
     }
 
     const ctx = this.ctx;
+    if (this.dailyChallengeWin) { this.drawDailySuccess(); return; }
+    const supplied = art.suppliedSettlement;
     const conditions = this.winStarConditions ?? evaluateLevelStars(
       this.model.level,
       this.captureCompletionMetrics(this.model.snapshot()),
@@ -17961,11 +23809,15 @@ export class ColorEscapeGame {
     ctx.fillStyle = WIN_ART_LAYOUT.overlay.color;
     ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
     ctx.restore();
-    this.withHomeArtboard(() => {
-      ctx.drawImage(art.panel, WIN_SETTLEMENT_LAYOUT.panel.x, WIN_SETTLEMENT_LAYOUT.panel.y);
-      if (this.save.reducedMotion) {
+    const winBounds = this.masterpieceUnlockPresentation
+      ? popupBounds(homeArtRect(WIN_SETTLEMENT_LAYOUT.panel), homeArtRect(WIN_SETTLEMENT_LAYOUT.unlock.panel))
+      : homeArtRect(WIN_SETTLEMENT_LAYOUT.panel);
+    this.withPopupEntrance("win", winBounds, () => this.withHomeArtboard(() => {
+      const panel = WIN_SETTLEMENT_LAYOUT.panel;
+      ctx.drawImage(supplied?.panel ?? art.panel, panel.x, panel.y, panel.width, panel.height);
+      if (!supplied && this.save.reducedMotion) {
         ctx.drawImage(art.glow, WIN_ART_LAYOUT.glow.x, WIN_ART_LAYOUT.glow.y);
-      } else {
+      } else if (!supplied) {
         const glowCenterX = WIN_ART_LAYOUT.glow.x + WIN_ART_LAYOUT.glow.width / 2;
         const glowCenterY = WIN_ART_LAYOUT.glow.y + WIN_ART_LAYOUT.glow.height / 2;
         ctx.save();
@@ -17975,9 +23827,15 @@ export class ColorEscapeGame {
         ctx.drawImage(art.glow, WIN_ART_LAYOUT.glow.x, WIN_ART_LAYOUT.glow.y);
         ctx.restore();
       }
-      // Localized title, level number, stars and criteria use Canvas text/shapes.
-      this.label(
-        this.tr("settlement.levelComplete"),
+      // Supplied title bitmaps cover their exact languages; dynamic copy and
+      // the other supported languages continue to use the localized strings.
+      const titleImage = supplied && (this.save.language === "zh-CN" ? supplied.titleZh
+        : this.save.language === "en" ? supplied.titleEn : undefined);
+      if (titleImage) {
+        const placement = this.save.language === "en" ? WIN_SETTLEMENT_LAYOUT.titleEn : WIN_SETTLEMENT_LAYOUT.titleZh;
+        ctx.drawImage(titleImage, placement.x, placement.y, placement.width, placement.height);
+      } else this.label(
+        title,
         WIN_SETTLEMENT_LAYOUT.title.x,
         WIN_SETTLEMENT_LAYOUT.title.y,
         WIN_SETTLEMENT_LAYOUT.title.size,
@@ -17992,42 +23850,282 @@ export class ColorEscapeGame {
       this.drawWinStars(conditions);
       this.drawWinCriteria(conditions);
 
-      ctx.drawImage(
-        art.coinPile,
-        WIN_SETTLEMENT_LAYOUT.coinPile.x,
-        WIN_SETTLEMENT_LAYOUT.coinPile.y,
-        WIN_SETTLEMENT_LAYOUT.coinPile.width,
-        WIN_SETTLEMENT_LAYOUT.coinPile.height,
-      );
-      ctx.drawImage(art.rewardPill, WIN_SETTLEMENT_LAYOUT.rewardPill.x, WIN_SETTLEMENT_LAYOUT.rewardPill.y);
-      this.drawFormalWinText(`+${rewardAmount}`, {
-        x: WIN_SETTLEMENT_LAYOUT.rewardPill.x + WIN_SETTLEMENT_LAYOUT.rewardPill.width / 2,
-        y: WIN_SETTLEMENT_LAYOUT.rewardPill.y + WIN_SETTLEMENT_LAYOUT.rewardPill.height / 2 + 2,
-        renderSize: 34,
-        fill: "#ffffff",
-        stroke: "#415ca4",
-        lineWidth: 5,
-      });
+      if (!this.dailyChallengeWin) {
+        ctx.drawImage(
+          supplied?.coinPile ?? art.coinPile,
+          WIN_SETTLEMENT_LAYOUT.coinPile.x,
+          WIN_SETTLEMENT_LAYOUT.coinPile.y,
+          WIN_SETTLEMENT_LAYOUT.coinPile.width,
+          WIN_SETTLEMENT_LAYOUT.coinPile.height,
+        );
+        const pill = WIN_SETTLEMENT_LAYOUT.rewardPill;
+        ctx.drawImage(supplied?.rewardPill ?? art.rewardPill, pill.x, pill.y, pill.width, pill.height);
+        if (supplied) {
+          const coin = WIN_SETTLEMENT_LAYOUT.coinIcon;
+          ctx.drawImage(supplied.coinIcon, coin.x, coin.y, coin.width, coin.height);
+        }
+        this.drawFormalWinText(`+${rewardAmount}`, {
+          x: WIN_SETTLEMENT_LAYOUT.rewardPill.x + WIN_SETTLEMENT_LAYOUT.rewardPill.width / 2 + (supplied ? 20 : 0),
+          y: WIN_SETTLEMENT_LAYOUT.rewardPill.y + WIN_SETTLEMENT_LAYOUT.rewardPill.height / 2 + 2,
+          renderSize: 35,
+          fill: "#ffffff",
+          stroke: "#415ca4",
+          lineWidth: 5,
+          maxWidth: 94,
+        });
+      }
       this.drawPressable("modalPrimary", WIN_SETTLEMENT_LAYOUT.continueButton, () => {
-        ctx.drawImage(art.continueButton, WIN_SETTLEMENT_LAYOUT.continueButton.x, WIN_SETTLEMENT_LAYOUT.continueButton.y);
+        const button = WIN_SETTLEMENT_LAYOUT.continueButton;
+        ctx.drawImage(supplied?.continueButton ?? art.continueButton, button.x, button.y, button.width, button.height);
         this.drawFormalWinText(this.tr("settlement.continue"), {
           x: WIN_SETTLEMENT_LAYOUT.continueButton.x + WIN_SETTLEMENT_LAYOUT.continueButton.width / 2,
           y: WIN_SETTLEMENT_LAYOUT.continueButton.y + WIN_SETTLEMENT_LAYOUT.continueButton.height / 2 + 8,
-          renderSize: 42,
+          renderSize: 61,
           fill: "#ffffff",
           stroke: "#10520b",
           lineWidth: 6,
+          maxWidth: 278,
         });
       });
       this.drawPressable("modalSecondary", WIN_SETTLEMENT_LAYOUT.close, () => {
-        ctx.drawImage(art.close, WIN_SETTLEMENT_LAYOUT.close.x, WIN_SETTLEMENT_LAYOUT.close.y);
+        const close = WIN_SETTLEMENT_LAYOUT.close;
+        ctx.drawImage(supplied?.close ?? art.close, close.x, close.y, close.width, close.height);
       });
+      this.drawMasterpieceUnlockProgress();
+    }));
+  }
+
+  private drawMasterpieceUnlockProgress(): void {
+    const presentation = this.masterpieceUnlockPresentation;
+    if (!presentation || this.dailyChallengeWin || this.temporaryLevelTestSession) return;
+    const progress = presentation.progress;
+    const item = progress.targetId ? findCollectionCatalogItem(progress.targetId) : undefined;
+    const complete = !item && progress.allUnlocked;
+    const title = this.albumText(complete ? "allMasterpiecesUnlocked"
+      : progress.justUnlocked ? "masterpieceUnlocked" : "unlockRemaining", { amount: progress.remaining });
+    const subtitle = item?.category === "masterpiece"
+      ? ""
+      : this.albumText("collectionProgress", {
+        owned: this.save.collectionProgress.restoredMasterpieceIds.length,
+        total: MASTERPIECE_COLLECTION_CATALOG.length,
+      });
+    const supplied = this.winArt?.suppliedSettlement;
+    if (supplied) {
+      const ctx = this.ctx;
+      const layout = WIN_SETTLEMENT_LAYOUT.unlock;
+      const draw = (image: HTMLImageElement, rect: Rect): void => {
+        ctx.drawImage(image, rect.x, rect.y, rect.width, rect.height);
+      };
+      const sample = sampleCollectionRewardProgress({
+        bounds: layout.panel,
+        previous: progress.previous,
+        current: progress.current,
+        total: progress.total,
+        age: Math.max(0, presentation.age - 0.32),
+        reducedMotion: this.save.reducedMotion,
+      });
+      draw(supplied.unlockPanel, layout.panel);
+      draw(supplied.unlockCrown, layout.crown);
+      this.label(title, layout.title.x, layout.title.y, layout.title.size,
+        "#fff29b", "left", 950, "#57378e", 2, layout.title.maxWidth);
+      draw(supplied.progressTrack, layout.track);
+      // Keep every slot visible, including unearned progress. Green segments
+      // still reveal only the confirmed-progress sample with the existing easing.
+      const gap = layout.segmentGap;
+      const innerWidth = layout.track.width - 14;
+      const segmentWidth = sample.total > 0 ? (innerWidth - gap * (sample.total - 1)) / sample.total : 0;
+      for (let index = 0; index < sample.total; index += 1) {
+        const fill = Math.max(0, Math.min(1, sample.value - index));
+        const rect = {
+          x: layout.fill.x + index * (segmentWidth + gap), y: layout.fill.y,
+          width: segmentWidth, height: layout.fill.height,
+        };
+        ctx.save();
+        ctx.beginPath();
+        traceRoundedRect(ctx, rect.x, rect.y, rect.width, rect.height, 7);
+        ctx.fillStyle = "#35204f";
+        ctx.fill();
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = "#9767bb";
+        ctx.stroke();
+        if (fill > 0) {
+          ctx.beginPath();
+          ctx.rect(rect.x, rect.y, rect.width * fill, rect.height);
+          ctx.clip();
+          draw(supplied.progressFill, rect);
+        }
+        ctx.restore();
+      }
+      if (progress.justUnlocked || complete) draw(supplied.unlockCheck, layout.check);
+      this.label(subtitle, layout.subtitle.x, layout.subtitle.y, layout.subtitle.size,
+        "#fff19a", "left", 850, undefined, 0, layout.subtitle.maxWidth);
+      ctx.save();
+      ctx.beginPath();
+      traceRoundedRect(ctx, layout.artwork.x, layout.artwork.y, layout.artwork.width, layout.artwork.height, 8);
+      ctx.clip();
+      ctx.fillStyle = "#382846";
+      ctx.fill();
+      this.drawMasterpieceUnlockTarget(item, layout.artwork);
+      ctx.restore();
+      draw(supplied.artworkFrame, layout.frame);
+      this.label(item ? this.collectionAlbumItemTitle(item) : this.albumText("masterpieceCollection"),
+        layout.targetTitle.x, layout.targetTitle.y, layout.targetTitle.size,
+        "#ffffff", "center", 850, undefined, 0, layout.targetTitle.maxWidth);
+      return;
+    }
+    drawCollectionRewardProgress(this.ctx, {
+      bounds: { x: 35, y: 1288, width: 650, height: 210 },
+      previous: progress.previous,
+      current: progress.current,
+      total: progress.total,
+      age: Math.max(0, presentation.age - 0.32),
+      reducedMotion: this.save.reducedMotion,
+      title,
+      subtitle,
+      targetTitle: item ? this.collectionAlbumItemTitle(item) : this.albumText("masterpieceCollection"),
+      status: complete ? "complete" : progress.justUnlocked ? "ready" : "progress",
+      drawTargetArtwork: (rect: Rect) => this.drawMasterpieceUnlockTarget(item, rect),
     });
   }
 
+  private drawMasterpieceUnlockTarget(item: CollectionCatalogItem | undefined, rect: Rect): void {
+    // This small preview owns one atlas, independently of the full album UI.
+    // It never blocks Continue; a failed image falls back to the collection icon.
+    if (item?.category === "masterpiece" && !this.masterpieceUnlockArtwork) {
+      const store = new CollectionArtworkStore({
+        paths: GAME_ART.ui.collectionCardAtlases.masterpieces,
+        loadImage: (path) => this.host.createImage(path),
+        releaseImage: (image) => this.host.releaseImage?.(image),
+        onChange: () => { this.dirty = true; this.scheduleFrame(); },
+      });
+      this.masterpieceUnlockArtwork = store;
+      void store.request([Math.floor((item.catalogNumber - 1) / 25)]).catch(() => {});
+    }
+    const cell = item?.category === "masterpiece" ? item.catalogNumber - 1 : 0;
+    const image = item && this.masterpieceUnlockArtwork?.image(Math.floor(cell / 25));
+    if (image) {
+      const width = (image.naturalWidth || image.width) / 5;
+      const height = (image.naturalHeight || image.height) / 5;
+      const gutterX = Math.max(1, width * 0.013), gutterY = Math.max(1, height * 0.013);
+      const ratio = rect.width / rect.height;
+      const cropWidth = Math.min(width - gutterX * 2, (height - gutterY * 2) * ratio);
+      const cropHeight = cropWidth / ratio;
+      this.ctx.drawImage(image,
+        (cell % 5) * width + (width - cropWidth) / 2,
+        Math.floor((cell % 25) / 5) * height + (height - cropHeight) / 2,
+        cropWidth, cropHeight, rect.x, rect.y, rect.width, rect.height);
+    } else if (this.art.homeUi?.collectionAlbumEntry) {
+      this.drawCollectionImageContained(this.art.homeUi.collectionAlbumEntry, rect);
+    }
+  }
+
+  private drawDailySuccess(): void {
+    const art = this.winArt, result = this.dailyChallengeWin;
+    if (!art || !result) return;
+    const layout = DAILY_SUCCESS_LAYOUT, ctx = this.ctx;
+    this.drawDim(WIN_ART_LAYOUT.overlay.alpha, WIN_ART_LAYOUT.overlay.color);
+    this.withPopupEntrance("win", homeArtRect(layout.panel), () => this.withHomeArtboard(() => {
+      this.drawCollectionImageContained(art.panel, layout.panel);
+      this.label("挑战成功", layout.title.x, layout.title.y, 60, "#ffffff", "center", 950, "#6750d8", 4, 430);
+      const rewards = DAILY_CHALLENGE_REWARDS[result.difficulty];
+      const prizes = [{ image: art.dailyRewards?.inspiration, amount: rewards.inspiration }, { image: art.dailyRewards?.coins, amount: rewards.coins }];
+      prizes.forEach((prize, index) => {
+        const card = layout.rewardCards[index];
+        if (art.dailyRewards) this.drawCollectionImageContained(art.dailyRewards.card, card);
+        if (prize.image) this.drawCollectionImageContained(prize.image, { x: card.x + 14, y: card.y + 12, width: 85, height: 73 });
+        this.label(String(prize.amount), card.x + 79, card.y + 95, 27, "#ffffff", "center", 950, "#7b6cc8", 1, 65);
+      });
+      if (!result.coins && !result.inspiration) this.label("奖励已领取", 360, 807, 22, "#975509", "center", 800);
+      this.drawPressable("modalPrimary", layout.continueButton, () => {
+        this.drawCollectionImageContained(art.continueButton, layout.continueButton);
+        this.label(this.tr("settlement.continue"), 360, 1025, 60, "#ffffff", "center", 950, "#155705", 4, 270);
+      });
+      this.drawPressable("modalSecondary", layout.close, () => this.drawCollectionImageContained(art.close, layout.close));
+    }));
+  }
+
+  private drawMainlineRankChange(): void {
+    const change = this.mainlineRankChange;
+    if (!change || !this.mainlineRankChangeEligible()) return;
+    const ctx = this.ctx;
+    const layout = WIN_SETTLEMENT_LAYOUT.rank;
+    const supplied = this.mainlineRankArt;
+    const { banner } = layout;
+    const reduced = this.save.reducedMotion;
+    const enter = easeOutCubic(Math.max(0, Math.min(1, (change.age - 0.12) / 0.32)));
+    const exit = Math.max(0, Math.min(1, (change.age - 2) / 0.3));
+    const offsetX = reduced ? 0 : -(banner.x + banner.width + 16) * (1 - enter + exit ** 3);
+    const progress = reduced ? 1 : easeOutCubic(Math.max(0, Math.min(1, (change.age - 0.48) / 0.8)));
+    const rank = change.beforeRank - (change.beforeRank - change.afterRank) * progress;
+    const displayedRank = Math.ceil(rank);
+    const roll = displayedRank - rank;
+    const english = this.save.language === "en";
+    ctx.save();
+    ctx.translate(banner.x + offsetX, banner.y);
+    ctx.scale(banner.width / layout.source.width, banner.height / layout.source.height);
+    ctx.globalAlpha *= reduced ? Math.min(1, change.age / 0.12) * (1 - exit) : 1;
+    if (supplied) ctx.drawImage(supplied.panel, 0, 0, layout.source.width, layout.source.height);
+    else {
+      const gradient = ctx.createLinearGradient(0, 0, 0, layout.source.height);
+      gradient.addColorStop(0, "#6c40d6");
+      gradient.addColorStop(1, "#35217e");
+      ctx.fillStyle = gradient;
+      ctx.strokeStyle = "#ffd86b";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      traceRoundedRect(ctx, 0, 0, layout.source.width, layout.source.height, 20);
+      ctx.fill();
+      ctx.stroke();
+    }
+    this.drawRankingAvatar(this.homeProfileArt, this.save.playerProfile?.avatar ?? 0,
+      this.save.playerProfile?.frame ?? 0, layout.avatar);
+    const titleImage = supplied && (this.save.language === "zh-CN" ? supplied.titleZh
+      : english ? supplied.titleEn : undefined);
+    if (titleImage) {
+      const title = english ? layout.titleEn : layout.titleZh;
+      ctx.drawImage(titleImage, title.x, title.y, title.width, title.height);
+    } else this.label(english ? "Rank Up" : "排名提升", layout.source.width / 2, 36,
+      45, "#ffe591", "center", 950, "#422578", 2, 320);
+    this.label(`${change.beforeRank}`, layout.ranks.beforeX, layout.ranks.y,
+      layout.ranks.size, "#ffffff", "center", 900, "#281947", 3);
+    if (supplied) {
+      const arrow = layout.arrow;
+      ctx.drawImage(supplied.rankArrow, arrow.x, arrow.y, arrow.width, arrow.height);
+    } else this.label("→", layout.arrow.x + layout.arrow.width / 2, layout.ranks.y, 60, "#ffe591");
+    // Roll the new position upward through a clipped slot; the old position
+    // remains visible beside it, including after large multi-place climbs.
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(layout.ranks.afterX - 70, layout.ranks.y - 35, 140, 70);
+    ctx.clip();
+    this.label(`${displayedRank}`, layout.ranks.afterX, layout.ranks.y - roll * 70,
+      layout.ranks.size, "#ffff6b", "center", 950, "#281947", 3);
+    if (roll > 0) this.label(`${displayedRank - 1}`, layout.ranks.afterX, layout.ranks.y + (1 - roll) * 70,
+      layout.ranks.size, "#ffff6b", "center", 950, "#281947", 3);
+    ctx.restore();
+    const gained = change.beforeRank - change.afterRank;
+    if (supplied) {
+      const arrow = layout.gainArrow;
+      ctx.drawImage(supplied.gainArrow, arrow.x, arrow.y, arrow.width, arrow.height);
+    }
+    this.label(english ? `${gained} places` : `上升 ${gained} 名`, layout.delta.x, layout.delta.y,
+      layout.delta.size, "#ffffff", "center", 900, undefined, 0, layout.delta.maxWidth);
+    ctx.restore();
+  }
+
   private drawWinLevelBadge(): void {
+    if (this.dailyChallengeWin) return;
     const ctx = this.ctx;
     const badge = WIN_SETTLEMENT_LAYOUT.levelBadge;
+    const supplied = this.winArt?.suppliedSettlement;
+    if (supplied) {
+      ctx.drawImage(supplied.levelBadge, badge.x, badge.y, badge.width, badge.height);
+      this.label(this.tr("common.levelNumber", { level: this.model.level.id }),
+        WIN_SETTLEMENT_LAYOUT.levelText.x, WIN_SETTLEMENT_LAYOUT.levelText.y,
+        WIN_SETTLEMENT_LAYOUT.levelText.size, "#8058ff", "center", 850,
+        undefined, 0, WIN_SETTLEMENT_LAYOUT.levelText.maxWidth);
+      return;
+    }
     ctx.save();
     ctx.shadowColor = "rgba(45, 24, 135, .55)";
     ctx.shadowBlur = 10;
@@ -18059,13 +24157,17 @@ export class ColorEscapeGame {
   }
 
   private drawWinStars(conditions: LevelStarEvaluation): void {
+    if (this.dailyChallengeWin) return;
     const ui = this.art.homeUi;
-    const active = ui ? [ui.starLeft, ui.starCenter, ui.starRight] : [];
-    const inactive = ui ? [ui.emptyStarLeft, ui.emptyStarCenter, ui.emptyStarRight] : [];
+    const supplied = this.winArt?.suppliedSettlement;
+    const active = supplied ? [supplied.starSide, supplied.starCenter, supplied.starSide]
+      : ui ? [ui.starLeft, ui.starCenter, ui.starRight] : [];
+    const inactive = supplied ? [supplied.starEmpty, supplied.starEmpty, supplied.starEmpty]
+      : ui ? [ui.emptyStarLeft, ui.emptyStarCenter, ui.emptyStarRight] : [];
     const achieved = [true, conditions.moveAchieved, conditions.timeAchieved];
     WIN_SETTLEMENT_LAYOUT.stars.forEach((placement, index) => {
       const image = achieved[index] ? active[index] : inactive[index];
-      if (image) this.ctx.drawImage(image, placement.x, placement.y);
+      if (image) this.ctx.drawImage(image, placement.x, placement.y, placement.width, placement.height);
       else this.drawFallbackWinStar(placement.x + placement.width / 2, placement.y + placement.height / 2, placement.width * 0.42, achieved[index]);
     });
   }
@@ -18092,6 +24194,23 @@ export class ColorEscapeGame {
 
   private drawWinCriteria(conditions: LevelStarEvaluation): void {
     const ctx = this.ctx;
+    const supplied = this.winArt?.suppliedSettlement;
+    if (supplied && !this.dailyChallengeWin) {
+      const labels = [
+        this.tr("settlement.criteria.clear"),
+        this.tr("settlement.criteria.moves", { target: conditions.moveTarget }),
+        this.tr("settlement.criteria.time", { target: conditions.timeTargetSeconds }),
+      ];
+      const achieved = [true, conditions.moveAchieved, conditions.timeAchieved];
+      WIN_SETTLEMENT_LAYOUT.criteriaRows.forEach((row, index) => {
+        ctx.drawImage(supplied.criterionRow, row.x, row.y, row.width, row.height);
+        const icon = achieved[index] ? supplied.criterionPass : supplied.criterionIdle;
+        ctx.drawImage(icon, row.x + 9, row.y + 7, 47, 46);
+        this.label(labels[index], row.x + 70, row.y + row.height / 2 + 1,
+          30, "#5433d9", "left", 850, undefined, 0, row.width - 86);
+      });
+      return;
+    }
     const panel = WIN_SETTLEMENT_LAYOUT.criteriaPanel;
     ctx.save();
     ctx.shadowColor = "rgba(72, 39, 138, .18)";
@@ -18105,6 +24224,34 @@ export class ColorEscapeGame {
     ctx.lineWidth = 3;
     ctx.stroke();
     ctx.restore();
+
+    if (this.dailyChallengeWin) {
+      const art = this.winArt?.dailyRewards;
+      if (!art) return;
+      // Keep the advertised amounts identical to difficulty selection. The
+      // credited amounts remain separate so repeat clears never pay again.
+      const reward = DAILY_CHALLENGE_REWARDS[this.dailyChallengeWin.difficulty];
+      const rewards = [
+        { amount: reward.inspiration, icon: art.inspiration },
+        { amount: reward.coins, icon: art.coins },
+      ];
+      rewards.forEach((reward, index) => {
+        const card = WIN_SETTLEMENT_LAYOUT.dailyRewardCards[index];
+        const scale = card.width / 84;
+        this.drawCollectionImageContained(art.card, card);
+        this.drawCollectionImageContained(reward.icon, {
+          x: card.x + 13 * scale, y: card.y + 4 * scale,
+          width: 58 * scale, height: 58 * scale,
+        });
+        this.label(`${reward.amount}`, card.x + 61 * scale, card.y + 68 * scale,
+          23 * scale, "#ffffff", "center", 1000, "#4e5373", 3 * scale);
+      });
+      if (this.dailyChallengeWin.coins === 0 && this.dailyChallengeWin.inspiration === 0) {
+        this.label("奖励已领取", panel.x + panel.width / 2, panel.y + panel.height - 29,
+          22, "#785b35", "center", 850);
+      }
+      return;
+    }
 
     const labels: Record<WinCriterionKind, string> = {
       clear: this.tr("settlement.criteria.clear"),
@@ -18183,6 +24330,7 @@ export class ColorEscapeGame {
       readonly fill: string;
       readonly stroke: string;
       readonly lineWidth: number;
+      readonly maxWidth?: number;
     },
   ): void {
     const ctx = this.ctx;
@@ -18193,9 +24341,11 @@ export class ColorEscapeGame {
     ctx.lineJoin = "round";
     ctx.strokeStyle = style.stroke;
     ctx.lineWidth = style.lineWidth;
-    ctx.strokeText(text, style.x, style.y);
+    if (style.maxWidth) ctx.strokeText(text, style.x, style.y, style.maxWidth);
+    else ctx.strokeText(text, style.x, style.y);
     ctx.fillStyle = style.fill;
-    ctx.fillText(text, style.x, style.y);
+    if (style.maxWidth) ctx.fillText(text, style.x, style.y, style.maxWidth);
+    else ctx.fillText(text, style.x, style.y);
     ctx.restore();
   }
 
@@ -18214,96 +24364,223 @@ export class ColorEscapeGame {
     const title = abandoning
       ? persistenceUnknown ? this.tr("settlement.failure.confirmingReturn") : this.tr("settlement.failure.returnUnsaved")
       : persistenceUnknown ? this.tr("settlement.failure.confirmingProgress") : this.tr("settlement.failure.progressUnsaved");
-    this.drawModal(68, 232, 360, 680, title);
-    this.label(
-      persistenceUnknown
-        ? abandoning
-          ? this.tr("settlement.failure.refundUnknown")
-          : this.tr("settlement.failure.saveUnknown")
-        : this.tr("settlement.storageUnavailable"),
-      248, 405, 31, "#ffb0bb", "center", 1000, "#7e1832", 5,
-    );
-    this.label(this.settlementFailureDetail(), 248, 485, 20, "#fff0ae", "center", 850, "#5b247a", 3);
-    const instruction = abandoning
-      ? this.tr("settlement.failure.retryReturnBusy")
-      : persistenceUnknown
-        ? this.tr("settlement.failure.retryConfirmBusy")
-        : this.tr("settlement.failure.retryOrAbandon");
-    this.label(instruction, 248, 550, 18, "#e4dcff", "center", 750);
-    this.drawButton(
-      "modalPrimary",
-      BUTTONS.modalPrimary,
-      abandoning ? this.tr("settlement.retryReturn") : this.tr("settlement.retrySave"),
-      "#43dc38",
-      "#0a8122",
-      28,
-    );
-    if (!abandoning && !persistenceUnknown) {
-      this.drawButton("modalSecondary", BUTTONS.modalSecondary, this.tr("settlement.abandonAndReturn"), "#7562c8", "#352878", 22);
-    }
-  }
-
-  private drawLifeRefill(): void {
-    const chrome = this.art.pauseSettings;
-    if (!chrome) return;
-    const layout = LIFE_REFILL_LAYOUT;
-    const nowMs = Date.now();
-    const quote = this.lifeRefillQuote(nowMs);
-    const state = quote.state;
-    const full = quote.missingLives === 0;
-    const recovery = getNextLifeRecoveryRemainingMs(state, nowMs);
-    const ctx = this.ctx;
-    this.drawDim(layout.overlay.alpha, layout.overlay.color);
-    this.withHomeArtboard(() => {
-      ctx.drawImage(chrome.panel, layout.panel.x, layout.panel.y);
-      this.label(this.tr("gameplay.life.refill"), layout.title.x, layout.title.y, layout.title.size,
-        "#ffffff", "center", 950, "#381ea2", 4, layout.title.maxWidth);
-      this.label(`${state.lives} / ${MAX_LIVES}`, layout.lives.x, layout.lives.y, layout.lives.size,
-        "#a74770", "center", 950, undefined, 0, layout.lives.maxWidth);
-      if (!full && !this.pendingLifeRefill) {
-        this.label(formatLifeCountdown(recovery), layout.recovery.x, layout.recovery.y, layout.recovery.size,
-          "#8c523d", "center", 850, undefined, 0, layout.recovery.maxWidth);
-      }
-      if (this.lifeRefillArt) {
-        const pile = layout.coinPile;
-        ctx.drawImage(this.lifeRefillArt.coinPile, pile.x, pile.y, pile.width, pile.height);
-        ctx.drawImage(this.lifeRefillArt.rewardPill, layout.costPill.x, layout.costPill.y);
-      } else {
-        const pile = layout.coinPile;
-        this.label(this.tr(this.lifeRefillArtError ? "page.loadFailed" : "page.loading"),
-          pile.x + pile.width / 2, pile.y + pile.height / 2, 24, "#8c523d", "center", 800, undefined, 0, pile.width);
-      }
-      this.label(quote.coinCost > 0 ? `-${quote.coinCost}` : "0", layout.cost.x, layout.cost.y, layout.cost.size,
-        "#ffffff", "center", 950, "#415ca4", 4, layout.cost.maxWidth);
-      if (this.lifeRefillFeedback) {
-        this.label(this.lifeRefillFeedback, layout.feedback.x, layout.feedback.y, layout.feedback.size,
-          "#8c523d", "center", 850, undefined, 0, layout.feedback.maxWidth);
-      }
-      if (full) {
-        this.label(this.tr("common.full"), layout.buyButton.x + layout.buyButton.width / 2,
-          layout.action.y, layout.action.size, "#8c523d", "center", 900, undefined, 0, layout.buyButton.width - 28);
-      } else {
-        this.drawPressable("lifeRefillBuy", layout.buyButton, () => {
-          ctx.drawImage(chrome.homeButton, layout.buyButton.x, layout.buyButton.y);
-          this.label(this.tr("gameplay.life.refill"), layout.buyButton.x + layout.buyButton.width / 2,
-            layout.action.y, layout.action.size, "#ffffff", "center", 900, "#176e21", 3, layout.buyButton.width - 28);
-        });
-      }
-      if (!this.pendingLifeRefill) {
-        this.drawPressable("lifeRefillDismiss", layout.close, () => {
-          ctx.drawImage(chrome.close, layout.close.x, layout.close.y);
-        });
+    this.withPopupEntrance("settlementFailed", { x: 68, y: 232, width: 360, height: 680 }, () => {
+      this.drawModal(68, 232, 360, 680, title);
+      this.label(
+        persistenceUnknown
+          ? abandoning
+            ? this.tr("settlement.failure.refundUnknown")
+            : this.tr("settlement.failure.saveUnknown")
+          : this.tr("settlement.storageUnavailable"),
+        248, 405, 31, "#ffb0bb", "center", 1000, "#7e1832", 5,
+      );
+      this.label(this.settlementFailureDetail(), 248, 485, 20, "#fff0ae", "center", 850, "#5b247a", 3);
+      const instruction = abandoning
+        ? this.tr("settlement.failure.retryReturnBusy")
+        : persistenceUnknown
+          ? this.tr("settlement.failure.retryConfirmBusy")
+          : this.tr("settlement.failure.retryOrAbandon");
+      this.label(instruction, 248, 550, 18, "#e4dcff", "center", 750);
+      this.drawButton(
+        "modalPrimary",
+        BUTTONS.modalPrimary,
+        abandoning ? this.tr("settlement.retryReturn") : this.tr("settlement.retrySave"),
+        "#43dc38",
+        "#0a8122",
+        28,
+      );
+      if (!abandoning && !persistenceUnknown) {
+        this.drawButton("modalSecondary", BUTTONS.modalSecondary, this.tr("settlement.abandonAndReturn"), "#7562c8", "#352878", 22);
       }
     });
   }
 
+  private drawBoosterPurchase(): void {
+    const modal = this.boosterPurchase;
+    if (!modal) return;
+    const ctx = this.ctx;
+    const layout = BOOSTER_PURCHASE_LAYOUT;
+    const panel = layout.panel;
+    const art = this.boosterPurchaseArt;
+    const price = this.pendingBoosterPurchase?.price ?? getBoosterBundlePrice(modal.kind);
+    const quantity = this.pendingBoosterPurchase?.quantity ?? BOOSTER_PURCHASE_QUANTITY;
+    this.drawDim(0.83, "#05020d");
+    const homeUi = this.art.homeUi;
+    if (homeUi) {
+      this.drawGameplayImage(homeUi.resourcePanel, GAMEPLAY_ART_LAYOUT.coin.panel);
+      this.drawGameplayImage(homeUi.coinIcon, GAMEPLAY_ART_LAYOUT.coin.icon);
+      this.drawGameplayImage(homeUi.addButton, GAMEPLAY_ART_LAYOUT.coin.add);
+      this.withGameplayArtboard(() => {
+        const text = GAMEPLAY_ART_LAYOUT.coin.label;
+        this.label(`${this.save.coins}`, text.x, text.y, GAMEPLAY_ART_LAYOUT.typography.coin,
+          "#723515", "center", 950, undefined, 0, text.maxWidth);
+      });
+    }
+    this.withPopupEntrance("boosterPurchase", panel, () => {
+      if (art) this.drawCollectionImageContained(art.panel, panel);
+      else {
+        ctx.save();
+        ctx.beginPath();
+        traceRoundedRect(ctx, panel.x, panel.y, panel.width, panel.height, 28);
+        ctx.fillStyle = "#f2e9e7"; ctx.fill();
+        ctx.strokeStyle = "#8152f7"; ctx.lineWidth = 9; ctx.stroke();
+        ctx.restore();
+      }
+      this.drawPressable("boosterPurchase.close", layout.close, () => {
+        if (art) this.drawCollectionImageContained(art.close, layout.close);
+        else this.drawRoundIcon("boosterPurchase.close", layout.close, "×", "#e6515f");
+      });
+      const title = layout.titleText;
+      this.label(this.tr(`boosterPurchase.title.${modal.kind}`), title.x, title.y, title.size,
+        "#ffffff", "center", 1000, "#6134cf", 4, title.maxWidth);
+      const ui = this.art.gameplayUi;
+      const icon = art?.[modal.kind] ?? (modal.kind === "time" ? ui?.boosterTime : modal.kind === "rocket" ? ui?.boosterRocket : ui?.boosterPulse);
+      if (icon) this.drawCollectionImageContained(icon, layout.icon);
+      const count = layout.quantityText;
+      this.label(`×${quantity}`, count.x, count.y, count.size, "#ffffff", "center", 1000, "#6841d4", 3, count.maxWidth);
+      const description = layout.descriptionText;
+      this.wrapText(this.tr(`boosterPurchase.description.${modal.kind}`), description.x, description.y,
+        description.maxWidth, description.lineHeight, description.size, "#619ff1", "center", undefined, 0,
+        layout.description.y + layout.description.height);
+      const availableBooster = modal.kind === "rocket" ? this.availableRocketStock()
+        : modal.kind === "pulse" ? this.availablePulseStock() : this.save.boosters[modal.kind];
+      if (availableBooster <= 0 || this.boosterRewardAdTransactionActive()) this.drawPressable("boosterPurchase.ad", layout.ad, () => {
+        const adBusy = Boolean(this.boosterRewardAdRequestId);
+        const adRetry = Boolean(this.pendingBoosterRewardAd && !this.boosterRewardAdRequestId);
+        if (art) {
+          this.drawCollectionImageContained(art.adButton, layout.ad);
+          this.drawCollectionImageContained(art.videoIcon, layout.adIcon);
+        } else {
+          ctx.beginPath();
+          traceRoundedRect(ctx, layout.ad.x, layout.ad.y, layout.ad.width, layout.ad.height, 25);
+          ctx.fillStyle = "#ffbd00"; ctx.fill();
+        }
+        this.label(this.tr(adBusy ? "page.loading" : adRetry ? "common.retry" : "gameplay.life.getLife"),
+          layout.adLabel.x, layout.adLabel.y, layout.adLabel.size, "#ffffff", "center", 1000, "#aa5d03", 2, layout.adLabel.maxWidth);
+        this.label("+1", layout.adReward.x, layout.adReward.y, layout.adReward.size,
+          "#fff5dd", "center", 1000, "#aa5d03", 2, layout.adReward.maxWidth);
+      });
+      this.drawPressable("boosterPurchase.buy", layout.buy, () => {
+        if (art) this.drawCollectionImageContained(art.buyButton, layout.buy);
+        else {
+          ctx.beginPath();
+          traceRoundedRect(ctx, layout.buy.x, layout.buy.y, layout.buy.width, layout.buy.height, 25);
+          ctx.fillStyle = "#23d900"; ctx.fill();
+        }
+        if (this.pendingBoosterPurchase) {
+          this.label(this.tr("common.retry"), layout.buy.x + layout.buy.width / 2, layout.buyText.y, layout.buyText.size,
+            "#ffffff", "center", 1000, "#18491b", 2, layout.buy.width - 20);
+        } else {
+          const text = layout.buyText;
+          this.label(this.tr("boosterPurchase.buy"), text.x, text.y, text.size,
+            "#ffffff", "center", 1000, "#18491b", 2, text.maxWidth);
+          const coin = art?.coinIcon ?? homeUi?.coinIcon;
+          if (coin) this.drawCollectionImageContained(coin, layout.coinIcon);
+          const cost = layout.priceText;
+          this.label(`${price}`, cost.x, cost.y, cost.size, "#ffffff", "center", 1000, "#18491b", 2, cost.maxWidth);
+        }
+      });
+      const feedback = layout.feedbackText;
+      if (this.boosterPurchaseArtError) {
+        this.label(this.tr("page.retryLoad"), feedback.x, feedback.y, feedback.size,
+          "#80342b", "center", 850, undefined, 0, feedback.maxWidth);
+      }
+    });
+  }
+
+  private drawLifeRefill(): void {
+    const layout = LIFE_REFILL_LAYOUT;
+    const art = this.lifeRefillArt;
+    const canDismiss = this.lifeRefillTargets().some(([key]) => key === "lifeRefillDismiss");
+    const nowMs = Date.now();
+    const quote = this.lifeRefillQuote(nowMs);
+    const state = quote.state;
+    const full = quote.missingLives === 0;
+    const adButton = full ? layout.adButtonCentered : layout.adButton;
+    const adOffsetX = adButton.x - layout.adButton.x;
+    const recovery = getNextLifeRecoveryRemainingMs(state, nowMs);
+    const ctx = this.ctx;
+    this.drawDim(layout.overlay.alpha, layout.overlay.color);
+    if (this.screen === "home") {
+      this.withHomeArtboard(() => {
+        ctx.save();
+        ctx.translate(HOME_RESOURCE_SHIFT_X, this.safeOffsets().top / HOME_ARTBOARD_SCALE);
+        this.drawHomeCoinResource();
+        ctx.restore();
+      });
+    }
+    this.withPopupEntrance("lifeRefill", layout.panel, () => {
+      if (art) this.drawCollectionImageContained(art.panel, layout.panel);
+      else {
+        ctx.save();
+        ctx.beginPath();
+        traceRoundedRect(ctx, layout.panel.x, layout.panel.y, layout.panel.width, layout.panel.height, 28);
+        ctx.fillStyle = "#f2e9e7"; ctx.fill();
+        ctx.strokeStyle = "#8152f7"; ctx.lineWidth = 9; ctx.stroke();
+        ctx.restore();
+      }
+      if (canDismiss) this.drawPressable("lifeRefillDismiss", layout.close, () => {
+        if (art) this.drawCollectionImageContained(art.close, layout.close);
+        else this.drawRoundIcon("lifeRefillDismiss", layout.close, "×", "#e6515f");
+      });
+      this.label(this.tr("gameplay.life.moreLives"), layout.title.x, layout.title.y, layout.title.size,
+        "#ffffff", "center", 1000, "#6134cf", 4, layout.title.maxWidth);
+      if (!art) {
+        this.label(this.tr(this.lifeRefillArtError ? "page.retryLoad" : "page.loading"),
+          layout.lives.x, layout.lives.y, layout.recoveryTitle.size, "#6134cf", "center", 900,
+          undefined, 0, layout.recoveryTitle.maxWidth);
+        return;
+      }
+      this.drawCollectionImageContained(art.heartIcon, layout.icon);
+      this.label(`${state.lives}`, layout.lives.x, layout.lives.y, layout.lives.size,
+        "#ffffff", "center", 1000, "#70070c", 3, layout.lives.maxWidth);
+      if (full) {
+        this.label(this.tr("gameplay.life.refillFull"), layout.recoveryTitle.x,
+          (layout.recoveryTitle.y + layout.recovery.y) / 2,
+          layout.recoveryTitle.size, "#619ff1", "center", 950, undefined, 0, layout.recoveryTitle.maxWidth);
+      } else {
+        this.label(this.tr("gameplay.life.nextLife"), layout.recoveryTitle.x, layout.recoveryTitle.y,
+          layout.recoveryTitle.size, "#619ff1", "center", 950, undefined, 0, layout.recoveryTitle.maxWidth);
+        this.label(formatLifeCountdown(recovery), layout.recovery.x, layout.recovery.y, layout.recovery.size,
+          "#619ff1", "center", 950, undefined, 0, layout.recovery.maxWidth);
+      }
+      this.drawPressable("lifeRefillAd", adButton, () => {
+        this.drawCollectionImageContained(art.adButton, adButton);
+        this.drawCollectionImageContained(art.videoIcon, { ...layout.adIcon, x: layout.adIcon.x + adOffsetX });
+        const adBusy = Boolean(this.lifeRefillAdRequestId);
+        const adRetry = Boolean(this.pendingLifeRefillAd && !this.lifeRefillAdRequestId);
+        this.label(this.tr(adBusy ? "page.loading" : adRetry ? "common.retry" : "gameplay.life.getLife"),
+          layout.adLabel.x + adOffsetX, layout.adLabel.y, layout.adLabel.size,
+          "#ffffff", "center", 1000, "#aa5d03", 2, layout.adLabel.maxWidth);
+        this.label("+1", layout.adReward.x + adOffsetX, layout.adReward.y, layout.adReward.size,
+          "#fff5dd", "center", 1000, "#aa5d03", 2, layout.adReward.maxWidth);
+      });
+      if (!full) this.drawPressable("lifeRefillBuy", layout.buyButton, () => {
+        this.drawCollectionImageContained(art.buyButton, layout.buyButton);
+        if (this.pendingLifeRefill) {
+          this.label(this.tr("common.retry"), layout.buyButton.x + layout.buyButton.width / 2,
+            layout.action.y, layout.action.size, "#ffffff", "center", 1000, "#18491b", 2, layout.buyButton.width - 20);
+          return;
+        }
+        this.label(this.tr("boosterPurchase.buy"), layout.action.x,
+          layout.action.y, layout.action.size, "#ffffff", "center", 1000, "#18491b", 2, layout.action.maxWidth);
+        this.drawCollectionImageContained(art.coinIcon, layout.coinIcon);
+        this.label(`${quote.coinCost}`, layout.cost.x, layout.cost.y, layout.cost.size,
+          "#ffffff", "center", 1000, "#18491b", 2, layout.cost.maxWidth);
+      });
+    });
+  }
+
+
   private drawStorageUnavailable(): void {
     this.drawDim();
-    this.drawModal(68, 232, 360, 680, this.tr("settlement.progressProtection"));
-    this.label(this.tr("settlement.storageUnavailable"), 248, 405, 29, "#ffcf76", "center", 1000, "#7e3d18", 5, 315);
-    this.label(this.tr("settlement.storagePaused"), 248, 486, 19, "#fff0ae", "center", 850, "#5b247a", 3, 315);
-    this.label(this.tr("settlement.storageRetryHint"), 248, 550, 18, "#e4dcff", "center", 750, undefined, 0, 310);
-    this.drawButton("modalPrimary", BUTTONS.modalPrimary, this.tr("settlement.retryRead"), "#43dc38", "#0a8122", 28);
+    this.withPopupEntrance("storageUnavailable", { x: 68, y: 232, width: 360, height: 680 }, () => {
+      this.drawModal(68, 232, 360, 680, this.tr("settlement.progressProtection"));
+      this.label(this.tr("settlement.storageUnavailable"), 248, 405, 29, "#ffcf76", "center", 1000, "#7e3d18", 5, 315);
+      this.label(this.tr("settlement.storagePaused"), 248, 486, 19, "#fff0ae", "center", 850, "#5b247a", 3, 315);
+      this.label(this.tr("settlement.storageRetryHint"), 248, 550, 18, "#e4dcff", "center", 750, undefined, 0, 310);
+      this.drawButton("modalPrimary", BUTTONS.modalPrimary, this.tr("settlement.retryRead"), "#43dc38", "#0a8122", 28);
+    });
   }
 
   private drawFailed(): void {
@@ -18318,7 +24595,7 @@ export class ColorEscapeGame {
     ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
     ctx.restore();
     const remaining = this.model.snapshot().blocks.length;
-    this.withHomeArtboard(() => {
+    this.withPopupEntrance("failed", homeArtRect(layout.panel), () => this.withHomeArtboard(() => {
       ctx.drawImage(panelArt.panel, layout.panel.x, layout.panel.y);
       this.drawTimeoutTitle();
       ctx.drawImage(statusArt.clock, layout.timeout.clock.x, layout.timeout.clock.y);
@@ -18333,7 +24610,7 @@ export class ColorEscapeGame {
         ctx.drawImage(panelArt.homeButton, layout.timeout.homeButton.x, layout.timeout.homeButton.y);
         this.label(this.tr("timeout.home"), layout.timeout.homeButton.x + layout.timeout.homeButton.width / 2, layout.timeout.actionText.y, layout.timeout.actionText.size, "#ffffff", "center", 900, "#176e21", 3, layout.timeout.homeButton.width - 28);
       });
-    });
+    }));
   }
 
   private drawTimeoutTitle(): void {
@@ -18361,85 +24638,88 @@ export class ColorEscapeGame {
   }
 
   private drawTemporaryLevelSelector(): void {
+    if (IS_WECHAT_BUILD) return;
     const selector = this.temporaryLevelSelector;
     if (!selector) return;
     const layout = this.temporaryLevelSelectorLayout();
-    const selected = Math.max(1, Math.min(LEVELS.length, selector.selectedLevel));
+    const selected = selector.selectedLevel;
     this.drawDim(0.78, "#08051f");
-    this.drawModal(
-      layout.panel.x,
-      layout.panel.y,
-      layout.panel.width,
-      layout.panel.height,
-      this.temporaryLevelText("临时测试关卡", "TEST LEVEL"),
-    );
-    this.drawRoundIcon("temporaryLevel.close", layout.close, "×", "#e6515f");
+    this.withPopupEntrance("temporaryLevelSelector", layout.panel, () => {
+      this.drawModal(
+        layout.panel.x,
+        layout.panel.y,
+        layout.panel.width,
+        layout.panel.height,
+        this.temporaryLevelText("临时测试关卡", "TEST LEVEL"),
+      );
+      this.drawRoundIcon("temporaryLevel.close", layout.close, "×", "#e6515f");
 
-    this.label(
-      this.temporaryLevelText(`已选择：第 ${selected} 关`, `SELECTED: LEVEL ${selected}`),
-      LOGICAL_WIDTH / 2,
-      153,
-      25,
-      "#fff4ae",
-      "center",
-      950,
-      "#3b126f",
-      4,
-      320,
-    );
+      this.label(
+        this.temporaryLevelText(`已选择：第 ${selected} 关`, `SELECTED: LEVEL ${selected}`),
+        LOGICAL_WIDTH / 2,
+        153,
+        25,
+        "#fff4ae",
+        "center",
+        950,
+        "#3b126f",
+        4,
+        320,
+      );
 
-    for (const cell of layout.cells) {
-      this.drawTemporaryLevelButton(
-        `temporaryLevel.level.${cell.levelId}`,
-        cell.rect,
-        `${cell.levelId}`,
-        cell.selected ? "primary" : "secondary",
+      for (const cell of layout.cells) {
+        this.drawTemporaryLevelButton(
+          `temporaryLevel.level.${cell.levelId}`,
+          cell.rect,
+          `${cell.levelId}`,
+          cell.selected ? "primary" : "secondary",
+          24,
+        );
+      }
+
+      this.drawRoundIcon("temporaryLevel.previous", layout.previousPage, "‹", "#7562c8", layout.canPrevious);
+      this.drawRoundIcon("temporaryLevel.next", layout.nextPage, "›", "#7562c8", layout.canNext);
+      this.label(
+        `${layout.page + 1} / ${layout.pageCount}`,
+        LOGICAL_WIDTH / 2,
+        layout.previousPage.y + layout.previousPage.height / 2 + 9,
         24,
+        "#ffffff",
+        "center",
+        900,
+        "#3b126f",
+        3,
       );
-    }
 
-    this.drawRoundIcon("temporaryLevel.previous", layout.previousPage, "‹", "#7562c8", layout.canPrevious);
-    this.drawRoundIcon("temporaryLevel.next", layout.nextPage, "›", "#7562c8", layout.canNext);
-    this.label(
-      `${layout.page + 1} / ${layout.pageCount}`,
-      LOGICAL_WIDTH / 2,
-      layout.previousPage.y + layout.previousPage.height / 2 + 9,
-      24,
-      "#ffffff",
-      "center",
-      900,
-      "#3b126f",
-      3,
-    );
-
-    this.drawTemporaryLevelButton(
-      "temporaryLevel.start",
-      layout.start,
-      this.temporaryLevelText("开始测试", "START TEST"),
-      "primary",
-      27,
-    );
-    if (this.temporaryLevelTestSession) {
       this.drawTemporaryLevelButton(
-        "temporaryLevel.exit",
-        layout.exit,
-        this.temporaryLevelText("退出测试并恢复进度", "EXIT TEST"),
-        "secondary",
-        20,
+        "temporaryLevel.start",
+        layout.start,
+        this.temporaryLevelText("开始测试", "START TEST"),
+        "primary",
+        27,
       );
-    }
-    this.label(
-      this.temporaryLevelText("测试中的进度、金币、生命和道具不会写入存档", "TEST CHANGES ARE NOT SAVED"),
-      LOGICAL_WIDTH / 2,
-      1002,
-      15,
-      "#dcd6ff",
-      "center",
-      750,
-      undefined,
-      0,
-      layout.panel.width - 54,
-    );
+      if (this.temporaryLevelTestSession) {
+        this.drawTemporaryLevelButton(
+          "temporaryLevel.exit",
+          layout.exit,
+          this.temporaryLevelText("退出测试并恢复进度", "EXIT TEST"),
+          "secondary",
+          20,
+        );
+      }
+      this.label(
+        this.temporaryLevelText("测试中的进度、金币、生命和道具不会写入存档", "TEST CHANGES ARE NOT SAVED"),
+        LOGICAL_WIDTH / 2,
+        1002,
+        15,
+        "#dcd6ff",
+        "center",
+        750,
+        undefined,
+        0,
+        layout.panel.width - 54,
+      );
+    });
   }
 
   private drawTemporaryLevelButton(
@@ -18637,7 +24917,7 @@ export class ColorEscapeGame {
     this.drawPressable(key, rect, () => {
       const ctx = this.ctx;
       ctx.save();
-      ctx.globalAlpha = enabled ? 1 : 0.46;
+      ctx.globalAlpha *= enabled ? 1 : 0.46;
       this.drawChromePanel(rect.x, rect.y, rect.width, rect.height, 17);
       ctx.restore();
       const icon = text === "↶"
@@ -18928,4 +25208,3 @@ export class ColorEscapeGame {
   }
 
 }
-

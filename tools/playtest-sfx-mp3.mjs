@@ -7,9 +7,9 @@ import { chromium } from "playwright";
 
 export const SFX_KINDS = [
   "blocked", "exit", "ice", "thaw", "win", "button", "putdown", "fail",
-  "reward", "booster", "unlock", "time", "rocket", "pulse", "mechanic", "shell", "shutter",
+  "reward", "gold", "itemArrival", "booster", "unlock", "time", "rocket", "pulse", "mechanic", "shell", "shutter",
 ];
-export const CONVERTED_KINDS = SFX_KINDS.filter((kind) => !["exit", "thaw", "button", "putdown", "shell", "shutter"].includes(kind));
+export const CONVERTED_KINDS = SFX_KINDS.filter((kind) => !["exit", "thaw", "button", "putdown", "shell", "shutter", "time", "rocket", "pulse", "fail", "win", "gold", "itemArrival"].includes(kind));
 
 // Technical regression checks, not a substitute for listening or WeChat-device QA.
 // Absolute 0.01 amplitude keeps MP3 pre-echo/near-zero noise out of the onset measure.

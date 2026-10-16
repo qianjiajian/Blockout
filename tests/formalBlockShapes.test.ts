@@ -132,5 +132,38 @@ describe("formal whole-block shape matching", () => {
     expect(matchFormalBlockShape([[0, 0], [1, 1]])).toBeUndefined();
     expect(matchFormalBlockShape([[0, 0], [0, 1], [1, 1], [1, 2], [2, 2]])).toBeUndefined();
     expect(matchFormalBlockShape([[0, 0], [0.5, 0]])).toBeUndefined();
+    expect(matchFormalBlockShape([[NaN, 0]])).toBeUndefined();
+    expect(matchFormalBlockShape([[Infinity, 0]])).toBeUndefined();
+  });
+
+  it("returns independently owned matches without exposing an indexed template", () => {
+    const cells: Point[] = [[8, -2], [8, -1], [9, -1]];
+    const first = matchFormalBlockShape(cells)!;
+    const expected = { ...first };
+    first.shapeId = 21;
+    first.quarterTurns = 3;
+    first.minX = 900;
+    first.minY = 900;
+    first.targetWidth = 900;
+    first.targetHeight = 900;
+    first.canonicalWidth = 900;
+    first.canonicalHeight = 900;
+    const second = matchFormalBlockShape(cells)!;
+    expect(second).not.toBe(first);
+    expect(second).toEqual(expected);
+    expect(matchFormalBlockShape([[0, 0], [0, 1], [1, 1]], "native-only")).toEqual({
+      ...expected, minX: 0, minY: 0,
+    });
+  });
+
+  it("never caches caller cell arrays or changes their authored order", () => {
+    const cells: Point[] = [[0, 1], [0, 0]];
+    expect(matchFormalBlockShape(cells)?.shapeId).toBe(2);
+    expect(cells).toEqual([[0, 1], [0, 0]]);
+    cells[0] = [1, 0];
+    expect(matchFormalBlockShape(cells)?.shapeId).toBe(8);
+    expect(cells).toEqual([[1, 0], [0, 0]]);
+    cells[0] = [0, 0];
+    expect(matchFormalBlockShape(cells)).toBeUndefined();
   });
 });

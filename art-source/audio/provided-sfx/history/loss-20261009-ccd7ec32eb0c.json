@@ -1,0 +1,17 @@
+{
+  "file": "fail.mp3",
+  "source": "User-provided loss.mp3",
+  "usage": "One shot when a failed puzzle transitions from gameplay to the failure screen; respects the sound-effects setting",
+  "archivedSource": "art-source/audio/provided-sfx/history/loss-20261009-ccd7ec32eb0c.mp3",
+  "audioReencoded": false,
+  "bytes": 75909,
+  "sha256": "CCD7EC32EB0C63A385DDBB5F5F477ACDC6382B72114BDD2E801E6987C3B02B9A",
+  "codec": "mp3",
+  "bitrateKbps": 192,
+  "sampleRate": 44100,
+  "channels": 2,
+  "frames": 139392,
+  "durationSeconds": 3.1608163265306124,
+  "replacedOn": "2026-10-09",
+  "replacedBySha256": "EDEECFFBCD385E471A5972D49CAC0D7E900368A369754134F442F686D06D93A4"
+}

@@ -1,5 +1,35 @@
 # Home V3 artwork
 
+## Right shortcut column (2026-10-07)
+
+Daily Tasks, Daily Challenge, Achievements and Glory League now share a right column on
+the 720×1584 artboard: x=576, y=226/398/570/742, each 118×118, with proportional
+drawing and matching hit bounds. The user's follow-up moves the complete column
+from the left to the right while retaining a 26px edge inset. This supersedes the
+historical entry positions below. Existing task/achievement artwork is unchanged.
+Each icon has a centered name below it (24px, center 18px below its bottom).
+The league countdown sits on a separate line 43px below the last icon's bottom.
+
+The project did not contain a matching standalone purple rounded-square blank
+base. The existing orange/gold circular league button was a different design.
+Built-in ImageGen extracted a matching blank base using the achievement shortcut
+as reference, and generated two separate transparent foreground emblems:
+
+| Asset | Source/runtime dimensions | Role |
+| --- | ---: | --- |
+| [side-entry-base.png](side-entry-base.png) | 118×118 | Shared purple/gold blank base |
+| [league-entry.png](league-entry.png) | 256×256 | Crown, shield and ribbon foreground |
+| [daily-challenge-entry.png](daily-challenge-entry.png) | 256×256 | Calendar, lightning and coins foreground |
+
+Runtime copies live at `public/assets/art/ui/home-v3/` and are byte-identical to
+the optimized source files. Foregrounds fit into a centered 90×90 rectangle over
+the base; they have no baked-in frame, label or notification dot. Generated
+originals are retained under `generated-originals/`. Import uses only uniform
+downsampling with transparent padding, preserving the generated alpha channel.
+Prompts, tool provenance and extraction instructions are recorded in
+[side-entry-prompts.json](side-entry-prompts.json). Replace each file independently
+without editing the other shortcut or the original task/achievement assets.
+
 This folder preserves the supplied 720×1584 home-screen slices at their authored pixel dimensions.
 `reference-layout.png` is a composition reference only and is not shipped at runtime.
 

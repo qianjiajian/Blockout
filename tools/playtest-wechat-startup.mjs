@@ -19,6 +19,23 @@ if (legacyImage.toString("ascii", 0, 4) !== "RIFF" || legacyImage.toString("asci
 const httpRequests = [];
 const failureCounts = new Map();
 const assert = (condition, message) => { if (!condition) throw new Error(message); };
+// ColorEscapeGame starts requestMusicEntryArt independently of loadArt's shell
+// batch. A successful singleton entry image survives a failed shell/retry;
+// every image owned by that failed batch must still be released.
+const independentMusicEntryPath = "menu-music/music-player-v1/music-entry-icon.png";
+const assertFailedShellReleased = (snapshot, label) => {
+  const shellImages = snapshot.imageRecords.filter((image) => image.source !== independentMusicEntryPath);
+  const retained = snapshot.imageRecords.filter((image) => !image.released);
+  assert(snapshot.pendingImages === 0, `${label}: failed batch still has pending images`);
+  assert(shellImages.length > 0 && shellImages.every((image) => image.released), `${label}: failed shell retained batch images`);
+  assert(retained.length <= 1 && retained.every((image) => image.source === independentMusicEntryPath && image.state === "loaded"),
+    `${label}: unexpected retained images: ${JSON.stringify(retained)}`);
+  assert(snapshot.loadedImages === retained.length, `${label}: retained image accounting is inconsistent`);
+  assert(snapshot.unreleasedFailedImages === 0, `${label}: failed image must be released before retry`);
+  assert(snapshot.settledImagesWithHandlers === 0, `${label}: settled image callbacks were retained`);
+  return {shellImageCount: shellImages.length, releasedShellImageCount: shellImages.filter((image) => image.released).length,
+    retainedIndependentImagePaths: retained.map((image) => image.source)};
+};
 const mime = { ".js": "application/javascript", ".json": "application/json", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".mp3": "audio/mpeg", ".wav": "audio/wav" };
 const html = '<!doctype html><meta charset="utf-8"><link rel="icon" href="data:,"><style>html,body{margin:0;overflow:hidden;background:#211f5e}canvas{display:block;width:100vw;height:100vh;touch-action:none}</style><body><script src="game.js"></script><script>window.__wechatHarness.show()</script></body>';
 const server = createServer(async (request, response) => {
@@ -106,7 +123,7 @@ const installWechatShim = () => {
         pendingImages.add(id);
         imageEvents.push({ id, source: String(source), state: "requested" });
         const root = String(source).split("/")[0];
-        if (["meta-ui", "gameplay-art", "journey-themes", "collection-art"].includes(root) && !loadedPackages.has(root)) {
+        if (["meta-ui", "gameplay-art", "journey-themes", "collection-art", "league-ui", "event-ui"].includes(root) && !loadedPackages.has(root)) {
           throw new Error(`Image accessed before package completed: ${source}`);
         }
         nativeImageSrc.set.call(image, source);
@@ -193,6 +210,8 @@ const installWechatShim = () => {
         releasedImages: images.filter((item) => item.released).length,
         unreleasedFailedImages: images.filter((item) => item.state === "failed" && !item.released).length,
         settledImagesWithHandlers: images.filter((item) => item.state !== "pending" && (item.image.onload || item.image.onerror)).length,
+        imageRecords: images.map(({ id, source, state, released }) => ({ id, source, state, released })),
+        retainedImagePaths: images.filter((item) => !item.released).map((item) => item.source),
         imageEvents, packageEvents, pointerEvents, loadedPackages: [...loadedPackages],
         lastFrameTexts, drawImageCount, frameCount, sampledColors: colors.size,
       };
@@ -228,6 +247,7 @@ try {
     const page = await context.newPage();
     const consoleErrors = [];
     const pageErrors = [];
+    let failedShellCleanup;
     page.on("pageerror", (error) => pageErrors.push(error.message));
     page.on("console", async (message) => {
       if (message.type() !== "error") return;
@@ -247,11 +267,11 @@ try {
             && state.pendingImages === 0 && state.lastFrameTexts.some((text) => text.includes("资源加载失败"));
         });
         const before = await page.evaluate(() => window.__wechatHarness.snapshot());
-        assert(before.loadedImages === 0 && before.unreleasedFailedImages === 0 && before.settledImagesWithHandlers === 0, "Legacy retry leaked failed shell images or callbacks");
+        failedShellCleanup = assertFailedShellReleased(before, "Legacy retry");
         assert(pageErrors.length === 0, `Legacy reproduction had unrelated script errors: ${pageErrors.join("; ")}`);
         assert(httpRequests.filter((entry) => entry.scenario === scenario && entry.path === legacyPath && entry.status === 415).length === 2, "Legacy WebP rejection did not repeat on retry");
         await page.screenshot({ path: path.join(output, "legacy-webp-failed-after-retry.png") });
-        report.scenarios.push({ scenario, status: "PASS", expectedResult: "Resource failure persists after retry when the legacy WebP decoder is unavailable", ...before, consoleErrors, pageErrors });
+        report.scenarios.push({ scenario, status: "PASS", expectedResult: "Resource failure persists after retry when the legacy WebP decoder is unavailable", ...before, failedShellCleanup, consoleErrors, pageErrors });
         console.log("PASS legacy-webp: reproduced persistent startup failure after real Pointer retry");
         continue;
       }
@@ -259,9 +279,7 @@ try {
         await page.waitForFunction(() => window.__wechatHarness.snapshot().lastFrameTexts.some((text) => text.includes("资源加载失败")), undefined, { timeout: 30_000 });
         await page.waitForFunction(() => window.__wechatHarness.snapshot().pendingImages === 0);
         const failed = await page.evaluate(() => window.__wechatHarness.snapshot());
-        assert(failed.loadedImages === 0, "Failed shell must release every image from its failed batch");
-        assert(failed.unreleasedFailedImages === 0, "Failed image must be released before retry");
-        assert(failed.settledImagesWithHandlers === 0, "Failed shell must detach all settled image callbacks");
+        failedShellCleanup = assertFailedShellReleased(failed, "Startup retry");
         await page.screenshot({ path: path.join(output, "retry-before.png") });
         for (let click = 0; click < 3; click += 1) await page.mouse.click(248, 548);
       }
@@ -289,7 +307,7 @@ try {
         assert(consoleErrors.some((entry) => entry.text.includes("[wechat-assets]") && JSON.stringify(entry.args).includes(faultFile)), "Image failure log did not identify the failing path");
       } else assert(consoleErrors.length === 0, `Unexpected console errors: ${JSON.stringify(consoleErrors)}`);
       await page.screenshot({ path: path.join(output, `${scenario}-home.png`) });
-      report.scenarios.push({ scenario, status: "PASS", ...final, consoleErrors, pageErrors });
+      report.scenarios.push({ scenario, status: "PASS", ...final, failedShellCleanup, consoleErrors, pageErrors });
       console.log(`PASS ${scenario}: ${final.loadedImages} retained images, ${final.loadedPackages.join(", ")}, ${final.sampledColors} sampled colors`);
     } catch (error) {
       report.failures.push({ scenario, error: String(error) });

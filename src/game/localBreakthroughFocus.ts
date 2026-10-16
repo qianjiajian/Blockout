@@ -222,7 +222,7 @@ const findLocalBreakthrough = (
       const blockerOccupiesCorridor = cellsAt(blocker).some(([x, y]) => corridor.has(pointKey(x, y)));
       if (!blockerOccupiesCorridor) continue;
       const setup = setupDrags.get(blocker.id)?.find((drag) => {
-        const destination = drag.path.at(-1);
+        const destination = drag.path[drag.path.length - 1];
         return Boolean(destination && avoidsCells(blocker, destination, corridor));
       });
       if (!setup) continue;

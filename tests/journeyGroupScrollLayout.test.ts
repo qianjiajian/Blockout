@@ -12,6 +12,7 @@ import {
 } from "../src/core/journeyProgress";
 import { GAME_ART } from "../src/game/artManifest";
 import { FORMAL_JOURNEY_LAYOUT } from "../src/game/formalPageLayout";
+import { JourneyDeferredArt } from "../src/game/JourneyDeferredArt";
 
 const sourcePath = fileURLToPath(new URL("../src/game/ColorEscapeGame.ts", import.meta.url));
 const source = readFileSync(sourcePath, "utf8");
@@ -117,7 +118,6 @@ describe("Journey continuous long-map scroll plane", () => {
     expect(renderer).toContain("ctx.drawImage(art.rewards.complete, rewardCard.x + 171, rewardCard.y + 85)");
     expect(renderer).toContain("ctx.drawImage(art.rewards.complete, button.x + 47, button.y - 26)");
     expect(renderer).toContain("if (!completed) {");
-    expect(renderer).toContain("const displayedLevel = entry.levelId === anchorRewardLevel ? anchorLevel : entry.levelId");
     expect(renderer).toContain("const active = entry.levelId === anchorRewardLevel");
     expect(renderer).toContain("ctx.drawImage(art.levelCardActiveLeft, card.x - 9, card.y - 7)");
     expect(renderer).toContain("ctx.drawImage(art.rewardCardActiveRight, rewardCard.x - 9, rewardCard.y - 6)");
@@ -129,7 +129,7 @@ describe("Journey continuous long-map scroll plane", () => {
     expect(renderer).not.toMatch(/journey(?:Previous|Prev|Next)/);
   });
 
-  it("reuses all ten chapter resources for twenty chapters", () => {
+  it("reuses all ten chapter resources for twenty chapters", async () => {
     const art = GAME_ART.ui.formalPages.journey;
     expect(art.episodes).toEqual(Array.from(
       { length: 10 },
@@ -171,17 +171,28 @@ describe("Journey continuous long-map scroll plane", () => {
       },
     });
 
-    expect(source).toContain("...paths.episodes");
-    expect(source).toContain("episodes: Array.from({ length: paths.episodes.length }, take)");
-    expect(source).toContain("art.lockedShade");
-    expect(source).toContain("art.lock,");
+    expect(source).toContain("episodePaths: paths.episodes");
+    expect(source).toContain("presentationPaths: paths.presentation");
+    const deferred = new JourneyDeferredArt({
+      episodePaths: art.episodes, presentationPaths: art.presentation,
+      loadImage: async path => ({ src: path } as HTMLImageElement),
+      releaseImage: () => {}, onChange: () => {},
+    });
+    await Promise.all([
+      deferred.requestEpisodes(Array.from({ length: 10 }, (_, index) => index)),
+      deferred.requestPresentation(),
+    ]);
+    expect(Array.from({ length: 10 }, (_, index) => deferred.episode(index)?.src)).toEqual(art.episodes);
+    expect(deferred.presentation?.panel.src).toBe(art.presentation.panel);
+    expect(deferred.presentation?.rewards.coins.src).toBe(art.presentation.rewards.coins);
+    deferred.dispose();
+    expect(source).not.toContain("art.lockedShade");
+    expect(source).toContain("destinationPath: paths.destination");
     expect(source).toContain("art.episodeRangePanel");
     expect(source).toContain("selected ? art.episodeSelectedButton : art.episodeActionButton");
     expect(source).toContain('this.tr("journey.levelRange", { start: episode.startLevel, end: episode.endLevel })');
     expect(source).not.toContain("art.lockedFrame");
     expect(source).not.toContain("paths.lockedFrame");
-    expect(source).toContain("paths.presentation.panel");
-    expect(source).toContain("paths.presentation.rewards.coins");
   });
 
   it("moves the background, both track states, marker, and nodes through one content offset", () => {
@@ -334,7 +345,7 @@ describe("Journey continuous long-map scroll plane", () => {
     const completion = privateMethodSource("private completeJourneyThemeSelection(presentation:");
     const dismissal = privateMethodSource("private dismissJourneyPresentation():");
 
-    const lockedGuard = selection.indexOf("episode.unlockLevel > this.save.highestLevel");
+    const lockedGuard = selection.indexOf("!isJourneyEpisodeUnlocked(episode, this.save.highestLevel, this.save.rewardedLevels)");
     const selectedGuard = selection.indexOf("this.save.selectedJourneyEpisode === episode.index");
     const openOverlay = selection.indexOf("this.journeyPresentation = {");
     expect(lockedGuard).toBeGreaterThanOrEqual(0);
@@ -374,7 +385,8 @@ describe("Journey continuous long-map scroll plane", () => {
     expect(dismissal).toContain('if (presentation.intent === "theme_selection")');
     expect(dismissal).toContain("if (this.pendingJourneyThemeSelection)");
     expect(dismissal).toContain("this.journeyPresentation = undefined");
-    expect(dismissal).toContain("this.requestJourneyHomeThemeArt(this.save.selectedJourneyEpisode)");
+    expect(dismissal).toContain("const episodeIndex = this.save.selectedJourneyEpisode");
+    expect(dismissal).toContain("this.requestJourneyHomeThemeArt(episodeIndex)");
     expect(dismissal).not.toContain("candidate.selectedJourneyEpisode");
     expect(dismissal).not.toContain("persistVerified");
     expect(dismissal).not.toContain('this.screen = "home"');
@@ -383,7 +395,8 @@ describe("Journey continuous long-map scroll plane", () => {
   it("keeps level selection separate from reward inspection and makes read-only rewards inert", () => {
     const resolver = privateMethodSource("private buttonReleaseTargetAt(point:");
     const pointerDown = privateMethodSource("private handleDown(point:");
-    const dispatch = privateMethodSource("private executePointerDown(point:");
+    const dispatch = privateMethodSource("private executePointerAction(point:");
+    expect(privateMethodSource("private executePointerDown(point:")).toContain("this.executePointerAction(point)");
     const openReward = privateMethodSource("private openJourneyReward(reward:");
     const rewardEarned = privateMethodSource("private journeyRewardEarned(reward:");
     const readOnlyText = privateMethodSource("private journeyPresentationRewardReadOnlyText(");
@@ -421,7 +434,7 @@ describe("Journey continuous long-map scroll plane", () => {
     expect(dismissal).toContain('if (presentation.intent === "reward_inspection")');
     expect(dismissal).toContain("this.journeyPresentation = undefined");
 
-    expect(evidence).toContain("if (this.journeyPresentationRewardReadOnlyText() === undefined)");
+    expect(evidence).toContain("if (this.journeyPresentationArtReady() && this.journeyPresentationRewardReadOnlyText() === undefined)");
     expect(evidence).toContain('add("journeyPresentation", BUTTONS.journeyPresentation)');
     expect(overlay).toContain("const readOnlyText = this.journeyPresentationRewardReadOnlyText(presentation)");
     expect(overlay).toContain("if (readOnlyText)");

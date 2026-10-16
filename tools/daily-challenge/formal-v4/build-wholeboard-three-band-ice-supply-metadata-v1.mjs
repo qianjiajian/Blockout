@@ -1,0 +1,197 @@
+/** Metadata only: freeze an exact externally supplied 72-recipe declaration, then bind an independently
+ * reviewed proposal to a later sealed history report. No history checkpoint or
+ * delta is read/merged, and no runtime, factory, replay, search or claim runs.
+ * Full history/parent/member authentication remains the qualified task's job. */
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {createHash} from 'node:crypto';
+import {pathToFileURL} from 'node:url';
+import {levelSha256} from '../formal-v2/contract.mjs';
+import {boardBaselineSha256} from '../formal-v2/geometry.mjs';
+import {assertIceSupplyProposal,assertPriorHistoryReport,SELF as TASK,VERSION as TASK_VERSION,
+ QUALIFICATION_STATUS,PROPOSAL_REVIEW_STATUS,HOLDS,PRIOR_HOLDS,HISTORY_ADAPTER,HISTORY_ADAPTER_SHA,HISTORY_ADAPTER_QUALIFICATION,SCOPE,assertPostN20Metadata} from './wholeboard-three-band-ice-supply-batch-task-v1.mjs';
+
+export const SELF='tools/daily-challenge/formal-v4/build-wholeboard-three-band-ice-supply-metadata-v1.mjs';
+const BASE='deliverables/daily-formal-v4-20261008';
+const FROZEN=BASE+'/frozen-workspace-4588';
+export const SELECTION={path:BASE+'/selection/completed-basic-and-advanced-161-01/index.json',sha256:'faf2a840869b3ed1ae971df301e82a495981449bb6207a3e186c2961af2965d1'};
+export const SELECTION_REVIEW={path:BASE+'/proof/completed161-quick-independent-01.json',sha256:'91ced2f2d9d6db570fb0b149add08c437506c3218a5145eefa896c5a07443d82'};
+export const SOURCE_IDS=[115,118,124];
+export const QUALIFICATION_PIN={path:'deliverables/daily-formal-v4-20261008/proof/wholeboard-three-band-ice-supply-batch-independent-01/report.json',sha256:'4ca56466ca810adb34df154097a9416e1b14050a3dc8debfaa6dc6a5467437ae'};
+export const TASK_SHA='e21a53fe2ac03f9528a53fac66e3bab46542953ebc313bc62123348e8b23fcd0';
+// The recipe draft and post-n20 report remain exact future inputs.
+export const POST_N20_STATUS='ACCEPTED_ICE20_BOMB_HISTORY_DELTAS_EXPORTED_AND_V7_VALIDATED';
+const sha=b=>createHash('sha256').update(b).digest('hex');
+const clone=structuredClone;
+const hash=h=>assert(/^[a-f0-9]{64}$/.test(h??''),'Exact SHA-256 required');
+const attemptId=id=>assert(/^[a-f0-9]{64}(?:-revalidation-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})?$/.test(id??''),'Original ledger attempt ID');
+const descriptor=d=>{assert(d&&typeof d.path==='string'&&d.path.length);hash(d.sha256);};
+const jsonBytes=q=>Buffer.from(JSON.stringify(q,null,2)+'\n');
+const exists=p=>fs.stat(p).then(()=>true,e=>{if(e.code==='ENOENT')return false;throw e;});
+const ZERO={newHistoryLoads:0,newHistoryMerges:0,newDomains:0,newFullWorlds:0,newModels:0,newSearches:0,newReplayCalls:0,newClaims:0,selectionWritten:false,formalAdoptionPerformed:false};
+
+/** Validate only the exported declaration; this does not authenticate a merge
+ * or infer the latest parent from old summaries. All lexical paths are kept. */
+export function inheritPostN20History(h){
+ assert.equal(h.status,POST_N20_STATUS);
+ assert.deepEqual(h.errors,[]);hash(h.headSha256);descriptor(h.checkpoint);descriptor(h.checkpointReview);
+ assert.equal(h.checkpointReexported,false);assert.equal(h.oldFilesChanged,false);
+ for(const k of ['newConstructions','newSearches','newLedgerClaims','newReplayCalls'])assert.equal(h[k],0);
+ assert.deepEqual(h.selection,SELECTION);assert.equal(h.summary?.consumedInputs,1);assert.equal(h.summary?.maximumInputs,1);
+ assert.equal(h.candidateStatuses.length,1);assert.equal(h.candidateStatuses[0].sourceLevelId,118);
+ descriptor(h.context);descriptor(h.plan);descriptor(h.completion);assert.equal(h.summary.closedCampaigns,h.before.closedCampaigns+1);
+ assert.deepEqual(h.unpersistedInputs,[]);assert.equal(h.persistedConstructionWorldFiles?.length,1);h.persistedConstructionWorldFiles.forEach(descriptor);
+ assert(Array.isArray(h.historyScope?.roots)&&h.historyScope.roots.length===7);
+ assert.equal(new Set(h.historyScope.roots.map(r=>r.id)).size,7);
+ for(const r of h.historyScope.roots)assert(typeof r.physicalPath==='string'&&r.physicalPath.length);
+ assert(Array.isArray(h.priorHistoryDeltas)&&h.priorHistoryDeltas.length>0);
+ assert(Array.isArray(h.historyDeltas)&&h.historyDeltas.length>=1&&h.historyDeltas.length<=2);
+ assert.deepEqual(h.completeHistoryDeltas,[...h.priorHistoryDeltas,...h.historyDeltas]);
+ const seen=new Set();for(const d of h.completeHistoryDeltas){descriptor(d.descriptor);descriptor(d.declaredOwner?.definition);
+  assert(typeof d.declaredOwner.id==='string'&&d.declaredOwner.id);assert(typeof d.declaredOwner.namespace==='string'&&d.declaredOwner.namespace);
+  assert(['construction','mathematical'].includes(d.declaredOwner.kind));assert(!seen.has(d.descriptor.sha256),'Duplicate delta');seen.add(d.descriptor.sha256);}
+ assert.equal(h.previousHeadSha256,h.priorHistoryDeltas.at(-1).descriptor.sha256);
+ assert.equal(h.headSha256,h.completeHistoryDeltas.at(-1).descriptor.sha256);
+ descriptor(h.comparisonEvidence?.provenance);descriptor(h.comparisonEvidence?.review);
+ const f=h.futureParents;assert(f);assert.equal(f.historyHeadSha256,h.headSha256);
+ assert.equal(f.newHistoryTraversal,false);assert.equal(f.newModelCalls,0);assert.equal(f.newSearches,0);assert.equal(f.mathematicalProofRevalidated,false);
+ assert(Array.isArray(f.requestedSourceLevelIds));assert.equal(new Set(f.requestedSourceLevelIds).size,f.requestedSourceLevelIds.length);
+ assert(Array.isArray(f.resolved)&&Array.isArray(f.unresolved));
+ assert.equal(new Set([...f.resolved,...f.unresolved].map(r=>r.sourceLevelId)).size,f.resolved.length+f.unresolved.length);
+ const parents=SOURCE_IDS.map(sourceLevelId=>{assert(f.requestedSourceLevelIds.includes(sourceLevelId));
+  const row=f.resolved.find(r=>r.sourceLevelId===sourceLevelId);assert(row,'Missing current exported failed parent '+sourceLevelId);
+  assert.equal(row.status,'RESOLVED_ORIGINAL_FAILED_PARENT');descriptor(row.receipt);attemptId(row.attemptId);
+  assert(typeof row.namespace==='string'&&row.namespace);assert(typeof row.startedAt==='string'&&Number.isFinite(Date.parse(row.startedAt)));
+  assert.equal(row.readDirectHistoryRolePassed,true);assert.equal(row.mathematicalProofRevalidated,false);
+  assert.equal(row.blocked?.length,2);row.blocked.forEach(descriptor);assert.notEqual(row.blocked[0].path,row.blocked[1].path);
+  return clone(row);});
+ const inherited={history:clone(h.checkpoint),historyReview:clone(h.checkpointReview),historyScope:clone(h.historyScope),
+  historyDeltas:clone(h.completeHistoryDeltas),historyHeadSha256:h.headSha256,selection:clone(h.selection),
+  comparison:{provenance:clone(h.comparisonEvidence.provenance),review:clone(h.comparisonEvidence.review)},
+  failedParents:parents.map(r=>({sourceLevelId:r.sourceLevelId,receipt:clone(r.receipt)}))};
+ assertPriorHistoryReport(inherited,h);return{inherited,parents};
+}
+
+export function composeIceSupplyProposal(draft,sourceDraft,qualification,taskDescriptor,priorHistoryReport,history){
+ [sourceDraft,qualification,taskDescriptor,priorHistoryReport].forEach(descriptor);assert.deepEqual(taskDescriptor,{path:TASK,sha256:TASK_SHA});assert.deepEqual(qualification,QUALIFICATION_PIN);
+ assertIceSupplyProposal(draft,72);assert.deepEqual(draft.selection,SELECTION);descriptor(draft.designDisposition);
+ const {inherited,parents}=inheritPostN20History(history);
+ const proposal={...clone(draft),status:'METADATA_DESIGN_PROPOSAL_NOT_EXECUTABLE',executable:false,
+  sourceDraft:clone(sourceDraft),qualification:clone(qualification),priorHistoryReport:clone(priorHistoryReport),
+  inheritedContext:inherited,exportedFailedParents:parents,
+  futureTask:{descriptor:clone(taskDescriptor),qualification:clone(qualification),historyAdapterV7:{path:HISTORY_ADAPTER,sha256:HISTORY_ADAPTER_SHA},historyAdapterQualification:clone(HISTORY_ADAPTER_QUALIFICATION),status:'QUALIFIED_TOOL_METADATA_ONLY'},
+  historyTiming:{priorHistoryReport:clone(priorHistoryReport),qualification:clone(qualification),proposalReview:null,
+   requiresLatestSealedPostN20History:true,metadataDraftDoesNotAuthorizeActualRun:true},
+  metadataPreparation:{recipeObjectsUnchanged:true,constructionContractsUnchanged:true,seedsGenerated:false,latestParentAuthenticationDeferredToTaskPrepare:true,
+   historyCheckpointOrDeltaRead:false,comparisonEvidenceHistoricalHeadNotUsedAsCurrentHead:true,
+   independentProposalReviewStillRequired:true,...ZERO}};
+ assert.deepEqual(proposal.recipes,draft.recipes);assertIceSupplyProposal(proposal,72);return proposal;
+}
+
+export function composeIceSupplyContext(proposal,proposalDescriptor,review,reviewDescriptor){
+ descriptor(proposalDescriptor);descriptor(reviewDescriptor);assertIceSupplyProposal(proposal,72);
+ descriptor(proposal.qualification);descriptor(proposal.sourceDraft);assert.deepEqual(proposal.futureTask.qualification,proposal.qualification);
+ assert.equal(review.status,PROPOSAL_REVIEW_STATUS);assert.deepEqual(review.proposal,proposalDescriptor);assert.deepEqual(review.errors,[]);
+ for(const k of ['newConstructions','newSearches','newClaims'])assert.equal(review[k],0);
+ return{version:TASK_VERSION,experimentId:proposal.experimentId,maximumInputs:72,failedInputRebandAllowed:false,fallbackAllowed:false,
+  proposal:clone(proposalDescriptor),proposalReview:clone(reviewDescriptor),qualification:clone(proposal.qualification),
+  priorHistoryReport:clone(proposal.priorHistoryReport),...clone(proposal.inheritedContext),selectionReview:clone(SELECTION_REVIEW),designDisposition:clone(proposal.designDisposition)};
+}
+
+function reader(){const bindings={};return{bindings,
+ async bytes(p,expected){const b=await fs.readFile(p),h=sha(b);if(expected)assert.equal(h,expected,p);
+  if(bindings[p])assert.equal(bindings[p],h,p);bindings[p]=h;return b;},
+ async bound(d){descriptor(d);return JSON.parse(await this.bytes(d.path,d.sha256));}};}
+
+export function assertDispositionMetadata(holds,minimum){
+ assert.equal(minimum.decisions.length,12);assert.equal(minimum.heldCandidateCount,12);
+ assert.equal(holds.status,'SELECTED_MATHEMATICS_PRESERVED_ADDITIONAL_DESIGN_HOLDS_RECORDED');assert.deepEqual(holds.selection,SELECTION);
+ assert.equal(holds.formalAcceptedCount,0);assert.equal(holds.remainingAutomaticallyDesignApproved,false);assert.equal(holds.heldCandidateCount,holds.decisions.length);assert(holds.decisions.length>=12);
+ assert.equal(new Set(holds.decisions.map(d=>d.formalId)).size,holds.decisions.length);
+ for(const d of minimum.decisions)assert(holds.decisions.some(q=>levelSha256(q)===levelSha256(d)),'Minimum exact hold removed or changed');
+ for(const d of holds.decisions){assert.equal(d.formalAdoptionAllowed,false);assert.equal(d.originalMathematicalEvidencePreserved,true);}
+ return true;
+}
+export function assertParentPublicationDeclaration(p,a){
+ attemptId(p.attemptId);assert.equal(a?.id,p.attemptId);assert.equal(a.startedAt,p.startedAt);hash(a.retryIdentitySha256);
+ const origin=a.identityOrigin??a.id;hash(origin);
+ if(a.id===origin)assert.equal(a.revalidates,undefined);else{assert.equal(a.revalidates,origin);assert(a.id.startsWith(origin+'-revalidation-'));}
+ assert.equal(p.blocked.length,2);p.blocked.forEach(descriptor);
+ const paths=p.blocked.map(d=>d.path.replaceAll('\\','/').toLowerCase());
+ assert(paths.some(s=>s.endsWith('/'+origin+'.blocked.json')),'Origin blocked descriptor');
+ assert(paths.some(s=>s.endsWith('/identities/'+a.retryIdentitySha256+'.blocked.json')),'Retry identity blocked descriptor');return true;
+}
+async function bindInputs(r,sourceDraft,qualificationDescriptor,priorHistoryReport){
+ assert.deepEqual(qualificationDescriptor,QUALIFICATION_PIN);const draft=await r.bound(sourceDraft),qualification=await r.bound(qualificationDescriptor);assertIceSupplyProposal(draft,72);
+ assert.equal(qualification.status,QUALIFICATION_STATUS);assert.deepEqual(qualification.errors,[]);
+ for(const k of ['newRealConstructions','newSearches','publicClaimsStarted'])assert.equal(qualification[k],0);
+ const taskDescriptor={path:TASK,sha256:qualification.toolBindings?.[TASK]};descriptor(taskDescriptor);assert.equal(taskDescriptor.sha256,TASK_SHA);await r.bytes(TASK,taskDescriptor.sha256);
+ assert.equal(qualification.toolBindings?.[HISTORY_ADAPTER],HISTORY_ADAPTER_SHA);const historyQualification=await r.bound(HISTORY_ADAPTER_QUALIFICATION);assert.equal(historyQualification.status,'INDEPENDENT_PLAN_HISTORY_ADAPTER_V7_PASS');assert.deepEqual(historyQualification.errors,[]);assert.deepEqual(historyQualification.adapter,{path:HISTORY_ADAPTER,sha256:HISTORY_ADAPTER_SHA});
+ // Frozen code bindings only: mixed-root UI/report file maps are not reinterpreted.
+ for(const[p,h]of Object.entries(qualification.toolBindings))await r.bytes(p,h);
+ await r.bound(SCOPE);
+ const history=await r.bound(priorHistoryReport),{parents,inherited}=inheritPostN20History(history);
+ const priorContext=await r.bound(history.context),priorPlan=await r.bound(history.plan),priorCompletion=await r.bound(history.completion);
+ assertPostN20Metadata(priorContext,priorPlan,priorCompletion,history.context);assert.deepEqual(priorCompletion.plan,history.plan);assert.deepEqual(priorCompletion.persistedConstructionWorldFiles,history.persistedConstructionWorldFiles);
+ const selection=await r.bound(SELECTION);assert.equal(selection.files.length,161);await r.bound(SELECTION_REVIEW);
+ const minimum=await r.bound(HOLDS),holds=await r.bound(draft.designDisposition);assertDispositionMetadata(holds,minimum);
+ assert.deepEqual(minimum.priorDisposition,PRIOR_HOLDS);const priorHolds=await r.bound(PRIOR_HOLDS);assert.deepEqual(minimum.decisions.slice(0,priorHolds.decisions.length),priorHolds.decisions);
+ await r.bound(inherited.comparison.provenance);await r.bound(inherited.comparison.review);
+ for(const p of parents){const receipt=await r.bound(p.receipt),a=receipt.attempt??receipt.proof?.attempt;
+  assert.equal(receipt.accepted,false);assert.equal(receipt.sourceLevelId??receipt.level?.id,p.sourceLevelId);
+  assert(receipt.level);assert.equal(levelSha256(receipt.level),receipt.levelSha256);assert.equal(a?.id,p.attemptId);
+  assert.equal(a.startedAt,p.startedAt);assert.equal(a.levelSha256,receipt.levelSha256);
+  assertParentPublicationDeclaration(p,a);
+  for(const d of p.blocked){const b=await r.bound(d);assert.equal(b.attemptId,p.attemptId);}
+ }
+ // Hash only the already saved catalogue/source fields; never make a new level.
+ const catalogues=new Map();for(const recipe of draft.recipes){const d=recipe.source.catalogue,key=d.path+'|'+d.sha256;
+  if(!catalogues.has(key))catalogues.set(key,await r.bound(d));
+  const row=catalogues.get(key).rows.find(x=>x.sourceLevelId===recipe.sourceLevelId);assert(row);
+  assert.equal(row.sourceLevelSha256,recipe.source.levelSha256);assert.equal(row.maskSha256,recipe.source.maskSha256);
+  assert.equal(row.level.width,recipe.source.width);assert.equal(row.level.height,recipe.source.height);
+  assert.equal(levelSha256(row.level),recipe.source.levelSha256);assert.equal(row.level.seams?.length??0,0);
+  assert.equal(boardBaselineSha256(row.level),recipe.source.boardBaselineSha256);
+  assert.equal(row.inventory.playableCells,recipe.source.playableCells);
+ }
+ return{draft,history,taskDescriptor};
+}
+
+/** Call only after root review and the preceding n20 task's actual sealed export.
+ * Output directories are new and immutable; failed attempts leave failure.json.
+ * The context phase requires an external independent proposal-review report. */
+export async function buildIceSupplyMetadata(mode,config){
+ assert(['proposal','context'].includes(mode));
+ assert.deepEqual(Object.keys(config).sort(),(mode==='proposal'?['outputDirectory','priorHistoryReport','recipeDraft','qualification']:['outputDirectory','proposal','proposalReview']).sort());
+ assert(process.cwd().replaceAll('\\','/').toLowerCase().endsWith('/'+FROZEN.toLowerCase()),'Use frozen workspace 4588 cwd');
+ assert(typeof config.outputDirectory==='string'&&/^deliverables\/daily-formal-v4-20261008\/design\/[a-z0-9-]+$/.test(config.outputDirectory));
+ assert(!await exists(config.outputDirectory),'Immutable output already exists');
+ await fs.mkdir(config.outputDirectory);const r=reader();
+ try{await r.bytes(SELF);let value,priorHistoryReport,sourceDraft,qualification;
+  if(mode==='proposal'){priorHistoryReport=config.priorHistoryReport;sourceDraft=config.recipeDraft;qualification=config.qualification;
+   const {draft,history,taskDescriptor}=await bindInputs(r,sourceDraft,qualification,priorHistoryReport);
+   value=composeIceSupplyProposal(draft,sourceDraft,qualification,taskDescriptor,priorHistoryReport,history);
+  }else{const proposal=await r.bound(config.proposal);priorHistoryReport=proposal.priorHistoryReport;sourceDraft=proposal.sourceDraft;qualification=proposal.qualification;
+   const {draft,history,taskDescriptor}=await bindInputs(r,sourceDraft,qualification,priorHistoryReport);
+   assert.deepEqual(proposal,composeIceSupplyProposal(draft,sourceDraft,qualification,taskDescriptor,priorHistoryReport,history),'Proposal differs from fixed declaration/current declared history');
+   const review=await r.bound(config.proposalReview);value=composeIceSupplyContext(proposal,config.proposal,review,config.proposalReview);assertPriorHistoryReport(value,history);
+  }
+  const file=config.outputDirectory+'/'+mode+'.json',b=jsonBytes(value);await fs.writeFile(file,b,{flag:'wx'});
+  const output={path:file,sha256:sha(b)},report={schemaVersion:1,status:'WHOLEBOARD_THREE_BAND_ICE_SUPPLY_METADATA_'+mode.toUpperCase()+'_BUILT',
+   mode,configuration:clone(config),output,sourceDraft,qualification,priorHistoryReport,
+   recipeCount:72,sourceIds:SOURCE_IDS,recipesPerSource:24,recipesChanged:false,
+   historyHeadSha256:mode==='proposal'?value.inheritedContext.historyHeadSha256:value.historyHeadSha256,
+   fullOrderedDeltaCount:(mode==='proposal'?value.inheritedContext.historyDeltas:value.historyDeltas).length,
+   independentReviewCreated:false,executionPermissionCreated:false,fullHistoryAndLatestRolesAuthenticatedHere:false,
+   bindingBaseDirectory:process.cwd(),fileBindings:r.bindings,...ZERO,errors:[]};
+  const reportPath=config.outputDirectory+'/report.json',reportBytes=jsonBytes(report);await fs.writeFile(reportPath,reportBytes,{flag:'wx'});
+  return{output,report:{path:reportPath,sha256:sha(reportBytes)},recipeCount:72,sourceIds:SOURCE_IDS};
+ }catch(e){await fs.writeFile(config.outputDirectory+'/failure.json',jsonBytes({status:'METADATA_BUILD_FAILED',mode,configuration:config,reason:e.message,fileBindings:r.bindings,...ZERO}),{flag:'wx'});throw e;}
+}
+
+if(process.argv[1]&&import.meta.url===pathToFileURL(path.resolve(process.argv[1])).href){
+ try{const[mode,configPath]=process.argv.slice(2);assert.equal(process.argv.length,4,'Usage: node <tool> proposal|context <config.json>');
+  console.log(JSON.stringify(await buildIceSupplyMetadata(mode,JSON.parse(await fs.readFile(configPath,'utf8')))));
+ }catch(e){console.error(e.stack);process.exitCode=1;}
+}

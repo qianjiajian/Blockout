@@ -1,0 +1,1 @@
+const fs=require('fs'); const lines=fs.readFileSync('playtest-results/all-block-adjacency-solvability-final-2026-09-19/results.jsonl','utf8').trim().split(/\r?\n/); for(const line of lines){const o=JSON.parse(line); if(o.solver?.repositionOverhead>30) console.log(o.levelId,o.solver.repositionOverhead,o.solver.minimumDrags,o.solver.clearLoad)}

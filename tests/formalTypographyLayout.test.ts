@@ -210,7 +210,7 @@ describe("formal UI typography mapped from the supplied mockups", () => {
     });
     expect(GAMEPLAY_ART_LAYOUT.typography).toMatchObject({ level: 31, timer: 33, boosterCount: 32 });
     expect(GAMEPLAY_ART_LAYOUT).toMatchObject({
-      coin: { label: { x: 146, y: 107, maxWidth: 98 } },
+      coin: { label: { x: 137, y: 107, maxWidth: 82 } },
       levelLabel: { x: 361.5, y: 202 },
       timer: { label: { x: 371, y: 288 } },
     });

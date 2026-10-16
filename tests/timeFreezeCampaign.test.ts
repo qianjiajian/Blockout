@@ -27,7 +27,7 @@ describe("v1.14 time freeze campaign migration", () => {
 
   it("freezes the same countdown for ten seconds on every formal level, without spending moves", () => {
     expect(TIME_FREEZE_SECONDS).toBe(10);
-    expect(SUPPLY_ITEMS.time).toMatchObject({ kind: "time", price: 180, maxStock: 9, unlockLevel: 4 });
+    expect(SUPPLY_ITEMS.time).toMatchObject({ kind: "time", price: 300, maxStock: 9, unlockLevel: 4 });
     for (const level of LEVELS) {
       const model = new PuzzleModel(level);
       const before = model.snapshot();

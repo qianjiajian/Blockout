@@ -40,9 +40,10 @@ describe('v1.111 separate formal182 and candidate185 star targets',()=>{
 
   it('uses the new182 score in production while keeping the old formal185 unchanged',()=>{
     expect(LEVELS[181]).toEqual(rows[0].packet.level);
-    expect(LEVELS[184]).toEqual(before.levels.find(row=>row.level.id===185)!.level);
-    expect(LEVELS[184]).not.toEqual(rows[1].packet.level);
-    expect(REMADE_181_190_IDS).not.toContain(185);
+    const formal185=readJson('../deliverables/star-targets181-187-20260929/formal-packets/level185.json') as {level:LevelSpec};
+    expect(LEVELS[184]).toEqual(formal185.level);
+    expect(LEVELS[184]).not.toEqual(before.levels.find(row=>row.level.id===185)!.level);
+    expect(REMADE_181_190_IDS).toContain(185);
     expect(rows[0].packet.mode).toBe('formal');
     expect(rows[1].packet.mode).toBe('candidate');
     expect(rows[1].packet.sourcePhaseApprovalPending).toBe(true);

@@ -14,6 +14,7 @@ export const ACHIEVEMENT_LAYOUT = {
   rowPitch: 110,
   badge: { x: 124, y: 581, width: 82, height: 79 },
   claimButton: { x: 472, y: 606, width: 120, height: 53 },
+  claimedCheck: { x: 492, y: 580, width: 80, height: 80 },
   reward: { x: 486, y: 582, width: 90, height: 23 },
   progress: { x: 218, y: 635, width: 229, height: 21 },
   typography: { summary: 30, name: 24, description: 16, progress: 20, button: 20 },
@@ -32,6 +33,7 @@ export const ACHIEVEMENT_LAYOUT = {
   rowPitch: number;
   badge: HomeArtPlacement;
   claimButton: HomeArtPlacement;
+  claimedCheck: HomeArtPlacement;
   reward: HomeArtPlacement;
   progress: HomeArtPlacement;
   typography: { summary: number; name: number; description: number; progress: number; button: number };
@@ -59,6 +61,11 @@ export const achievementBadgePlacement = (index: number, scrollOffset: number): 
 export const achievementClaimPlacement = (index: number, scrollOffset: number): HomeArtPlacement => ({
   ...ACHIEVEMENT_LAYOUT.claimButton,
   y: ACHIEVEMENT_LAYOUT.claimButton.y + index * ACHIEVEMENT_LAYOUT.rowPitch - scrollOffset,
+});
+
+export const achievementClaimedCheckPlacement = (index: number, scrollOffset: number): HomeArtPlacement => ({
+  ...ACHIEVEMENT_LAYOUT.claimedCheck,
+  y: ACHIEVEMENT_LAYOUT.claimedCheck.y + index * ACHIEVEMENT_LAYOUT.rowPitch - scrollOffset,
 });
 
 export const achievementScrollMaximum = (entryCount: number): number => Math.max(

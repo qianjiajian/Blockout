@@ -201,4 +201,117 @@ describe("CollectionArtworkStore", () => {
     expect(store.image(0)).toBe(recovered);
     expect(onChange).toHaveBeenCalledTimes(2);
   });
+
+  it("bounds a long visit to its visible and adjacent atlas window and reloads evicted pages", async () => {
+    const control = createStore();
+    const { store, releaseImage, loadImage } = control;
+    for (let current = 0; current < 10; current++) {
+      const window = [current - 1, current, current + 1].filter(index => index >= 0 && index < 10);
+      store.retain(window);
+      const requested = store.request(window);
+      await control.completeAll();
+      await requested;
+      expect(store.loadedIndexes).toEqual(window);
+      expect(store.images.length).toBeLessThanOrEqual(3);
+      expect(store.image(current)).toBeDefined();
+    }
+    expect(loadImage).toHaveBeenCalledTimes(10);
+    expect(releaseImage).toHaveBeenCalledTimes(8);
+    store.retain([0, 1]);
+    const revisit = store.request([0, 1]);
+    await control.completeAll();
+    await revisit;
+    expect(store.loadedIndexes).toEqual([0, 1]);
+    expect(loadImage).toHaveBeenCalledTimes(12);
+    store.dispose();
+    expect(releaseImage).toHaveBeenCalledTimes(12);
+    expect(new Set(releaseImage.mock.calls.map(([value]) => value)).size).toBe(12);
+  });
+
+  it("drops obsolete queued prefetch and releases late images without publishing them", async () => {
+    const control = createStore();
+    const { store, loadImage, releaseImage, onChange } = control;
+    store.retain([0, 1, 2, 3]);
+    const stale = store.request([0, 1, 2, 3], false, false);
+    const rejected = expect(stale).rejects.toThrow("retained window");
+    store.retain([7, 8]);
+    const current = store.request([7, 8]);
+    await rejected;
+    expect(loadImage.mock.calls.map(([path]) => path)).toEqual(["atlas/0", "atlas/1"]);
+    const late0 = control.resolve("atlas/0");
+    await flush();
+    expect(releaseImage).toHaveBeenCalledExactlyOnceWith(late0);
+    expect(store.image(0)).toBeUndefined();
+    expect(onChange).not.toHaveBeenCalled();
+    const late1 = control.resolve("atlas/1");
+    await flush();
+    expect(releaseImage).toHaveBeenCalledWith(late1);
+    expect(onChange).not.toHaveBeenCalled();
+    await control.completeAll();
+    await current;
+    expect(loadImage.mock.calls.map(([path]) => path)).toEqual(["atlas/0", "atlas/1", "atlas/7", "atlas/8"]);
+    expect(store.loadedIndexes).toEqual([7, 8]);
+    expect(control.maximumActive).toBe(2);
+    expect(onChange).toHaveBeenCalledTimes(2);
+  });
+
+  it("reuses an in-flight image when navigation returns before it finishes", async () => {
+    const control = createStore();
+    const { store, loadImage, releaseImage } = control;
+    store.retain([0]);
+    const first = store.request([0]);
+    store.retain([1]);
+    const middle = store.request([1]);
+    const obsolete = expect(middle).rejects.toThrow("retained window");
+    store.retain([0]);
+    const revisit = store.request([0]);
+    const kept = control.resolve("atlas/0");
+    const dropped = control.resolve("atlas/1");
+    await Promise.all([first, revisit, obsolete]);
+    expect(loadImage).toHaveBeenCalledTimes(2);
+    expect(store.image(0)).toBe(kept);
+    expect(store.image(1)).toBeUndefined();
+    expect(releaseImage).toHaveBeenCalledExactlyOnceWith(dropped);
+  });
+
+  it("keeps failed slots behind explicit retry after they leave and reenter the window", async () => {
+    const control = createStore();
+    const { store, pending, loadImage, onChange } = control;
+    store.retain([0]);
+    const initial = store.request([0]);
+    const failed = expect(initial).rejects.toThrow("offline");
+    store.retain([1]);
+    pending.get("atlas/0")!.reject(new Error("offline"));
+    await failed;
+    expect(onChange).not.toHaveBeenCalled();
+    store.retain([0]);
+    await expect(store.request([0])).rejects.toThrow("offline");
+    expect(loadImage).toHaveBeenCalledTimes(1);
+    const retry = store.request([0], true);
+    control.resolve("atlas/0");
+    await retry;
+    expect(store.loadedIndexes).toEqual([0]);
+    expect(onChange).toHaveBeenCalledTimes(1);
+  });
+
+  it("retains a shared path by either alias and rejects invalid windows before releasing anything", async () => {
+    const control = createStore(["shared", "other", "shared"]);
+    const { store, releaseImage } = control;
+    const initial = store.request([0, 1]);
+    await control.completeAll();
+    await initial;
+    for (const invalid of [-1, 3, 0.5, NaN, Infinity]) {
+      expect(() => store.retain([2, invalid])).toThrow("Invalid collection artwork index");
+    }
+    expect(releaseImage).not.toHaveBeenCalled();
+    store.retain([2]);
+    expect(store.image(0)).toBe(store.image(2));
+    expect(store.loadedIndexes).toEqual([0, 2]);
+    expect(releaseImage).toHaveBeenCalledTimes(1);
+    await expect(store.request([1])).rejects.toThrow("retained window");
+    expect(control.loadImage).toHaveBeenCalledTimes(2);
+    store.retain([]);
+    expect(store.images).toEqual([]);
+    expect(releaseImage).toHaveBeenCalledTimes(2);
+  });
 });

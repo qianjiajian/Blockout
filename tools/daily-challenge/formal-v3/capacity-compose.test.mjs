@@ -1,0 +1,21 @@
+import fs from 'node:fs';
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {expectedDailySlots} from '../formal-v2/catalog-progress.mjs';
+import {levelSha256} from '../formal-v2/contract.mjs';
+import {loadV3CatalogRuntime} from './catalog-contract.mjs';
+import {composeCapacity} from './capacity-compose.mjs';
+const root='deliverables/daily-formal-v3-20261008';
+const base=JSON.parse(fs.readFileSync(`${root}/design/macro-opening-guarded8-02/candidate-006.json`));
+const runtime=await loadV3CatalogRuntime(),slots=expectedDailySlots(runtime.MECHANISM_GUIDE);
+const old=JSON.parse(fs.readFileSync('deliverables/daily-formal-v2-20261007/final-qualified/index.json'));
+for(const mechanism of ['axis-block','colored-grid'])test(`complete ${mechanism} capacity fixture, zero lower searches and no duplicate slot`,async()=>{
+  const slot=slots.find(s=>s.newestMechanism===mechanism&&s.difficulty===3&&s.slot===1);assert(slot);
+  const priorLevel=JSON.parse(fs.readFileSync(old.entries.find(e=>e.formalId===slot.formalId).path)).level;
+  const input=structuredClone(base),before=levelSha256(input.level);
+  const r=await composeCapacity(runtime,input,slot,priorLevel);
+  assert(r.ok,JSON.stringify(r.failures));assert.equal(r.primaryInstances,1);
+  assert.equal(r.audit.priorComparison.currentTotal,4);assert.equal(r.audit.replay.nonClearingDrags,40);
+  assert(r.audit.rows.every(x=>x.allParticipate));assert.equal(r.formalReady,false);
+  assert.equal(r.provenance.searchPerformed,false);assert.equal(levelSha256(input.level),before);
+});

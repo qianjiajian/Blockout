@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "activeVersion": "1.114.0",
+  "activeVersion": "1.198.0",
   "hashAlgorithm": "sha256-utf8-lf",
   "versions": [
     {
@@ -1172,6 +1172,856 @@
       "status": "frozen",
       "frozenOn": "2026-09-28",
       "confirmation": "用户要求调整191/196三星条件；仅采用已验证完整路线总拖31/27，保留原时间星、总时限、玩法、来源状态、其余198关、旧证据和存档，正式双屏自然钟三星验收，不发布。"
+    },
+    {
+      "version": "1.115.0",
+      "ruleId": "blockout-rules-v1.115.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.115.0.md",
+      "sha256": "a4adb68d345d4c682198ee5339c79415cb83bf04af1f02c869b5d39cfe7996fa",
+      "status": "frozen",
+      "frozenOn": "2026-09-29",
+      "confirmation": "用户明确要求根据竞品视频继续生成201–210关；本版本仅新增201–210范围，其他200关、旧证据、存档和发布边界保持。"
+    },
+    {
+      "version": "1.116.0",
+      "ruleId": "blockout-rules-v1.116.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.116.0.md",
+      "sha256": "522dc805da6c294daa2f549c8be04bd7fff621a84df0d15647c4d9b546014556",
+      "status": "frozen",
+      "frozenOn": "2026-09-29",
+      "confirmation": "用户明确要求根据竞品视频继续生成221–230关，并要求满足难度、必挪与三星条件调整；本版本仅新增隔离候选，正式边界仍为200关，未发布。"
+    },
+    {
+      "version": "1.117.0",
+      "ruleId": "blockout-rules-v1.117.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.117.0.md",
+      "sha256": "048e36951de31270854878c9e2c42d633416eeb8dfb2227a3cb49c34323d1332",
+      "status": "frozen",
+      "frozenOn": "2026-09-29",
+      "confirmation": "用户明确要求修改181和187；仅调整两关三星拖动目标为43/36并完成独立fresh、双屏Pointer自然钟与结算验收，保留地图、机制、时间、par/reward、旧证据和存档，不发布。"
+    },
+    {
+      "version": "1.118.0",
+      "ruleId": "blockout-rules-v1.118.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.118.0.md",
+      "sha256": "793399242e32a43de4922c712dd077bf4dfb524bdfa74ddd2071dc7139225cd5",
+      "status": "frozen",
+      "frozenOn": "2026-09-29",
+      "confirmation": "用户明确要求201和210写入正式数据，并满足必挪、难度和三星条件；仅两关进入隔离正式集合，生产边界仍为200，未发布。"
+    },
+    {
+      "version": "1.119.0",
+      "ruleId": "blockout-rules-v1.119.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.119.0.md",
+      "sha256": "9c57267cdf1c0f7fe6fb66554ff2c3a6651b26123d247b7dd8c87d95c0e75a94",
+      "status": "frozen",
+      "frozenOn": "2026-09-29",
+      "confirmation": "用户明确要求修改181和187；仅调整两关三星拖动目标为43/36并完成独立fresh、双屏Pointer自然钟与结算验收，保留地图、机制、时间、par/reward、旧证据和存档，不发布。"
+    },
+    {
+      "version": "1.120.0",
+      "ruleId": "blockout-rules-v1.120.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.120.0.md",
+      "sha256": "26e0e359e6c784315a7bd98bd9e20bc3be6e481d444d85e1c5925fdb92b7d372",
+      "status": "frozen",
+      "frozenOn": "2026-09-29",
+      "confirmation": "用户明确要求根据竞品视频继续生成211–220关，并满足既定难度、必挪与三星条件；本版本仅新增211–220隔离候选，正式边界仍为200关，未发布。"
+    },
+    {
+      "version": "1.121.0",
+      "ruleId": "blockout-rules-v1.121.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.121.0.md",
+      "sha256": "f6effa20f5bdb7af5f50b7661e37120272fd0cbf5df6d1ca3d03180a5d2ccb68",
+      "status": "frozen",
+      "frozenOn": "2026-09-29",
+      "confirmation": "用户指出221–230未采用既定难度节奏和必挪区间；本版本按简普普难简普难简普超及四档5–10/11–15/16–20/21–30修正隔离候选，正式边界仍为200关，未发布。"
+    },
+    {
+      "version": "1.122.0",
+      "ruleId": "blockout-rules-v1.122.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.122.0.md",
+      "sha256": "3d8bcf7834b623dcd4a62637cac18937d7fed4ec385b7305d92c76d220f80321",
+      "status": "frozen",
+      "frozenOn": "2026-09-29",
+      "confirmation": "用户指出211–220难度曲线错误；本版本按最新简/普/普/难/简/普/难/简/普/超模板及四档5–10/11–15/16–20/21–30修正隔离候选，正式边界仍为200关，未发布。"
+    },
+    {
+      "version": "1.123.0",
+      "ruleId": "blockout-rules-v1.123.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.123.0.md",
+      "sha256": "125217b01f071d3482b40a1964a50cd64f76bc345ef8c497f2ac8097c218e23f",
+      "status": "frozen",
+      "frozenOn": "2026-09-29",
+      "confirmation": "用户要求按最新十关难度节奏生成201–210；本版本只更新隔离候选，正式边界仍为200，未发布。"
+    },
+    {
+      "version": "1.124.0",
+      "ruleId": "blockout-rules-v1.124.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.124.0.md",
+      "sha256": "25aefc1c31f369eac686e6fe685ff3139fb56ed4f740599a4e351a7a6331289a",
+      "status": "frozen",
+      "frozenOn": "2026-09-30",
+      "confirmation": "用户明确要求生成201–210正式关卡；本版本将十关整理为正式数据隔离包，保留生产LEVELS与活动边界200，不发布，未完成结构、双屏Pointer、自然钟和三星结算门禁如实保留。"
+    },
+    {
+      "version": "1.125.0",
+      "ruleId": "blockout-rules-v1.125.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.125.0.md",
+      "sha256": "b05a511ed00e183d16943f57fd11fe65d9a1a2055a7a60385644accff9c11c76",
+      "status": "frozen",
+      "frozenOn": "2026-09-30",
+      "confirmation": "用户要求211–220上下界持续不满足时有限求解后换色换形重生成，并直接接入正式数据；保持既定十关难度、fresh上下界与完整验收，不扩大其它批次或发布。"
+    },
+    {
+      "version": "1.126.0",
+      "ruleId": "blockout-rules-v1.126.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.126.0.md",
+      "sha256": "781716972762a9caefa4bc5c264494a749906964421b1eebd1a470e1c1d916c9",
+      "status": "frozen",
+      "frozenOn": "2026-09-30",
+      "confirmation": "用户在201–210结构修复后要求接入正式数据；本版本授权十关经同对象完整验收后写入独立正式数据注册表，生产LEVELS和活动边界仍为200，不发布、不改存档，旧证据保持。"
+    },
+    {
+      "version": "1.127.0",
+      "ruleId": "blockout-rules-v1.127.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.127.0.md",
+      "sha256": "e357926d7b12ca84c398dda6b7b27264aef12a4e103771179319ef734e4a0391",
+      "status": "frozen",
+      "frozenOn": "2026-09-30",
+      "confirmation": "用户明确要求221–230接入正式数据；本版本授权十个已验收对象经同对象完整复核进入独立正式注册表，生产LEVELS与活动边界保持200，旧证据和存档保持，不发布。"
+    },
+    {
+      "version": "1.128.0",
+      "ruleId": "blockout-rules-v1.128.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.128.0.md",
+      "sha256": "9f4c8206a0dce0ba428e02430493f807638bd3fa6d64c8ea9b5bd500ed6063b9",
+      "status": "frozen",
+      "frozenOn": "2026-10-01",
+      "confirmation": "用户要求开始第1步，登记已确认联赛规则：第5关解锁、个人北京时间15日赛季、50人模拟组、独立100关、特殊块10分及段位星数金币结算；仅保存规则，不实现功能或发布，旧合同保持，未确认边界另列。"
+    },
+    {
+      "version": "1.129.0",
+      "ruleId": "blockout-rules-v1.129.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.129.0.md",
+      "sha256": "b45f3920836024da2256673b10930379d84a685b4f3bac653ac1c9880c334eb1",
+      "status": "frozen",
+      "frozenOn": "2026-10-01",
+      "confirmation": "用户授权第2步核心实现，并明确采纳首次青铜、旧玩家登录开启、跨期双榜不计、长期离线保留已入组结算后加入原锚定当前周期；不制作UI/100关或发布，历史规则保持。"
+    },
+    {
+      "version": "1.130.0",
+      "ruleId": "blockout-rules-v1.130.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.130.0.md",
+      "sha256": "00c870c89602c94768caee79048266b40c6f982464213b1f4d0b05cc425f632b",
+      "status": "frozen",
+      "frozenOn": "2026-10-01",
+      "confirmation": "用户明确开始第3步，授权独立联赛入口/榜单/段位/规则与结算界面接入核心保存事务；尚无特殊块和100关，不冒用主线，不发布，旧规则保持。"
+    },
+    {
+      "version": "1.131.0",
+      "ruleId": "blockout-rules-v1.131.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.131.0.md",
+      "sha256": "b6b6a4c589d8bc9675c805c2a98f0dae8d070a6fda8d183020ece336968e4496",
+      "status": "frozen",
+      "frozenOn": "2026-10-01",
+      "confirmation": "用户授权调用ImageGen按两段视频生成联赛界面并接入，上下滑动50人榜单替代分页；其余联赛和主线合同保持，不制作100关、不发布。"
+    },
+    {
+      "version": "1.132.0",
+      "ruleId": "blockout-rules-v1.132.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.132.0.md",
+      "sha256": "1de1198a9f5114041223243aebef89e7121d524a69a32fe9f1f81bc16bac4f1d",
+      "status": "frozen",
+      "frozenOn": "2026-10-01",
+      "confirmation": "用户授权第4步，并采纳普通色块带联赛积分徽章、剥壳不计分、完整消除10分含道具；测试关时限/体力/单关奖励建议尚待回答，先做配置无关事件桥，不发布。"
+    },
+    {
+      "version": "1.133.0",
+      "ruleId": "blockout-rules-v1.133.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.133.0.md",
+      "sha256": "e4c4176ab3eabebd22bec9350d6507bb6d510769131409989179cfe21e1a5898",
+      "status": "frozen",
+      "frozenOn": "2026-10-01",
+      "confirmation": "用户确认测试关180秒、免体力、不额外发金币、成功奖励显示积分；继续第4步独立数据与实际流程，100关不在本轮，不发布。"
+    },
+    {
+      "version": "1.134.0",
+      "ruleId": "blockout-rules-v1.134.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.134.0.md",
+      "sha256": "58ab9358f78a654ee81be28c2a477b92eb0c323648e21e04c67bdde152e46269",
+      "status": "frozen",
+      "frozenOn": "2026-10-01",
+      "confirmation": "用户要求按视频完成完整联赛并增加首页入口；扩展至100实际独立关卡与连续挑战，执行约定沿用180秒/免体力/无额外金币，旧主线边界和证据保持，不发布。"
+    },
+    {
+      "version": "1.135.0",
+      "ruleId": "blockout-rules-v1.135.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.135.0.md",
+      "sha256": "2feff43b9852b550b2822bd70915a0bbaf40a0e50f9c17314c362d77e10f4c5e",
+      "status": "frozen",
+      "frozenOn": "2026-10-01",
+      "confirmation": "用户要求按视频和截图增加首次进入联赛说明；两页图示引导、已读账户候选保存、底层交互阻断，旧规则数据和证据保持，不发布。"
+    },
+    {
+      "version": "1.136.0",
+      "ruleId": "blockout-rules-v1.136.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.136.0.md",
+      "sha256": "9a682d49e6ac0f97436742b62bc878402ea4eca9a6e911bb31cbcf98517bb51d",
+      "status": "frozen",
+      "frozenOn": "2026-10-03",
+      "confirmation": "用户要求冻结道具解锁后，在任意关卡剩余20秒内对从未使用过冻结的玩家显示手指引导；未解锁时不触发，其他计时、星级、失败和道具规则保持。"
+    },
+    {
+      "version": "1.137.0",
+      "ruleId": "blockout-rules-v1.137.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.137.0.md",
+      "sha256": "86c22c1d7a179aa5acb76341138684314673c1438b61e73da698a314ff124022",
+      "status": "frozen",
+      "frozenOn": "2026-10-03",
+      "confirmation": "用户确认第7关采用授权死局触发火箭救援；仅成功通关后扣除本局实际使用火箭，失败/重开/离开不扣，每次重新进入达到死局都再次引导。"
+    },
+    {
+      "version": "1.138.0",
+      "ruleId": "blockout-rules-v1.138.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.138.0.md",
+      "sha256": "5fe881776cf154f90c1396e4e151407ea2fecbef0b2648e601a69873c389c599",
+      "status": "frozen",
+      "frozenOn": "2026-10-03",
+      "confirmation": "用户要求第10关左下角冰冻色块初值20，冻结到1时引导使用脉冲并点击目标；第10关成功后才扣除脉冲，失败/重开/离开不扣。"
+    },
+    {
+      "version": "1.139.0",
+      "ruleId": "blockout-rules-v1.139.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.139.0.md",
+      "sha256": "7c60db15deaf85cf0043e9a49b7b69995a97a99b356e51020eb4bd6a3cef3b07",
+      "status": "frozen",
+      "frozenOn": "2026-10-03",
+      "confirmation": "用户要求第7关重新调整布局形成真实死局；交换上方红色与粉色块位置，粉色出口后无火箭不可解，移除黄色目标后可通关，火箭仅成功通关扣除。"
+    },
+    {
+      "version": "1.140.0",
+      "ruleId": "blockout-rules-v1.140.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.140.0.md",
+      "sha256": "4a4921bb472f135a3f6b57aa4f48f3ed5ab91af988208c984315bdeeea93a040",
+      "status": "frozen",
+      "frozenOn": "2026-10-03",
+      "confirmation": "用户反馈第7关火箭未解锁并要求挑战暂停时背景音乐继续正常播放；第7关当前教学关卡计入火箭解锁判定，暂停保持gameplay或danger音乐场景，库存、救援、计时和其它结算规则保持。"
+    },
+    {
+      "version": "1.141.0",
+      "ruleId": "blockout-rules-v1.141.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.141.0.md",
+      "sha256": "4a113bb62d799b3b9462526b8de76b23851195666096599348e1b1a03e9603a6",
+      "status": "frozen",
+      "frozenOn": "2026-10-03",
+      "confirmation": "用户要求新用户进入游戏时初始金币为0；仅新建默认存档使用0，已有有效存档金币、奖励、消费和补给经济保持不变，不发布。"
+    },
+    {
+      "version": "1.142.0",
+      "ruleId": "blockout-rules-v1.142.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.142.0.md",
+      "sha256": "dbd97beb6f346b85006fddbf48a27a6612214de3eeda69a9390a05d4c915abeb",
+      "status": "frozen",
+      "frozenOn": "2026-10-03",
+      "confirmation": "用户要求第7关火箭引导在瞄准阶段指向四格2×2红色方块strategy-guard-12；既有死局、救援和成功结算规则保持。"
+    },
+    {
+      "version": "1.143.0",
+      "ruleId": "blockout-rules-v1.143.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.143.0.md",
+      "sha256": "e05a0416973b695a9cdffb0bba197b775840e3f8fc5f77e602dc897999382315",
+      "status": "frozen",
+      "frozenOn": "2026-10-03",
+      "confirmation": "用户要求第7关火箭引导改为参考方向的原地按压手势，并在火箭消除目标块时增加中心爆闪与碎片消失特效；游戏逻辑、库存和通关规则保持。"
+    },
+    {
+      "version": "1.144.0",
+      "ruleId": "blockout-rules-v1.144.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.144.0.md",
+      "sha256": "f14452a9e30ea084cabb9c4d8ac89736f06092e3532a42cdef06481d5617a18f",
+      "status": "frozen",
+      "frozenOn": "2026-10-03",
+      "confirmation": "用户要求时间停止、火箭、脉冲道具无论是否解锁或库存是否为0，图标均保持正常显示；锁定、补充提示与实际使用限制保持。"
+    },
+    {
+      "version": "1.145.0",
+      "ruleId": "blockout-rules-v1.145.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.145.0.md",
+      "sha256": "33592b7ed7450a63b89d0597b4f8d375bdbbbce09808591256c7276394a13eed",
+      "status": "frozen",
+      "frozenOn": "2026-10-04",
+      "confirmation": "用户要求将引导手指替换为提供的斜向左上手势，并将第10关左下角冰冻色块初始数字及脉冲救援阈值改为21；其它引导和关卡逻辑保持。"
+    },
+    {
+      "version": "1.146.0",
+      "ruleId": "blockout-rules-v1.146.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.146.0.md",
+      "sha256": "50379976c7c0a59e3f91b5680500bc6187151b0d8ed5c732c9920c446cd9a4bb",
+      "status": "frozen",
+      "frozenOn": "2026-10-04",
+      "confirmation": "用户要求新道具解锁图标与底部道具图标保持一致；解锁弹窗和提示条复用正式 gameplay UI 素材并按宽高比等比缩放，解锁与关卡逻辑保持。"
+    },
+    {
+      "version": "1.147.0",
+      "ruleId": "blockout-rules-v1.147.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.147.0.md",
+      "sha256": "03d59c329683319be00167cca3d43d45d5b7185c0da810a49d788d2e6e6c9e61",
+      "status": "frozen",
+      "frozenOn": "2026-10-04",
+      "confirmation": "用户要求将第10关左下角冰冻色块数字由21改为25，脉冲救援阈值同步调整；其它关卡与通关逻辑保持。"
+    },
+    {
+      "version": "1.148.0",
+      "ruleId": "blockout-rules-v1.148.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.148.0.md",
+      "sha256": "77f450f772c4ecba474666a777ca5d551ddd7d2e156aca3ea0186f79cd66e81d",
+      "status": "frozen",
+      "frozenOn": "2026-10-04",
+      "confirmation": "用户要求第10关脉冲引导手指直接出现在道具图标或目标色块上，使用食指向下按压动画，不再发生起点到终点的位移；冻结计数、道具结算和其它玩法保持。"
+    },
+    {
+      "version": "1.149.0",
+      "ruleId": "blockout-rules-v1.149.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.149.0.md",
+      "sha256": "95e65c0a37679b8b69ec8f0900656817ef77c18b8516bc6bfd2374a9c99d2b80",
+      "status": "frozen",
+      "frozenOn": "2026-10-04",
+      "confirmation": "用户要求删除第10关脉冲使用后出现在左下目标色块上的手指引导；保留脉冲按钮引导及全部冻结、结算和通关逻辑。"
+    },
+    {
+      "version": "1.150.0",
+      "ruleId": "blockout-rules-v1.150.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.150.0.md",
+      "sha256": "8d8859fb0e6d1995fc95ed84abfaef535b3e0b9d5196f93b6139c26ec3989025",
+      "status": "frozen",
+      "frozenOn": "2026-10-04",
+      "confirmation": "用户确认每日挑战规则：每阶段三档各10关、按实际解锁机制生成、当天固定抽取、每玩家独立、3次且每小时恢复、首次奖励、仅时间限制、使用主线道具库存且不影响主线；难度3必挪次数改为大于30。"
+    },
+    {
+      "version": "1.151.0",
+      "ruleId": "blockout-rules-v1.151.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.151.0.md",
+      "sha256": "faf7eb1edc8c0c532e451d2dab4b312f19896c9ff292b7f5ba270fb976bec827",
+      "status": "frozen",
+      "frozenOn": "2026-10-07",
+      "confirmation": "用户要求取消每日挑战每小时恢复，改为每日固定5次，北京时间00:00重置；其余每日挑战规则保持。"
+    },
+    {
+      "version": "1.152.0",
+      "ruleId": "blockout-rules-v1.152.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.152.0.md",
+      "sha256": "408600e71bacb6cf3d34509d94b38240e862fbe09b4ef5c6b042545fce2e8a40",
+      "status": "frozen",
+      "frozenOn": "2026-10-07",
+      "confirmation": "用户要求每日挑战当天成功后不得再次挑战，隐藏按钮并显示每日任务同款绿色勾选；成功奖励卡与难度选择页共用奖励配置，实际奖励与每日5次及北京时间零点刷新保持。"
+    },
+    {
+      "version": "1.153.0",
+      "ruleId": "blockout-rules-v1.153.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.153.0.md",
+      "sha256": "58aa3f8762d7ba4f784cc6da3889eb8f873854def6affe718f69da5d3b4f2811",
+      "status": "frozen",
+      "frozenOn": "2026-10-07",
+      "confirmation": "用户活动目标授权重新求解全部450每日挑战，不达标或无法求解时调整布局、形状和颜色后重解，最终生成450正式关卡；保留主线正常棋盘基准及独立布局、真实必挪证明。"
+    },
+    {
+      "version": "1.154.0",
+      "ruleId": "blockout-rules-v1.154.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.154.0.md",
+      "sha256": "5b8986873d7014f6d6612f3678891e295e72d30431f2b3b0bd67c2dd91d4698c",
+      "status": "frozen",
+      "frozenOn": "2026-10-08",
+      "confirmation": "用户活动目标要求重生成同质化严重的每日450关，提高机制数量及初值并满足真实必挪上下界；用户明确每次求解最多10000个棋盘状态，超限未通过后改变颜色和形状重新求解，最终450正式。"
+    },
+    {
+      "version": "1.155.0",
+      "ruleId": "blockout-rules-v1.155.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.155.0.md",
+      "sha256": "00511044905b1d03107f61f913f6276a3d451e928558cedb03b24d1e195cca13",
+      "status": "frozen",
+      "frozenOn": "2026-10-08",
+      "confirmation": "用户要求重制同质化荣耀联赛100关，增加机关实例及适用数值，满足困难/超难真实上下界；超过10000次求解未通过须改颜色和造型重解直至100正式。每次10000棋盘状态为本轮执行口径。"
+    },
+    {
+      "version": "1.156.0",
+      "ruleId": "blockout-rules-v1.156.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.156.0.md",
+      "sha256": "71cbdc5c52b8d02b191c0db83c5a7875948450226473ad848817296de491b90a",
+      "status": "frozen",
+      "frozenOn": "2026-10-08",
+      "confirmation": "用户将普通出口、异形色块、冰冻出口、异形棋盘、数字冰块、卷帘门合并为一个每日阶段，明确每档10关共30且未解锁也可随机；其余九阶段保持，目标由450改为300。"
+    },
+    {
+      "version": "1.157.0",
+      "ruleId": "blockout-rules-v1.157.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.157.0.md",
+      "sha256": "4a34f0466f58f2562c98b3813f9634bb402ee4bcc422e4fa42de04df5be6f377",
+      "status": "frozen",
+      "frozenOn": "2026-10-08",
+      "confirmation": "用户明确旅程11/排行6/商店8/每日任务5/每日挑战15/成就5均为通关后解锁，成就与每日任务不需要引导；联赛维持通5，旧进度/经济和其它合同保持。"
+    },
+    {
+      "version": "1.158.0",
+      "ruleId": "blockout-rules-v1.158.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.158.0.md",
+      "sha256": "519598c549cbdeed4a994baa70353ea1525713ea105a56b7f1660528bc894c08",
+      "status": "frozen",
+      "frozenOn": "2026-10-08",
+      "confirmation": "用户追加荣耀联赛第20关解锁，沿用已确认通关后语义；统一入口/自动入组/新挑战，保原六门槛、成就及每日任务不引导、旧数据和保存事务。"
+    },
+    {
+      "version": "1.159.0",
+      "ruleId": "blockout-rules-v1.159.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.159.0.md",
+      "sha256": "277c81b858d515d3dc7fa151d5b7c7ad7f54ca928195af02d95c5cbbb422bd5a",
+      "status": "frozen",
+      "frozenOn": "2026-10-08",
+      "confirmation": "用户授权制作功能解锁引导；排行6/商店8/旅程11/每日15/联赛20通关后，排除任务成就，保既有提示队列与账户事务。"
+    },
+    {
+      "version": "1.160.0",
+      "ruleId": "blockout-rules-v1.160.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.160.0.md",
+      "sha256": "9dd7cd6c6ca5224a5f8547680206920409f7a455e0a321b97c27fb054090bfa4",
+      "status": "frozen",
+      "frozenOn": "2026-10-08",
+      "confirmation": "用户要求0库存道具点击弹出关内参考图购买界面，并明确每次购买1个，全游戏冻结300/火箭400/脉冲400金币；沿用道具解锁和候选保存边界，不自动使用、不微信打包或发布。"
+    },
+    {
+      "version": "1.161.0",
+      "ruleId": "blockout-rules-v1.161.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.161.0.md",
+      "sha256": "3da59438410b182306a1d67f9298ce8545803f8fd881fe6124b2bb49f7cc4cc1",
+      "status": "frozen",
+      "frozenOn": "2026-10-08",
+      "confirmation": "用户将主线每关首次通关金币改为40，重复及补星仍0，不追溯旧存档；每日、联赛等奖励与历史关卡reward保持，沿用候选保存事务，不微信打包或发布。"
+    },
+    {
+      "version": "1.162.0",
+      "ruleId": "blockout-rules-v1.162.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.162.0.md",
+      "sha256": "d3a7df9d8aae063b0fa05a53e4642805fc73c18ade68939bc5c02933cdc54e7d",
+      "status": "frozen",
+      "frozenOn": "2026-10-08",
+      "confirmation": "用户要求按视频新增个人资料界面，补充截图确认9款头像框；15头像、免费外观保存、100金币改名及真实统计，承继主线首通40和既有保存合同，不微信打包或发布。"
+    },
+    {
+      "version": "1.163.0",
+      "ruleId": "blockout-rules-v1.163.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.163.0.md",
+      "sha256": "421c2a59d3759ced8a4201ee23e6b22ea264b274cbfdd787ac08afc37bbc4814",
+      "status": "frozen",
+      "frozenOn": "2026-10-08",
+      "confirmation": "用户要求首页头像放在最左边，金币/体力顺次右移，真实绘制/按压/命中及金币飞行终点同步；其余个人资料和历史规则保持，不微信打包或发布。"
+    },
+    {
+      "version": "1.164.0",
+      "ruleId": "blockout-rules-v1.164.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.164.0.md",
+      "sha256": "c21d6bff8c82e286abe136fb93b306cc171e45d724d8546154097b04b85d866f",
+      "status": "frozen",
+      "frozenOn": "2026-10-09",
+      "confirmation": "用户采纳10款头像通10/30至190、10款头像框通20/40至200解锁；旧15头像/9框免费，未解锁显示锁和关卡，旧玩家自动获得，沿用保存合同，不微信打包发布。"
+    },
+    {
+      "version": "1.165.0",
+      "ruleId": "blockout-rules-v1.165.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.165.0.md",
+      "sha256": "3df0c3206b31f9f160161d213a8eeb793889afff10f433bc9c6a2e91be9232a3",
+      "status": "frozen",
+      "frozenOn": "2026-10-09",
+      "confirmation": "用户要求头像/头像框取消翻页，改成上下滑动显示更多；保留全部解锁及保存规则，不发布。"
+    },
+    {
+      "version": "1.166.0",
+      "ruleId": "blockout-rules-v1.166.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.166.0.md",
+      "sha256": "b1a2d863f5097591fae595d53b7d0bea4dcad6e7d48a2e41ad42ebd7c50a7888",
+      "status": "frozen",
+      "frozenOn": "2026-10-09",
+      "confirmation": "用户要求未解锁头像/框允许选中但保存按钮置灰，未解锁图片不虚化；保留通关资格与保存合同。"
+    },
+    {
+      "version": "1.167.0",
+      "ruleId": "blockout-rules-v1.167.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.167.0.md",
+      "sha256": "fb970a837fbbef3c18ce999312fe2bb08ac474ffe65c9c3208c6a78a3e120767",
+      "status": "frozen",
+      "frozenOn": "2026-10-09",
+      "confirmation": "用户要求选中未解锁头像/框时不显示底部解锁提示；其它预览/灰按钮和解锁规则保持。"
+    },
+    {
+      "version": "1.168.0",
+      "ruleId": "blockout-rules-v1.168.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.168.0.md",
+      "sha256": "4ec07e882ce907071a908f31172a70ce248a26f44bb9f840f60647847e5008d0",
+      "status": "frozen",
+      "frozenOn": "2026-10-09",
+      "confirmation": "用户要求头像/框保存后不关闭界面并提示保存成功；保留当前分类与位置，确认持久化才成功。"
+    },
+    {
+      "version": "1.169.0",
+      "ruleId": "blockout-rules-v1.169.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.169.0.md",
+      "sha256": "f132f97f24bac5170f327ed5d2af028caf14841de6df622dc2a92584bd1a75ac",
+      "status": "frozen",
+      "frozenOn": "2026-10-09",
+      "confirmation": "用户要求手动花费灵感成功收藏新名画时播放收藏解锁翻转动画；确认保存成功后展示实际名画，保留原收藏费用、资格、事务和首次解锁流程。"
+    },
+    {
+      "version": "1.170.0",
+      "ruleId": "blockout-rules-v1.170.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.170.0.md",
+      "sha256": "2c3b1417cbbae2b0f5eb42202f037df92c03e79af79979a62a65bd74f000a4ff",
+      "status": "frozen",
+      "frozenOn": "2026-10-09",
+      "confirmation": "用户要求功能解锁时取消红框内标题、说明和稍后等提示，仅保留入口手指引导；五项功能直接聚焦入口，保存确认与重试合同保持。"
+    },
+    {
+      "version": "1.171.0",
+      "ruleId": "blockout-rules-v1.171.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.171.0.md",
+      "sha256": "66c2a77367829864cbe1dbc476362e850887c6f4d51815763ec28ed1194b6000",
+      "status": "frozen",
+      "frozenOn": "2026-10-09",
+      "confirmation": "用户要求每日挑战界面删除金币插图上的每日挑战文本，将顶部难度选择改为每日挑战；其它界面和挑战机制保持。"
+    },
+    {
+      "version": "1.172.0",
+      "ruleId": "blockout-rules-v1.172.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.172.0.md",
+      "sha256": "b1ca839c765000b3f02911bd846622bb89b985712c8d4316ffc1e696ab9db401",
+      "status": "frozen",
+      "frozenOn": "2026-10-09",
+      "confirmation": "用户要求所有名画收藏统一消耗50灵感，含第一幅；已收藏不追溯，原解锁、奖励及候选保存和翻转动画保持，不微信打包发布。"
+    },
+    {
+      "version": "1.173.0",
+      "ruleId": "blockout-rules-v1.173.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.173.0.md",
+      "sha256": "8827613b79c249e86b3a72ed6e814392a258ddad7003055b0f49677bd6df0e7d",
+      "status": "frozen",
+      "frozenOn": "2026-10-09",
+      "confirmation": "用户要求个人资料头像/框目录移除通关条件文字，选中未解锁项隐藏保存按钮并在原位置显示通过X关解锁；保清晰预览、角锁、原门槛及组合资格与候选保存合同。"
+    },
+    {
+      "version": "1.173.1",
+      "ruleId": "blockout-rules-v1.173.1",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.173.1.md",
+      "sha256": "a66180ec06878ef38c689a193cd99d1eb0ca63c07a50b9fd2c0133b3fcacb4f1",
+      "status": "frozen",
+      "frozenOn": "2026-10-09",
+      "confirmation": "v1.173.0登记后的文字修正：解锁提示优先当前分类选中锁定项的关号；当前项已解锁而另一草稿锁定时显示另一项关号，替代组合max解释。用户授权、全部资格与其它合同不变，旧文档及hash保持。"
+    },
+    {
+      "version": "1.174.0",
+      "ruleId": "blockout-rules-v1.174.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.174.0.md",
+      "sha256": "eafa6d324dbd794730f35522b99e785330bc0c7a96ec797a81093cc6d60e9ab7",
+      "status": "frozen",
+      "frozenOn": "2026-10-09",
+      "confirmation": "用户要求补充体力删除右上独立金币显示，高亮主界面原金币资源；复用原位置及余额，不新增点击穿透，体力及保存合同保持。"
+    },
+    {
+      "version": "1.175.0",
+      "ruleId": "blockout-rules-v1.175.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.175.0.md",
+      "sha256": "285fa77871f6cf497b3d67c1f3878b45da088a71dc8dd620e36b6a8f5e1c6365",
+      "status": "frozen",
+      "frozenOn": "2026-10-09",
+      "confirmation": "用户要求参考视频制作连续消除赞语，明确不用3秒窗口，连续拖进出口消除计连击且剥壳也算；保留既有玩法/经济/保存合同，不微信打包发布。"
+    },
+    {
+      "version": "1.176.0",
+      "ruleId": "blockout-rules-v1.176.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.176.0.md",
+      "sha256": "28f5d91c5fa367acc6a912cfbfb02a69bfd881af450fdea87a400d834eef6fde",
+      "status": "frozen",
+      "frozenOn": "2026-10-09",
+      "confirmation": "用户授权荣耀联赛模拟对手按主线类型及自身进度独立固定每日通关数量、按小时分批并将星级改为积分，取代随玩家积分追涨；具体配额为现有主线period推导的执行配置。保旧分与身份、pending快照、原周期和保存合同，不改主线、不微信打包发布。"
+    },
+    {
+      "version": "1.177.0",
+      "ruleId": "blockout-rules-v1.177.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.177.0.md",
+      "sha256": "728bb29013df23f7b9f937c6238c457baaa572734318e4c7e01cafc08b436784",
+      "status": "frozen",
+      "frozenOn": "2026-10-09",
+      "confirmation": "用户明确恢复新功能解锁前置弹窗，点击去看看后才显示入口手指；五功能卡片及稍后持久确认恢复，focus仍无底部说明，保原队列、已读记录与候选保存合同，不微信打包发布。"
+    },
+    {
+      "version": "1.178.0",
+      "ruleId": "blockout-rules-v1.178.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.178.0.md",
+      "sha256": "45a38102fe379391140f43a601e9db1a125bfb5a7bac2aa610531a032ee67d51",
+      "status": "frozen",
+      "frozenOn": "2026-10-09",
+      "confirmation": "用户要求所有非全屏弹窗由80%放大到100%、不透明度0%到100%；0.22秒缓出为执行选择，保全屏页面、段位滑动、功能解锁顺序及玩法/经济/保存合同，不微信打包发布。"
+    },
+    {
+      "version": "1.179.0",
+      "ruleId": "blockout-rules-v1.179.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.179.0.md",
+      "sha256": "919bdc54038abc5689c7bfc9503b54daf92721c01d7de32d0831bf8dc86fe1e2",
+      "status": "frozen",
+      "frozenOn": "2026-10-09",
+      "confirmation": "用户追加弹窗80%→120%→100%回弹，并明确淡入仅在80%→120%期间完成，回落保持完全不透明；0.18+0.14秒为执行选择，其余弹窗覆盖/全屏排除及历史合同保持，不微信打包发布。"
+    },
+    {
+      "version": "1.180.0",
+      "ruleId": "blockout-rules-v1.180.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.180.0.md",
+      "sha256": "3652a8e8ad885c05738dc398fd401ee39a88d6f7f427d0c53a94eb0f4cf39fae",
+      "status": "frozen",
+      "frozenOn": "2026-10-09",
+      "confirmation": "用户最新将放大峰值改为110%，非全屏弹窗80%→110%→100%，放大阶段完成淡入、回落保持不透明，时长及全部历史合同保持，不微信打包发布。"
+    },
+    {
+      "version": "1.181.0",
+      "ruleId": "blockout-rules-v1.181.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.181.0.md",
+      "sha256": "19f7142c52049976abe902e84854ff83d0aeb58ffe73d4def71a9c54cfe8d378",
+      "status": "frozen",
+      "frozenOn": "2026-10-09",
+      "confirmation": "用户明确非全屏弹窗关闭100%→110%→80%，只在110%→80%缩小阶段从完全不透明淡出至0；原入场及事务和历史合同保持，不微信打包发布。"
+    },
+    {
+      "version": "1.182.0",
+      "ruleId": "blockout-rules-v1.182.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.182.0.md",
+      "sha256": "4d6e4a049a6389ee810349d6f82b45210846c73c6508d1c5f01ce061ceac71c4",
+      "status": "frozen",
+      "frozenOn": "2026-10-10",
+      "confirmation": "用户要求参考视频底部名画进度，后续明确仍需消耗灵感获得、这里只展示；保原5关解锁和50灵感手动收藏，无自动授予。"
+    },
+    {
+      "version": "1.183.0",
+      "ruleId": "blockout-rules-v1.183.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.183.0.md",
+      "sha256": "b29db064467d53c85434be178761e987ae96cd2ec7a4858e02c05f03ca967eb9",
+      "status": "frozen",
+      "frozenOn": "2026-10-10",
+      "confirmation": "用户明确仍需灵感且这里只展示后，追加集齐后播放翻转；集满自动新解锁预览，保留50灵感手动获得。"
+    },
+    {
+      "version": "1.184.0",
+      "ruleId": "blockout-rules-v1.184.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.184.0.md",
+      "sha256": "38f2e91bf869b1085aebe920d2dc067224aa6d06812151abb9390bb1c22572f2",
+      "status": "frozen",
+      "frozenOn": "2026-10-10",
+      "confirmation": "用户采纳福利站方案及ImageGen效果图，授权四类广告奖励各每日2次、共用60秒冷却与真实广告完成后候选保存发奖；保关内金币购买和50灵感收藏。"
+    },
+    {
+      "version": "1.185.0",
+      "ruleId": "blockout-rules-v1.185.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.185.0.md",
+      "sha256": "2395967cdde8bc90c843c97a389b26ab700885bb8ae12874010ffc67ebb3bd44",
+      "status": "frozen",
+      "frozenOn": "2026-10-10",
+      "confirmation": "用户明确不要候选不要设计，达到要求直接写入正式数据，好一个写入一个；取代每日300全量后接入的等待顺序，保单关完整质量/数学/真实运行验收及同日存档边界。"
+    },
+    {
+      "version": "1.186.0",
+      "ruleId": "blockout-rules-v1.186.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.186.0.md",
+      "sha256": "fce3e46c7ca465bb01c4d9656453306a730549e64a1db4e191530d007fa45744",
+      "status": "frozen",
+      "frozenOn": "2026-10-10",
+      "confirmation": "用户明确体力已满仍可看广告并超出上限；福利站每次+1，日2次及60秒冷却保持，自然恢复上限仍5。"
+    },
+    {
+      "version": "1.187.0",
+      "ruleId": "blockout-rules-v1.187.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.187.0.md",
+      "sha256": "d47398cd89525bba751b299d65819c4313c45aa772c6ecdbf0201c89d5471fe7",
+      "status": "frozen",
+      "frozenOn": "2026-10-10",
+      "confirmation": "用户明确看广告不需要冷却，取消福利站全部四类60秒冷却并解除旧存档冷却；保日额度、满体力溢出和保存事务。"
+    },
+    {
+      "version": "1.188.0",
+      "ruleId": "blockout-rules-v1.188.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.188.0.md",
+      "sha256": "c3ddfb5705cd5974c2863fa0bbc1b8416b2c3e4f668dde679cf9f214b8ea04e4",
+      "status": "frozen",
+      "frozenOn": "2026-10-10",
+      "confirmation": "用户执行主线三榜优化，确认周榜本周新增星，省榜/全国累计星；省份自动识别，失败随机并保存，无手选。日配额具体配置为实现设计。"
+    },
+    {
+      "version": "1.189.0",
+      "ruleId": "blockout-rules-v1.189.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.189.0.md",
+      "sha256": "0625e8d67b9cc717b0d47c539cc4f0378461e4d3019ad6f6f1cfe58c925e93ae",
+      "status": "frozen",
+      "frozenOn": "2026-10-10",
+      "confirmation": "用户要求旅程任务改为通过关卡达成；资格保持真实通关记录，修正任务卡以当前到达关号替换目标的显示，保旧领取和章节背景合同。"
+    },
+    {
+      "version": "1.190.0",
+      "ruleId": "blockout-rules-v1.190.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.190.0.md",
+      "sha256": "f259c1ae4a4c64373532bd59a04372557f7c8ccffdf43f63c411db24248066ac",
+      "status": "frozen",
+      "frozenOn": "2026-10-10",
+      "confirmation": "用户纠正沙漠王国应第11关解锁，旅程背景统一为通过标注关11/21/…191；修复提前一关，保持首章默认及其它资源和通关合同。"
+    },
+    {
+      "version": "1.191.0",
+      "ruleId": "blockout-rules-v1.191.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.191.0.md",
+      "sha256": "edcd51be04cf3abca45f27027a72131d1179293e92a4cda8e0b900750a3e9502",
+      "status": "frozen",
+      "frozenOn": "2026-10-10",
+      "confirmation": "用户要求旅程功能第10关解锁，沿已确认通关口径改入口与引导为通过10；沙漠背景通过11及其它门槛保持。"
+    },
+    {
+      "version": "1.192.0",
+      "ruleId": "blockout-rules-v1.192.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.192.0.md",
+      "sha256": "7246d3875d869e4eabd06f366f176b7119da7e5543bd69dcb117d0699f1ea82d",
+      "status": "frozen",
+      "frozenOn": "2026-10-10",
+      "confirmation": "用户要求将省榜页签固定显示为本省；省份归属与排名逻辑保持。"
+    },
+    {
+      "version": "1.193.0",
+      "ruleId": "blockout-rules-v1.193.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.193.0.md",
+      "sha256": "f5edbbe2cf900df455b9d54e335a9cf1132d224f674cae36dea37f880f3f9c97",
+      "status": "frozen",
+      "frozenOn": "2026-10-10",
+      "confirmation": "用户要求按机制解锁顺序制作每日挑战；从基础合并阶段起逐阶段补齐，保留已正式数据及逐关接入、全部数学和运行验收。基础池开放冲突仍待选择，不因顺序要求改变玩家抽取规则。"
+    },
+    {
+      "version": "1.194.0",
+      "ruleId": "blockout-rules-v1.194.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.194.0.md",
+      "sha256": "f792ca3911991b0f4c45dec128633243f208e65724075668dc70eb84612a1b06",
+      "status": "frozen",
+      "frozenOn": "2026-10-10",
+      "confirmation": "用户反馈开局使用脉冲后目标仍卡1；修复第10关本局有效脉冲记忆，已用后允许普通清除1到0且不再提示，未用教学及胜利延迟扣除保持。"
+    },
+    {
+      "version": "1.195.0",
+      "ruleId": "blockout-rules-v1.195.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.195.0.md",
+      "sha256": "8268171aaca64398902d6b83b4be299e872f7f0473c3aad61c21883fc1e5ae48",
+      "status": "frozen",
+      "frozenOn": "2026-10-10",
+      "confirmation": "用户反馈本省高分榜首全国无法找到，修正全国候选遗漏本省补充身份；合并去重竞争99对手名额并保100人、原成长及玩家数据。"
+    },
+    {
+      "version": "1.196.0",
+      "ruleId": "blockout-rules-v1.196.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.196.0.md",
+      "sha256": "fde3a14bef2170ec3dd8f9bf42f099bd357eb3f2a85df7cf812454a3e7ec206a",
+      "status": "frozen",
+      "frozenOn": "2026-10-12",
+      "confirmation": "用户在获知点击后才加载广告的等待原因与提前加载方案后明确要求优化；允许前台预热单条独立实例，展示与奖励仍需玩家点击，保回调隔离、失败不循环、后台边界及原奖励保存事务。缓存刷新与加载超时为实现策略，不自动微信打包或发布。"
+    },
+    {
+      "version": "1.197.0",
+      "ruleId": "blockout-rules-v1.197.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.197.0.md",
+      "sha256": "363d475158431748bc3e08382ed59239a08e42647fc1dead17688672cd3733f0",
+      "status": "frozen",
+      "frozenOn": "2026-10-12",
+      "confirmation": "用户在获知有损图片说明后明确执行已审计微信包优化；仅五图停用排除、四组同图复用及白名单30PNG/12JPEG同尺寸编码，保原图/Web/音频与玩法。本轮允许本地重建，验画质/加载/预算，不上传发布。"
+    },
+    {
+      "version": "1.198.0",
+      "ruleId": "blockout-rules-v1.198.0",
+      "runtimeProfile": "revised-2026-09-27-v1.5",
+      "document": "docs/rules/mechanism-rules-v1.198.0.md",
+      "sha256": "bdb39680642cd1c4a75214cdeee541feaf8a8e8e992a2b531f302b70990ef198",
+      "status": "frozen",
+      "frozenOn": "2026-10-12",
+      "confirmation": "用户允许当前每日挑战各档必挪上下限正负3容差：13–23、18–33、至少28且完整有限U；保真实L/U、10000状态及独立布局和正式验收，按机制顺序逐关接入。"
     }
   ]
 }

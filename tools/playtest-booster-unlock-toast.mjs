@@ -140,6 +140,27 @@ const logicalPoint = (state, x, y) => ({
   x: state.viewportTransform.offsetX + x * state.viewportTransform.scale,
   y: state.viewportTransform.offsetY + y * state.viewportTransform.scale,
 });
+const pagePoint = async (page, point) => {
+  const current = await debug(page);
+  const bounds = await page.locator("canvas").boundingBox();
+  if (!bounds) throw new Error("Unlock toast E2E: canvas bounds are unavailable");
+  const logical = logicalPoint(current, point.x, point.y);
+  return { x: bounds.x + logical.x, y: bounds.y + logical.y };
+};
+const performOnboardingGesture = async (page, guide) => {
+  const start = await pagePoint(page, guide.start);
+  if (!guide.points?.[1]) {
+    await page.mouse.click(start.x, start.y);
+    return;
+  }
+  await page.mouse.move(start.x, start.y);
+  await page.mouse.down();
+  for (const point of guide.points.slice(1)) {
+    const destination = await pagePoint(page, point);
+    await page.mouse.move(destination.x, destination.y, { steps: 3 });
+  }
+  await page.mouse.up();
+};
 const clickInteractionTarget = async (page, name) => {
   const state = await debug(page);
   const hit = state.interactionTargets?.targets?.[name]?.hit;
@@ -277,8 +298,7 @@ if (!state.onboarding.guide || state.boosterUnlock.pending?.visible) {
   throw new Error("Unlock toast E2E: pending prompt competed with the direct-exit tutorial");
 }
 const guide = state.onboarding.guide;
-await tutorial.mouse.move(guide.start.x, guide.start.y);
-await tutorial.mouse.click(guide.start.x, guide.start.y);
+await performOnboardingGesture(tutorial, guide);
 await tutorial.waitForTimeout(30);
 state = await debug(tutorial);
 if (!state.onboarding.basicsSeen || state.boosterUnlock.pending?.kind !== "time" || !state.boosterUnlock.pending.visible) {
@@ -547,8 +567,7 @@ if (!basicsGuide?.points?.[1]) {
 }
 const basicsBlockCount = basicsState.puzzle.blocks.length;
 await installStorageFaultPlan(basicsFault, "write-then-unresolved");
-await basicsFault.mouse.move(basicsGuide.start.x, basicsGuide.start.y);
-await basicsFault.mouse.down();
+await performOnboardingGesture(basicsFault, basicsGuide);
 await basicsFault.waitForTimeout(50);
 basicsState = await debug(basicsFault);
 const basicsProbe = await storageFaultProbe(basicsFault);

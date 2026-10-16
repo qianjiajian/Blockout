@@ -1,0 +1,1 @@
+const fs=require('fs');const p='docs/rules/mechanism-rules-v1.123.0.md';let s=fs.readFileSync(p,'utf8');s=s.replace('- `deliverables/continue201-210-20260929/routes-v123.json`','- `deliverables/continue201-210-20260929/candidate-levels-v123.json`\n- `deliverables/continue201-210-20260929/routes-v123.json`');fs.writeFileSync(p,s);

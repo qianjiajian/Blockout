@@ -1,0 +1,1 @@
+const r=JSON.parse(require('fs').readFileSync('deliverables/league-regeneration-20261004/mid-experiments/proof-20-64.json'));for(const x of r.results){for(const a of x.attempts??[])if(a.U)console.log(x.sourceIndex,a.mutationIndex,a.status,a.U,a.L,a.lower?.status,a.lower?.termination)}

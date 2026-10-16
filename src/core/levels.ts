@@ -1145,7 +1145,84 @@ export const LEVELS_BEFORE_LEVEL78_LATE_LIFT_REPAIR: LevelSpec[] = LEVELS_BEFORE
 export const LEVELS_BEFORE_161_170_REMAKE: LevelSpec[] = LEVELS_BEFORE_LEVEL78_LATE_LIFT_REPAIR.map(applyLevel78LateLiftRepair);
 export const LEVELS_BEFORE_191_200_REMAKE: LevelSpec[] = LEVELS_BEFORE_161_170_REMAKE.map(applyRemake161to170);
 export const LEVELS_BEFORE_171_180_REMAKE: LevelSpec[] = LEVELS_BEFORE_191_200_REMAKE.map(applyRemake191to200);
-export const LEVELS: LevelSpec[] = LEVELS_BEFORE_171_180_REMAKE.map(applyRemake171to180);
+// The accepted 201–210 formal-data registry remains separate from production.
+// The campaign, meta and saved-progress boundaries stay at 200 levels.
+const applyLevelOneCornerTutorial = (level: LevelSpec): LevelSpec => {
+  if (level.id !== 1) return level;
+
+  // Keep the first lesson visually simple: three authored square pieces sit
+  // in three board corners. The blue piece starts in the upper-left and the
+  // hand traces its verified horizontal opening route to the right exit;
+  // the other two pieces provide the follow-up moves.
+  return {
+    ...level,
+    blocks: level.blocks.map((block) => (
+      block.id === "cc-001-b1-01" ? { ...block, x: 0, y: 0 }
+        : block.id === "cc-001-b1-02" ? { ...block, x: 0, y: 3 }
+          : block.id === "cc-001-b1-03" ? { ...block, x: 3, y: 3 }
+            : block
+    )),
+    onboardingHint: {
+      blockId: "cc-001-b1-01",
+      path: [[1, 0], [2, 0], [3, 0]],
+    },
+  };
+};
+
+export const LEVELS: LevelSpec[] = LEVELS_BEFORE_171_180_REMAKE
+  .map(applyRemake171to180)
+  .map((level) => level.id === 7
+    ? {
+      ...level,
+      // v1.139: make the authored rescue state a real layout deadlock. Move
+      // the red blocker into the upper lane and park the second pink block at
+      // the far edge; after the pink opener leaves, no pink block can reach
+      // the top exit until the red 2x2 rescue target is removed.
+      blocks: level.blocks.map((block) => block.id === "strategy-guard-05"
+        ? { ...block, x: 4, y: 0 }
+        : block.id === "cc-piece-06"
+          ? { ...block, x: 2, y: 0 }
+          : block),
+      // Lv7 intentionally reaches a no-exit deadlock as soon as the opening
+      // pink departure settles. The rocket rescue removes the authored red
+      // 2x2 (four-cell) target and leaves the verified completion route.
+      rocketRescue: {
+        trigger: "no-exit-deadlock" as const,
+        targetBlockId: "strategy-guard-12",
+        deadlockBlockId: "cc-piece-03",
+        deadlockPosition: [1, 0] as const,
+      },
+    }
+    : level.id === 10
+      ? {
+        ...level,
+        // Lv10's lower-left frozen block is intentionally held at one by the
+        // model until the pulse rescue is used. This makes the authored pulse
+        // tutorial mandatory while preserving the verified completion route.
+        blocks: level.blocks.map((block) => block.id === "cc-010-b1-15"
+          ? { ...block, frozen: 25 }
+          : block),
+        pulseRescue: {
+          trigger: "frozen-one" as const,
+          targetBlockId: "cc-010-b1-15",
+          targetPosition: [0, 6] as const,
+          requiredFrozen: 25,
+        },
+      }
+      : level)
+  .map(applyLevelOneCornerTutorial);
+
+// Expose continuation records without widening the production campaign.
+export {
+  REMADE_201_210_LEVELS,
+  CONTINUATION_LEVELS_201_210,
+  FORMAL_201_210_LEVELS,
+  FORMAL_ISOLATED_201_210_LEVELS,
+  FORMAL_201_210_EVIDENCE,
+  getFormal201to210LevelStrict,
+} from './remake201to210';
+export { REMADE_211_220_LEVELS, CONTINUATION_LEVELS_211_220, FORMAL_211_220_LEVELS, FORMAL_211_220_EVIDENCE, getFormal211to220LevelStrict } from './remake211to220';
+export { REMADE_221_230_LEVELS, CONTINUATION_LEVELS_221_230, FORMAL_221_230_LEVELS, FORMAL_221_230_EVIDENCE, getFormal221to230LevelStrict } from './remake221to230';
 
 export const getLevelStrict = (id: number): LevelSpec => {
   const normalized = Number(id);

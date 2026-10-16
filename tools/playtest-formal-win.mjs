@@ -7,7 +7,7 @@ const output = fileURLToPath(new URL("../playtest-results/formal-win/", import.m
 const playtestUrl = process.env.PLAYTEST_URL ?? "http://127.0.0.1:5173/";
 const testLevelId = 5;
 const saveKey = "color-escape-save-v1";
-const initialCoins = 1000;
+const initialCoins = 0;
 const journeyMilestoneLevels = [10, 15, 25, 30, 35, 45, 50, 60, 65, 75, 80, 90, 95];
 const journeyEpisodeUnlockLevels = [11, 21, 31, 41, 51, 61, 71, 81, 91];
 const winPrefix = "/assets/art/ui/formal-pages/overlays/win/";
@@ -270,12 +270,12 @@ if (legacyCelebrationCopyDrawn) {
 }
 const [state, audit] = await redrawAndAudit();
 const firstClearDisk = await storedSave();
-if (state.settlement.coinReward !== 20
-  || state.economy.coins !== initialCoins + 20
+if (state.settlement.coinReward !== 40
+  || state.economy.coins !== initialCoins + 40
   || firstClearDisk.coins !== state.economy.coins
   || state.economy.rewardedLevels.filter((id) => id === testLevelId).length !== 1
   || firstClearDisk.rewardedLevels.filter((id) => id === testLevelId).length !== 1) {
-  throw new Error(`Formal win E2E: first clear did not present and persist exactly 20 coins: ${JSON.stringify({
+  throw new Error(`Formal win E2E: first clear did not present and persist exactly 40 coins: ${JSON.stringify({
     levelReward: state.level.reward,
     presentedReward: state.settlement.coinReward,
     runtimeCoins: state.economy.coins,
@@ -622,4 +622,4 @@ const report = {
 await writeFile(resolve(output, "formal-win-report.json"), `${JSON.stringify(report, null, 2)}\n`, "utf8");
 await browser.close();
 if (browserErrors.length) throw new Error(`Formal win browser errors:\n${browserErrors.join("\n")}`);
-console.log("Formal win passed: exact layout, isolated looping glow rotation, reduced-motion idle, first-clear 20/replay 0 coins, wallet persistence, and Journey-ledger isolation.");
+console.log("Formal win passed: exact layout, isolated looping glow rotation, reduced-motion idle, first-clear 40/replay 0 coins, wallet persistence, and Journey-ledger isolation.");

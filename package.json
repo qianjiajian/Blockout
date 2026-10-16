@@ -35,6 +35,8 @@
     "levels:verify:board-topology": "node tools/verify-board-topology-repairs.mjs",
     "levels:verify:shutter-geometry": "node tools/audit-shutter-geometry-coverage.mjs --solve --write",
     "levels:verify:shutter-geometry:post100-exact": "node tools/audit-competitor-exact-shutter-geometry-post100.mjs --solve --write",
+    "levels:daily:generate": "node tools/daily-challenge/formal-v2/emit-catalog.mjs",
+    "levels:daily:verify": "node tools/daily-challenge/formal-v2/verify-runtime.mjs",
     "levels:audit:shutter-cohorts": "node tools/audit-competitor-shutter-cohorts-stage2.mjs --write",
     "levels:verify:generators": "node tools/validate-final-generator-contracts.mjs",
     "levels:verify:generator-spawns": "node --max-old-space-size=8192 tools/verify-generator-spawn-alignment.mjs",

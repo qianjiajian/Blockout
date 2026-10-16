@@ -1,3 +1,5 @@
+import { HOME_ART_LAYOUT, HOME_TYPOGRAPHY } from "./homeArtLayout";
+
 export interface GameplayArtPlacement {
   x: number;
   y: number;
@@ -65,6 +67,7 @@ export const fitGameplayBoard = (
   rows: number,
   boosterTop: number,
   visualInsets: Partial<GameplayBoardVisualInsets> = DEFAULT_BOARD_VISUAL_INSETS,
+  fitCompleteVisualHeight = false,
 ): GameplayBoardFit => {
   const width = Math.max(1, columns);
   const height = Math.max(1, rows);
@@ -90,6 +93,9 @@ export const fitGameplayBoard = (
     metrics.maxCell,
     maximumCellFromWidth,
     maximumCellFromBottom,
+    fitCompleteVisualHeight
+      ? (boosterTop - metrics.minimumBoosterGap - metrics.minimumVisualTop) / (height + insets.top + insets.bottom)
+      : Number.POSITIVE_INFINITY,
   ));
   const innerWidth = width * cell;
   const innerHeight = height * cell;
@@ -119,15 +125,22 @@ export const fitGameplayBoard = (
   };
 };
 
+// Reuse the Home wallet spacing while preserving the gameplay icon's anchor.
+const gameplayCoinPlacement = <T extends { x: number; y: number }>(placement: T) => ({
+  ...placement,
+  x: placement.x + 10,
+  y: placement.y + 27,
+});
+
 // Coordinates are measured directly from the supplied 720×1584 gameplay
 // reference. Bitmaps are drawn at their natural sizes inside one shared
 // artboard transform; these placements must not be independently fit.
 export const GAMEPLAY_ART_LAYOUT = {
   coin: {
-    panel: { x: 39, y: 84, width: 170, height: 48 },
-    icon: { x: 26, y: 74, width: 62, height: 64 },
-    add: { x: 210, y: 86, width: 36, height: 36 },
-    label: { x: 146, y: 107, maxWidth: 98 },
+    panel: gameplayCoinPlacement(HOME_ART_LAYOUT.coinPanel),
+    icon: gameplayCoinPlacement(HOME_ART_LAYOUT.coinIcon),
+    add: gameplayCoinPlacement(HOME_ART_LAYOUT.coinAdd),
+    label: gameplayCoinPlacement(HOME_TYPOGRAPHY.coin),
   },
   back: { x: 61, y: 153, width: 88, height: 88 },
   level: { x: 255, y: 155, width: 213, height: 88 },
@@ -162,7 +175,7 @@ export const GAMEPLAY_ART_LAYOUT = {
   typography: {
     level: 31,
     timer: 33,
-    coin: 29,
+    coin: HOME_TYPOGRAPHY.coin.size,
     boosterCount: 32,
     pace: 18,
   },

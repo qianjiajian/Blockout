@@ -248,21 +248,21 @@ describe("WeChat primary touch routing", () => {
       const orangeSingleShell = await host.createImage("assets/art/gameplay/blocks/formal-v1/orange-shell-single.png");
       expect(orangeSingleShell.src).toBe("gameplay-art/formal-v1/orange-shell-single.png");
       const grabHalo = await host.createImage("assets/art/fx/block-grab-halo-v1.png");
-      expect(grabHalo.src).toBe("gameplay-art/fx/block-grab-halo-v1.png");
+      expect(grabHalo.src).toBe("assets/art/fx/block-grab-halo-v1.png");
       expect(loadSubpackage).toHaveBeenCalledTimes(1);
       expect(assignedSources).toEqual([
         "gameplay-art/formal-v1/red-single.png",
         "gameplay-art/formal-v1/blue-horizontal-2.png",
         "gameplay-art/formal-v1/green-square-2x2.png",
         "gameplay-art/formal-v1/orange-shell-single.png",
-        "gameplay-art/fx/block-grab-halo-v1.png",
+        "assets/art/fx/block-grab-halo-v1.png",
       ]);
     } finally {
       delete (globalThis as typeof globalThis & { wx?: unknown }).wx;
     }
   });
 
-  it("loads gameplay-art when an FX image is the package's first request", async () => {
+  it("loads main-package FX without requesting the gameplay-art subpackage", async () => {
     const createImage = vi.fn(() => {
       const image: Record<string, unknown> = { onload: null, onerror: null, _src: "" };
       Object.defineProperty(image, "src", {
@@ -283,9 +283,8 @@ describe("WeChat primary touch routing", () => {
     try {
       const host = new WechatHost();
       const image = await host.createImage("assets/art/fx/block-grab-halo-v1.png");
-      expect(loadSubpackage).toHaveBeenCalledOnce();
-      expect(loadSubpackage.mock.calls[0]?.[0].name).toBe("gameplay-art");
-      expect(image.src).toBe("gameplay-art/fx/block-grab-halo-v1.png");
+      expect(loadSubpackage).not.toHaveBeenCalled();
+      expect(image.src).toBe("assets/art/fx/block-grab-halo-v1.png");
     } finally {
       delete (globalThis as typeof globalThis & { wx?: unknown }).wx;
     }

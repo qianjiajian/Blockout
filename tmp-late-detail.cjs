@@ -1,0 +1,1 @@
+const r=require('./deliverables/league-regeneration-20261004/formal/late-65-100.json'); for(const i of [65,66,67,69,72,74,75,76,79,85,96,100]){const x=(r.blocked||[]).find(q=>q.index===i);console.log('LEVEL',i,JSON.stringify(x,null,2).slice(0,5000));}

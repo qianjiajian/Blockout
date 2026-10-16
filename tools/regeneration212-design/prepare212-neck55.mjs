@@ -1,0 +1,26 @@
+import fs from 'node:fs';
+import {build} from 'esbuild';
+import {loadSpatialApi} from '../continuation211-optional-lift-domain.mjs';
+import {liftPayload,runNativeLift} from '../continuation211-native-lift.mjs';
+import {sha256,modelBinding} from '../continuation211-runtime.mjs';
+import {replay} from '../remake191-200/replay.mjs';
+import {auditOpeningCoverage} from '../revised-opening-coverage.mjs';
+import {auditHiddenCoverage} from '../revised-hidden-coverage.mjs';
+import {adjacency,OUT} from './design212.mjs';
+const dir=`${OUT}/source212-grid`,input=`${dir}/neck55prefix212-0.json`,output=`${dir}/scored-neck55prefix212-0.json`,proofFile=`${dir}/native-neck55prefix212-0.json`,factsFile=`${dir}/source212-neck55-facts-v3.json`;
+if([output,proofFile,factsFile].some(f=>fs.existsSync(f)))throw Error('Finite evidence is append-only; do not rerun.');
+const parent=JSON.parse(fs.readFileSync(input)),level=structuredClone(parent.level),facts=JSON.parse(fs.readFileSync(`${dir}/source212-facts-v2.json`));
+facts.authoredDifferences=facts.authoredDifferences.filter(t=>!t.includes('59-cell')&&!t.includes('41 bodies'));
+facts.authoredDifferences.push('Original symmetric 55-cell mask remains 7x9 irregular: top 7x2, middle 5x4, bottom 7x3. Source internal hole removed and outer outline redesigned. This differs from source56; no internal wall.', 'Final design has 38 bodies:29 visible and9hidden, covering55 cells. Source inventory remains25visible+6top+1small=32. Ordinary retiling and recoloring were expressly authorized; this is not exact source inventory.');
+facts.supersedesDesignOnly=`${dir}/source212-facts-v2.json`;
+fs.writeFileSync(factsFile,JSON.stringify(facts,null,2));
+level.preservedMoveTarget=51;level.mechanismAdaptation.sourceFactsFile=factsFile;
+const api0=await loadSpatialApi(),bundle=await build({stdin:{resolveDir:process.cwd(),contents:`export{matchingContinuousExitPortals,choosePortalReleaseCandidate}from'./src/game/continuousDrag.ts';export{levelStarTargets,evaluateLevelStars}from'./src/core/levelStarConditions.ts';export{auditRevisedMechanismContract}from'./src/core/revisedMechanismContract.ts';`},bundle:true,write:false,platform:'node',format:'esm',logLevel:'silent'}),extra=await import(`data:text/javascript;base64,${Buffer.from(bundle.outputFiles[0].text).toString('base64')}`),api={...api0,...extra};
+const drags=parent.search.drags,strict=replay(level,drags,api,{timed:true,complete:true,requirePointerCompatible:true});
+const audit={opening:auditOpeningCoverage(new api.PuzzleModel(level).snapshot()),hidden:auditHiddenCoverage(level),allInventoryAdjacency:adjacency(level.blocks),nativeQ0:level.blocks.every(b=>api.matchFormalBlockShape(b.shape,'native-only')?.quarterTurns===0),mechanismIssues:api.auditRevisedMechanismContract(level)};
+const packet={status:'STRICT_COMPLETE_L11_PENDING',level,levelSha256:sha256(level),drags,routeSha256:sha256(drags),strictTimedModelReplay:strict,audit,starTargets:extra.levelStarTargets(level),modelStarEvaluation:extra.evaluateLevelStars(level,{moves:strict.effectiveDrags,elapsedSeconds:strict.simulatedSeconds}),sourceFactsFile:factsFile,sourceFactsSha256:sha256(facts),parentFile:input,pointerValidated:false,naturalClockValidated:false,formalStarSettlementValidated:false,formalAdopted:false};
+fs.writeFileSync(output,JSON.stringify(packet,null,2));
+console.log(JSON.stringify({output,sha256:packet.levelSha256,U:strict.nonClearingDrags,drags:strict.effectiveDrags}));
+const projection=structuredClone(level),removed=[];for(const b of projection.blocks)if(b.timedBombSeconds!==undefined){removed.push({id:b.id,timedBombSeconds:b.timedBombSeconds});delete b.timedBombSeconds;}
+const {p}=liftPayload(projection,api,{floor:11,maxMilliseconds:6000,maxStates:500000}),native=runNativeLift(p),report={sourceLevelSha256:packet.levelSha256,projectedLevelSha256:sha256(projection),modelBinding:modelBinding(),qualification:'deliverables/continue211-220-20260930/native-lift-qualification.json',relaxation:{removed,retained:'All bodies, colored grid cells, curtains, counts, ice, geometry, exits. Only bomb deadline removed; every successful real solution projects to equal drag cost.'},budget:{floor:11,maxMilliseconds:6000,maxStates:500000},native,certified:native.status==='threshold-proven',formalAdopted:false};
+fs.writeFileSync(proofFile,JSON.stringify(report,null,2));console.log(JSON.stringify({proofFile,...native}));

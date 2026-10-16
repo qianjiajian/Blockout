@@ -5,7 +5,6 @@ import { usesImmediatePlayableClock, usesRevisedMechanisms } from "../src/core/m
 import type { ShutterSpec } from "../src/core/types";
 import {
   missingMechanismArtPaths, requiredMechanismArtPaths,
-  ACTIVE_REVISED_MECHANISM_ART_PATHS,
 } from "../src/game/revisedMechanismArt";
 import { SHUTTER_NINE_SLICE_PATHS } from "../src/game/shutterNineSlice";
 import { isMechanismRegionRevealed, usesReferenceRegionVisuals } from "../src/game/revisedMechanismPresentation";
@@ -44,14 +43,14 @@ describe("legacy curtain reference presentation without a rules migration", () =
     expect(isMechanismRegionRevealed(getLevel(20), { ...region, count: 1 })).toBe(false);
   });
 
-  it("loads the other 62 assets after a nine-piece Lv20 cache, without reloading the frame", () => {
+  it("reuses the curtain frame and only loads assets used by the next scene", () => {
     const cache = new Map(SHUTTER_NINE_SLICE_PATHS.map((path) => [path, {}]));
     expect(missingMechanismArtPaths(getLevel(20), cache)).toEqual([]);
     const missing = missingMechanismArtPaths(getLevel(21), cache);
-    expect(missing).toHaveLength(62);
+    expect(missing).toEqual(requiredMechanismArtPaths(getLevel(21)).filter(path => !cache.has(path)));
     for (const path of SHUTTER_NINE_SLICE_PATHS) expect(missing).not.toContain(path);
     for (const path of missing) cache.set(path, {});
-    expect(cache.size).toBe(ACTIVE_REVISED_MECHANISM_ART_PATHS.length);
+    expect(cache.size).toBe(new Set([...SHUTTER_NINE_SLICE_PATHS, ...requiredMechanismArtPaths(getLevel(21))]).size);
     expect(missingMechanismArtPaths(getLevel(21), cache)).toEqual([]);
     expect(missingMechanismArtPaths(getLevel(20), cache)).toEqual([]);
   });

@@ -1,0 +1,24 @@
+import fs from 'node:fs';
+import {loadSpatialApi} from '../continuation211-optional-lift-domain.mjs';
+import {loadApi,replay} from '../remake191-200/replay.mjs';
+import {loadContinuationRuntime,sha256} from '../continuation211-runtime.mjs';
+import {nativeWitness64} from '../regeneration212-design/native-witness212-guided.mjs';
+import {prefixPayload,runPrefix} from '../regeneration212-design/native-prefix212.mjs';
+import {liftPayload,runNativeLift} from '../continuation211-native-lift.mjs';
+import {auditOpeningCoverage} from '../revised-opening-coverage.mjs';
+import {auditHiddenCoverage} from '../revised-hidden-coverage.mjs';
+import {adjacency} from '../regeneration212-design/design212.mjs';
+const out='deliverables/continue211-220-20260930/design220-new/aux212-hidden-six';fs.mkdirSync(out,{recursive:true});const api={...await loadSpatialApi(),...(await loadApi()).api},core=await loadContinuationRuntime(),history=[];
+for(const p of[20,2,34])for(let variant=0;variant<4;variant++){
+ const parent='deliverables/continue211-220-20260930/design220-new/aux212-mixed-packing-legal/candidate-'+p+'.json',base=JSON.parse(fs.readFileSync(parent)),level=structuredClone(base.level),file=out+'/parent'+p+'-six'+variant+'.json';if(fs.existsSync(file))throw Error('Already attempted');
+ level.blocks=level.blocks.filter(b=>b.shutterId!=='l212-cover10');
+ const h=w=>Array.from({length:w},(_,i)=>[i,0]);const specs=variant<2?[['a',0,0,'yellow',2],['bomb40',2,0,'blue',2],['c',4,0,'red',3],['e',0,1,'red',2],['f',2,1,variant===0?'green':'yellow',2],['d',4,1,'blue',3]]:[['a',0,0,'yellow',2],['f',2,0,variant===2?'red':'green',2],['d',4,0,'blue',3],['e',0,1,'red',2],['bomb40',2,1,'blue',2],['c',4,1,'green',3]];
+ for(const[id,x,y,color,w]of specs)level.blocks.push({id:'l212-top-'+id,x,y,color,shape:h(w),shutterId:'l212-cover10',...(id==='bomb40'?{timedBombSeconds:40}:{})});
+ const blue=level.gates.find(g=>g.color==='blue');if(blue.side==='bottom'||blue.side==='top')blue.size=Math.max(3,blue.size);level.coloredGrids[0].cells=variant<2?[[5,1],[6,1]]:[[5,0],[6,0]];
+ level.mechanismAdaptation.change+=' New top6body/full14cell original tiling: bothrowspartition2+2+3 nativehorizontalbars. Two sourceL3 ordinarybodies retilledasH3, numericblueH2bomb40 preserved, two bluefloors remaininsideblueH3. Gatebluebottomsize3 onlyforactualH3width. Sourcefactsandordinaryshape/color differences explicitly authored.';
+ const audit={opening:auditOpeningCoverage(new api.PuzzleModel(level).snapshot()),hidden:auditHiddenCoverage(level),adjacency:[undefined,'l212-cover10','l212-cover1'].flatMap(id=>adjacency(level.blocks.filter(b=>b.shutterId===id))),mechanism:core.auditRevisedMechanismContract(level)};
+ const packet={level,parent,variant,levelSha256:sha256(level),audit,formalAccepted:false};
+ if(audit.opening.passed&&audit.hidden.passed&&!audit.adjacency.length&&!audit.mechanism.length){try{let prefix=[];for(const d of base.upper.partialDrags){prefix.push(d);const r=replay(level,prefix,api,{timed:true,requirePointerCompatible:true});if(r.clearEvents>=10)break;}const pr=replay(level,prefix,api,{timed:true,requirePointerCompatible:true});packet.prefix={drags:prefix,nonClearing:pr.nonClearingDrags,clears:pr.clearEvents};const plan=structuredClone(level);plan.blocks.forEach(b=>delete b.timedBombSeconds);packet.projection=plan;packet.upper=nativeWitness64(plan,api,{prefixDrags:prefix,floor:16-pr.nonClearingDrags,maxMilliseconds:3000,maxStates:350000});if(packet.upper.drags){packet.drags=packet.upper.drags;packet.replay=replay(level,packet.drags,api,{timed:true,complete:true,requirePointerCompatible:true});if(packet.replay.nonClearingDrags>=11&&packet.replay.nonClearingDrags<=15){level.preservedMoveTarget=packet.replay.effectiveDrags;plan.preservedMoveTarget=packet.replay.effectiveDrags;packet.levelSha256=sha256(level);if(pr.nonClearingDrags>=11){packet.lower=runPrefix(prefixPayload(plan,api,{goalClears:10,floor:11,maxMilliseconds:6000,maxStates:2000000,mergeCold:true}).p);packet.lowerScope='Coldcolorprefix goal10 only';}else{packet.lower=runNativeLift(liftPayload(plan,api,{floor:11,maxMilliseconds:6000,maxStates:2000000}).p);packet.lowerScope='Full inventory only bomb deadline deleted';}}}}catch(e){packet.error=e.stack;}}
+ fs.writeFileSync(file,JSON.stringify(packet,null,2),{flag:'wx'});const row={p,variant,N:level.blocks.length,adj:audit.adjacency,pre:packet.prefix?.nonClearing,U:packet.replay?.nonClearingDrags,max:packet.upper?.maxClearsSeen,L:packet.lower?.status,frontier:packet.lower?.frontierCost,shortcut:packet.lower?.relaxedNonClearingDrags,error:packet.error?.split('\n').slice(0,3)};history.push(row);console.log(JSON.stringify(row));if(packet.lower?.thresholdProven){fs.writeFileSync(out+'/history.json',JSON.stringify(history,null,2),{flag:'wx'});process.exit(0);}
+}
+fs.writeFileSync(out+'/history.json',JSON.stringify(history,null,2),{flag:'wx'});

@@ -1,0 +1,3165 @@
+{
+  "high": [
+    {
+      "id": 4,
+      "par": 35,
+      "design": 5,
+      "mechs": [
+        "color-exit"
+      ]
+    },
+    {
+      "id": 6,
+      "par": 34,
+      "design": 5,
+      "mechs": [
+        "color-exit",
+        "frozen-exit"
+      ]
+    },
+    {
+      "id": 8,
+      "par": 104,
+      "design": 7,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "irregular-board"
+      ]
+    },
+    {
+      "id": 10,
+      "par": 62,
+      "design": 10,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice"
+      ]
+    },
+    {
+      "id": 11,
+      "par": 36,
+      "preserved": 36,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "irregular-board"
+      ]
+    },
+    {
+      "id": 14,
+      "par": 39,
+      "design": 9,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice"
+      ]
+    },
+    {
+      "id": 15,
+      "par": 536,
+      "preserved": 34,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "irregular-board"
+      ]
+    },
+    {
+      "id": 16,
+      "par": 50,
+      "preserved": 50,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "irregular-board"
+      ]
+    },
+    {
+      "id": 17,
+      "par": 71,
+      "design": 9,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell"
+      ]
+    },
+    {
+      "id": 21,
+      "par": 33,
+      "preserved": 33,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "shutter"
+      ]
+    },
+    {
+      "id": 22,
+      "par": 39,
+      "preserved": 39,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "shutter"
+      ]
+    },
+    {
+      "id": 23,
+      "par": 65,
+      "preserved": 65,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 24,
+      "par": 39,
+      "preserved": 39,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 26,
+      "par": 43,
+      "preserved": 43,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 28,
+      "par": 70,
+      "preserved": 70,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "irregular-block",
+        "shutter"
+      ]
+    },
+    {
+      "id": 29,
+      "par": 204,
+      "preserved": 204,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "irregular-block",
+        "shutter"
+      ]
+    },
+    {
+      "id": 30,
+      "par": 31,
+      "preserved": 31,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 32,
+      "par": 124,
+      "preserved": 124,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell"
+      ]
+    },
+    {
+      "id": 33,
+      "par": 35,
+      "preserved": 35,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "irregular-block",
+        "irregular-board"
+      ]
+    },
+    {
+      "id": 34,
+      "par": 68,
+      "preserved": 68,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "shutter"
+      ]
+    },
+    {
+      "id": 35,
+      "par": 26,
+      "preserved": 38,
+      "mechs": [
+        "color-exit",
+        "irregular-block",
+        "generator"
+      ]
+    },
+    {
+      "id": 36,
+      "par": 19,
+      "preserved": 31,
+      "mechs": [
+        "color-exit",
+        "irregular-block",
+        "generator"
+      ]
+    },
+    {
+      "id": 37,
+      "par": 63,
+      "preserved": 63,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "irregular-block",
+        "irregular-board",
+        "shutter",
+        "generator"
+      ]
+    },
+    {
+      "id": 38,
+      "par": 41,
+      "preserved": 49,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "irregular-block",
+        "shutter",
+        "generator"
+      ]
+    },
+    {
+      "id": 39,
+      "par": 39,
+      "preserved": 44,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "irregular-block",
+        "irregular-board",
+        "shutter",
+        "generator"
+      ]
+    },
+    {
+      "id": 40,
+      "par": 34,
+      "preserved": 34,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 41,
+      "par": 34,
+      "preserved": 45,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "irregular-block",
+        "irregular-board",
+        "shutter",
+        "generator"
+      ]
+    },
+    {
+      "id": 42,
+      "par": 49,
+      "preserved": 49,
+      "mechs": [
+        "color-exit",
+        "irregular-board"
+      ]
+    },
+    {
+      "id": 44,
+      "par": 30,
+      "preserved": 39,
+      "mechs": [
+        "color-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board",
+        "shutter",
+        "generator"
+      ]
+    },
+    {
+      "id": 45,
+      "par": 41,
+      "preserved": 41,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board"
+      ]
+    },
+    {
+      "id": 46,
+      "par": 38,
+      "preserved": 41,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "irregular-block",
+        "irregular-board",
+        "shutter",
+        "generator"
+      ]
+    },
+    {
+      "id": 47,
+      "par": 42,
+      "preserved": 46,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "irregular-board",
+        "generator"
+      ]
+    },
+    {
+      "id": 48,
+      "par": 35,
+      "preserved": 43,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 49,
+      "par": 73,
+      "preserved": 73,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "irregular-block",
+        "irregular-board",
+        "shutter",
+        "generator"
+      ]
+    },
+    {
+      "id": 51,
+      "par": 46,
+      "preserved": 46,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "axis-block"
+      ]
+    },
+    {
+      "id": 52,
+      "par": 30,
+      "preserved": 45,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "axis-block"
+      ]
+    },
+    {
+      "id": 53,
+      "par": 52,
+      "preserved": 52,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "axis-block"
+      ]
+    },
+    {
+      "id": 54,
+      "par": 37,
+      "preserved": 48,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-block",
+        "shutter"
+      ]
+    },
+    {
+      "id": 55,
+      "par": 25,
+      "preserved": 34,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "axis-block",
+        "shutter"
+      ]
+    },
+    {
+      "id": 56,
+      "par": 33,
+      "preserved": 40,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "axis-block",
+        "irregular-block",
+        "generator"
+      ]
+    },
+    {
+      "id": 57,
+      "par": 37,
+      "preserved": 37,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "axis-block",
+        "irregular-block",
+        "irregular-board",
+        "shutter",
+        "generator"
+      ]
+    },
+    {
+      "id": 58,
+      "par": 38,
+      "preserved": 41,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board",
+        "generator"
+      ]
+    },
+    {
+      "id": 59,
+      "par": 41,
+      "preserved": 51,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 60,
+      "par": 52,
+      "preserved": 52,
+      "mechs": [
+        "color-exit",
+        "axis-block",
+        "key-lock"
+      ]
+    },
+    {
+      "id": 61,
+      "par": 29,
+      "preserved": 31,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "axis-block",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 62,
+      "par": 35,
+      "preserved": 41,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board",
+        "shutter",
+        "generator"
+      ]
+    },
+    {
+      "id": 63,
+      "par": 31,
+      "preserved": 31,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "axis-block",
+        "irregular-block"
+      ]
+    },
+    {
+      "id": 64,
+      "par": 43,
+      "preserved": 43,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 65,
+      "par": 29,
+      "preserved": 38,
+      "mechs": [
+        "color-exit",
+        "numeric-ice",
+        "irregular-block",
+        "layered-lift"
+      ]
+    },
+    {
+      "id": 66,
+      "par": 40,
+      "preserved": 40,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-block",
+        "layered-lift"
+      ]
+    },
+    {
+      "id": 67,
+      "par": 35,
+      "preserved": 40,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "irregular-block",
+        "irregular-board",
+        "layered-lift",
+        "shutter"
+      ]
+    },
+    {
+      "id": 68,
+      "par": 35,
+      "preserved": 53,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "irregular-block",
+        "irregular-board",
+        "layered-lift",
+        "shutter"
+      ]
+    },
+    {
+      "id": 69,
+      "par": 48,
+      "preserved": 52,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board",
+        "layered-lift",
+        "shutter"
+      ]
+    },
+    {
+      "id": 70,
+      "par": 23,
+      "preserved": 51,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "irregular-board",
+        "generator"
+      ]
+    },
+    {
+      "id": 71,
+      "par": 37,
+      "preserved": 50,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "irregular-block",
+        "irregular-board",
+        "shutter",
+        "generator"
+      ]
+    },
+    {
+      "id": 72,
+      "par": 31,
+      "preserved": 31,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 73,
+      "par": 132,
+      "preserved": 132,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board",
+        "layered-lift",
+        "shutter"
+      ]
+    },
+    {
+      "id": 74,
+      "par": 103,
+      "preserved": 103,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-block",
+        "layered-lift",
+        "shutter"
+      ]
+    },
+    {
+      "id": 75,
+      "par": 34,
+      "preserved": 37,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board",
+        "layered-lift"
+      ]
+    },
+    {
+      "id": 76,
+      "par": 32,
+      "preserved": 36,
+      "mechs": [
+        "color-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board",
+        "layered-lift"
+      ]
+    },
+    {
+      "id": 77,
+      "par": 40,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-board",
+        "generator"
+      ]
+    },
+    {
+      "id": 78,
+      "par": 35,
+      "preserved": 37,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "irregular-block",
+        "irregular-board",
+        "layered-lift"
+      ]
+    },
+    {
+      "id": 79,
+      "par": 52,
+      "preserved": 58,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "axis-block",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 80,
+      "par": 34,
+      "preserved": 34,
+      "mechs": [
+        "color-exit",
+        "key-lock",
+        "irregular-board"
+      ]
+    },
+    {
+      "id": 81,
+      "par": 29,
+      "preserved": 38,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "key-lock"
+      ]
+    },
+    {
+      "id": 82,
+      "par": 32,
+      "preserved": 32,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "key-lock",
+        "irregular-block",
+        "irregular-board"
+      ]
+    },
+    {
+      "id": 83,
+      "par": 45,
+      "preserved": 56,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "key-lock",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 84,
+      "par": 125,
+      "preserved": 125,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "axis-block",
+        "key-lock",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 85,
+      "par": 25,
+      "preserved": 33,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "axis-block",
+        "irregular-block",
+        "irregular-board"
+      ]
+    },
+    {
+      "id": 86,
+      "par": 31,
+      "preserved": 31,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "key-lock",
+        "irregular-board"
+      ]
+    },
+    {
+      "id": 87,
+      "par": 44,
+      "preserved": 50,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board",
+        "generator"
+      ]
+    },
+    {
+      "id": 88,
+      "par": 51,
+      "preserved": 54,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board",
+        "generator"
+      ]
+    },
+    {
+      "id": 89,
+      "par": 45,
+      "preserved": 45,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "key-lock",
+        "irregular-block",
+        "irregular-board",
+        "shutter",
+        "generator"
+      ]
+    },
+    {
+      "id": 90,
+      "par": 49,
+      "preserved": 49,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "irregular-block",
+        "irregular-board",
+        "generator"
+      ]
+    },
+    {
+      "id": 91,
+      "par": 35,
+      "preserved": 50,
+      "mechs": [
+        "color-exit",
+        "numeric-ice",
+        "axis-block",
+        "key-lock",
+        "irregular-block",
+        "shutter"
+      ]
+    },
+    {
+      "id": 92,
+      "par": 43,
+      "preserved": 44,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "axis-block",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 93,
+      "par": 40,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "axis-block",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 94,
+      "par": 46,
+      "preserved": 65,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "key-lock",
+        "irregular-block",
+        "irregular-board",
+        "layered-lift",
+        "shutter"
+      ]
+    },
+    {
+      "id": 95,
+      "par": 38,
+      "preserved": 46,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "key-lock",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 96,
+      "par": 47,
+      "preserved": 47,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "axis-block",
+        "irregular-block",
+        "irregular-board"
+      ]
+    },
+    {
+      "id": 97,
+      "par": 45,
+      "preserved": 45,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "key-lock",
+        "irregular-block",
+        "irregular-board",
+        "layered-lift"
+      ]
+    },
+    {
+      "id": 98,
+      "par": 39,
+      "preserved": 55,
+      "mechs": [
+        "color-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 99,
+      "par": 44,
+      "preserved": 44,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "axis-block",
+        "key-lock",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 101,
+      "par": 49,
+      "preserved": 49,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "star",
+        "axis-block",
+        "irregular-block",
+        "shutter"
+      ]
+    },
+    {
+      "id": 102,
+      "par": 27,
+      "preserved": 47,
+      "mechs": [
+        "color-exit",
+        "star",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 103,
+      "par": 42,
+      "preserved": 42,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "star",
+        "numeric-ice",
+        "axis-block",
+        "irregular-block",
+        "shutter"
+      ]
+    },
+    {
+      "id": 104,
+      "par": 43,
+      "preserved": 52,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "star",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board",
+        "layered-lift",
+        "shutter"
+      ]
+    },
+    {
+      "id": 105,
+      "par": 31,
+      "preserved": 51,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "irregular-block",
+        "shutter"
+      ]
+    },
+    {
+      "id": 106,
+      "par": 48,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "star",
+        "axis-block",
+        "irregular-board"
+      ]
+    },
+    {
+      "id": 107,
+      "par": 71,
+      "preserved": 71,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "key-lock",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 108,
+      "par": 30,
+      "preserved": 33,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "star",
+        "irregular-block",
+        "layered-lift"
+      ]
+    },
+    {
+      "id": 109,
+      "par": 60,
+      "preserved": 60,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "key-lock",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 110,
+      "par": 40,
+      "preserved": 40,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board",
+        "layered-lift",
+        "shutter"
+      ]
+    },
+    {
+      "id": 111,
+      "par": 53,
+      "preserved": 53,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "star",
+        "axis-block",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 112,
+      "par": 36,
+      "preserved": 52,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "axis-block",
+        "irregular-block",
+        "layered-lift",
+        "shutter"
+      ]
+    },
+    {
+      "id": 113,
+      "par": 51,
+      "preserved": 51,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board",
+        "layered-lift",
+        "shutter"
+      ]
+    },
+    {
+      "id": 114,
+      "par": 46,
+      "preserved": 46,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "star",
+        "key-lock",
+        "irregular-block",
+        "irregular-board",
+        "generator"
+      ]
+    },
+    {
+      "id": 115,
+      "par": 13,
+      "preserved": 56,
+      "mechs": [
+        "color-exit",
+        "numeric-ice",
+        "multilayer-shell"
+      ]
+    },
+    {
+      "id": 116,
+      "par": 44,
+      "preserved": 44,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board",
+        "shutter",
+        "generator"
+      ]
+    },
+    {
+      "id": 117,
+      "par": 51,
+      "preserved": 51,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board",
+        "layered-lift",
+        "shutter"
+      ]
+    },
+    {
+      "id": 118,
+      "par": 34,
+      "preserved": 38,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "star",
+        "axis-block",
+        "irregular-block"
+      ]
+    },
+    {
+      "id": 119,
+      "par": 45,
+      "preserved": 62,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "irregular-block",
+        "irregular-board",
+        "shutter",
+        "generator"
+      ]
+    },
+    {
+      "id": 120,
+      "par": 40,
+      "preserved": 40,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "bomb"
+      ]
+    },
+    {
+      "id": 121,
+      "par": 81,
+      "preserved": 81,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "bomb",
+        "shutter"
+      ]
+    },
+    {
+      "id": 122,
+      "par": 42,
+      "preserved": 49,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "bomb",
+        "irregular-block"
+      ]
+    },
+    {
+      "id": 123,
+      "par": 69,
+      "preserved": 69,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "key-lock",
+        "irregular-board",
+        "layered-lift",
+        "shutter"
+      ]
+    },
+    {
+      "id": 124,
+      "par": 47,
+      "preserved": 47,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "bomb",
+        "irregular-block"
+      ]
+    },
+    {
+      "id": 125,
+      "par": 47,
+      "preserved": 47,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "bomb",
+        "shutter"
+      ]
+    },
+    {
+      "id": 126,
+      "par": 49,
+      "preserved": 61,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-block",
+        "shutter"
+      ]
+    },
+    {
+      "id": 127,
+      "par": 36,
+      "preserved": 41,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "irregular-block",
+        "shutter",
+        "generator"
+      ]
+    },
+    {
+      "id": 128,
+      "par": 74,
+      "preserved": 74,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "shutter"
+      ]
+    },
+    {
+      "id": 129,
+      "par": 64,
+      "preserved": 64,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-board",
+        "shutter",
+        "generator"
+      ]
+    },
+    {
+      "id": 130,
+      "par": 49,
+      "preserved": 49,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "key-lock",
+        "bomb",
+        "shutter"
+      ]
+    },
+    {
+      "id": 131,
+      "par": 50,
+      "preserved": 28,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "star",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 132,
+      "par": 66,
+      "preserved": 49,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "irregular-block",
+        "generator"
+      ]
+    },
+    {
+      "id": 133,
+      "par": 62,
+      "preserved": 57,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "axis-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 134,
+      "par": 50,
+      "preserved": 51,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "key-lock",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 135,
+      "par": 45,
+      "preserved": 36,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "axis-block",
+        "irregular-block",
+        "shutter"
+      ]
+    },
+    {
+      "id": 136,
+      "par": 60,
+      "preserved": 49,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "irregular-block",
+        "shutter"
+      ]
+    },
+    {
+      "id": 137,
+      "par": 54,
+      "preserved": 34,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 138,
+      "par": 74,
+      "preserved": 47,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "irregular-board",
+        "shutter",
+        "generator"
+      ]
+    },
+    {
+      "id": 139,
+      "par": 99,
+      "preserved": 70,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "axis-block",
+        "irregular-block",
+        "irregular-board",
+        "shutter",
+        "generator"
+      ]
+    },
+    {
+      "id": 140,
+      "par": 37,
+      "preserved": 42,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "axis-block",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 141,
+      "par": 58,
+      "preserved": 48,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "key-lock",
+        "irregular-block",
+        "irregular-board",
+        "layered-lift",
+        "shutter"
+      ]
+    },
+    {
+      "id": 142,
+      "par": 51,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "bomb",
+        "shutter"
+      ]
+    },
+    {
+      "id": 143,
+      "par": 66,
+      "preserved": 57,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board",
+        "shutter",
+        "generator"
+      ]
+    },
+    {
+      "id": 144,
+      "par": 56,
+      "preserved": 31,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "key-lock",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 145,
+      "par": 44,
+      "preserved": 38,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "bomb",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 146,
+      "par": 41,
+      "preserved": 54,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "star",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 147,
+      "par": 53,
+      "preserved": 55,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "irregular-block",
+        "irregular-board",
+        "layered-lift",
+        "shutter"
+      ]
+    },
+    {
+      "id": 148,
+      "par": 57,
+      "preserved": 44,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "axis-block",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 149,
+      "par": 78,
+      "preserved": 56,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-block",
+        "shutter"
+      ]
+    },
+    {
+      "id": 152,
+      "par": 44,
+      "mechs": [
+        "multilayer-shell",
+        "axis-block",
+        "irregular-board",
+        "flip-door"
+      ]
+    },
+    {
+      "id": 153,
+      "par": 44,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "irregular-block",
+        "flip-door",
+        "layered-lift"
+      ]
+    },
+    {
+      "id": 154,
+      "par": 132,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "key-lock",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 155,
+      "par": 39,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "star",
+        "irregular-block",
+        "irregular-board",
+        "flip-door"
+      ]
+    },
+    {
+      "id": 156,
+      "par": 52,
+      "mechs": [
+        "numeric-ice",
+        "irregular-block",
+        "flip-door",
+        "generator"
+      ]
+    },
+    {
+      "id": 157,
+      "par": 42,
+      "preserved": 47,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "key-lock",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 158,
+      "par": 40,
+      "preserved": 59,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 159,
+      "par": 47,
+      "preserved": 47,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-block",
+        "flip-door",
+        "layered-lift",
+        "shutter"
+      ]
+    },
+    {
+      "id": 160,
+      "par": 57,
+      "preserved": 57,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "axis-block",
+        "irregular-block",
+        "shutter"
+      ]
+    },
+    {
+      "id": 161,
+      "par": 39,
+      "preserved": 43,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "irregular-block",
+        "irregular-board",
+        "generator"
+      ]
+    },
+    {
+      "id": 162,
+      "par": 42,
+      "preserved": 42,
+      "mechs": [
+        "multilayer-shell",
+        "irregular-block",
+        "flip-door"
+      ]
+    },
+    {
+      "id": 163,
+      "par": 92,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "star",
+        "bomb",
+        "irregular-block",
+        "irregular-board",
+        "flip-door"
+      ]
+    },
+    {
+      "id": 164,
+      "par": 89,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "irregular-block",
+        "shutter"
+      ]
+    },
+    {
+      "id": 165,
+      "par": 74,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "key-lock",
+        "irregular-block",
+        "shutter"
+      ]
+    },
+    {
+      "id": 166,
+      "par": 82,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "irregular-block",
+        "irregular-board",
+        "layered-lift",
+        "shutter"
+      ]
+    },
+    {
+      "id": 167,
+      "par": 43,
+      "preserved": 50,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "irregular-block",
+        "irregular-board",
+        "layered-lift",
+        "shutter"
+      ]
+    },
+    {
+      "id": 168,
+      "par": 55,
+      "preserved": 63,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 169,
+      "par": 40,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 170,
+      "par": 33,
+      "preserved": 37,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "star",
+        "numeric-ice",
+        "irregular-block",
+        "irregular-board"
+      ]
+    },
+    {
+      "id": 171,
+      "par": 27,
+      "preserved": 35,
+      "mechs": [
+        "color-exit",
+        "star",
+        "irregular-block",
+        "irregular-board",
+        "flip-door",
+        "shutter"
+      ]
+    },
+    {
+      "id": 172,
+      "par": 64,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "axis-block",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 173,
+      "par": 91,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "bomb",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 174,
+      "par": 30,
+      "preserved": 47,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 175,
+      "par": 42,
+      "preserved": 46,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 176,
+      "par": 49,
+      "preserved": 51,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "irregular-block",
+        "irregular-board",
+        "layered-lift",
+        "shutter"
+      ]
+    },
+    {
+      "id": 177,
+      "par": 36,
+      "preserved": 38,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "irregular-block",
+        "irregular-board",
+        "generator"
+      ]
+    },
+    {
+      "id": 178,
+      "par": 78,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "key-lock",
+        "irregular-block",
+        "irregular-board",
+        "flip-door",
+        "shutter"
+      ]
+    },
+    {
+      "id": 179,
+      "par": 43,
+      "mechs": [
+        "color-exit",
+        "key-lock",
+        "irregular-block",
+        "irregular-board",
+        "layered-lift",
+        "shutter"
+      ]
+    },
+    {
+      "id": 180,
+      "par": 34,
+      "preserved": 35,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "irregular-block",
+        "irregular-board"
+      ]
+    },
+    {
+      "id": 181,
+      "par": 49,
+      "preserved": 43,
+      "mechs": [
+        "color-exit",
+        "axis-block",
+        "bomb",
+        "irregular-block",
+        "shutter"
+      ]
+    },
+    {
+      "id": 182,
+      "par": 31,
+      "preserved": 48,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 183,
+      "par": 31,
+      "preserved": 31,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "axis-block",
+        "irregular-block",
+        "irregular-board",
+        "generator"
+      ]
+    },
+    {
+      "id": 185,
+      "par": 31,
+      "preserved": 50,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "irregular-block",
+        "flip-door",
+        "shutter"
+      ]
+    },
+    {
+      "id": 186,
+      "par": 43,
+      "preserved": 43,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "irregular-block",
+        "irregular-board",
+        "generator"
+      ]
+    },
+    {
+      "id": 187,
+      "par": 31,
+      "preserved": 36,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "irregular-block"
+      ]
+    },
+    {
+      "id": 188,
+      "par": 55,
+      "preserved": 55,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "key-lock",
+        "irregular-block",
+        "irregular-board",
+        "layered-lift",
+        "shutter"
+      ]
+    },
+    {
+      "id": 189,
+      "par": 57,
+      "preserved": 57,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-block",
+        "shutter"
+      ]
+    },
+    {
+      "id": 190,
+      "par": 73,
+      "preserved": 73,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "irregular-block",
+        "shutter"
+      ]
+    },
+    {
+      "id": 191,
+      "par": 73,
+      "preserved": 31,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell"
+      ]
+    },
+    {
+      "id": 192,
+      "par": 45,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "key-lock",
+        "irregular-board",
+        "shutter"
+      ]
+    },
+    {
+      "id": 193,
+      "par": 35,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-block",
+        "shutter"
+      ]
+    },
+    {
+      "id": 194,
+      "par": 90,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board",
+        "shutter",
+        "generator"
+      ]
+    },
+    {
+      "id": 196,
+      "par": 32,
+      "preserved": 27,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "flip-door"
+      ]
+    },
+    {
+      "id": 198,
+      "par": 56,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "key-lock"
+      ]
+    },
+    {
+      "id": 199,
+      "par": 79,
+      "mechs": [
+        "color-exit",
+        "frozen-exit",
+        "numeric-ice",
+        "multilayer-shell",
+        "irregular-block",
+        "irregular-board",
+        "shutter"
+      ]
+    }
+  ],
+  "profiles": [
+    {
+      "profile": "legacy|color-exit",
+      "ids": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "profile": "legacy|color-exit|irregular-block",
+      "ids": [
+        5
+      ]
+    },
+    {
+      "profile": "legacy|color-exit|frozen-exit",
+      "ids": [
+        6,
+        7
+      ]
+    },
+    {
+      "profile": "legacy|color-exit|frozen-exit|irregular-board",
+      "ids": [
+        8
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|irregular-board",
+      "ids": [
+        9
+      ]
+    },
+    {
+      "profile": "legacy|color-exit|frozen-exit|numeric-ice",
+      "ids": [
+        10,
+        13,
+        14,
+        18,
+        19
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|irregular-board",
+      "ids": [
+        11,
+        12
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|multilayer-shell|irregular-board",
+      "ids": [
+        15,
+        16,
+        25
+      ]
+    },
+    {
+      "profile": "legacy|color-exit|frozen-exit|numeric-ice|multilayer-shell",
+      "ids": [
+        17
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|shutter",
+      "ids": [
+        20,
+        128
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|multilayer-shell|shutter",
+      "ids": [
+        21
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|shutter",
+      "ids": [
+        22
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|multilayer-shell|irregular-block|irregular-board|shutter",
+      "ids": [
+        23,
+        59
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|multilayer-shell|irregular-board|shutter",
+      "ids": [
+        24
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|irregular-board|shutter",
+      "ids": [
+        26,
+        27,
+        30
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|irregular-block|shutter",
+      "ids": [
+        28,
+        136
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|multilayer-shell|irregular-block|shutter",
+      "ids": [
+        29,
+        105,
+        190
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice",
+      "ids": [
+        31
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|multilayer-shell",
+      "ids": [
+        32
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|irregular-block|irregular-board",
+      "ids": [
+        33
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|multilayer-shell|shutter",
+      "ids": [
+        34
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|irregular-block|generator",
+      "ids": [
+        35,
+        36
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|irregular-block|irregular-board|shutter|generator",
+      "ids": [
+        37,
+        39,
+        41,
+        49,
+        71,
+        119
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|irregular-block|shutter|generator",
+      "ids": [
+        38
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|irregular-block|irregular-board|shutter",
+      "ids": [
+        40
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|irregular-board",
+      "ids": [
+        42
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|generator",
+      "ids": [
+        43
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|numeric-ice|multilayer-shell|irregular-block|irregular-board|shutter|generator",
+      "ids": [
+        44
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|multilayer-shell|irregular-block|irregular-board",
+      "ids": [
+        45
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|irregular-block|irregular-board|shutter|generator",
+      "ids": [
+        46
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|irregular-board|generator",
+      "ids": [
+        47
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|multilayer-shell|irregular-board|shutter",
+      "ids": [
+        48
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|axis-block",
+      "ids": [
+        50
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|multilayer-shell|axis-block",
+      "ids": [
+        51,
+        53
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|axis-block",
+      "ids": [
+        52
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|multilayer-shell|irregular-block|shutter",
+      "ids": [
+        54,
+        126,
+        149,
+        189
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|axis-block|shutter",
+      "ids": [
+        55
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|axis-block|irregular-block|generator",
+      "ids": [
+        56
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|axis-block|irregular-block|irregular-board|shutter|generator",
+      "ids": [
+        57,
+        139
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|multilayer-shell|irregular-block|irregular-board|generator",
+      "ids": [
+        58,
+        87
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|axis-block|key-lock",
+      "ids": [
+        60
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|axis-block|irregular-block|irregular-board|shutter",
+      "ids": [
+        61,
+        79
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|multilayer-shell|irregular-block|irregular-board|shutter|generator",
+      "ids": [
+        62,
+        116,
+        143
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|multilayer-shell|axis-block|irregular-block",
+      "ids": [
+        63
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|multilayer-shell|irregular-block|irregular-board|shutter",
+      "ids": [
+        64
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|numeric-ice|irregular-block|layered-lift",
+      "ids": [
+        65
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|multilayer-shell|irregular-block|layered-lift",
+      "ids": [
+        66
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|irregular-block|irregular-board|layered-lift|shutter",
+      "ids": [
+        67,
+        147
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|irregular-block|irregular-board|layered-lift|shutter",
+      "ids": [
+        68
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|multilayer-shell|irregular-block|irregular-board|layered-lift|shutter",
+      "ids": [
+        69,
+        110,
+        113
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|irregular-board|generator",
+      "ids": [
+        70
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|irregular-block|irregular-board|shutter",
+      "ids": [
+        72,
+        137
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|multilayer-shell|irregular-block|irregular-board|layered-lift|shutter",
+      "ids": [
+        73,
+        117,
+        184
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|multilayer-shell|irregular-block|layered-lift|shutter",
+      "ids": [
+        74
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|multilayer-shell|irregular-block|irregular-board|layered-lift",
+      "ids": [
+        75
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|numeric-ice|multilayer-shell|irregular-block|irregular-board|layered-lift",
+      "ids": [
+        76
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|multilayer-shell|irregular-board|generator",
+      "ids": [
+        77
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|irregular-block|irregular-board|layered-lift",
+      "ids": [
+        78
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|key-lock|irregular-board",
+      "ids": [
+        80
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|multilayer-shell|key-lock",
+      "ids": [
+        81
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|key-lock|irregular-block|irregular-board",
+      "ids": [
+        82
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|multilayer-shell|key-lock|irregular-block|irregular-board|shutter",
+      "ids": [
+        83,
+        109,
+        134
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|multilayer-shell|axis-block|key-lock|irregular-block|irregular-board|shutter",
+      "ids": [
+        84
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|axis-block|irregular-block|irregular-board",
+      "ids": [
+        85
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|key-lock|irregular-board",
+      "ids": [
+        86
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|multilayer-shell|irregular-block|irregular-board|generator",
+      "ids": [
+        88
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|key-lock|irregular-block|irregular-board|shutter|generator",
+      "ids": [
+        89
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|irregular-block|irregular-board|generator",
+      "ids": [
+        90
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|numeric-ice|axis-block|key-lock|irregular-block|shutter",
+      "ids": [
+        91
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|multilayer-shell|axis-block|irregular-block|irregular-board|shutter",
+      "ids": [
+        92,
+        93,
+        140,
+        148
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|key-lock|irregular-block|irregular-board|layered-lift|shutter",
+      "ids": [
+        94
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|key-lock|irregular-block|irregular-board|shutter",
+      "ids": [
+        95,
+        107
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|axis-block|irregular-block|irregular-board",
+      "ids": [
+        96
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|key-lock|irregular-block|irregular-board|layered-lift",
+      "ids": [
+        97
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|numeric-ice|multilayer-shell|irregular-block|irregular-board|shutter",
+      "ids": [
+        98
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|axis-block|key-lock|irregular-block|irregular-board|shutter",
+      "ids": [
+        99
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|star",
+      "ids": [
+        100
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|star|axis-block|irregular-block|shutter",
+      "ids": [
+        101
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|star|irregular-block|irregular-board|shutter",
+      "ids": [
+        102
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|star|numeric-ice|axis-block|irregular-block|shutter",
+      "ids": [
+        103
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|star|multilayer-shell|irregular-block|irregular-board|layered-lift|shutter",
+      "ids": [
+        104
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|star|axis-block|irregular-board",
+      "ids": [
+        106
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|star|irregular-block|layered-lift",
+      "ids": [
+        108
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|star|axis-block|irregular-block|irregular-board|shutter",
+      "ids": [
+        111
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|multilayer-shell|axis-block|irregular-block|layered-lift|shutter",
+      "ids": [
+        112
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|star|key-lock|irregular-block|irregular-board|generator",
+      "ids": [
+        114
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|numeric-ice|multilayer-shell",
+      "ids": [
+        115
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|star|axis-block|irregular-block",
+      "ids": [
+        118
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|multilayer-shell|bomb",
+      "ids": [
+        120
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|multilayer-shell|bomb|shutter",
+      "ids": [
+        121,
+        125,
+        142
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|bomb|irregular-block",
+      "ids": [
+        122
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|multilayer-shell|key-lock|irregular-board|layered-lift|shutter",
+      "ids": [
+        123
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|multilayer-shell|bomb|irregular-block",
+      "ids": [
+        124
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|multilayer-shell|irregular-block|shutter|generator",
+      "ids": [
+        127
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|multilayer-shell|irregular-board|shutter|generator",
+      "ids": [
+        129
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|key-lock|bomb|shutter",
+      "ids": [
+        130
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|star|irregular-block|irregular-board|shutter",
+      "ids": [
+        131
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|irregular-block|generator",
+      "ids": [
+        132
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|multilayer-shell|axis-block|irregular-board|shutter",
+      "ids": [
+        133
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|axis-block|irregular-block|shutter",
+      "ids": [
+        135
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|multilayer-shell|irregular-board|shutter|generator",
+      "ids": [
+        138
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|multilayer-shell|key-lock|irregular-block|irregular-board|layered-lift|shutter",
+      "ids": [
+        141
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|multilayer-shell|key-lock|irregular-board|shutter",
+      "ids": [
+        144
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|multilayer-shell|bomb|irregular-board|shutter",
+      "ids": [
+        145
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|star|numeric-ice|multilayer-shell|irregular-block|irregular-board|shutter",
+      "ids": [
+        146
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|multilayer-shell|flip-door",
+      "ids": [
+        150
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|flip-door",
+      "ids": [
+        151
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|multilayer-shell|axis-block|irregular-board|flip-door",
+      "ids": [
+        152
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|numeric-ice|irregular-block|flip-door|layered-lift",
+      "ids": [
+        153
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|key-lock|irregular-block|irregular-board|shutter",
+      "ids": [
+        154
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|star|irregular-block|irregular-board|flip-door",
+      "ids": [
+        155
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|numeric-ice|irregular-block|flip-door|generator",
+      "ids": [
+        156
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|multilayer-shell|key-lock|irregular-block|irregular-board|shutter",
+      "ids": [
+        157
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|irregular-block|irregular-board|shutter",
+      "ids": [
+        158,
+        168
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|numeric-ice|multilayer-shell|irregular-block|flip-door|layered-lift|shutter",
+      "ids": [
+        159
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|axis-block|irregular-block|shutter",
+      "ids": [
+        160
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|numeric-ice|irregular-block|irregular-board|generator",
+      "ids": [
+        161,
+        177
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|multilayer-shell|irregular-block|flip-door",
+      "ids": [
+        162
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|star|bomb|irregular-block|irregular-board|flip-door",
+      "ids": [
+        163
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|multilayer-shell|irregular-block|shutter",
+      "ids": [
+        164
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|key-lock|irregular-block|shutter",
+      "ids": [
+        165
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|numeric-ice|irregular-block|irregular-board|layered-lift|shutter",
+      "ids": [
+        166,
+        176
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|irregular-block|irregular-board|layered-lift|shutter",
+      "ids": [
+        167
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|numeric-ice|multilayer-shell|irregular-block|irregular-board|shutter",
+      "ids": [
+        169,
+        182,
+        199
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|star|numeric-ice|irregular-block|irregular-board",
+      "ids": [
+        170
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|star|irregular-block|irregular-board|flip-door|shutter",
+      "ids": [
+        171
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|multilayer-shell|axis-block|irregular-block|irregular-board|shutter",
+      "ids": [
+        172
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|bomb|irregular-block|irregular-board|shutter",
+      "ids": [
+        173
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|multilayer-shell|irregular-block|irregular-board|shutter",
+      "ids": [
+        174,
+        175
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|key-lock|irregular-block|irregular-board|flip-door|shutter",
+      "ids": [
+        178
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|key-lock|irregular-block|irregular-board|layered-lift|shutter",
+      "ids": [
+        179
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|irregular-block|irregular-board",
+      "ids": [
+        180
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|axis-block|bomb|irregular-block|shutter",
+      "ids": [
+        181
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|axis-block|irregular-block|irregular-board|generator",
+      "ids": [
+        183
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|irregular-block|flip-door|shutter",
+      "ids": [
+        185
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|numeric-ice|irregular-block|irregular-board|generator",
+      "ids": [
+        186
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|irregular-block",
+      "ids": [
+        187
+      ]
+    },
+    {
+      "profile": "revised-2026-09-23-v1.4|color-exit|frozen-exit|key-lock|irregular-block|irregular-board|layered-lift|shutter",
+      "ids": [
+        188
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|numeric-ice|multilayer-shell",
+      "ids": [
+        191
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|numeric-ice|key-lock|irregular-board|shutter",
+      "ids": [
+        192
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|numeric-ice|multilayer-shell|irregular-block|shutter",
+      "ids": [
+        193
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|multilayer-shell|irregular-block|irregular-board|shutter|generator",
+      "ids": [
+        194
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|key-lock|irregular-block|irregular-board",
+      "ids": [
+        195
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|flip-door",
+      "ids": [
+        196
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|star|axis-block|irregular-block|irregular-board",
+      "ids": [
+        197
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|numeric-ice|multilayer-shell|key-lock",
+      "ids": [
+        198
+      ]
+    },
+    {
+      "profile": "revised-2026-09-27-v1.5|color-exit|frozen-exit|numeric-ice|colored-grid",
+      "ids": [
+        200
+      ]
+    }
+  ]
+}

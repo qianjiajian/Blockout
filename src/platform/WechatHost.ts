@@ -4,6 +4,9 @@ import { MUSIC_CATALOG, musicTrackForScene } from "../audio/musicCatalog";
 import type { GameHost, MusicScene, MusicTransport, PointerHandlers, PointerSample, SoundKind, StorageReadResult, Viewport } from "./Host";
 import { filteredRawLocales } from "./preferredLocales";
 import { readWechatWindowInfo } from "./wechatRuntime";
+import { WechatRewardedVideoAdapter } from "./rewardedVideoAd";
+import { WECHAT_REWARDED_AD_UNIT_ID } from "./rewardedAdConfig";
+import { requestWechatProvince } from "./leaderboardRegion";
 
 declare const wx: any;
 
@@ -13,6 +16,7 @@ declare const wx: any;
 // network/package budget separate from the local image decode budget.
 const WECHAT_SUBPACKAGE_TIMEOUT_MS = 60_000;
 const WECHAT_IMAGE_TIMEOUT_MS = 15_000;
+const WECHAT_MUSIC_RETRY_DELAY_MS = 3_000;
 
 const wechatAssetErrorDetail = (error: unknown): string => {
   if (error == null) return "";
@@ -43,7 +47,7 @@ const detachWechatImageHandlers = (image: HTMLImageElement): void => {
   try { image.onload = null; } catch { /* best-effort native handler cleanup */ }
   try { image.onerror = null; } catch { /* clean the other handler independently */ }
 };
-type AssetSubpackage = "meta-ui" | "gameplay-art" | "journey-themes" | "collection-art" | "audio" | "menu-music";
+type AssetSubpackage = "meta-ui" | "gameplay-art" | "journey-themes" | "collection-art" | "audio" | "menu-music" | "league-ui" | "event-ui";
 type MusicAssetSubpackage = Extract<AssetSubpackage, "audio" | "menu-music">;
 const WECHAT_MUSIC_ASSETS: Partial<Record<MusicTrack, { path: string; subpackage: MusicAssetSubpackage }>> = Object.fromEntries(
   MUSIC_CATALOG.filter((entry) => entry.wechatPath && entry.wechatSubpackage)
@@ -51,8 +55,8 @@ const WECHAT_MUSIC_ASSETS: Partial<Record<MusicTrack, { path: string; subpackage
 ) as Partial<Record<MusicTrack, { path: string; subpackage: MusicAssetSubpackage }>>;
 const RECORDED_SOUND_KINDS = [
   "blocked", "exit", "ice", "thaw", "win", "button", "putdown", "fail",
-  "reward", "booster", "unlock",
-  "time", "rocket", "pulse", "mechanic", "shell", "shutter",
+  "reward", "gold", "itemArrival", "booster", "unlock",
+  "time", "rocket", "pulse", "mechanic", "shell", "shutter", "timeover",
 ] as const satisfies readonly SoundKind[];
 
 
@@ -136,6 +140,19 @@ export class WechatTouchRouter {
 }
 
 export class WechatHost implements GameHost {
+  private rewardedVideo?: WechatRewardedVideoAdapter;
+  private rewardedVideoAdapter(): WechatRewardedVideoAdapter {
+    return this.rewardedVideo ??= new WechatRewardedVideoAdapter(wx, WECHAT_REWARDED_AD_UNIT_ID);
+  }
+  isRewardedAdAvailable(): boolean { return this.rewardedVideoAdapter().isAvailable(); }
+  showRewardedAd(requestId: string) { return this.rewardedVideoAdapter().show(requestId); }
+  resolveLeaderboardProvince() { return requestWechatProvince(wx); }
+  openTextInput(options: { value: string; maxLength: number; rect: { x: number; y: number; width: number; height: number }; onChange(value: string): void }): () => void {
+    const change = (event: { value: string }) => options.onChange(event.value);
+    wx.onKeyboardInput?.(change); wx.showKeyboard?.({defaultValue:options.value,maxLength:options.maxLength,multiple:false,confirmHold:false,confirmType:"done"});
+    return () => {wx.offKeyboardInput?.(change);wx.hideKeyboard?.();};
+  }
+  copyText(value: string): Promise<boolean> { return new Promise(resolve => wx.setClipboardData({data:value,success:()=>resolve(true),fail:()=>resolve(false)})); }
   readonly canvas: HTMLCanvasElement;
   readonly context: CanvasRenderingContext2D;
   private system: any;
@@ -144,9 +161,13 @@ export class WechatHost implements GameHost {
   private musicScene: MusicScene = "menu";
   private musicEnabled = false;
   private selectedMusicTrack?: MusicTrack;
+  private musicPlaylist: MusicTrack[] = [];
   private retainedMusicTrack: MusicTrack = "menu";
+  private readonly retainedMusicTracks = new Set<MusicTrack>(["menu"]);
   private readonly musicAssetLoads: Partial<Record<MusicTrack, Promise<void>>> = {};
+  private readonly musicRetryAfter: Partial<Record<MusicTrack, number>> = {};
   private effectsAssetLoading?: Promise<void>;
+  private visible = true;
   private touchRouter?: WechatTouchRouter;
   private assetSubpackages: Partial<Record<AssetSubpackage, Promise<void>>> = {};
 
@@ -157,7 +178,10 @@ export class WechatHost implements GameHost {
     this.canvas.width = Math.round(this.system.screenWidth * pixelRatio);
     this.canvas.height = Math.round(this.system.screenHeight * pixelRatio);
     this.context = this.canvas.getContext("2d", { alpha: false })!;
+    this.rewardedVideoAdapter().preload();
   }
+
+  createOffscreenCanvas(): HTMLCanvasElement { return wx.createCanvas() as HTMLCanvasElement; }
 
   viewport(): Viewport {
     const info = this.system;
@@ -184,7 +208,15 @@ export class WechatHost implements GameHost {
   onPointer(handlers: PointerHandlers): void {
     const router = new WechatTouchRouter(handlers);
     this.touchRouter = router;
-    wx.onTouchStart((event: any) => router.start(event));
+    wx.onTouchStart((event: any) => {
+      // A music-only player still needs the first native gesture to resume
+      // audio. Do this before gameplay handles the gesture or emits an effect.
+      if (this.visible && (this.audio || this.musicEnabled)) {
+        this.ensureAudio(true);
+        this.music(this.musicScene, this.musicEnabled, this.selectedMusicTrack, this.musicPlaylist);
+      }
+      router.start(event);
+    });
     wx.onTouchMove((event: any) => router.move(event));
     wx.onTouchEnd((event: any) => router.end(event));
     wx.onTouchCancel((event: any) => router.cancel(event));
@@ -192,6 +224,8 @@ export class WechatHost implements GameHost {
 
   onHide(callback: () => void): void {
     wx.onHide(() => {
+      this.visible = false;
+      this.rewardedVideoAdapter().setVisible(false);
       this.soundscape?.suspend();
       this.touchRouter?.reset();
       callback();
@@ -199,11 +233,13 @@ export class WechatHost implements GameHost {
   }
   onShow(callback: () => void): void {
     wx.onShow(() => {
+      this.visible = true;
+      this.rewardedVideoAdapter().setVisible(true);
       this.soundscape?.resume();
       callback();
     });
   }
-  isVisible(): boolean { return true; }
+  isVisible(): boolean { return this.visible; }
   onResize(callback: () => void): void {
     wx.onWindowResize?.(() => {
       this.system = readWechatWindowInfo(wx);
@@ -257,16 +293,60 @@ export class WechatHost implements GameHost {
   }
 
   private prepareImageSource(src: string): Promise<string> {
+    // Some shared loaders use web-root asset paths. Native package paths are
+    // relative; normalize only local assets and leave remote URLs untouched.
+    const localSource = src.startsWith("/assets/") ? src.slice(1) : src;
     const routes = [
+      {
+        prefix: "assets/art/ui/league-video-v1/background.",
+        packageName: "event-ui" as const,
+        outputRoot: "event-ui/league-video-v1/background.",
+      },
+      {
+        prefix: "assets/art/ui/league-video-v1/",
+        packageName: "league-ui" as const,
+        outputRoot: "league-ui/league-video-v1/",
+      },
+      {
+        prefix: "assets/art/ui/league-rank-badges-v2/",
+        packageName: "league-ui" as const,
+        outputRoot: "league-ui/league-rank-badges-v2/",
+      },
+      {
+        prefix: "assets/art/ui/league-supplied-v1/",
+        packageName: "league-ui" as const,
+        outputRoot: "league-ui/league-supplied-v1/",
+      },
+      {
+        prefix: "assets/art/ui/league-settlement-supplied-v1/",
+        packageName: "league-ui" as const,
+        outputRoot: "league-ui/league-settlement-supplied-v1/",
+      },
+      {
+        prefix: "assets/art/ui/daily-challenge-v2/",
+        packageName: "event-ui" as const,
+        outputRoot: "event-ui/daily-challenge-v2/",
+      },
+      {
+        prefix: "assets/art/ui/icons/tutorial-hand-supplied-v2.png",
+        packageName: "event-ui" as const,
+        outputRoot: "event-ui/tutorial-hand-supplied-v2.png",
+      },
+      ...["daily-challenge-supplied-v1", "daily-success-supplied-v1", "profile-reference-v1",
+        "profile-unlocks-v1", "profile-supplied-v2", "profile-frames-supplied-v1", "icons", "notifications"].map(group => ({
+        prefix: `assets/art/ui/${group}/`,
+        packageName: "event-ui" as const,
+        outputRoot: `event-ui/${group}/`,
+      })),
+      {
+        prefix: "assets/art/ui/formal-pages/booster-purchase-reference-v1/",
+        packageName: "event-ui" as const,
+        outputRoot: "event-ui/booster-purchase-reference-v1/",
+      },
       {
         prefix: "assets/art/ui/formal-pages/journey/home-",
         packageName: "journey-themes" as const,
         outputRoot: "journey-themes/home-",
-      },
-      {
-        prefix: "assets/art/ui/formal-pages/journey/episode-",
-        packageName: "journey-themes" as const,
-        outputRoot: "journey-themes/episode-",
       },
       {
         prefix: "assets/art/ui/formal-pages/collection-card-atlases-v1/",
@@ -284,11 +364,6 @@ export class WechatHost implements GameHost {
         outputRoot: "gameplay-art/formal-v1/",
       },
       {
-        prefix: "assets/art/fx/",
-        packageName: "gameplay-art" as const,
-        outputRoot: "gameplay-art/fx/",
-      },
-      {
         prefix: "assets/art/gameplay/mechanics/revised-reference-v1/",
         packageName: "gameplay-art" as const,
         outputRoot: "gameplay-art/revised-mechanisms/",
@@ -299,15 +374,19 @@ export class WechatHost implements GameHost {
         outputRoot: "gameplay-art/shutter-nine-slice/",
       },
     ];
-    const route = routes.find((candidate) => src.startsWith(candidate.prefix));
-    if (!route) return Promise.resolve(src);
-    const mappedSource = `${route.outputRoot}${src.slice(route.prefix.length)}`;
+    const route = routes.find((candidate) => localSource.startsWith(candidate.prefix));
+    if (!route) return Promise.resolve(localSource);
+    const mappedSource = `${route.outputRoot}${localSource.slice(route.prefix.length)}`;
     return this.loadAssetSubpackage(route.packageName)
       .then(() => mappedSource)
       .catch((error: unknown) => {
         reportWechatAssetFailure(src, mappedSource, error);
         throw error;
       });
+  }
+
+  async prepareImages(paths: readonly string[]): Promise<void> {
+    await Promise.all(paths.map((path) => this.prepareImageSource(path)));
   }
 
   async createImage(src: string): Promise<HTMLImageElement> {
@@ -379,22 +458,67 @@ export class WechatHost implements GameHost {
     }
   }
 
-  music(scene: MusicScene, enabled: boolean, selectedTrack?: MusicTrack): void {
-    const changed = scene !== this.musicScene || enabled !== this.musicEnabled || selectedTrack !== this.selectedMusicTrack;
+  async prepareAudio(scene: MusicScene, options: { music: boolean; sound: boolean }): Promise<void> {
+    if (!options.music && !options.sound) return;
+    // Decode while the startup art is loading, without playing a synthetic
+    // effect or beginning the soundtrack before the game selects its scene.
+    this.ensureAudio(false);
+    if (!this.audio || !this.soundscape) return;
+    const pending: Promise<void>[] = [];
+    const track = options.music ? musicTrackForScene(scene) : undefined;
+    if (track) {
+      this.retainMusicTracks(new Set([track]));
+      const load = this.beginMusicAssetLoad(track);
+      if (load) pending.push(load);
+    }
+    if (options.sound) {
+      const load = this.beginEffectsAssetLoad();
+      if (load) pending.push(load);
+    }
+    await Promise.allSettled(pending);
+  }
+
+  private ensureAudio(resume: boolean): void {
+    try {
+      this.audio ??= wx.createWebAudioContext?.();
+      if (!this.audio) return;
+      if (!this.soundscape) {
+        this.soundscape = new ProceduralSoundscape(this.audio as AudioContext);
+        if (!this.visible) this.soundscape.suspend();
+      }
+      if (resume && this.visible && this.audio.state === "suspended") {
+        const resumed = this.audio.resume?.();
+        if (typeof resumed?.catch === "function") void resumed.catch(() => undefined);
+      }
+    } catch { /* sound remains optional on older base libraries */ }
+  }
+
+  private retainMusicTracks(retained: ReadonlySet<MusicTrack>): void {
+    for (const retainedTrack of this.retainedMusicTracks) {
+      if (retained.has(retainedTrack)) continue;
+      this.soundscape?.releaseMusicBuffer(retainedTrack);
+      delete this.musicAssetLoads[retainedTrack];
+      delete this.musicRetryAfter[retainedTrack];
+      this.retainedMusicTracks.delete(retainedTrack);
+    }
+    retained.forEach((retainedTrack) => this.retainedMusicTracks.add(retainedTrack));
+  }
+
+  music(scene: MusicScene, enabled: boolean, selectedTrack?: MusicTrack, playlist?: readonly MusicTrack[]): void {
     this.musicScene = scene;
     this.musicEnabled = enabled;
     this.selectedMusicTrack = selectedTrack;
+    this.musicPlaylist = this.normalizeMusicPlaylist(playlist);
     const track = musicTrackForScene(scene, selectedTrack);
-    if (track && track !== this.retainedMusicTrack) {
-      const releasedTrack = this.retainedMusicTrack;
-      this.retainedMusicTrack = track;
-      this.soundscape?.releaseMusicBuffer(releasedTrack);
-      delete this.musicAssetLoads[releasedTrack];
+    const retained = new Set<MusicTrack>(this.musicPlaylist);
+    if (track) retained.add(track);
+    this.retainMusicTracks(retained);
+    if (track) this.retainedMusicTrack = track;
+    if (enabled && this.visible) {
+      this.ensureAudio(true);
+      for (const candidate of retained) this.beginMusicAssetLoad(candidate);
     }
-    if (changed && enabled) {
-      if (track) this.beginMusicAssetLoad(track);
-    }
-    this.soundscape?.setMusic(scene, enabled, selectedTrack);
+    this.soundscape?.setMusic(scene, enabled, selectedTrack, this.musicPlaylist);
   }
 
   musicTransport(): MusicTransport { return this.soundscape?.musicTransport() ?? { positionSeconds: 0, durationSeconds: 0, playing: false }; }
@@ -434,8 +558,12 @@ export class WechatHost implements GameHost {
     });
   }
 
-  private beginMusicAssetLoad(track: MusicTrack): void {
-    if (this.musicAssetLoads[track] || !this.audio || !this.soundscape) return;
+  private beginMusicAssetLoad(track: MusicTrack): Promise<void> | undefined {
+    if (this.musicAssetLoads[track]) return this.musicAssetLoads[track];
+    // Scene synchronization also runs each animation frame. A quick native
+    // download/decode failure must not become a new request on every frame.
+    if (Date.now() < (this.musicRetryAfter[track] ?? 0)) return;
+    if (!this.audio || !this.soundscape) return;
     const soundscape = this.soundscape;
     const asset = WECHAT_MUSIC_ASSETS[track];
     // New library tracks stay outside the current WeChat package budget until
@@ -450,48 +578,69 @@ export class WechatHost implements GameHost {
     guarded = this.loadAssetSubpackage(asset.subpackage)
       .then(() => this.decodeAudioAsset(asset.path))
       .then((buffer) => {
-        if (this.musicAssetLoads[track] !== guarded || this.retainedMusicTrack !== track) return;
+        if (this.musicAssetLoads[track] !== guarded || !this.retainedMusicTracks.has(track)) return;
+        delete this.musicRetryAfter[track];
         soundscape.setMusicBuffer(track, buffer, RECORDED_MUSIC_LOOP_DURATIONS[track]);
       })
       .catch(() => {
         if (this.musicAssetLoads[track] === guarded) {
+          this.musicRetryAfter[track] = Date.now() + WECHAT_MUSIC_RETRY_DELAY_MS;
           soundscape.useSynthMusicFallback(track);
           delete this.musicAssetLoads[track];
         }
       });
     this.musicAssetLoads[track] = guarded;
+    return guarded;
   }
 
-  private beginEffectsAssetLoad(): void {
-    if (this.effectsAssetLoading || !this.audio || !this.soundscape) return;
+  private beginEffectsAssetLoad(): Promise<void> | undefined {
+    if (this.effectsAssetLoading) return this.effectsAssetLoading;
+    if (!this.audio || !this.soundscape) return;
     const soundscape = this.soundscape;
     let guarded: Promise<void>;
     guarded = this.loadAssetSubpackage("audio")
       .then(async () => {
         await Promise.all(RECORDED_SOUND_KINDS.map(async (kind) => {
-          try { soundscape.setSoundBuffer(kind, await this.decodeAudioAsset(`audio/sfx/${kind}.mp3`)); } catch { /* oscillator fallback remains */ }
+          try { soundscape.setSoundBuffer(kind, await this.decodeAudioAsset(`audio/sfx/${kind}.mp3`)); } catch { /* timeover stays silent; other effects retain their fallback */ }
         }));
       })
       .catch(() => {
         if (this.effectsAssetLoading === guarded) this.effectsAssetLoading = undefined;
       });
     this.effectsAssetLoading = guarded;
+    return guarded;
   }
 
   sound(kind: SoundKind): void {
+    if (!this.visible) return;
     try {
-      this.audio ??= wx.createWebAudioContext?.();
-      if (!this.audio) return;
-      this.soundscape ??= new ProceduralSoundscape(this.audio as AudioContext);
+      this.ensureAudio(true);
+      if (!this.soundscape) return;
       this.beginEffectsAssetLoad();
       const track = this.musicEnabled ? musicTrackForScene(this.musicScene, this.selectedMusicTrack) : undefined;
-      if (track) this.beginMusicAssetLoad(track);
-      this.soundscape.setMusic(this.musicScene, this.musicEnabled, this.selectedMusicTrack);
+      if (track) {
+        for (const candidate of new Set([track, ...this.musicPlaylist])) this.beginMusicAssetLoad(candidate);
+      }
+      this.soundscape.setMusic(this.musicScene, this.musicEnabled, this.selectedMusicTrack, this.musicPlaylist);
       this.soundscape.play(kind);
     } catch { /* sound is optional on older base libraries */ }
   }
 
+  stopSound(kind: SoundKind): void {
+    this.soundscape?.stopSound(kind);
+  }
+
   vibrate(kind: "light" | "medium"): void {
     try { wx.vibrateShort({ type: kind === "medium" ? "heavy" : "light" }); } catch { /* optional */ }
+  }
+
+  private normalizeMusicPlaylist(playlist?: readonly MusicTrack[]): MusicTrack[] {
+    if (!playlist) return [];
+    const normalized: MusicTrack[] = [];
+    for (const track of playlist) {
+      if (!MUSIC_CATALOG.some((entry) => entry.id === track) || normalized.includes(track)) continue;
+      normalized.push(track);
+    }
+    return normalized;
   }
 }

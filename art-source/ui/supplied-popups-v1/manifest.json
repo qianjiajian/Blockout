@@ -1,0 +1,792 @@
+{
+  "sourceRoot": "C:/Users/Administrator/Desktop/block out/1-5界面UI",
+  "groups": {
+    "booster": {
+      "folder": "道具购买界面",
+      "files": {
+        "panel": "底",
+        "ad-button": "按钮1",
+        "buy-button": "按钮2",
+        "close": "关闭",
+        "time": "道具1",
+        "pulse": "道具2",
+        "rocket": "道具3",
+        "coin-icon": "金币图标",
+        "video-icon": "图标2"
+      }
+    },
+    "painting": {
+      "folder": "获得新名画",
+      "files": {
+        "banner": "底",
+        "title-zh": "文字1",
+        "title-en": "文字2",
+        "continue-button": "按钮",
+        "close": "关闭"
+      }
+    },
+    "settlement": {
+      "folder": "结算界面1",
+      "files": {
+        "panel": "大底",
+        "title-en": "文字1",
+        "title-zh": "文字2",
+        "level-badge": "等级低",
+        "star-center": "星1",
+        "star-side": "星2",
+        "star-empty": "星3",
+        "criterion-row": "文字底",
+        "criterion-pass": "图标1",
+        "criterion-idle": "图标2",
+        "coin-pile": "金币",
+        "reward-pill": "数字底",
+        "coin-icon": "图标",
+        "continue-button": "按钮",
+        "close": "关闭",
+        "unlock-panel": "解锁低",
+        "progress-track": "进度块低",
+        "progress-fill": "进度块",
+        "unlock-crown": "图标4",
+        "unlock-check": "0",
+        "artwork-frame": "名画边框"
+      }
+    },
+    "rank": {
+      "folder": "排名提升",
+      "files": {
+        "panel": "底",
+        "title-zh": "文字1",
+        "title-en": "文字2",
+        "rank-arrow": "箭头1",
+        "gain-arrow": "箭头2"
+      }
+    },
+    "scene": {
+      "folder": "新场景解锁界面",
+      "files": {
+        "confirm-button": "按钮",
+        "range-panel": "板",
+        "locked-hint-panel": "提示底",
+        "title-zh": "文字1",
+        "title-en": "文字2"
+      }
+    }
+  },
+  "inventory": [
+    {
+      "group": "booster",
+      "filename": "关闭.png",
+      "bytes": 10556,
+      "sha256": "fd6df9c51e81220161239dd0e405ce5ab8080827c22b7bd703650150659167ec",
+      "width": 94,
+      "height": 98,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/booster/关闭.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/booster/close.png"
+    },
+    {
+      "group": "booster",
+      "filename": "图标2.png",
+      "bytes": 6517,
+      "sha256": "b92ab092f1ab71fb15c64043eb8e7a8197507661f1110a2c8e45c048ca2efca9",
+      "width": 61,
+      "height": 52,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/booster/图标2.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/booster/video-icon.png"
+    },
+    {
+      "group": "booster",
+      "filename": "底.png",
+      "bytes": 42490,
+      "sha256": "21bbd1dbe6e525a1f1e879e2690a141abc5bfd74017d8059787058c7d5546a79",
+      "width": 594,
+      "height": 889,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/booster/底.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/booster/panel.png"
+    },
+    {
+      "group": "booster",
+      "filename": "按钮1.png",
+      "bytes": 13770,
+      "sha256": "d81a7f42beeafbbccacfeb218669a2a8440d9306e27026fbf947738a97a157a8",
+      "width": 225,
+      "height": 84,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/booster/按钮1.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/booster/ad-button.png"
+    },
+    {
+      "group": "booster",
+      "filename": "按钮2.png",
+      "bytes": 23174,
+      "sha256": "66f8961579b4c7b53c58af0cb4a7d66d28e034f42daceb1220481ae709bb808a",
+      "width": 225,
+      "height": 84,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/booster/按钮2.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/booster/buy-button.png"
+    },
+    {
+      "group": "booster",
+      "filename": "示意图1.png",
+      "bytes": 366527,
+      "sha256": "175331a74ff692831052a03baa62fd828d4950bb96ae8ea88c9042cf1a2cce7f",
+      "width": 720,
+      "height": 1584,
+      "alpha": false,
+      "archived": "art-source/ui/supplied-popups-v1/originals/booster/示意图1.png"
+    },
+    {
+      "group": "booster",
+      "filename": "示意图2.png",
+      "bytes": 327125,
+      "sha256": "bbf614f8c17048c336946fbdd43a173aa9e692d160fd7752f408b0c4e25fd203",
+      "width": 720,
+      "height": 1584,
+      "alpha": false,
+      "archived": "art-source/ui/supplied-popups-v1/originals/booster/示意图2.png"
+    },
+    {
+      "group": "booster",
+      "filename": "道具1.png",
+      "bytes": 66001,
+      "sha256": "7f75c0c385f48a2a7cdf74686c7f14a60514ac3c8b69885de71169aefccaac90",
+      "width": 200,
+      "height": 215,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/booster/道具1.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/booster/time.png"
+    },
+    {
+      "group": "booster",
+      "filename": "道具2.png",
+      "bytes": 76699,
+      "sha256": "fef08c26d37100dcbe6302f7a217b6f1cea714cd215f3fe083fae55a17352d98",
+      "width": 216,
+      "height": 213,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/booster/道具2.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/booster/pulse.png"
+    },
+    {
+      "group": "booster",
+      "filename": "道具3.png",
+      "bytes": 53241,
+      "sha256": "881a1d33dd6a6d1a3ce133aa731b661fea9757e1f6c98e382179adde1f6ea31c",
+      "width": 187,
+      "height": 213,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/booster/道具3.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/booster/rocket.png"
+    },
+    {
+      "group": "booster",
+      "filename": "金币图标.png",
+      "bytes": 3741,
+      "sha256": "1e335ed302f4ec2a34781f36f1421633f5a671795fb232ae0624915b3761e431",
+      "width": 37,
+      "height": 38,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/booster/金币图标.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/booster/coin-icon.png"
+    },
+    {
+      "group": "painting",
+      "filename": "1.png",
+      "bytes": 246627,
+      "sha256": "03b71e675af9c9e9953b1ee376c1bf566b743a90bc3bc67dd0f42f1a9be14e88",
+      "width": 401,
+      "height": 389,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/painting/1.png"
+    },
+    {
+      "group": "painting",
+      "filename": "10.png",
+      "bytes": 292352,
+      "sha256": "03c401fb68f8141c0dea5032b97028ba7e62952189ba223b0543a70cd1325b31",
+      "width": 401,
+      "height": 389,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/painting/10.png"
+    },
+    {
+      "group": "painting",
+      "filename": "2.png",
+      "bytes": 274332,
+      "sha256": "eec77ac90a323a1e0cf277fcf9b996d740d3465a18970b9b2922020dad9a5447",
+      "width": 401,
+      "height": 389,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/painting/2.png"
+    },
+    {
+      "group": "painting",
+      "filename": "4.png",
+      "bytes": 259981,
+      "sha256": "c2850deb987cf5502f07e0a34d9878b7135baf44da9abc087921fe193ac4cb09",
+      "width": 401,
+      "height": 389,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/painting/4.png"
+    },
+    {
+      "group": "painting",
+      "filename": "5-1.png",
+      "bytes": 254164,
+      "sha256": "f162a7efd853af60e56d834f63d49ae4ffad526eb231218a09a0f4d31d83f507",
+      "width": 401,
+      "height": 389,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/painting/5-1.png"
+    },
+    {
+      "group": "painting",
+      "filename": "5.png",
+      "bytes": 258880,
+      "sha256": "5fa2c7b315b1e6974e4772b582814279a20a205ec9d9e6012a5c4e4a436174e0",
+      "width": 401,
+      "height": 389,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/painting/5.png"
+    },
+    {
+      "group": "painting",
+      "filename": "6.png",
+      "bytes": 209277,
+      "sha256": "5b16e1aeeb968af24961463d0829af7fd88b7da396806526a928c51aa6f853cf",
+      "width": 401,
+      "height": 389,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/painting/6.png"
+    },
+    {
+      "group": "painting",
+      "filename": "7.png",
+      "bytes": 286252,
+      "sha256": "5febcb10639b2081311f3cae17431ccec03344e0415d0da7bc9272781f92b903",
+      "width": 401,
+      "height": 389,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/painting/7.png"
+    },
+    {
+      "group": "painting",
+      "filename": "8.png",
+      "bytes": 299137,
+      "sha256": "58322fcb21c679d5a885ad769d5c36aa51be53001ef7ff2a1fe86fd13a774e91",
+      "width": 401,
+      "height": 389,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/painting/8.png"
+    },
+    {
+      "group": "painting",
+      "filename": "9.png",
+      "bytes": 248173,
+      "sha256": "09c2ec31775ceae0df5e12f201316dcbd2abf888841843100ba67012cee954b4",
+      "width": 401,
+      "height": 389,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/painting/9.png"
+    },
+    {
+      "group": "painting",
+      "filename": "关闭.png",
+      "bytes": 10556,
+      "sha256": "fd6df9c51e81220161239dd0e405ce5ab8080827c22b7bd703650150659167ec",
+      "width": 94,
+      "height": 98,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/painting/关闭.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/painting/close.png"
+    },
+    {
+      "group": "painting",
+      "filename": "底.png",
+      "bytes": 90454,
+      "sha256": "ae9f9903a73ac6c3dcc8cb9a8a12da13ac80c78495d77127dd9c1600b75ad64b",
+      "width": 556,
+      "height": 208,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/painting/底.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/painting/banner.png"
+    },
+    {
+      "group": "painting",
+      "filename": "按钮.png",
+      "bytes": 38343,
+      "sha256": "a2cbe57d47e6f6456d6511b44a9e8a9e565a2633636b56048c49b2cc65f9210b",
+      "width": 322,
+      "height": 125,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/painting/按钮.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/painting/continue-button.png"
+    },
+    {
+      "group": "painting",
+      "filename": "文字1.png",
+      "bytes": 58678,
+      "sha256": "e62bd9de9f92d08cade32625199bcd4bdbab5e8023e8ed99fbb06a51d8171987",
+      "width": 355,
+      "height": 98,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/painting/文字1.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/painting/title-zh.png"
+    },
+    {
+      "group": "painting",
+      "filename": "文字2.png",
+      "bytes": 64965,
+      "sha256": "3294b74e3075b318e6f2a16aeef09e15947b571c2a1493e28f4643539240d9f6",
+      "width": 363,
+      "height": 104,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/painting/文字2.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/painting/title-en.png"
+    },
+    {
+      "group": "painting",
+      "filename": "示意图1.png",
+      "bytes": 582757,
+      "sha256": "4b47d3a6db8673bafefe214f729ebd34fd6820c78a3380ee2567ff412735771a",
+      "width": 720,
+      "height": 1584,
+      "alpha": false,
+      "archived": "art-source/ui/supplied-popups-v1/originals/painting/示意图1.png"
+    },
+    {
+      "group": "painting",
+      "filename": "示意图2.png",
+      "bytes": 573450,
+      "sha256": "6d00a2f405000304365ea585f53c1f0051850f63d5648c7c633e0653426c49fc",
+      "width": 720,
+      "height": 1584,
+      "alpha": false,
+      "archived": "art-source/ui/supplied-popups-v1/originals/painting/示意图2.png"
+    },
+    {
+      "group": "settlement",
+      "filename": "0.png",
+      "bytes": 11465,
+      "sha256": "40d741ece3ab28f9a5f6df5c4ca1639291f26cd630b4696801e0437152690aff",
+      "width": 72,
+      "height": 77,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/settlement/0.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/unlock-check.png"
+    },
+    {
+      "group": "settlement",
+      "filename": "关闭.png",
+      "bytes": 10556,
+      "sha256": "fd6df9c51e81220161239dd0e405ce5ab8080827c22b7bd703650150659167ec",
+      "width": 94,
+      "height": 98,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/settlement/关闭.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/close.png"
+    },
+    {
+      "group": "settlement",
+      "filename": "名画边框.png",
+      "bytes": 17877,
+      "sha256": "012a7c14970b748b0317d68308f3e0274ef3074e3dc506eb570485890a31489f",
+      "width": 164,
+      "height": 164,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/settlement/名画边框.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/artwork-frame.png"
+    },
+    {
+      "group": "settlement",
+      "filename": "图标.png",
+      "bytes": 3741,
+      "sha256": "1e335ed302f4ec2a34781f36f1421633f5a671795fb232ae0624915b3761e431",
+      "width": 37,
+      "height": 38,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/settlement/图标.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/coin-icon.png"
+    },
+    {
+      "group": "settlement",
+      "filename": "图标1.png",
+      "bytes": 3968,
+      "sha256": "250095fc5d9242a473ce387a10397b7c549d556531126fd57a1f544cd8cd14d6",
+      "width": 47,
+      "height": 46,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/settlement/图标1.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/criterion-pass.png"
+    },
+    {
+      "group": "settlement",
+      "filename": "图标2.png",
+      "bytes": 1495,
+      "sha256": "446800f78e31f04b001c625220f139b78bbdc54fb169af7673c3ca668e17fca5",
+      "width": 47,
+      "height": 46,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/settlement/图标2.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/criterion-idle.png"
+    },
+    {
+      "group": "settlement",
+      "filename": "图标4.png",
+      "bytes": 4709,
+      "sha256": "1c5a5342e4c34646b49fac61e6802eb9ca92f4481cca2a1dde97b05d77105bb1",
+      "width": 46,
+      "height": 48,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/settlement/图标4.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/unlock-crown.png"
+    },
+    {
+      "group": "settlement",
+      "filename": "大底.png",
+      "bytes": 105084,
+      "sha256": "664a839e9b220e3aeba073e6b3e6aac385b83e67fc8b7cce3c4792671228da4a",
+      "width": 594,
+      "height": 939,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/settlement/大底.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/panel.png"
+    },
+    {
+      "group": "settlement",
+      "filename": "按钮.png",
+      "bytes": 38343,
+      "sha256": "a2cbe57d47e6f6456d6511b44a9e8a9e565a2633636b56048c49b2cc65f9210b",
+      "width": 322,
+      "height": 125,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/settlement/按钮.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/continue-button.png"
+    },
+    {
+      "group": "settlement",
+      "filename": "数字底.png",
+      "bytes": 1611,
+      "sha256": "050a5b78eb582979f26472a84d95a74a5a69db2da6e1f64cf0b5cbf6f0abcba5",
+      "width": 166,
+      "height": 58,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/settlement/数字底.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/reward-pill.png"
+    },
+    {
+      "group": "settlement",
+      "filename": "文字1.png",
+      "bytes": 58437,
+      "sha256": "faf36fea136bad2dba1f62a81d1ccea8280c33480d107598017d2adc82906ca1",
+      "width": 386,
+      "height": 91,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/settlement/文字1.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/title-en.png"
+    },
+    {
+      "group": "settlement",
+      "filename": "文字2.png",
+      "bytes": 41457,
+      "sha256": "719e87c8db2c7b6720473b716b07fd54a3e5ad0ba567914727fe0732b2467685",
+      "width": 263,
+      "height": 87,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/settlement/文字2.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/title-zh.png"
+    },
+    {
+      "group": "settlement",
+      "filename": "文字底.png",
+      "bytes": 1583,
+      "sha256": "17f96cddc2fb1750ba289ec58656c2a49011554d1c38d2094e59cdd930616204",
+      "width": 442,
+      "height": 61,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/settlement/文字底.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/criterion-row.png"
+    },
+    {
+      "group": "settlement",
+      "filename": "星1.png",
+      "bytes": 14242,
+      "sha256": "fa989a02fb71542323d7c90bf6cff2bd76a44df98b1189e7ff04607303575272",
+      "width": 106,
+      "height": 108,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/settlement/星1.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/star-center.png"
+    },
+    {
+      "group": "settlement",
+      "filename": "星2.png",
+      "bytes": 10946,
+      "sha256": "1183589d233a5c0c7c86555780079201ac332badf66d5dca8db95d8a91d38c35",
+      "width": 92,
+      "height": 93,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/settlement/星2.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/star-side.png"
+    },
+    {
+      "group": "settlement",
+      "filename": "星3.png",
+      "bytes": 7989,
+      "sha256": "39ff00ee1fab9c6b8ed1ee71abfee65f3a9ddbe48455f4436b86cefe5d8f9546",
+      "width": 92,
+      "height": 93,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/settlement/星3.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/star-empty.png"
+    },
+    {
+      "group": "settlement",
+      "filename": "示意图1.png",
+      "bytes": 550825,
+      "sha256": "d5190e7a9eea2f9a5006a68396f4dba966243569469eb16cba82841213870876",
+      "width": 720,
+      "height": 1584,
+      "alpha": false,
+      "archived": "art-source/ui/supplied-popups-v1/originals/settlement/示意图1.png"
+    },
+    {
+      "group": "settlement",
+      "filename": "示意图2.png",
+      "bytes": 528997,
+      "sha256": "f0086febf319e32fcc9ba2dc5eb1f9fa1db70313f0969e4a115d0263acfb9727",
+      "width": 720,
+      "height": 1584,
+      "alpha": false,
+      "archived": "art-source/ui/supplied-popups-v1/originals/settlement/示意图2.png"
+    },
+    {
+      "group": "settlement",
+      "filename": "等级低.png",
+      "bytes": 1583,
+      "sha256": "8714e7dc41d8f5d735dd14871976414f5447d66380c309abbc5bfd7dd71a5e96",
+      "width": 183,
+      "height": 49,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/settlement/等级低.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/level-badge.png"
+    },
+    {
+      "group": "settlement",
+      "filename": "解锁低.png",
+      "bytes": 171181,
+      "sha256": "fe1e2feac364adea4ed2693debebf609cd132a682ef6651653482549a0e1269c",
+      "width": 669,
+      "height": 219,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/settlement/解锁低.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/unlock-panel.png"
+    },
+    {
+      "group": "settlement",
+      "filename": "进度块.png",
+      "bytes": 4540,
+      "sha256": "8d5d61785cd5200641ecf0d8a671b3a46a5cb05df634cbb8ace971155bae32eb",
+      "width": 73,
+      "height": 39,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/settlement/进度块.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/progress-fill.png"
+    },
+    {
+      "group": "settlement",
+      "filename": "进度块低.png",
+      "bytes": 1357,
+      "sha256": "dcadbdfbe664ad46c7b0979b522351b6d5e4e05cb264caf07bb19dcc28e48e98",
+      "width": 386,
+      "height": 51,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/settlement/进度块低.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/progress-track.png"
+    },
+    {
+      "group": "settlement",
+      "filename": "金币.png",
+      "bytes": 52072,
+      "sha256": "04f0f022b77f7163b443116c61733dd8fe0b98c80afb22f8692143f3a6d57d46",
+      "width": 223,
+      "height": 143,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/settlement/金币.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/settlement/coin-pile.png"
+    },
+    {
+      "group": "rank",
+      "filename": "底.png",
+      "bytes": 167022,
+      "sha256": "bd19aef4caf070e195777039e16885b33216d1629c3ccf2460b622996cbcb1fb",
+      "width": 669,
+      "height": 219,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/rank/底.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/rank/panel.png"
+    },
+    {
+      "group": "rank",
+      "filename": "文字1.png",
+      "bytes": 22631,
+      "sha256": "b7f61263c2d4fa3a5210e43fa9baac7f59b7d6461fe5017aaacf0b2a50d3f9e3",
+      "width": 206,
+      "height": 51,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/rank/文字1.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/rank/title-zh.png"
+    },
+    {
+      "group": "rank",
+      "filename": "文字2.png",
+      "bytes": 20920,
+      "sha256": "4e6ddda2dac7c327bc44d3a1ba52aca09a817f450abd7707696bd1cd633cce4b",
+      "width": 215,
+      "height": 47,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/rank/文字2.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/rank/title-en.png"
+    },
+    {
+      "group": "rank",
+      "filename": "示意图1.png",
+      "bytes": 472602,
+      "sha256": "11a037ceb4fb001f39b81a99cb5fc35c35028de0ffc217c645b63215f4c92b48",
+      "width": 720,
+      "height": 1584,
+      "alpha": false,
+      "archived": "art-source/ui/supplied-popups-v1/originals/rank/示意图1.png"
+    },
+    {
+      "group": "rank",
+      "filename": "示意图2.png",
+      "bytes": 465457,
+      "sha256": "1455963dc9dedefa8331c29f3eacf0781d99d5f2d611f199acd0cf846a1b7351",
+      "width": 720,
+      "height": 1584,
+      "alpha": false,
+      "archived": "art-source/ui/supplied-popups-v1/originals/rank/示意图2.png"
+    },
+    {
+      "group": "rank",
+      "filename": "箭头1.png",
+      "bytes": 4264,
+      "sha256": "b598e5ecbbf0f81a2a6a1c753971189bbb511cc0bf3f5642ffb394d0fd786782",
+      "width": 106,
+      "height": 68,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/rank/箭头1.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/rank/rank-arrow.png"
+    },
+    {
+      "group": "rank",
+      "filename": "箭头2.png",
+      "bytes": 1253,
+      "sha256": "025ed3bee81c000bf37ddeeb119d832b249d68f53462ff3373d698012253e5ed",
+      "width": 20,
+      "height": 21,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/rank/箭头2.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/rank/gain-arrow.png"
+    },
+    {
+      "group": "scene",
+      "filename": "按钮.png",
+      "bytes": 69131,
+      "sha256": "a55f9b9e0f440329c64c1c66fe506c8d914bbc922f0628fd5992899c64179779",
+      "width": 365,
+      "height": 134,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/scene/按钮.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/scene/confirm-button.png"
+    },
+    {
+      "group": "scene",
+      "filename": "提示底.png",
+      "bytes": 6701,
+      "sha256": "1a5f0d06ea58820dca8cb469f9507fe0837aa9214365f5c5ddd10b8e20d5615a",
+      "width": 478,
+      "height": 57,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/scene/提示底.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/scene/locked-hint-panel.png"
+    },
+    {
+      "group": "scene",
+      "filename": "提示示意图1.png",
+      "bytes": 431083,
+      "sha256": "777f9d85ab213a98d6dd892c437a8406a2be71a4ce9c83d7173a54029a6a827f",
+      "width": 490,
+      "height": 698,
+      "alpha": false,
+      "archived": "art-source/ui/supplied-popups-v1/originals/scene/提示示意图1.png"
+    },
+    {
+      "group": "scene",
+      "filename": "提示示意图2.png",
+      "bytes": 395308,
+      "sha256": "da14ea987188e3f9f6002e4938171a99aae92073b3e45c3826b579684f30e3db",
+      "width": 470,
+      "height": 657,
+      "alpha": false,
+      "archived": "art-source/ui/supplied-popups-v1/originals/scene/提示示意图2.png"
+    },
+    {
+      "group": "scene",
+      "filename": "文字1.png",
+      "bytes": 78156,
+      "sha256": "2951d92a50205690b5a40385a2c58641c6bbe115c424bac99eb1d2c8fd7ec509",
+      "width": 462,
+      "height": 100,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/scene/文字1.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/scene/title-zh.png"
+    },
+    {
+      "group": "scene",
+      "filename": "文字2.png",
+      "bytes": 83102,
+      "sha256": "3d1a1198c1938729ade38ecaeac57b01043e72ba89901a41502c082b4f3befe4",
+      "width": 619,
+      "height": 119,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/scene/文字2.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/scene/title-en.png"
+    },
+    {
+      "group": "scene",
+      "filename": "板.png",
+      "bytes": 21729,
+      "sha256": "48272a6cfb6314677cc7e55e4089e62721373efb3308fe9dfdac48cf8c8ea800",
+      "width": 257,
+      "height": 62,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/scene/板.png",
+      "runtime": "public/assets/art/ui/formal-pages/supplied-popups-v1/scene/range-panel.png"
+    },
+    {
+      "group": "scene",
+      "filename": "示意图1.png",
+      "bytes": 1509436,
+      "sha256": "e82670f7dc5540bd97c19d7742f8583239d133309acfd614bbf305d2030906b5",
+      "width": 720,
+      "height": 1584,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/scene/示意图1.png"
+    },
+    {
+      "group": "scene",
+      "filename": "示意图2.png",
+      "bytes": 1506909,
+      "sha256": "4474fe9037802508afc632421b48cb61e040a02d71d4f9d84618087ea55aa0ef",
+      "width": 720,
+      "height": 1584,
+      "alpha": true,
+      "archived": "art-source/ui/supplied-popups-v1/originals/scene/示意图2.png"
+    }
+  ]
+}

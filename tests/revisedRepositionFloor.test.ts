@@ -238,8 +238,8 @@ describe("revised non-clearing drag threshold relaxation", () => {
     expect(explicit.getBlock("hidden")?.frozen).toBe(0);
   });
 
-  it("refuses v1.4 clocks and animation-dependent flip doors instead of asserting a headless floor", () => {
-    const level = fixture({ mechanismRules: "revised-2026-09-23-v1.4" });
+  it.each(["revised-2026-09-23-v1.4", "revised-2026-09-27-v1.5"] as const)("refuses %s clocks and animation-dependent flip doors instead of asserting a headless floor", (mechanismRules) => {
+    const level = fixture({ mechanismRules });
     const flip = { ...level, flipDoors: [{ id: "flip", color: "blue" as const,
       side: "right" as const, offset: 0, size: 1, initiallyOpen: false }] };
     expect(check(flip, 1)).toMatchObject({ status: "unsupported", thresholdProven: false,

@@ -321,7 +321,7 @@ const rectangularTemplate = (level: LevelSpec, templateId: 12 | 13): LevelSpec =
   const width = level.id === 20 ? level.width : template.width;
   const height = level.id === 20 ? level.height : template.height;
   const ordinaryShutter = (level.shutters ?? []).find(isOrdinaryShutter);
-  const shutterCargoId = level.id === 20 ? template.blocks.at(-1)?.id : undefined;
+  const shutterCargoId = level.id === 20 ? template.blocks[template.blocks.length - 1]?.id : undefined;
   const playable = level.id === 20
     ? (() => {
       const cells = new Map((level.playable ?? []).map(([x, y]) => [`${x},${y}`, [x, y] as Point]));

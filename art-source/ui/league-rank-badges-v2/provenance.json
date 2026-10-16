@@ -1,0 +1,115 @@
+{
+  "generator": "user-provided-formal-assets",
+  "sourceDirectory": "C:/Users/Administrator/Desktop/block out/1-8勋章",
+  "purpose": "User-authorized official Glory League rank badge assets",
+  "transform": {
+    "name": "copy",
+    "note": "Preserves supplied PNG bytes, dimensions, alpha, colours and orientation; no resize, crop, recolour or rotation."
+  },
+  "entries": [
+    {
+      "id": "bronze",
+      "label": "青铜",
+      "original": "originals/bronze-85d2e7c3b7e3.png",
+      "originalSha256": "85d2e7c3b7e37c640c296981cffa4c43fa3204204ef7a9f99248dbafea4f7b69",
+      "originalWidth": 220,
+      "originalHeight": 230,
+      "width": 220,
+      "height": 230,
+      "alpha": true,
+      "sha256": "85d2e7c3b7e37c640c296981cffa4c43fa3204204ef7a9f99248dbafea4f7b69",
+      "runtime": "assets/art/ui/league-rank-badges-v2/bronze.png"
+    },
+    {
+      "id": "silver",
+      "label": "白银",
+      "original": "originals/silver-b818662b0cca.png",
+      "originalSha256": "b818662b0cca3aa5d167c53a2d886928ef8dc0bada50077ec8f030f9cff10e56",
+      "originalWidth": 222,
+      "originalHeight": 203,
+      "width": 222,
+      "height": 203,
+      "alpha": true,
+      "sha256": "b818662b0cca3aa5d167c53a2d886928ef8dc0bada50077ec8f030f9cff10e56",
+      "runtime": "assets/art/ui/league-rank-badges-v2/silver.png"
+    },
+    {
+      "id": "gold",
+      "label": "黄金",
+      "original": "originals/gold-ae21cb7aa747.png",
+      "originalSha256": "ae21cb7aa7471d987f4f8fae33b9c96c83b618ab565a373f6df48d2b0a5d91ff",
+      "originalWidth": 245,
+      "originalHeight": 242,
+      "width": 245,
+      "height": 242,
+      "alpha": true,
+      "sha256": "ae21cb7aa7471d987f4f8fae33b9c96c83b618ab565a373f6df48d2b0a5d91ff",
+      "runtime": "assets/art/ui/league-rank-badges-v2/gold.png"
+    },
+    {
+      "id": "platinum",
+      "label": "铂金",
+      "original": "originals/platinum-1b68ee0b45ae.png",
+      "originalSha256": "1b68ee0b45aea4445cdab90ddea2af8fba206cda255dfa3b4f0260b83329c7e4",
+      "originalWidth": 254,
+      "originalHeight": 267,
+      "width": 254,
+      "height": 267,
+      "alpha": true,
+      "sha256": "1b68ee0b45aea4445cdab90ddea2af8fba206cda255dfa3b4f0260b83329c7e4",
+      "runtime": "assets/art/ui/league-rank-badges-v2/platinum.png"
+    },
+    {
+      "id": "emerald",
+      "label": "翡翠",
+      "original": "originals/emerald-f59f4939c925.png",
+      "originalSha256": "f59f4939c9250a52b19227e214bf9dbd59bf5ff389fd07843cb6c403b9a4942f",
+      "originalWidth": 253,
+      "originalHeight": 230,
+      "width": 253,
+      "height": 230,
+      "alpha": true,
+      "sha256": "f59f4939c9250a52b19227e214bf9dbd59bf5ff389fd07843cb6c403b9a4942f",
+      "runtime": "assets/art/ui/league-rank-badges-v2/emerald.png"
+    },
+    {
+      "id": "diamond",
+      "label": "钻石",
+      "original": "originals/diamond-4f72514bf7ed.png",
+      "originalSha256": "4f72514bf7ede334ac2bd24c303e786ec5acaaebe6dd851032c121a7443e511b",
+      "originalWidth": 271,
+      "originalHeight": 252,
+      "width": 271,
+      "height": 252,
+      "alpha": true,
+      "sha256": "4f72514bf7ede334ac2bd24c303e786ec5acaaebe6dd851032c121a7443e511b",
+      "runtime": "assets/art/ui/league-rank-badges-v2/diamond.png"
+    },
+    {
+      "id": "master",
+      "label": "大师",
+      "original": "originals/master-0bb7f251992e.png",
+      "originalSha256": "0bb7f251992e5683e62d1069c818d373a826032bf3ec432a8126c2e465efcd85",
+      "originalWidth": 261,
+      "originalHeight": 245,
+      "width": 261,
+      "height": 245,
+      "alpha": true,
+      "sha256": "0bb7f251992e5683e62d1069c818d373a826032bf3ec432a8126c2e465efcd85",
+      "runtime": "assets/art/ui/league-rank-badges-v2/master.png"
+    },
+    {
+      "id": "glory",
+      "label": "荣耀",
+      "original": "originals/glory-9003723d5a41.png",
+      "originalSha256": "9003723d5a4181a8347520346ee8e52deb6a2bb996181feb8f9d061de53a70c5",
+      "originalWidth": 265,
+      "originalHeight": 239,
+      "width": 265,
+      "height": 239,
+      "alpha": true,
+      "sha256": "9003723d5a4181a8347520346ee8e52deb6a2bb996181feb8f9d061de53a70c5",
+      "runtime": "assets/art/ui/league-rank-badges-v2/glory.png"
+    }
+  ]
+}

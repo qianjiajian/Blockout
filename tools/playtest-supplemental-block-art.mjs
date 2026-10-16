@@ -1,24 +1,51 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
+import { createServer } from 'node:http';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { extname, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { build } from 'esbuild';
 import { chromium } from 'playwright';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-const baseUrl = process.env.PLAYTEST_URL ?? 'http://127.0.0.1:5173/';
+const publicRoot = resolve(root, 'public');
+const contentTypes = { '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.svg': 'image/svg+xml' };
+const assetServer = createServer(async (request, response) => {
+  try {
+    const pathname = decodeURIComponent(new URL(request.url ?? '/', 'http://127.0.0.1').pathname);
+    if (pathname === '/favicon.ico') { response.writeHead(204).end(); return; }
+    assert(pathname.startsWith('/assets/'), 'Only checked-in public assets may be served');
+    const file = resolve(publicRoot, `.${pathname}`);
+    assert(file.startsWith(`${publicRoot}${sep}`), 'Asset path must remain within public');
+    const bytes = await readFile(file);
+    response.writeHead(200, { 'Content-Type': contentTypes[extname(file).toLowerCase()] ?? 'application/octet-stream' });
+    response.end(bytes);
+  } catch (error) {
+    if (!response.headersSent) response.writeHead(404);
+    response.end(String(error));
+  }
+});
+await new Promise((resolveListen, reject) => {
+  assetServer.once('error', reject);
+  assetServer.listen(0, '127.0.0.1', resolveListen);
+});
+const baseUrl = `http://127.0.0.1:${assetServer.address().port}/`;
 assert(['127.0.0.1', 'localhost', '[::1]'].includes(new URL(baseUrl).hostname), 'Local source server only');
 const sourceUrl = new URL('__supplemental_block_art_fixture__', baseUrl).href;
+const bundleUrl = new URL('__supplemental_block_art_fixture__.js', baseUrl).href;
 const output = resolve(root, `playtest-results/supplemental-block-art-${new Date().toISOString().replace(/[:.]/g, '-')}`);
 const colors = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'cyan'];
-const shapes = [{ id: 'vertical', shapeId: 13, name: 'rectangle-2x3', width: 2, height: 3, native: [192, 296], x: 1, y: 1 },
+const shapes = [{ id: 'vertical', shapeId: 13, name: 'rectangle-2x3', width: 2, height: 3, native: [191, 296], x: 1, y: 1 },
   { id: 'horizontal', shapeId: 21, name: 'rectangle-3x2', width: 3, height: 2, native: [285, 201], x: 4, y: 1 },
-  { id: 'square', shapeId: 14, name: 'square-3x3', width: 3, height: 3, native: [286, 296], x: 4, y: 4 }];
+  { id: 'square', shapeId: 14, name: 'square-3x3', width: 3, height: 3, native: [285, 296], x: 4, y: 4 }];
 const artPath = 'assets/art/gameplay/blocks/formal-v1/';
 const artFiles = colors.flatMap(color => shapes.map(shape => `${color}-${shape.name}.png`));
+const rulesManifest = JSON.parse(await readFile(resolve(root, 'docs/rules/manifest.json'), 'utf8'));
+const activeRule = rulesManifest.versions.find(entry => entry.version === rulesManifest.activeVersion);
+assert(activeRule?.document, 'Active rules document must be present in the rules manifest');
 const files = ['src/game/ColorEscapeGame.ts', 'src/game/formalBlockShapes.ts', 'src/game/artManifest.ts',
   'src/core/PuzzleModel.ts', 'src/core/levels.ts', 'src/platform/WebHost.ts', 'tools/playtest-supplemental-block-art.mjs',
-  'docs/rules/manifest.json', 'docs/mechanism-rules-v1.41.0.md', 'art-source/gameplay/blocks/supplemental-v1.json',
+  'docs/rules/manifest.json', activeRule.document, 'art-source/gameplay/blocks/supplemental-v1.json',
   ...artFiles.flatMap(name => [`art-source/gameplay/blocks/formal-v1/${name}`, `public/${artPath}${name}`])];
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
 const hashes = async () => Object.fromEntries(await Promise.all(files.map(async file => [file, sha(await readFile(resolve(root, file)))])));
@@ -31,11 +58,11 @@ const fixture = color => ({ id: 993, name: `Isolated supplemental ${color} art`,
   gates: [{ id: 'color-gate', side: 'bottom', offset: 4, size: 3, color }],
   blocks: shapes.map(shape => ({ id: shape.id, x: shape.x, y: shape.y, color, shape: cells(shape.width, shape.height) })) });
 
-const html = `<!doctype html><meta charset="utf-8"><style>html,body{margin:0;overflow:hidden;background:#201953}canvas{display:block;width:100vw;height:100vh;touch-action:none}</style><script type="module">
-import { ColorEscapeGame } from '/src/game/ColorEscapeGame.ts';
-import { PuzzleModel } from '/src/core/PuzzleModel.ts';
-import { WebHost } from '/src/platform/WebHost.ts';
-import { matchFormalBlockShape } from '/src/game/formalBlockShapes.ts';
+const fixtureScript = `
+import { ColorEscapeGame } from './src/game/ColorEscapeGame.ts';
+import { PuzzleModel } from './src/core/PuzzleModel.ts';
+import { WebHost } from './src/platform/WebHost.ts';
+import { matchFormalBlockShape } from './src/game/formalBlockShapes.ts';
 class MemoryHost extends WebHost {
  data=new Map();
  storageRead(k){return this.data.has(k)?{status:'ok',value:structuredClone(this.data.get(k))}:{status:'missing'}}
@@ -76,7 +103,8 @@ test.preview=()=>{const original=game.ctx,canvas=document.createElement('canvas'
  return {calls:structuredClone(test.calls),results,png:canvas.toDataURL('image/png')};
 };
 game.start();
-</script>`;
+`;
+const html = `<!doctype html><meta charset="utf-8"><style>html,body{margin:0;overflow:hidden;background:#201953}canvas{display:block;width:100vw;height:100vh;touch-action:none}</style><script type="module" src="${bundleUrl}"></script>`;
 
 const browser = await chromium.launch({ headless: true });
 let page;
@@ -106,6 +134,21 @@ function assertBoard(frame, color) {
   }
 }
 try {
+  // Bundle the real production imports in memory so a cold Vite module graph
+  // does not consume the browser's readiness deadline. Assets still load over
+  // real HTTP, and no runtime module or Canvas/Pointer assertion is replaced.
+  const fixtureBundle = await build({
+    absWorkingDir: root,
+    stdin: { contents: fixtureScript, resolveDir: root, sourcefile: 'supplemental-art-fixture.ts', loader: 'ts' },
+    bundle: true, write: false, platform: 'browser', format: 'esm', target: 'es2020', metafile: true,
+  });
+  for (const file of Object.keys(fixtureBundle.metafile.inputs)) {
+    if (file !== 'supplemental-art-fixture.ts' && !files.includes(file)) files.push(file);
+  }
+  const bundledSourcesBefore = await hashes();
+  for (const [file, hash] of Object.entries(report.sourcesBefore)) assert.equal(bundledSourcesBefore[file], hash, `Source stable while bundling: ${file}`);
+  report.sourcesBefore = bundledSourcesBefore;
+  report.fixtureBundle = { url: bundleUrl, sha256: sha(fixtureBundle.outputFiles[0].contents), bytes: fixtureBundle.outputFiles[0].contents.length };
   for (const name of artFiles) assert.equal(report.sourcesBefore[`art-source/gameplay/blocks/formal-v1/${name}`], report.sourcesBefore[`public/${artPath}${name}`], `Source/runtime PNG identical: ${name}`);
   const context = await browser.newContext({ viewport: { width: 496, height: 1078 }, deviceScaleFactor: 1 });
   await context.addInitScript(() => { window.__NATIVE_STORAGE_CALLS__=[];
@@ -122,6 +165,7 @@ try {
   page.on('response', response => { const path = new URL(response.url()).pathname;
     if (artFiles.some(name => path === `/${artPath}${name}`)) http.push(response.body().then(bytes => ({ path, status: response.status(), bytes: bytes.length, sha256: sha(bytes) }))); });
   await page.route(sourceUrl, route => route.fulfill({ contentType: 'text/html', body: html }));
+  await page.route(bundleUrl, route => route.fulfill({ contentType: 'text/javascript', body: fixtureBundle.outputFiles[0].text }));
   await page.goto(sourceUrl, { waitUntil: 'commit' }); await page.waitForFunction(() => window.__SUPPLEMENTAL_TEST__?.game.getDebugState().art.ready, undefined, { timeout: 60000 });
   for (const viewport of [{ width: 496, height: 1078 }, { width: 320, height: 568 }]) {
     await page.setViewportSize(viewport);
@@ -174,5 +218,6 @@ try {
   process.exitCode = 1; console.error(error);
 } finally {
   await writeFile(resolve(output, 'report.json'), JSON.stringify(report, null, 2) + '\n'); await browser.close();
+  await new Promise((resolveClose, reject) => assetServer.close(error => error ? reject(error) : resolveClose()));
   console.log(JSON.stringify({ status: report.status, output, scenarios: report.scenarios.length }));
 }

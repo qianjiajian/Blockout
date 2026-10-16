@@ -1,0 +1,1 @@
+import {build} from 'esbuild';const b=await build({stdin:{contents:`export {LEVELS} from "./src/core/levels.ts";`,resolveDir:process.cwd(),loader:"ts"},bundle:true,write:false,platform:'node',format:'esm'}); await import('fs').then(fs=>fs.writeFileSync('tools/daily-challenge/tmp-level-runtime.mjs',b.outputFiles[0].text));

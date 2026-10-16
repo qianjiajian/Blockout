@@ -177,7 +177,7 @@ export const sweepContinuousPose = (
   const path: ContinuousPose[] = [];
 
   const recordPose = (): void => {
-    const previous = path.at(-1);
+    const previous = path[path.length - 1];
     if (!previous || Math.abs(previous.x - x) > 1e-9 || Math.abs(previous.y - y) > 1e-9) {
       path.push({ x, y });
     }
@@ -374,10 +374,10 @@ export const chooseNearestReachableSnap = (
     const distance = score(a) - score(b);
     if (Math.abs(distance) > 1e-9) return distance;
     if (lastIntentAxis) {
-      const aLast = a.path.length > 0 ? a.path.at(-1)! : grid;
-      const aBefore = a.path.length > 1 ? a.path.at(-2)! : grid;
-      const bLast = b.path.length > 0 ? b.path.at(-1)! : grid;
-      const bBefore = b.path.length > 1 ? b.path.at(-2)! : grid;
+      const aLast = a.path.length > 0 ? a.path[a.path.length - 1]! : grid;
+      const aBefore = a.path.length > 1 ? a.path[a.path.length - 2]! : grid;
+      const bLast = b.path.length > 0 ? b.path[b.path.length - 1]! : grid;
+      const bBefore = b.path.length > 1 ? b.path[b.path.length - 2]! : grid;
       const aAxis = aLast.x !== aBefore.x ? "x" : aLast.y !== aBefore.y ? "y" : undefined;
       const bAxis = bLast.x !== bBefore.x ? "x" : bLast.y !== bBefore.y ? "y" : undefined;
       if (aAxis === lastIntentAxis && bAxis !== lastIntentAxis) return -1;

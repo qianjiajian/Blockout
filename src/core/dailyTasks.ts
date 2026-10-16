@@ -205,7 +205,7 @@ const sanitizeSameCycle = (
  * Advances at local midnight, but never moves backward. A future device date
  * therefore cannot be rolled back to mint a second set of rewards.
  */
-export const reconcileDailyTaskProgress = (
+const reconcileDailyTaskCycle = (
   value: unknown,
   date = new Date(),
   highestLevel = 1,
@@ -221,6 +221,23 @@ export const reconcileDailyTaskProgress = (
   return current.dayKey === today
     ? current
     : createDailyTaskProgress(today, highestLevel, today);
+};
+
+/** Locked accounts cannot bank task credit for a later unlock. Keep their
+ * cycle and clock-rollback guard, while discarding legacy premature credit.
+ * Existing unlocked accounts retain both earned progress and claim receipts. */
+export const reconcileDailyTaskProgress = (
+  value: unknown,
+  date = new Date(),
+  highestLevel = 1,
+  trackingEnabled = true,
+): DailyTaskProgressState => {
+  const state = reconcileDailyTaskCycle(value, date, highestLevel);
+  return trackingEnabled ? state : {
+    ...state,
+    tasks: state.tasks.map(task => ({ ...task, progress: 0, claimed: false })),
+    bonusClaimed: false,
+  };
 };
 
 const progressForMetric = (result: DailyTaskRunResult, metric: DailyTaskMetric): number => {

@@ -1,0 +1,17 @@
+import fs from 'node:fs';import {loadSpatialApi,searchSpatial} from './continuation211-colored-witness.mjs';import {loadContinuationRuntime,sha256} from './continuation211-runtime.mjs';import {liftPayload,runNativeLift} from './continuation211-native-lift.mjs';
+const OUT='deliverables/continue211-220-20260930/design217-structured';fs.mkdirSync(OUT,{recursive:true});const base=JSON.parse(fs.readFileSync('deliverables/continue211-220-20260930/design212-new/source217/scored-candidate217.json')),api=await loadSpatialApi(),core=await loadContinuationRuntime();
+const shape={S:[[0,0]],H2:[[0,0],[1,0]],V2:[[0,0],[0,1]],H3:[[0,0],[1,0],[2,0]],V3:[[0,0],[0,1],[0,2]],Q:[[0,0],[1,0],[0,1],[1,1]]};
+function generate(seed){let rnd=seed;const rand=()=>{rnd=(Math.imul(rnd,1664525)+1013904223)>>>0;return rnd/4294967296;};const l=structuredClone(base.level);l.playable=l.playable.filter(([x,y])=>y<4||y>5||x>=2&&x<=5);l.blocks=l.blocks.filter(b=>b.shutterId||b.movementAxis||b.id==='l217-bridge-blue');
+ const add=(id,x,y,s,color)=>l.blocks.push({id:'l217-new-'+id,x,y,shape:shape[s],color});
+ const grid=[];for(let y=0;y<4;y+=2)for(let x=0;x<8;x+=2){const colors=['red','cyan','pink','blue'].filter(c=>!grid.some(b=>b.color===c&&Math.abs(x-b.x)+Math.abs(y-b.y)===2));const color=colors[Math.floor(rand()*colors.length)];add('u'+x+'-'+y,x,y,'Q',color);grid.push({x,y,color});}
+ add('bridge-left',2,4,'V2',seed%2?'orange':'cyan');add('bridge-right',5,4,'V2',seed%3?'pink':'orange');
+ // Keep the original horizontal-axis V3 at x4. The other lower bodies are a
+ // new original tiling with three ordinary release colors and complete fill.
+ add('opening',2,7,'Q','orange');add('purple',7,6,'V3','purple');add('lower-blue',5,6,'Q','blue');add('lower-a',0,6,'Q',['pink','blue','orange'][seed%3]);add('lower-b',0,8,'H2',['orange','cyan','pink'][Math.floor(seed/3)%3]);add('lower-c',2,6,'H2',['red','green','cyan'][Math.floor(seed/9)%3]);add('lower-d',5,8,'H2',['orange','pink','red'][Math.floor(seed/27)%3]);
+ l.mechanismAdaptation.change+=' New authored64-cell narrow bridge mask: remove four outer neck cells and repack ordinary bodies into eight upper Q2 plus larger lower rectangles. All4 blue grid cells, horizontal axis, lift inventory and retained gate values remain. No source parity claim.';return l;
+}
+const history=[];for(let n=0;n<48;n++){const level=generate(17000+n);const adjacency=level.blocks.some((b,i)=>level.blocks.slice(i+1).some(a=>a.shutterId===b.shutterId&&a.color===b.color&&a.shape.some(([x,y])=>b.shape.some(([dx,dy])=>Math.abs(a.x+x-b.x-dx)+Math.abs(a.y+y-b.y-dy)===1))));if(adjacency)continue;
+ const upper=searchSpatial(level,api,{floor:21,normalize:true,maxMilliseconds:3500,maxStates:70000,maxTransitions:1500000,orderSeed:n}),replay=upper.drags?core.replayRevisedRoute(level,upper.drags):null,p={level,drags:upper.drags??[],upper,replay,sourceFactsFile:base.sourceFactsFile};
+ if(replay?.valid&&replay.complete&&replay.nonClearingDrags>=16&&replay.nonClearingDrags<=20){level.preservedMoveTarget=replay.effectiveDrags;p.levelSha256=sha256(level);p.lower=runNativeLift(liftPayload(level,api,{floor:16,maxMilliseconds:6000,maxStates:500000}).p);}
+ const r={n,status:upper.status,maxClear:upper.maxClearsSeen,U:replay?.nonClearingDrags,lower:p.lower?.status};history.push(r);console.log(r);fs.writeFileSync(`${OUT}/candidate-${n}.json`,JSON.stringify(p,null,2));if(p.lower?.thresholdProven)break;
+}fs.writeFileSync(OUT+'/history.json',JSON.stringify(history,null,2));

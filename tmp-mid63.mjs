@@ -1,0 +1,1 @@
+import fs from 'node:fs';const x=JSON.parse(fs.readFileSync('deliverables/league-regeneration-20261004/formal/mid-20-64.json','utf8'));const r=x.rows.find(r=>r.index===63);console.dir(r.attempts.at(-1),{depth:2});console.log('route sample',r.attempts[0].route?.slice(0,2));

@@ -17,13 +17,15 @@ interface ArtworkEntry {
 
 const MAX_CONCURRENT_IMAGES = 2;
 const disposedError = (): Error => new Error("Collection artwork has been disposed");
+const evictedError = (): Error => new Error("Collection artwork is outside the retained window");
 
-/** Keeps requested atlases for one collection visit; the owner disposes them on exit. */
+/** Owns requested atlases until disposal or an explicit retained-window change. */
 export class CollectionArtworkStore {
   private readonly entries: ArtworkEntry[];
   private readonly uniqueEntries: readonly ArtworkEntry[];
   private readonly queue: ArtworkEntry[] = [];
-  private readonly releasedImages = new Set<HTMLImageElement>();
+  private readonly releasedImages = new WeakSet<HTMLImageElement>();
+  private retainedEntries?: ReadonlySet<ArtworkEntry>;
   private activeLoads = 0;
   private disposed = false;
 
@@ -61,12 +63,46 @@ export class CollectionArtworkStore {
     return this.indexes((entry) => entry.state === "failed");
   }
 
+  /** The owner includes every visible atlas and any desired adjacent-page prefetch. */
+  retain(indexes: readonly number[]): void {
+    if (this.disposed) return;
+    if (indexes.some((index) => !Number.isInteger(index) || !this.entries[index])) {
+      throw new Error("Invalid collection artwork index");
+    }
+    this.retainedEntries = new Set(indexes.map((index) => this.entries[index]));
+    for (const entry of this.uniqueEntries) {
+      if (this.retainedEntries.has(entry)) continue;
+      if (entry.state === "loaded") {
+        if (entry.image) this.release(entry.image);
+        entry.image = undefined;
+        entry.promise = undefined;
+        entry.state = "idle";
+      } else if (entry.state === "queued") {
+        entry.reject?.(evictedError());
+        entry.resolve = undefined;
+        entry.reject = undefined;
+        entry.promise = undefined;
+        entry.state = "idle";
+      }
+      // A running request keeps its identity: navigation back can reuse it.
+      // Its completion below releases the image if it is still out of view.
+      // Failed entries keep their explicit-retry contract across navigation.
+    }
+    for (let index = this.queue.length - 1; index >= 0; index--) {
+      if (this.queue[index].state !== "queued") this.queue.splice(index, 1);
+    }
+  }
+
   request(indexes: readonly number[], retry = false, priority = true): Promise<void> {
     if (this.disposed) return Promise.reject(disposedError());
     if (indexes.some((index) => !Number.isInteger(index) || !this.entries[index])) {
       return Promise.reject(new Error("Invalid collection artwork index"));
     }
     const requested = new Set(indexes.map((index) => this.entries[index]));
+    const retained = this.retainedEntries;
+    if (retained && [...requested].some((entry) => !retained.has(entry))) {
+      return Promise.reject(evictedError());
+    }
     const promises = [...requested].map((entry) => {
       if (entry.state === "loaded") return Promise.resolve();
       if (entry.state === "queued" || entry.state === "loading") return entry.promise!;
@@ -123,6 +159,13 @@ export class CollectionArtworkStore {
         this.release(image);
         return;
       }
+      if (this.retainedEntries && !this.retainedEntries.has(entry)) {
+        this.release(image);
+        entry.state = "idle";
+        entry.reject?.(evictedError());
+        entry.promise = undefined;
+        return;
+      }
       entry.image = image;
       entry.state = "loaded";
       entry.resolve?.();
@@ -137,7 +180,7 @@ export class CollectionArtworkStore {
       this.activeLoads -= 1;
       this.drain();
     }
-    if (!this.disposed) this.options.onChange();
+    if (!this.disposed && (!this.retainedEntries || this.retainedEntries.has(entry))) this.options.onChange();
   }
 
   private release(image: HTMLImageElement): void {

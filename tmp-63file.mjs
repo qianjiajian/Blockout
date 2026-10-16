@@ -1,0 +1,1 @@
+import fs from 'node:fs';const p='deliverables/league-regeneration-20261004/mid-experiments/level63-variant7-rejected.json';const x=JSON.parse(fs.readFileSync(p,'utf8'));console.log(Object.keys(x));console.log(x.level?.id,x.level?.difficulty,x.level?.blocks?.length,x.specials,x.drags?.length,x.route?.length,x.replay);console.log(x.reason,x.proof?.status,x.lower?.status);

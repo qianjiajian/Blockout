@@ -23,7 +23,10 @@ describe("chapter-one competitor-composition difficulty", () => {
     expect(tutorial.blocks).toHaveLength(3);
     expect(tutorial.gates).toHaveLength(3);
     expect(new Set(tutorial.blocks.map((block) => block.color)).size).toBe(3);
-    expect(tutorial.onboardingHint).toEqual({ blockId: "cc-001-b1-01", path: [] });
+    expect(tutorial.onboardingHint).toEqual({
+      blockId: "cc-001-b1-01",
+      path: [[1, 0], [2, 0], [3, 0]],
+    });
     expect(tutorial.shutters).toBeUndefined();
     expect(tutorial.blocks.every((block) => !block.layers && !block.frozen)).toBe(true);
     expect(tutorial.gates.every((gate) => !gate.frozen)).toBe(true);

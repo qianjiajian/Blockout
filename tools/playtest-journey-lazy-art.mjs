@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
-const output = resolve(root, "playtest-results/journey-lazy-art-20260927");
+const output = resolve(root, process.env.PLAYTEST_OUTPUT ?? "playtest-results/journey-lazy-art-20260927");
 const origin = process.env.PLAYTEST_URL ?? "http://127.0.0.1:5180/";
 const fixtureUrl = new URL("/__journey_lazy_art_fixture__", origin).href;
 const sourceHash = async () => createHash("sha256")
@@ -172,14 +172,15 @@ try {
         const first=data.profile.draws.find(d=>d.phase==='first-entry'&&d.ready);
         assert.ok(first,'Journey must render ready content');
         const requests=data.profile.images.filter(i=>i.phase==='first-entry'&&i.start<=first.start&&['base','episode','presentation'].includes(i.group));
-        assert.equal(requests.filter(i=>i.group==='base').length,23,'Only 23 base images are required');
+        assert.equal(requests.filter(i=>i.group==='base').length,20,'Only 20 base images are required');
         assert.equal(requests.filter(i=>i.group==='presentation').length,0,'Popups must not block map first paint');
-        const episodes=requests.filter(i=>i.group==='episode');
-        assert.ok(episodes.length>0&&episodes.length<10,'Only nearby chapter art should load at first paint');
-        assert.ok(requests.length<44,'First paint must not wait for old full 44-image bundle');
+        assert.equal(requests.filter(i=>i.group==='episode').length,0,'Chapter images must not block the first map-shell paint');
+        const episodes=data.profile.images.filter(i=>i.phase==='first-entry'&&i.group==='episode'&&i.start<=first.end);
+        assert.ok(episodes.length>0&&episodes.length<10,'Only nearby chapter art should start during the first map-shell paint');
+        assert.equal(requests.length,20,'First paint waits only for the 20 map-shell images');
         for(const episode of first.visibleEpisodes)assert.ok(episodes.some(i=>i.src.endsWith(`episode-${String(episode).padStart(2,'0')}.webp`)),`Visible episode ${episode} is required`);
         const encodedAssetBytes=(await Promise.all(requests.map(i=>stat(resolve(root,'public',i.src))))).reduce((total,file)=>total+file.size,0);
-        result.measurement={imageCount:requests.length,baseCount:23,episodeCount:episodes.length,presentationCount:0,encodedAssetBytes,visibleEpisodes:first.visibleEpisodes,firstReadyDrawMs:first.start-data.profile.marks.find(m=>m.name==='first-entry').at};
+        result.measurement={imageCount:requests.length,baseCount:20,episodeCount:0,deferredEpisodeCount:episodes.length,presentationCount:0,encodedAssetBytes,visibleEpisodes:first.visibleEpisodes,firstReadyDrawMs:first.start-data.profile.marks.find(m=>m.name==='first-entry').at};
         await page.screenshot({path:resolve(output,`${result.name}-ready.png`)});
         const initialEpisodes=new Set(episodes.map(i=>i.src));
         await mark(page,'scroll-new-chapter');await seek(page,'episode',3);

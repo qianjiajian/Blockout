@@ -1,0 +1,10 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';import {build} from 'esbuild';import {sha256} from './continuation211-runtime.mjs';
+const root='deliverables/continue211-220-20260930',p=JSON.parse(fs.readFileSync(root+'/design-new/qualified215-bound.json'));
+assert.equal(sha256(p.level.playable),sha256(p.source.sourceLevel.playable));
+const file='src/core/formal211to220Data.ts',text=fs.readFileSync(file,'utf8');
+fs.writeFileSync(root+'/formal-data-before215-geometry-withdrawal.ts',text,{flag:'wx'});
+const built=await build({entryPoints:[file],bundle:true,write:false,platform:'node',format:'esm',logLevel:'silent'}),data=await import('data:text/javascript;base64,'+Buffer.from(built.outputFiles[0].text).toString('base64'));
+const levels=data.FORMAL_211_220_LEVELS.filter(l=>l.id!==215),entries=data.FORMAL_211_220_EVIDENCE.filter(l=>l.id!==215);
+fs.writeFileSync(file,'import type { LevelSpec } from "./types";\n\n// Accepted exact objects only; no failed candidates or placeholder levels.\nexport const FORMAL_211_220_LEVELS: readonly LevelSpec[] = '+JSON.stringify(levels,null,2)+';\n\nexport const FORMAL_211_220_EVIDENCE = '+JSON.stringify(entries,null,2)+' as const;\n\nexport const getFormal211to220LevelStrict = (id: number): LevelSpec => {\n  const level = FORMAL_211_220_LEVELS.find(level => level.id === id);\n  if (!level) throw new RangeError(`Level ${id} has not passed formal-data acceptance`);\n  return level;\n};\n');
+fs.writeFileSync(root+'/withdraw215-source-geometry.json',JSON.stringify({id:215,status:'WITHDRAWN_SOURCE_MASK_REUSED',levelSha256:sha256(p.level),supersedesAcceptanceRecord:root+'/formal-adoption215-v125.json',reason:'Source and candidate irregular masks are identical. Static audit omitted independent sourceMask. Spatial/Pointer certificates remain true for that object but do not establish original board geometry.',next:'Author a different symmetric mask within source dimensions; retile and rerun all acceptance gates.',oldEvidencePreserved:true},null,2),{flag:'wx'});
+console.log({status:'WITHDRAWN_SOURCE_MASK_REUSED',acceptedIds:levels.map(l=>l.id)});

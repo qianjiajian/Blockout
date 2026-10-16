@@ -1,0 +1,74 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {createHash} from 'node:crypto';
+import {build} from 'esbuild';
+import {SELF,VERSION,nativeWholeBoardCatalogue,createWholeBoardMeter,createAxisIceWholeBoardFactory,necessaryReleaseSupport,necessaryStarterGateSupport} from './axis-ice-active-region-stock-v1.mjs';
+import {levelSha256} from '../formal-v2/contract.mjs';
+
+const output=process.env.ACTIVE_REGION_FACTORY_TEST_OUT;assert(output);await fs.mkdir(output,{recursive:false});
+const sha=b=>createHash('sha256').update(b).digest('hex'),checks=[],bindings={},activity={syntheticFactoryCalls:0,syntheticSourceDefinitions:0};
+async function save(name,value){const p=path.join(output,name);await fs.writeFile(p,JSON.stringify(value,null,2)+'\n',{flag:'wx'});bindings[p]=sha(await fs.readFile(p));}
+const bundle=await build({stdin:{contents:"export {GAME_ART} from './src/game/artManifest.ts';export {matchFormalBlockShape} from './src/game/formalBlockShapes.ts';",resolveDir:process.cwd(),loader:'ts'},bundle:true,write:false,metafile:true,platform:'node',format:'esm',logLevel:'silent'});
+const art=await import('data:text/javascript;base64,'+Buffer.from(bundle.outputFiles[0].text).toString('base64')),catalogue=nativeWholeBoardCatalogue(art);Object.assign(bindings,catalogue.assetBindings);for(const p of Object.keys(bundle.metafile.inputs).filter(p=>p!=='<stdin>'))bindings[p]=sha(await fs.readFile(p));
+const rect=(w,h)=>Array.from({length:w*h},(_,i)=>[i%w,Math.floor(i/w)]);
+function source(){activity.syntheticSourceDefinitions++;return{id:997991,name:'Private active-region source',width:4,height:4,difficulty:'super',reward:0,timeSeconds:120,parMoves:40,mechanismRules:'revised-2026-09-27-v1.5',blocks:[[0,0],[2,0],[0,2],[2,2]].map(([x,y],i)=>({id:'old'+i,x,y,shape:rect(2,2),color:['red','blue','green','yellow'][i]})),gates:[{id:'old',color:'red',side:'top',offset:0,size:2}]};}
+const positions=[[0,0,2,1],[0,1,1,1],[1,1,1,1],[2,0,2,2],[0,2,2,1],[2,2,2,1],[0,3,2,1],[2,3,2,1]];
+const gatePins={G0:{side:'left',offset:0,size:1},G1:{side:'top',offset:0,size:1},G2:{side:'left',offset:1,size:1},G3:{side:'top',offset:2,size:2},G4:{side:'right',offset:2,size:1},G5:{side:'left',offset:2,size:1},G6:{side:'bottom',offset:0,size:2},G7:{side:'right',offset:3,size:1}};
+const colours=['red','blue','green','purple','cyan','orange','yellow','pink'];
+function recipe(){return{recipeId:'private-active-region-01',sourceLevelId:997991,seed:817,colourSeed:311,authoredInventory:{bodyCount:8,shapeAreaMaximum:6,nativeOrientation:'q0-only',maximumSingleCellBodies:2,allowedRectangleDimensions:[[1,1],[2,1],[2,2]]},activeRegion:{x:0,y:0,width:2,height:2,bodyIds:['b00','b01','b02'],minimumHorizontalBars:1,minimumVerticalBars:0},starter:{body:'b00',gateRole:'G0',area:2,onlyInitiallyAvailableExit:true},labels:{bodyPrefix:'active-tiny-',axisRoles:[{body:'b03',axis:'vertical',gateRole:'G3'},{body:'b04',axis:'horizontal',gateRole:'G4'},{body:'b05',axis:'horizontal',gateRole:'G5'},{body:'b06',axis:'vertical',gateRole:'G6'}],iceRoles:[{body:'b03',frozen:2},{body:'b04',frozen:3},{body:'b05',frozen:4},{body:'b06',frozen:2},{body:'b07',frozen:4}],gateRoles:Array.from({length:8},(_,i)=>({id:'G'+i,allowedSides:[gatePins['G'+i].side],sizeRange:[gatePins['G'+i].size,gatePins['G'+i].size],...([3,6].includes(i)?{frozen:3}:{})}))},redesignRequirements:{minimumSourceBodiesWhoseFootprintDisappears:2,minimumOriginalOpeningFootprintAreaChangedFraction:.5,minimumChangedPhysicalGateApertures:2},finiteLimits:{maximumFullWorlds:1,maximumCspSessions:1,maximumRestarts:0,firstFullIsTerminal:true}};}
+function constraints(){return{gatePins:structuredClone(gatePins),roleColours:[...colours],bodyPins:Object.fromEntries(positions.map(([x,y,w,h],i)=>['b'+String(i).padStart(2,'0'),{x,y,dimensions:[w,h],gateRoles:['G'+i]}]))};}
+const future=[{reason:'static-audit',worlds:16,transitions:1000,micro:20},{reason:'spatial-compile',worlds:16,transitions:2000,micro:40},{reason:'dual-replay',worlds:80,transitions:80,micro:40},{reason:'terminal-guard',worlds:1,transitions:1,micro:0}];
+function run({s=source(),r=recipe(),q=constraints(),limits={},now=Date.now}={}){const meter=createWholeBoardMeter({qualificationOnly:true,limits,now}),f=createAxisIceWholeBoardFactory(s,r,catalogue,meter,{qualificationOnly:true,qualificationConstraints:q,futureReservations:future});activity.syntheticFactoryCalls++;return{meter,f,result:f.constructOnce()};}
+function sane(q){assert.equal(q.accounting.version,VERSION);assert.equal(q.constructionAccounting.version,VERSION);assert(q.accounting.worlds<=1);assert.equal(q.constructionAccounting.placeholderWorlds,0);for(const k of ['newModels','newSearches','newReplays','newClaims'])assert.equal(q.constructionAccounting[k],0);for(const[k,cap]of [['worlds','maxWorlds'],['transitions','maxTransitions'],['micro','maxMicroStates'],['partialNodes','maxPartialNodes']])assert(q.accounting[k]<=q.accounting.limits[cap]);assert.equal(q.accounting.transitions,Object.values(q.accounting.kinds).reduce((n,v)=>n+(v.transitions??0),0));}
+
+test('first complete object has the declared region, starter, true ice and axes before hash',async()=>{
+ const {result:q,f}=run();assert(q.found,JSON.stringify({reason:q.reason,prunes:q.constructionAccounting.pruneCounts,domains:q.constructionAccounting.domainCounts}));sane(q);assert.equal(q.status,'FIRST_FULL_AXIS_ICE_TERMINAL');assert.equal(q.accounting.worlds,1);assert.equal(q.levelSha256,levelSha256(q.level));assert.equal(q.level.blocks.filter(b=>b.frozen).length,5);assert.equal(q.level.blocks.filter(b=>b.movementAxis).length,4);assert.deepEqual(q.level.blocks.filter(b=>b.frozen).map(b=>b.frozen),[2,3,4,2,4]);assert.equal(q.firstFullReceipt.openingRelation.forcedSecondClear,false);assert.equal(q.firstFullReceipt.openingRelation.starterArea,2);assert.equal(q.firstFullReceipt.futureReservationsPaid,false);assert.equal(q.firstFullReceipt.futureVerificationExecuted,false);assert.deepEqual(q.firstFullReceipt.futureReservationsDeclared,future);assert.equal(q.firstFullReceipt.allMechanismsBeforeFirstHash,true);assert(!Object.hasOwn(q.firstFullReceipt,'prepaidPhases'));assert.throws(()=>f.constructOnce(),/terminal/);assert.throws(()=>{q.level.blocks[3].frozen=1;});
+ await save('first-full.json',{q,recipe:recipe(),constraints:constraints(),solvabilityClaimed:false});checks.push({name:'first-full-all-physical-fields',pass:true});
+});
+
+test('no-full limits and finite incompatible pins seal without identity or retry',async()=>{
+ const rows=[];for(const limits of [{maxPartialNodes:1},{maxTransitions:1},{maxMicroStates:1}]){const x=run({limits});assert(!x.result.found);assert.equal(x.result.level,null);assert.equal(x.result.levelSha256,null);sane(x.result);assert.throws(()=>x.f.constructOnce());rows.push(x.result);}
+ const q=constraints();q.bodyPins.b03.x=0;const x=run({q});assert(!x.result.found);assert.equal(x.result.status,'FINITE_JOINT_DOMAIN_EXHAUSTED');rows.push(x.result);await save('no-full-terminals.json',{rows});checks.push({name:'no-full-finite-terminal',pass:true});
+});
+
+test('post-full clock and transition limits retain the same sole world',async()=>{
+ let calls=0;const base=run({now:()=>{calls++;return 0;},limits:{maxMilliseconds:10}});assert(base.result.found);let count=0;const timed=run({now:()=>++count>=calls?10:0,limits:{maxMilliseconds:10}});assert(timed.result.found);assert.equal(timed.result.reason,'wholeboard-deadline');assert.equal(timed.result.levelSha256,base.result.levelSha256);sane(timed.result);assert.throws(()=>timed.f.constructOnce());
+ const capped=run({limits:{maxTransitions:base.result.accounting.transitions-1}});assert(capped.result.found);assert.equal(capped.result.reason,'wholeboard-transitions-cap');assert.equal(capped.result.levelSha256,base.result.levelSha256);sane(capped.result);assert.throws(()=>capped.f.constructOnce());await save('formed-full-terminals.json',{base:base.result,timed:timed.result,capped:capped.result});checks.push({name:'post-full-identity-preserved',pass:true});
+});
+
+test('region boundary, extra ordinary contact, two-cell starter and bars reject only before first-full',async()=>{
+ const rows=[];for(const change of [q=>{q.bodyPins.b01={x:0,y:0,dimensions:[1,1],gateRoles:['G1']};},q=>{q.bodyPins.b00.dimensions=[1,1];},q=>{q.bodyPins.b07.x=1;q.bodyPins.b07.y=1;}]){const q=constraints();change(q);const x=run({q});assert(!x.result.found);assert.equal(x.result.accounting.worlds,0);rows.push(x.result);}
+ const r=recipe();r.activeRegion.minimumVerticalBars=1;const x=run({r});assert(!x.result.found);assert(x.result.constructionAccounting.pruneCounts['active-bar-inventory']>0);rows.push(x.result);await save('region-opening-rejections.json',{rows});checks.push({name:'partial-geometry-only-rejections',pass:true});
+});
+
+test('numeric release bound agrees with every tiny abstract removal order and stays optimistic on partial domains',async()=>{
+ const meter=createWholeBoardMeter({qualificationOnly:true});let cases=0,rejected=0;for(let n=0;n<625;n++){let v=n;const counts=[];for(let i=0;i<4;i++){counts.push(v%5);v=Math.floor(v/5);}const sorted=[...counts].sort((a,b)=>a-b),possible=sorted.every((t,i)=>t<=i),pass=necessaryReleaseSupport(counts.map(release=>({release})),[],[...new Set(counts.filter(Boolean))],meter)!==null;assert.equal(pass,possible);cases++;rejected+=Number(!pass);}
+ const optimistic=necessaryReleaseSupport([{release:0}],[{options:[{release:4},{release:0}]},{options:[{release:1},{release:3}]}],[1,3],meter);assert(optimistic);assert.equal(meter.report().worlds,0);await save('release-capacity-oracle.json',{cases,rejected,accounting:meter.report(),physicalWorlds:0,abstractCounterOrdersOnly:true});checks.push({name:'necessary-release-counts',pass:true,cases});
+});
+
+test('body and gate ice combine by maximum and all frozen perimeter roles are mandatory',async()=>{
+ const r=recipe();for(const g of r.labels.gateRoles)if(g.id!=='G0')g.frozen=7;const x=run({r});assert(!x.result.found);assert(x.result.constructionAccounting.pruneCounts['ice-clear-inventory-bound']>0);assert.equal(x.result.accounting.worlds,0);
+ let rejects=0;for(const change of [r=>r.labels.iceRoles.pop(),r=>r.labels.iceRoles.push({...r.labels.iceRoles[0]}),r=>{r.labels.iceRoles[0].body='b01';},r=>{r.labels.iceRoles[0].frozen=1;},r=>{r.openingRelations=[];},r=>{r.starter.area=1;}]){const z=recipe();change(z);assert.throws(()=>run({r:z}));rejects++;}await save('ice-role-rejections.json',{x:x.result,rejects});checks.push({name:'body-gate-counter-and-role-integrity',pass:true,rejects});
+});
+
+test('incremental domains never exchange different ice groups and agree with the naive filter',async()=>{
+ const q=constraints();delete q.bodyPins.b01;delete q.bodyPins.b02;delete q.bodyPins.b07;const a=run({q}),b=run({q:{...q,incrementalDomains:false}});assert(a.result.found&&b.result.found);assert.equal(a.result.levelSha256,b.result.levelSha256);assert.deepEqual(a.result.level.blocks.map(b=>b.frozen??0),[0,0,0,2,3,4,2,4]);sane(a.result);sane(b.result);assert(a.result.constructionAccounting.optimizationChoices.domainClassIncludesRegionAndIce);await save('incremental-naive.json',{incremental:a.result,naive:b.result});checks.push({name:'region-ice-domain-equivalence',pass:true});
+});
+
+test('single-fragment starter gate support uses actual corner geometry without complete boards',async()=>{
+ const meter=createWholeBoardMeter({qualificationOnly:true}),shapes=[{w:2,h:1,colours:['red']},{w:1,h:2,colours:['red']}],region={x:0,y:0,width:2,height:2};assert(necessaryStarterGateSupport({color:'red',side:'left',offset:0,size:1},region,4,4,shapes,meter));assert(!necessaryStarterGateSupport({color:'red',side:'right',offset:0,size:1},region,4,4,shapes,meter));assert(!necessaryStarterGateSupport({color:'red',side:'left',offset:0,size:1,frozen:1},region,4,4,shapes,meter));assert(!necessaryStarterGateSupport({color:'red',side:'left',offset:3,size:1},region,4,4,shapes,meter));assert.equal(meter.report().worlds,0);await save('starter-support.json',{accounting:meter.report(),realModels:0});checks.push({name:'starter-native-rim-geometry',pass:true});
+});
+
+test('production needs immutable explicit declaration and tiny cannot admit real source IDs',async()=>{
+ const s=source();s.id=100;const r=recipe();r.sourceLevelId=100;assert.throws(()=>createAxisIceWholeBoardFactory(s,r,catalogue,createWholeBoardMeter({qualificationOnly:true}),{qualificationOnly:true,qualificationConstraints:constraints()}),/Tiny/);assert.throws(()=>createAxisIceWholeBoardFactory(source(),recipe(),{shapes:catalogue.shapes},createWholeBoardMeter({qualificationOnly:true}),{qualificationOnly:true}));assert.throws(()=>createWholeBoardMeter({now:()=>0}));assert.throws(()=>createWholeBoardMeter({limits:{maxWorlds:10001}}));assert.throws(()=>createAxisIceWholeBoardFactory(s,r,catalogue,createWholeBoardMeter(),{}));await save('isolation.json',{realDomains:0,realSourcesConstructed:0});checks.push({name:'production-and-tiny-isolation',pass:true});
+});
+
+test('a frozen axis at its ordinary portal is excluded for eventual movement participation',async()=>{
+ const r=recipe();delete r.labels.gateRoles.find(g=>g.id==='G3').frozen;const x=run({r});assert(!x.result.found);assert.equal(r.labels.iceRoles.find(b=>b.body==='b03').frozen,2);assert(x.result.constructionAccounting.pruneCounts['empty-initial-domain']>0);assert(x.result.constructionAccounting.domainDesignChoices.axisAtOrdinaryPortalExcludedEvenIfBodyFrozen);assert.equal(x.result.accounting.worlds,0);await save('frozen-axis-ordinary-contact.json',{q:x.result,reason:'A body-frozen axis is unavailable initially, but after thaw its first pointer-down at an ordinary portal clears with zero movement.'});checks.push({name:'frozen-axis-ordinary-contact-participation-choice',pass:true});
+});
+
+test.after(async()=>{
+ const b=await build({entryPoints:[SELF],bundle:true,packages:'external',write:false,metafile:true,platform:'node',format:'esm',logLevel:'silent'}),toolBindings={};for(const p of Object.keys(b.metafile.inputs))toolBindings[p]=sha(await fs.readFile(p));Object.assign(bindings,toolBindings);const p='tools/daily-challenge/formal-v4/axis-ice-active-region-stock-v1.test.mjs';bindings[p]=sha(await fs.readFile(p));await save('report.json',{status:checks.length===10?'ACTIVE_REGION_AXIS_ICE_FACTORY_TINY_PASS':'ACTIVE_REGION_AXIS_ICE_FACTORY_TINY_INCOMPLETE',checks,activity,toolBindings,fileBindings:{...bindings},newRealDomains:0,newRealConstructions:0,newRealModels:0,newReplays:0,newSearches:0,newClaims:0,productionQualified:false,syntheticOnly:true,oldDataAccountingClarification:'The earlier source50 construction snapshot1562054 transitions includes1359329 prepaid future operations; actual constructor checks202725. Those are separate from the subsequent joint search. No old report changed.'});
+});

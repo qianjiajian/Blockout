@@ -1,0 +1,103 @@
+{
+  "source": "C:\\Users\\Administrator\\20261009_115925.mp4",
+  "filename": "20261009_115925.mp4",
+  "durationSeconds": 209.978005,
+  "sourceWidth": 512,
+  "sourceHeight": 914,
+  "startSeconds": 174,
+  "endSeconds": 209.978005,
+  "intervalSeconds": 2,
+  "frameCount": 18,
+  "frames": [
+    {
+      "index": 0,
+      "seconds": 174,
+      "file": "frame-0000-0174.00s.png"
+    },
+    {
+      "index": 1,
+      "seconds": 176,
+      "file": "frame-0001-0176.00s.png"
+    },
+    {
+      "index": 2,
+      "seconds": 178,
+      "file": "frame-0002-0178.00s.png"
+    },
+    {
+      "index": 3,
+      "seconds": 180,
+      "file": "frame-0003-0180.00s.png"
+    },
+    {
+      "index": 4,
+      "seconds": 182,
+      "file": "frame-0004-0182.00s.png"
+    },
+    {
+      "index": 5,
+      "seconds": 184,
+      "file": "frame-0005-0184.00s.png"
+    },
+    {
+      "index": 6,
+      "seconds": 186,
+      "file": "frame-0006-0186.00s.png"
+    },
+    {
+      "index": 7,
+      "seconds": 188,
+      "file": "frame-0007-0188.00s.png"
+    },
+    {
+      "index": 8,
+      "seconds": 190,
+      "file": "frame-0008-0190.00s.png"
+    },
+    {
+      "index": 9,
+      "seconds": 192,
+      "file": "frame-0009-0192.00s.png"
+    },
+    {
+      "index": 10,
+      "seconds": 194,
+      "file": "frame-0010-0194.00s.png"
+    },
+    {
+      "index": 11,
+      "seconds": 196,
+      "file": "frame-0011-0196.00s.png"
+    },
+    {
+      "index": 12,
+      "seconds": 198,
+      "file": "frame-0012-0198.00s.png"
+    },
+    {
+      "index": 13,
+      "seconds": 200,
+      "file": "frame-0013-0200.00s.png"
+    },
+    {
+      "index": 14,
+      "seconds": 202,
+      "file": "frame-0014-0202.00s.png"
+    },
+    {
+      "index": 15,
+      "seconds": 204,
+      "file": "frame-0015-0204.00s.png"
+    },
+    {
+      "index": 16,
+      "seconds": 206,
+      "file": "frame-0016-0206.00s.png"
+    },
+    {
+      "index": 17,
+      "seconds": 208,
+      "file": "frame-0017-0208.00s.png"
+    }
+  ]
+}

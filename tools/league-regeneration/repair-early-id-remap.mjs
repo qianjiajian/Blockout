@@ -1,0 +1,7 @@
+import fs from 'node:fs';
+import { createHash } from 'node:crypto';
+const sha=v=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
+const rf='deliverables/league-regeneration-20261004/formal/early-1-19.json',cf='deliverables/league-regeneration-20261004/formal/early-1-19-formal-catalog.json';
+const r=JSON.parse(fs.readFileSync(rf));for(const row of r.acceptedRows){const oldId=910000+row.index,newId=900000+row.index,old=structuredClone(row.level);old.id=oldId;row.idRemap={oldId,newId,oldLevelSha256:sha(old),newLevelSha256:sha(row.level),geometryUnchanged:true};row.targetLeagueId=newId;row.levelSha256=sha(row.level);if(row.proof)row.proof.sourceLevelSha256=row.levelSha256;}
+r.mutationPolicy={finite:true,shape:'equal-area different-shape swaps within same shutter/coverage group',color:'bounded color swaps',onFailure:'candidate rejected after finite attempts; fingerprint and reason recorded'};
+fs.writeFileSync(rf,JSON.stringify(r,null,2)+String.fromCharCode(10));const c=JSON.parse(fs.readFileSync(cf));for(const e of c.entries){const row=r.acceptedRows.find(x=>x.index===e.index);Object.assign(e,{targetLeagueId:row.targetLeagueId,level:row.level,levelSha256:row.levelSha256,lowerProof:row.proof,idRemap:row.idRemap,specials:row.specials,specialEvidence:row.specialEvidence,specialAudit:row.specialEvidence});}c.mutationPolicy=r.mutationPolicy;fs.writeFileSync(cf,JSON.stringify(c,null,2)+String.fromCharCode(10));console.log(JSON.stringify(r.acceptedRows.map(x=>x.idRemap)));

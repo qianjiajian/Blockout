@@ -12,9 +12,9 @@ import {
 const root = resolve(import.meta.dirname, "..");
 const row = (path) => ({ path, bytes: 12, sha256: "unchanged" });
 
-test("policy has precisely the eight reviewed non-runtime resources, not broad extension exclusions", () => {
-  assert.equal(WECHAT_RESOURCE_EXCLUSIONS.length, 8);
-  assert.deepEqual(WECHAT_RESOURCE_EXCLUSIONS.map(({ source }) => source).sort(), [
+test("policy keeps the original exclusions and adds the reviewed zero-consumer files", () => {
+  assert.equal(WECHAT_RESOURCE_EXCLUSIONS.length, 87);
+  assert.deepEqual(WECHAT_RESOURCE_EXCLUSIONS.filter(({ reason }) => !reason.startsWith("retired-")).map(({ source }) => source).sort(), [
     "art/gameplay/mechanics/revised-reference-v1/README.md",
     "art/gameplay/mechanics/revised-reference-v1/manifest.json",
     "art/gameplay/mechanics/shutter-nine-slice-v1/README.md",
@@ -24,6 +24,14 @@ test("policy has precisely the eight reviewed non-runtime resources, not broad e
     "art/gameplay/board/formal-border-v1/neutral-corner-inner.png",
     "art/gameplay/board/formal-border-v1/neutral-corner-outer.png",
   ].sort());
+  assert.equal(WECHAT_RESOURCE_EXCLUSIONS.filter(({ reason }) => reason === "retired-ui-art").length, 26);
+  assert.equal(WECHAT_RESOURCE_EXCLUSIONS.filter(({ reason }) => reason === "retired-shop-art").length, 7);
+  assert.equal(WECHAT_RESOURCE_EXCLUSIONS.filter(({ reason }) => reason === "retired-profile-art").length, 23);
+  assert.equal(WECHAT_RESOURCE_EXCLUSIONS.filter(({ reason }) => reason === "retired-profile-frame-art").length, 19);
+  assert.equal(WECHAT_RESOURCE_EXCLUSIONS.filter(({ reason }) => reason === "retired-life-refill-art").length, 1);
+  assert.equal(WECHAT_RESOURCE_EXCLUSIONS.filter(({ reason }) => reason === "retired-booster-reference-art").length, 1);
+  assert.equal(WECHAT_RESOURCE_EXCLUSIONS.filter(({ reason }) => reason === "retired-test-control-art").length, 1);
+  assert.equal(WECHAT_RESOURCE_EXCLUSIONS.filter(({ reason }) => reason === "retired-shutter-art").length, 1);
   assert(Object.isFrozen(WECHAT_RESOURCE_EXCLUSIONS));
   assert(WECHAT_RESOURCE_EXCLUSIONS.every(Object.isFrozen));
   const other = [row("art/README.md"), row("audio/manifest.json"), row("art/required.json"),
@@ -31,7 +39,7 @@ test("policy has precisely the eight reviewed non-runtime resources, not broad e
   const excluded = WECHAT_RESOURCE_EXCLUSIONS.map(({ source }) => row(source));
   const snapshot = [...other, ...excluded];
   assert.deepEqual(filterWechatAssetSnapshot(snapshot), other);
-  assert.equal(snapshot.length, 12, "source snapshot must not be mutated");
+  assert.equal(snapshot.length, 91, "source snapshot must not be mutated");
 });
 
 test("source-prefix filtering retains every runtime mechanism image and sound", () => {
@@ -92,7 +100,7 @@ test("authored roots are rejected before any deletion", async () => {
   }
 });
 
-test("one changed generated copy prevents removal of all eight", async () => {
+test("one changed generated copy prevents removal of every reviewed copy", async () => {
   await withGeneratedCopies(async (output) => {
     await writeFile(resolve(output, WECHAT_RESOURCE_EXCLUSIONS.at(-1).output), "changed");
     await assert.rejects(removeGeneratedWechatExcludedResources(root, output), /differs from its source/);
@@ -128,7 +136,8 @@ test("build removes reviewed copies before native encoding and fingerprints the 
   assert(integrity.includes('"scripts/wechat-resource-policy.mjs"'));
   assert(verifier.includes("assertWechatResourcesExcluded(currentOutputSnapshot)"));
   assert(verifier.includes("JSON.stringify(manifest.resourceExclusions) !== JSON.stringify(WECHAT_RESOURCE_EXCLUSIONS)"));
-  assert(verifier.includes("const publicAssets = filterWechatAssetSnapshot("));
+  assert(verifier.includes("const allPublicAssets = deduplicatedArtSnapshot(filterWechatAssetSnapshot("));
+  assert(verifier.includes("const publicAssets = allPublicAssets"));
   assert(verifier.includes("const revisedMechanismSource = filterWechatAssetSnapshot("));
   assert(verifier.includes("const allAudioSourceSnapshot = filterWechatAssetSnapshot("));
 });

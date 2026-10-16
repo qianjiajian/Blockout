@@ -3,10 +3,18 @@ export interface TutorialGuideMotion {
   alpha: number;
 }
 
+export interface TutorialTapMotion {
+  /** Vertical press distance in logical pixels; horizontal position stays fixed. */
+  offsetY: number;
+  scale: number;
+  alpha: number;
+}
+
 const CYCLE_SECONDS = 1.6;
 const TRAVEL_END = 0.68;
 const HOLD_END = 0.76;
 const FADE_END = 0.92;
+const TAP_CYCLE_SECONDS = 1.08;
 
 const positiveModulo = (value: number, divisor: number): number => (
   ((value % divisor) + divisor) % divisor
@@ -34,4 +42,25 @@ export const tutorialGuideMotion = (elapsedSeconds: number, reducedMotion: boole
     return { progress: 1, alpha: 0.56 * (1 - fade) };
   }
   return { progress: 1, alpha: 0 };
+};
+
+/**
+ * A stationary tap cue for button/block targets. The pointer never travels
+ * along a path: it only presses straight down and springs back up.
+ */
+export const tutorialTapMotion = (elapsedSeconds: number, reducedMotion: boolean): TutorialTapMotion => {
+  if (reducedMotion) return { offsetY: 0, scale: 1, alpha: 0.86 };
+  const cycle = positiveModulo(elapsedSeconds, TAP_CYCLE_SECONDS) / TAP_CYCLE_SECONDS;
+  const press = cycle <= 0.3
+    ? smoothstep(cycle / 0.3)
+    : cycle <= 0.5
+      ? 1
+      : cycle <= 0.78
+        ? 1 - smoothstep((cycle - 0.5) / 0.28)
+        : 0;
+  return {
+    offsetY: press * 18,
+    scale: 1 - press * 0.055,
+    alpha: 0.72 + Math.sin(cycle * Math.PI * 2) * 0.12,
+  };
 };

@@ -1,0 +1,279 @@
+{
+  "sourceRoot": "C:/Users/Administrator/Desktop/block out/新解锁-个人资料-头像/新功能解锁",
+  "contract": "User-supplied formal PNGs copied verbatim: no redraw, resize, crop, rotation, recompression, or color/alpha changes.",
+  "loadGroup": "feature-unlock",
+  "runtimeRoot": "public/assets/art/ui/formal-pages/feature-unlock-supplied-v1",
+  "archivedCount": 14,
+  "runtimeCount": 11,
+  "runtimeBytes": 467743,
+  "decodedRuntimeRgbaBytes": 3616372,
+  "referenceAudit": {
+    "artboard": {
+      "width": 720,
+      "height": 1584
+    },
+    "selectedReference": "示意图3.png",
+    "references": {
+      "示意图1.png": "Annotated version of reference 2: feature name 62, description 23, primary/later labels 41.",
+      "示意图2.png": "Clean reference with a large purple/gold winged medal. No separate medal cutout is supplied in this folder.",
+      "示意图3.png": "Clean reference using the supplied star-shield trophy (图层 52.png) for ranking. Other features retain their respective existing formal icons."
+    },
+    "bakedText": {
+      "文字2.png": "新功能解锁",
+      "文字1.png": "NEW FEATURE UNLOCKED"
+    },
+    "dynamicText": [
+      "feature name",
+      "feature description",
+      "primary action",
+      "later action"
+    ],
+    "nativePlacementsInReference3": {
+      "panel": {
+        "x": 63,
+        "y": 306,
+        "width": 594,
+        "height": 844
+      },
+      "title-zh": {
+        "x": 185,
+        "y": 328,
+        "width": 356,
+        "height": 94
+      },
+      "rank-icon": {
+        "x": 234,
+        "y": 539,
+        "width": 235,
+        "height": 211
+      },
+      "sparkles": {
+        "x": 195,
+        "y": 507,
+        "width": 345,
+        "height": 273
+      },
+      "name-left": {
+        "x": 244,
+        "y": 793,
+        "width": 54,
+        "height": 68
+      },
+      "name-right": {
+        "x": 412,
+        "y": 793,
+        "width": 55,
+        "height": 68
+      },
+      "divider": {
+        "x": 136,
+        "y": 859,
+        "width": 448,
+        "height": 26
+      },
+      "button": {
+        "x": 207,
+        "y": 977,
+        "width": 305,
+        "height": 91
+      },
+      "later-line": {
+        "x": 100,
+        "y": 1257,
+        "width": 521,
+        "height": 5
+      }
+    },
+    "placementEvidence": "All 14 PNGs visually inspected. Native title/icon/sparkles/laurels/divider positions confirmed using zero-error matches of sampled opaque source pixels in reference 3. Panel/button/later-line positions are visual estimates; no runtime rendering equivalence is claimed.",
+    "layoutNotes": "Panel width is 82.5% of artboard width. Later action sits outside the panel. Preserve native alpha margins; the glow and sparkles are separate transparent effects. Only reference PNGs contain background gameplay, example values, and button/feature text."
+  },
+  "inventory": [
+    {
+      "file": "光.png",
+      "role": "runtime-cutout",
+      "width": 372,
+      "height": 372,
+      "alpha": true,
+      "bytes": 37952,
+      "sourceSha256": "1dada22d508354f76b7c5bb3b26a332e6f7e0412b7abb748d3ffb270f0794a50",
+      "archived": "art-source/ui/feature-unlock-supplied-v1/originals/光.png",
+      "runtimeName": "glow",
+      "runtime": "public/assets/art/ui/formal-pages/feature-unlock-supplied-v1/glow.png",
+      "archivedSha256": "1dada22d508354f76b7c5bb3b26a332e6f7e0412b7abb748d3ffb270f0794a50",
+      "runtimeSha256": "1dada22d508354f76b7c5bb3b26a332e6f7e0412b7abb748d3ffb270f0794a50"
+    },
+    {
+      "file": "图层 52.png",
+      "role": "runtime-cutout",
+      "width": 235,
+      "height": 211,
+      "alpha": true,
+      "bytes": 64341,
+      "sourceSha256": "d57aaca8465154467c56340745b419577e19b988920f8e9e6a983dac4e347a8a",
+      "archived": "art-source/ui/feature-unlock-supplied-v1/originals/图层 52.png",
+      "runtimeName": "rank-icon",
+      "runtime": "public/assets/art/ui/formal-pages/feature-unlock-supplied-v1/rank-icon.png",
+      "archivedSha256": "d57aaca8465154467c56340745b419577e19b988920f8e9e6a983dac4e347a8a",
+      "runtimeSha256": "d57aaca8465154467c56340745b419577e19b988920f8e9e6a983dac4e347a8a"
+    },
+    {
+      "file": "底.png",
+      "role": "runtime-cutout",
+      "width": 594,
+      "height": 844,
+      "alpha": true,
+      "bytes": 186657,
+      "sourceSha256": "6e6c33418646db827884ac6a2f915c46af23ae7e34eceb3a4152a32d79b2d5ed",
+      "archived": "art-source/ui/feature-unlock-supplied-v1/originals/底.png",
+      "runtimeName": "panel",
+      "runtime": "public/assets/art/ui/formal-pages/feature-unlock-supplied-v1/panel.png",
+      "archivedSha256": "6e6c33418646db827884ac6a2f915c46af23ae7e34eceb3a4152a32d79b2d5ed",
+      "runtimeSha256": "6e6c33418646db827884ac6a2f915c46af23ae7e34eceb3a4152a32d79b2d5ed"
+    },
+    {
+      "file": "按钮.png",
+      "role": "runtime-cutout",
+      "width": 305,
+      "height": 91,
+      "alpha": true,
+      "bytes": 18014,
+      "sourceSha256": "7ddbc997e00a2f309470ac6627ee6123401244ef32aee0c007474262b5be7c0a",
+      "archived": "art-source/ui/feature-unlock-supplied-v1/originals/按钮.png",
+      "runtimeName": "button",
+      "runtime": "public/assets/art/ui/formal-pages/feature-unlock-supplied-v1/button.png",
+      "archivedSha256": "7ddbc997e00a2f309470ac6627ee6123401244ef32aee0c007474262b5be7c0a",
+      "runtimeSha256": "7ddbc997e00a2f309470ac6627ee6123401244ef32aee0c007474262b5be7c0a"
+    },
+    {
+      "file": "排行装饰1.png",
+      "role": "runtime-cutout",
+      "width": 54,
+      "height": 68,
+      "alpha": true,
+      "bytes": 5547,
+      "sourceSha256": "72647d48619a6021b892c37991e15bf5b5dcf37873d6381abd91154d32919426",
+      "archived": "art-source/ui/feature-unlock-supplied-v1/originals/排行装饰1.png",
+      "runtimeName": "name-left",
+      "runtime": "public/assets/art/ui/formal-pages/feature-unlock-supplied-v1/name-left.png",
+      "archivedSha256": "72647d48619a6021b892c37991e15bf5b5dcf37873d6381abd91154d32919426",
+      "runtimeSha256": "72647d48619a6021b892c37991e15bf5b5dcf37873d6381abd91154d32919426"
+    },
+    {
+      "file": "排行装饰2.png",
+      "role": "runtime-cutout",
+      "width": 55,
+      "height": 68,
+      "alpha": true,
+      "bytes": 5497,
+      "sourceSha256": "78021651fc9a481b730f61fc475e01a8d8ac5a2ea62e9faa9d3ad54ea9f6ec96",
+      "archived": "art-source/ui/feature-unlock-supplied-v1/originals/排行装饰2.png",
+      "runtimeName": "name-right",
+      "runtime": "public/assets/art/ui/formal-pages/feature-unlock-supplied-v1/name-right.png",
+      "archivedSha256": "78021651fc9a481b730f61fc475e01a8d8ac5a2ea62e9faa9d3ad54ea9f6ec96",
+      "runtimeSha256": "78021651fc9a481b730f61fc475e01a8d8ac5a2ea62e9faa9d3ad54ea9f6ec96"
+    },
+    {
+      "file": "文字1.png",
+      "role": "runtime-cutout",
+      "width": 381,
+      "height": 99,
+      "alpha": true,
+      "bytes": 67297,
+      "sourceSha256": "f4499b58b2e88a01256fe082b03712aab850f62632b6efa783fc3c64fe393722",
+      "archived": "art-source/ui/feature-unlock-supplied-v1/originals/文字1.png",
+      "runtimeName": "title-en",
+      "runtime": "public/assets/art/ui/formal-pages/feature-unlock-supplied-v1/title-en.png",
+      "archivedSha256": "f4499b58b2e88a01256fe082b03712aab850f62632b6efa783fc3c64fe393722",
+      "runtimeSha256": "f4499b58b2e88a01256fe082b03712aab850f62632b6efa783fc3c64fe393722"
+    },
+    {
+      "file": "文字2.png",
+      "role": "runtime-cutout",
+      "width": 356,
+      "height": 94,
+      "alpha": true,
+      "bytes": 56954,
+      "sourceSha256": "5abd069e1cf132aa8422846b842033c204b91506125e70e9684545e43c489f8a",
+      "archived": "art-source/ui/feature-unlock-supplied-v1/originals/文字2.png",
+      "runtimeName": "title-zh",
+      "runtime": "public/assets/art/ui/formal-pages/feature-unlock-supplied-v1/title-zh.png",
+      "archivedSha256": "5abd069e1cf132aa8422846b842033c204b91506125e70e9684545e43c489f8a",
+      "runtimeSha256": "5abd069e1cf132aa8422846b842033c204b91506125e70e9684545e43c489f8a"
+    },
+    {
+      "file": "星.png",
+      "role": "runtime-cutout",
+      "width": 345,
+      "height": 273,
+      "alpha": true,
+      "bytes": 21173,
+      "sourceSha256": "c547922f815e4a91edd487dd2cb0ecc2adc8b1bf2ee65395ed9084ca95c5bee1",
+      "archived": "art-source/ui/feature-unlock-supplied-v1/originals/星.png",
+      "runtimeName": "sparkles",
+      "runtime": "public/assets/art/ui/formal-pages/feature-unlock-supplied-v1/sparkles.png",
+      "archivedSha256": "c547922f815e4a91edd487dd2cb0ecc2adc8b1bf2ee65395ed9084ca95c5bee1",
+      "runtimeSha256": "c547922f815e4a91edd487dd2cb0ecc2adc8b1bf2ee65395ed9084ca95c5bee1"
+    },
+    {
+      "file": "示意图1.png",
+      "role": "reference-only",
+      "width": 720,
+      "height": 1584,
+      "alpha": false,
+      "bytes": 481711,
+      "sourceSha256": "f71faa8af48565df3555e92b04d4eb94d76ca6a6f41e92e1b50ad7747b7f83de",
+      "archived": "art-source/ui/feature-unlock-supplied-v1/originals/示意图1.png",
+      "archivedSha256": "f71faa8af48565df3555e92b04d4eb94d76ca6a6f41e92e1b50ad7747b7f83de"
+    },
+    {
+      "file": "示意图2.png",
+      "role": "reference-only",
+      "width": 720,
+      "height": 1584,
+      "alpha": false,
+      "bytes": 464173,
+      "sourceSha256": "f0cb5cfe0cbe87af3e2674aaf13bdf6bba6213c2551dc3ccb449f3835ff87656",
+      "archived": "art-source/ui/feature-unlock-supplied-v1/originals/示意图2.png",
+      "archivedSha256": "f0cb5cfe0cbe87af3e2674aaf13bdf6bba6213c2551dc3ccb449f3835ff87656"
+    },
+    {
+      "file": "示意图3.png",
+      "role": "reference-only",
+      "width": 720,
+      "height": 1584,
+      "alpha": false,
+      "bytes": 373063,
+      "sourceSha256": "945cee141c3962286ae53bf03477dfa11f6d7fad6b8e16fed97a1b8b74f559d7",
+      "archived": "art-source/ui/feature-unlock-supplied-v1/originals/示意图3.png",
+      "archivedSha256": "945cee141c3962286ae53bf03477dfa11f6d7fad6b8e16fed97a1b8b74f559d7"
+    },
+    {
+      "file": "稍后提示线.png",
+      "role": "runtime-cutout",
+      "width": 521,
+      "height": 5,
+      "alpha": true,
+      "bytes": 907,
+      "sourceSha256": "d54b3e5fff5870b86bb0a1e42d2f619d209e45d0a255572a77d84dfd54d635ee",
+      "archived": "art-source/ui/feature-unlock-supplied-v1/originals/稍后提示线.png",
+      "runtimeName": "later-line",
+      "runtime": "public/assets/art/ui/formal-pages/feature-unlock-supplied-v1/later-line.png",
+      "archivedSha256": "d54b3e5fff5870b86bb0a1e42d2f619d209e45d0a255572a77d84dfd54d635ee",
+      "runtimeSha256": "d54b3e5fff5870b86bb0a1e42d2f619d209e45d0a255572a77d84dfd54d635ee"
+    },
+    {
+      "file": "线.png",
+      "role": "runtime-cutout",
+      "width": 448,
+      "height": 26,
+      "alpha": true,
+      "bytes": 3404,
+      "sourceSha256": "a32f50f80322de1ce395ac2a249187a12ef19abe165662f4db3d8afb4bd5dcfb",
+      "archived": "art-source/ui/feature-unlock-supplied-v1/originals/线.png",
+      "runtimeName": "divider",
+      "runtime": "public/assets/art/ui/formal-pages/feature-unlock-supplied-v1/divider.png",
+      "archivedSha256": "a32f50f80322de1ce395ac2a249187a12ef19abe165662f4db3d8afb4bd5dcfb",
+      "runtimeSha256": "a32f50f80322de1ce395ac2a249187a12ef19abe165662f4db3d8afb4bd5dcfb"
+    }
+  ]
+}

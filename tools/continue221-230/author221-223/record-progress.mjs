@@ -1,0 +1,2 @@
+import fs from 'node:fs';
+const p='deliverables/continue221-230-20260929/rebuild221-223/progress.json'; const d=JSON.parse(fs.readFileSync(p)); d.status='CANDIDATE_REBUILD_MODEL_AUDIT'; d.attempts.push({tag:'filled-7x7-cover-v1',candidate:'candidate-levels.json',audit:'model-audit.json',contract:'PASS',openingCoverage:'PASS via contract',route:'INCOMPLETE_NAIVE_ORDER',lowerBound:'NOT_RUN',why:'direct exit ordering rejects non-edge blocks; requires levelSolver/PuzzleModel search'}); fs.writeFileSync(p,JSON.stringify(d,null,2)+'\n');

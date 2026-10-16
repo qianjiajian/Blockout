@@ -1,0 +1,1 @@
+import fs from 'node:fs';for(const f of ['deliverables/league-regeneration-20261005/round2/early-hard-source42-105.json','deliverables/league-regeneration-20261005/round2/early-hard-source80-32.json']){let x=JSON.parse(fs.readFileSync(f));console.log(f,x.replay,x.lowerBound)}

@@ -1,0 +1,18 @@
+[
+  {
+    "source": "C:/Users/Administrator/Desktop/block out/挑战成功/低.png",
+    "file": "panel.png",
+    "width": 640,
+    "height": 764,
+    "sha256": "bfbff701d44697f6a8679533944cb3a97b24a084c834f14e57c7eb70a3cc19fb",
+    "transform": "original-byte-copy"
+  },
+  {
+    "source": "C:/Users/Administrator/Desktop/block out/挑战成功/按钮.png",
+    "file": "continue.png",
+    "width": 322,
+    "height": 125,
+    "sha256": "67c0e1c6000e78cdfab5dbd586f9d2019d4139b462dcfdb740195fc8014b9805",
+    "transform": "original-byte-copy"
+  }
+]

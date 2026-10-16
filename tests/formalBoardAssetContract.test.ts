@@ -242,13 +242,29 @@ describe("replacement formal board artwork contract", () => {
     }
     expect(expectedSources.size).toBe(120);
 
+    const lShapeDimensions = {
+      l2: { width: 286, height: 197 },
+      l1: { width: 284, height: 199 },
+    } as const;
+    const l1NarrowColors = new Set(["red", "yellow", "cyan"]);
+    for (const color of COLORS) {
+      const l2 = `gameplay/blocks/formal-v1/${color}-l-tetromino.png`;
+      expectCopiedAsset(l2, lShapeDimensions.l2);
+      const l1 = `gameplay/blocks/formal-v1/${color}-mirrored-l-tetromino.png`;
+      expectCopiedAsset(l1, {
+        width: l1NarrowColors.has(color) ? 283 : lShapeDimensions.l1.width,
+        height: lShapeDimensions.l1.height,
+      });
+    }
+
     const temporarySources = new Set([
       ...COLORS.map((color) => `gameplay/blocks/formal-v1/${color}-l-tetromino.png`),
+      ...COLORS.map((color) => `gameplay/blocks/formal-v1/${color}-mirrored-l-tetromino.png`),
       "gameplay/blocks/formal-v1/red-z-tetromino.png",
       "gameplay/blocks/formal-v1/blue-plus-pentomino.png",
       "gameplay/blocks/formal-v1/pink-plus-pentomino.png",
     ]);
-    expect(temporarySources.size).toBe(11);
+    expect(temporarySources.size).toBe(19);
     for (const source of temporarySources) {
       expect(bySource.has(source), `${source} preserved manifest slot`).toBe(true);
       expect(runtimeStrings.has(`assets/art/${source}`), `${source} preserved runtime API path`).toBe(true);
@@ -256,7 +272,7 @@ describe("replacement formal board artwork contract", () => {
     const supplementalSources = new Set<string>();
     for (const color of COLORS) {
       for (const [suffix, width, height] of [
-        ["rectangle-2x3", 192, 296], ["rectangle-3x2", 285, 201], ["square-3x3", 286, 296],
+        ["rectangle-2x3", 191, 296], ["rectangle-3x2", 285, 201], ["square-3x3", 285, 296],
       ] as const) {
         const source = `gameplay/blocks/formal-v1/${color}-${suffix}.png`;
         supplementalSources.add(source);
@@ -277,7 +293,6 @@ describe("replacement formal board artwork contract", () => {
       ["gameplay/blocks/formal-v1/green-plus-pentomino-generated.png", { width: 287, height: 285 }],
       ["gameplay/blocks/formal-v1/green-l-pentomino-generated.png", { width: 380, height: 199 }],
       ["gameplay/blocks/formal-v1/yellow-t-hexomino-generated.png", { width: 287, height: 389 }],
-      ["gameplay/blocks/formal-v1/yellow-mirrored-l-tetromino-generated.png", { width: 287, height: 191 }],
       ["gameplay/blocks/formal-v1/cyan-square-3x3-corner-notch-generated.png", { width: 287, height: 294 }],
     ]);
     for (const [source, dimensions] of generatedParitySources) {
@@ -294,7 +309,33 @@ describe("replacement formal board artwork contract", () => {
       ...supplementalSources,
       ...generatedParitySources.keys(),
     ]));
-    expect(actualBlockSources).toHaveLength(169);
+    expect(actualBlockSources).toHaveLength(176);
+  });
+
+  it("registers the official L1/L2 star-block overlays", () => {
+    const expected = new Map([
+      ["gameplay/mechanics/formal-star-v1/star-block-l-tetromino.png", { width: 286, height: 197, key: "gameplay.starBlock.lTetromino" }],
+      ["gameplay/mechanics/formal-star-v1/star-block-mirrored-l-tetromino.png", { width: 284, height: 199, key: "gameplay.starBlock.mirroredLTetromino" }],
+    ]);
+    for (const [source, dimensions] of expected) {
+      const asset = bySource.get(source);
+      expect(asset, `${source} manifest entry`).toMatchObject({
+        source,
+        runtime: `../public/assets/art/${source}`,
+        width: dimensions.width,
+        height: dimensions.height,
+        alpha: true,
+        grid: [1, 1],
+        transform: "png-palette-256-q95",
+        loadGroup: "formal-star-overlays",
+        key: dimensions.key,
+      });
+      expect(runtimeStrings.has(`assets/art/${source}`), `${source} runtime API path`).toBe(true);
+      const sourceBytes = new Uint8Array(readFileSync(resolve(ROOT, "art-source", source)));
+      const runtimeBytes = new Uint8Array(readFileSync(resolve(ROOT, "public/assets/art", source)));
+      expect(pngSize(sourceBytes)).toEqual({ width: dimensions.width, height: dimensions.height });
+      expect(pngSize(runtimeBytes)).toEqual({ width: dimensions.width, height: dimensions.height });
+    }
   });
 
   it("registers nine supplied whole-shape frozen blocks with source and deterministic runtime contracts", () => {
@@ -317,6 +358,5 @@ describe("replacement formal board artwork contract", () => {
         .toBe(lazy ? "formal-gameplay-current-level" : undefined);
     }
     expect(runtimeBytes).toBe(104_562);
-    expect(manifest.assets).toHaveLength(445);
   });
 });

@@ -1,0 +1,2 @@
+import fs from 'node:fs';const x=JSON.parse(fs.readFileSync('deliverables/league-regeneration-20261004/formal/early-1-19.json','utf8')).acceptedRows.find(a=>a.index===7);const m=new Map();for(const d of x.drags){const axis=new Set();let prev=null;for(const p of d.path){if(prev){if(p[0]!==prev[0])axis.add('h');if(p[1]!==prev[1])axis.add('v')}prev=p;}if(!m.has(d.blockId))m.set(d.blockId,new Set);for(const a of axis)m.get(d.blockId).add(a);if(d.exitSide){if(!m.get(d.blockId).has('exits'))m.get(d.blockId).add('exits');}}
+for(const [id,s] of m)console.log(id,[...s]);

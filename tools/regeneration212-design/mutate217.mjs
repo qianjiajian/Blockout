@@ -1,0 +1,22 @@
+import fs from 'node:fs';
+import {build} from 'esbuild';
+import {loadSpatialApi,searchSpatial} from '../remake201to210-v123-floor.mjs';
+import {load217WitnessSearch} from './spatial217-witness.mjs';
+import {digest} from '../revised-preview-validation-v160.mjs';
+import {auditOpeningCoverage} from '../revised-opening-coverage.mjs';
+import {auditHiddenCoverage} from '../revised-hidden-coverage.mjs';
+import {adjacency,OUT} from './design212.mjs';
+const DIR=`${OUT}/source217`,sourceFile=`${DIR}/candidate217-217800.json`,base=JSON.parse(fs.readFileSync(sourceFile));
+const changes=[[],[['fill-7','cyan']],[['fill-7','orange']],[['fill-12','blue']],[['fill-14','cyan']],[['fill-14','blue']],[['fill-12','blue'],['fill-7','orange']],[['fill-14','blue'],['fill-7','orange']]];
+const api=await loadSpatialApi(),fast=await load217WitnessSearch({eagerClear:true}),bundle=await build({stdin:{resolveDir:process.cwd(),contents:`export{replayRevisedRoute}from'./src/core/revisedLevelSearch.ts';export{auditRevisedMechanismContract}from'./src/core/revisedMechanismContract.ts';`},bundle:true,write:false,platform:'node',format:'esm',logLevel:'silent'}),core=await import(`data:text/javascript;base64,${Buffer.from(bundle.outputFiles[0].text).toString('base64')}`),history=[];
+for(const[index,changesExtra]of changes.entries()){
+ const file=`${DIR}/mutation217-${index}.json`;if(fs.existsSync(file))throw Error('Do not repeat failed candidate');
+ const level=structuredClone(base.level),change=[['fill-11','green'],...changesExtra];for(const[id,color]of change)level.blocks.find(b=>b.id===`l217-${id}`).color=color;
+ level.mechanismAdaptation.change='Reconstructed actual source8x9 irregular/62 cells; authored symmetric68 cells. Keep1 real3x4lift and full12-cell blueQ3+goldH3 hidden layer,4blue coloredcells,1 horizontal-axis V3. Source9ice+1ordinary10portals exceed8-colorunique capacity: v1.11 removes exactlypurple10 andgreen7; retained5/4/8/8/3/12/1 andordinary orange unchanged. Source goldH3 mapsyellow to fit its right1-cell portal; sourcewidepurpleH2 recoloredpink forretainedleft8. SourceblueQ2 lowerretiledblueV2+redS+purpleS forfullopening andunlocking. Confirmednarrowdoublearrow isaxisblock (Lv56sourceframe andmechanism workbook A10:B10), notflipgate orrotation. KnownV3axis preserved. Otherordinaryshape,color,layout adaptations declared; sourceparity notclaimed. Latestfinite mutation '+JSON.stringify(change);
+ const audit={opening:auditOpeningCoverage(new api.PuzzleModel(level).snapshot()),hidden:auditHiddenCoverage(level),openingAdjacency:adjacency(level.blocks.filter(b=>!b.shutterId)),hiddenAdjacency:adjacency(level.blocks.filter(b=>b.shutterId)),nativeQ0:level.blocks.every(b=>api.matchFormalBlockShape(b.shape,'native-only')?.quarterTurns===0),mechanismIssues:core.auditRevisedMechanismContract(level),uniqueGateColors:new Set(level.gates.map(g=>g.color)).size===8};
+ const passed=audit.opening.passed&&audit.hidden.passed&&audit.nativeQ0&&!audit.openingAdjacency.length&&!audit.hiddenAdjacency.length&&!audit.mechanismIssues.length&&audit.uniqueGateColors;
+ const packet={level,levelSha256:digest(level),audit,change,parentSource:{file:sourceFile,levelSha256:base.levelSha256},sourceReviewPending:false,formalAdopted:false};
+ if(passed){packet.search=fast.search(level,api,{floor:Infinity,normalize:true,maxMilliseconds:4000,maxStates:80000,maxTransitions:1000000,diagnosticTrace:true,orderSeed:index});if(packet.search.status==='witness'){packet.replay=core.replayRevisedRoute(level,packet.search.drags);if(packet.replay.valid&&packet.replay.complete&&packet.replay.nonClearingDrags>=16&&packet.replay.nonClearingDrags<=20){const projection=structuredClone(level);delete projection.coloredGrids;packet.lowerBound={status:'PROJECTION_DIAGNOSTIC_ONLY',levelSha256:packet.levelSha256,projectionSha256:digest(projection),reason:'Remove4colored restrictions, keepallblocks/axis/lift/gates',search:searchSpatial(projection,api,{floor:16,prove:true,maxMilliseconds:4000,maxStates:80000,maxTransitions:1000000})};}}}
+ const row={index,change,levelSha256:packet.levelSha256,structurePassed:passed,searchStatus:packet.search?.status,maxClears:packet.search?.maxClearsSeen,partialCost:packet.search?.partialCost,U:packet.replay?.nonClearingDrags,complete:packet.replay?.complete,error:packet.replay?.error};history.push(row);fs.writeFileSync(file,JSON.stringify(packet,null,2));console.log(JSON.stringify(row));
+}
+fs.writeFileSync(`${DIR}/mutation-history217.json`,JSON.stringify({maxAttempts:8,maxMillisecondsPerFingerprint:4000,history},null,2));

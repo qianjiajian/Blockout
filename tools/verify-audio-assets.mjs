@@ -1,5 +1,6 @@
 import { access, readFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
+import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { ORIGINAL_SFX_KINDS, verifyOriginalSfx } from "./audio-quality.mjs";
@@ -15,7 +16,8 @@ const assert = (condition, message) => {
   if (!condition) throw new Error(message);
 };
 
-const originalSfx = await verifyOriginalSfx(root, resolveSfxFfmpeg());
+const ffmpeg = resolveSfxFfmpeg();
+const originalSfx = await verifyOriginalSfx(root, ffmpeg);
 const manifest = originalSfx.manifest;
 let sfxBytes = originalSfx.bytes;
 for (const result of originalSfx.measurements) {
@@ -31,6 +33,14 @@ const providedSounds = [
   // The replacement supplied on 2026-09-24 is 10,708 bytes; its exact hash remains required below.
   { kind: "shell", source: "User-provided waike.mp3", minimumBytes: 10_000 },
   { kind: "shutter", source: "User-provided juanlian.mp3", minimumBytes: 20_000 },
+  { kind: "timeover", source: "User-provided timeover.mp3", minimumBytes: 20_000 },
+  { kind: "time", source: "User-provided item_time.mp3", minimumBytes: 50_000 },
+  { kind: "rocket", source: "User-provided item_daodan.mp3", minimumBytes: 25_000 },
+  { kind: "pulse", source: "User-provided item_maichong.mp3", minimumBytes: 53_000 },
+  { kind: "fail", source: "User-provided loss.mp3", minimumBytes: 116_000 },
+  { kind: "win", source: "User-provided win.mp3", minimumBytes: 87_000 },
+  { kind: "gold", source: "User-provided gold.mp3", minimumBytes: 25_000 },
+  { kind: "itemArrival", source: "User-provided item_huoqu.mp3", minimumBytes: 7_500 },
 ];
 for (const expected of providedSounds) {
   const entry = manifest.providedSounds?.[expected.kind];
@@ -40,6 +50,36 @@ for (const expected of providedSounds) {
   assert(bytes.length > expected.minimumBytes && bytes.subarray(0, 3).toString("ascii") === "ID3", `Provided ${expected.kind} sound is not the expected MP3`);
   assert(hash === entry.sha256, `Provided ${expected.kind} sound differs from its manifest hash`);
   sfxBytes += bytes.length;
+}
+
+// Supplied recordings retain their original encoded bytes and measured native frame counts.
+const archivedSounds = [
+  { kind: "timeover", sourceFile: "timeover.mp3", frames: 47_232 },
+  { kind: "time", sourceFile: "item_time.mp3", frames: 92_160 },
+  { kind: "rocket", sourceFile: "item_daodan.mp3", frames: 47_232 },
+  { kind: "pulse", sourceFile: "item_maichong.mp3", frames: 99_072 },
+  { kind: "fail", sourceFile: "loss.mp3", frames: 213_120 },
+  { kind: "win", sourceFile: "win.mp3", frames: 161_280 },
+  { kind: "gold", sourceFile: "gold.mp3", frames: 47_232 },
+  { kind: "itemArrival", sourceFile: "item_huoqu.mp3", frames: 13_824 },
+];
+for (const { kind, sourceFile, frames } of archivedSounds) {
+  const entry = manifest.providedSounds[kind];
+  assert(entry.file === kind + ".mp3" && entry.archivedSource === "art-source/audio/provided-sfx/" + sourceFile,
+    kind + " source/runtime paths must remain canonical");
+  const archive = await readFile(path.join(root, entry.archivedSource));
+  const runtime = await readFile(path.join(sfxRoot, entry.file));
+  assert(archive.equals(runtime), kind + " must retain the original user-provided MP3 bytes");
+  assert(entry.bytes === runtime.length && entry.audioReencoded === false, kind + " size/preservation metadata differs");
+  assert(entry.sampleRate === 44_100 && entry.channels === 2 && entry.frames === frames, kind + " format/frame metadata differs");
+  assert(Math.abs(entry.durationSeconds - frames / entry.sampleRate) < 1e-9, kind + " duration metadata differs");
+  const decoded = spawnSync(ffmpeg, ["-nostdin", "-v", "error", "-i", path.join(sfxRoot, entry.file),
+    "-map", "0:a:0", "-c:a", "pcm_f32le", "-f", "f32le", "pipe:1"], { windowsHide: true, maxBuffer: 2 * 1024 * 1024 });
+  assert(!decoded.error && decoded.status === 0,
+    kind + " failed local decoding: " + (decoded.error?.message ?? decoded.stderr?.toString()));
+  assert(decoded.stdout.length === frames * entry.channels * 4, kind + " decoded frame count differs");
+  console.log("SFX " + kind + ": " + frames + " decoded frames; " + entry.durationSeconds.toFixed(3)
+    + "s; " + entry.bytes + "B, original bytes preserved");
 }
 
 const challengeMeta = await readJson(path.join(root, "art-source", "audio", "happy-foods.json"));

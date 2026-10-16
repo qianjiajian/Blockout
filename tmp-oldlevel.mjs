@@ -1,0 +1,1 @@
+import fs from 'node:fs';const old=JSON.parse(fs.readFileSync('deliverables/league-regeneration-20261005/round3/early-fixes/accepted-8-13-18.json')).rows[0].level;const src=JSON.parse(JSON.stringify((await import('data:text/javascript;base64,'+Buffer.from('').toString('base64')).catch(()=>({})))));console.log(old.blocks.slice(0,15).map(b=>[b.id,b.color,b.x,b.y,b.shape]));

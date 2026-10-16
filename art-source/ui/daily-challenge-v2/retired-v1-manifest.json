@@ -1,0 +1,160 @@
+{
+  "reason": "Replaced by independent reference-layout v2 runtime assets; original art-source images retained",
+  "runtimeArchive": "C:\\Users\\Administrator\\Documents\\ChatGPT\\Block Out!\\.codex-temp\\daily-reference-layout-20261007\\legacy-runtime",
+  "assets": [
+    {
+      "key": "ui.dailyChallenge.panelFrame",
+      "source": "ui/daily-challenge-v1/panel-frame.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-v1/panel-frame.png",
+      "width": 1296,
+      "height": 2160,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
+    },
+    {
+      "key": "ui.dailyChallenge.headerBar",
+      "source": "ui/daily-challenge-v1/header-bar.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-v1/header-bar.png",
+      "width": 1136,
+      "height": 176,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
+    },
+    {
+      "key": "ui.dailyChallenge.closeButton",
+      "source": "ui/daily-challenge-v1/close-button.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-v1/close-button.png",
+      "width": 152,
+      "height": 152,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
+    },
+    {
+      "key": "ui.dailyChallenge.rewardBanner",
+      "source": "ui/daily-challenge-v1/reward-banner.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-v1/reward-banner.png",
+      "width": 1136,
+      "height": 380,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
+    },
+    {
+      "key": "ui.dailyChallenge.attemptBadge",
+      "source": "ui/daily-challenge-v1/attempt-badge.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-v1/attempt-badge.png",
+      "width": 376,
+      "height": 120,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
+    },
+    {
+      "key": "ui.dailyChallenge.difficultyDiamond",
+      "source": "ui/daily-challenge-v1/difficulty-diamond.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-v1/difficulty-diamond.png",
+      "width": 216,
+      "height": 252,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
+    },
+    {
+      "key": "ui.dailyChallenge.rowFrame",
+      "source": "ui/daily-challenge-v1/row-frame.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-v1/row-frame.png",
+      "width": 1136,
+      "height": 320,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
+    },
+    {
+      "key": "ui.dailyChallenge.challengeButton",
+      "source": "ui/daily-challenge-v1/challenge-button.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-v1/challenge-button.png",
+      "width": 232,
+      "height": 140,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
+    },
+    {
+      "key": "ui.dailyChallenge.lockedButton",
+      "source": "ui/daily-challenge-v1/locked-button.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-v1/locked-button.png",
+      "width": 232,
+      "height": 140,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
+    },
+    {
+      "key": "ui.dailyChallenge.coinIcon",
+      "source": "ui/daily-challenge-v1/coin-icon.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-v1/coin-icon.png",
+      "width": 128,
+      "height": 128,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
+    },
+    {
+      "key": "ui.dailyChallenge.gemIcon",
+      "source": "ui/daily-challenge-v1/gem-icon.png",
+      "runtime": "../public/assets/art/ui/daily-challenge-v1/gem-icon.png",
+      "width": 128,
+      "height": 128,
+      "alpha": true,
+      "grid": [
+        1,
+        1
+      ],
+      "transform": "copy",
+      "loadGroup": "dailyChallenge"
+    }
+  ]
+}

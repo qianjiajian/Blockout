@@ -3,6 +3,16 @@
   "showStatusBar": false,
   "subpackages": [
     {
+      "name": "league-ui",
+      "root": "league-ui",
+      "independent": true
+    },
+    {
+      "name": "event-ui",
+      "root": "event-ui",
+      "independent": true
+    },
+    {
       "name": "meta-ui",
       "root": "meta-ui",
       "independent": true

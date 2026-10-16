@@ -12,9 +12,9 @@ describe("supply economy", () => {
   });
 
   it("does not mutate either balance when coins are insufficient", () => {
-    expect(purchaseSupply(179, 2, "time")).toEqual({
+    expect(purchaseSupply(299, 2, "time")).toEqual({
       status: "insufficient-coins",
-      coins: 179,
+      coins: 299,
       stock: 2,
       shortfall: 1,
     });

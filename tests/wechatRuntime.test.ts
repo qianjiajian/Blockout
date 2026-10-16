@@ -3,6 +3,7 @@ import { launchWechatGameWhenReady, readWechatWindowInfo } from "../src/platform
 
 describe("WeChat bridge-safe startup", () => {
   it("waits for the first show event before touching bridge-backed APIs", () => {
+    vi.useFakeTimers();
     let onShow: (() => void) | undefined;
     let bridgeReady = false;
     const getWindowInfo = vi.fn(() => {
@@ -18,10 +19,33 @@ describe("WeChat bridge-safe startup", () => {
 
     bridgeReady = true;
     onShow?.();
+    vi.advanceTimersByTime(500);
     onShow?.();
 
     expect(launch).toHaveBeenCalledOnce();
     expect(getWindowInfo).toHaveBeenCalledOnce();
+    vi.useRealTimers();
+  });
+
+  it("retries a first show delivered before the JSBridge is ready", () => {
+    vi.useFakeTimers();
+    try {
+      let onShow: (() => void) | undefined;
+      let bridgeReady = false;
+      const launch = vi.fn(() => {
+        if (!bridgeReady) throw new Error("jsbridge not ready");
+      });
+      launchWechatGameWhenReady({ onShow: (callback) => { onShow = callback; } }, launch);
+      onShow?.();
+      expect(launch).not.toHaveBeenCalled();
+      bridgeReady = true;
+      vi.advanceTimersByTime(500);
+      expect(launch).toHaveBeenCalledOnce();
+      onShow?.();
+      expect(launch).toHaveBeenCalledOnce();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("prefers getWindowInfo and never invokes the deprecated API when both exist", () => {

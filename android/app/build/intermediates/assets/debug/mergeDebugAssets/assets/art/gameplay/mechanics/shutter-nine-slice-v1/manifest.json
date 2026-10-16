@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "sourceDirectory": "C:/Users/Administrator/Desktop/block out/框切/框切",
+  "technique": "nine-slice, whole fixed-size corners, one-axis edge stretching",
+  "excludedReferences": [
+    "示意.png"
+  ],
+  "totalRuntimePngBytes": 120127,
+  "entries": [
+    {
+      "part": "panel",
+      "source": "图层 11.png",
+      "url": "assets/art/gameplay/mechanics/shutter-nine-slice-v1/panel.png",
+      "width": 293,
+      "height": 291,
+      "bytes": 84134,
+      "sha256": "601bb6112521eada8a71aa0ce06055f3e29f48d7c948b59ff18047a76e9d9b97",
+      "rgbaSha256": "86c714607729f32f4313d15f7b8ddb8a134f4b99a7e4f9296b18a3f25da26fb2"
+    },
+    {
+      "part": "top-left",
+      "source": "图层 8.png",
+      "url": "assets/art/gameplay/mechanics/shutter-nine-slice-v1/top-left.png",
+      "width": 86,
+      "height": 78,
+      "bytes": 5346,
+      "sha256": "851db252975ad7577638a46afd213ebf12f694984b92e3f689b8f15d7694c51f",
+      "rgbaSha256": "c12be02e0fd720e6d91a3c54d4ed736963fb63b5f1858f69206907a3b6672048"
+    },
+    {
+      "part": "top-right",
+      "source": "图层 6.png",
+      "url": "assets/art/gameplay/mechanics/shutter-nine-slice-v1/top-right.png",
+      "width": 80,
+      "height": 78,
+      "bytes": 5182,
+      "sha256": "ada56a20fa3550eeea1138fa6622ea3f887b8799ecf21bac4195912fe8a207c1",
+      "rgbaSha256": "41dc39a6748bc267e4fa96fa392837097ae97bbfb5e4eb42f13711a9c90858fa"
+    },
+    {
+      "part": "bottom-left",
+      "source": "图层 2.png",
+      "url": "assets/art/gameplay/mechanics/shutter-nine-slice-v1/bottom-left.png",
+      "width": 86,
+      "height": 84,
+      "bytes": 5583,
+      "sha256": "f090389bd0eff30ab86338e2a3886bb947650c4b6e89a01f8d7951e4bb916599",
+      "rgbaSha256": "fcb2c91ed4dc29017a45031279634b24d93e4f8deac50b73b7663470e7518712"
+    },
+    {
+      "part": "bottom-right",
+      "source": "图层 4.png",
+      "url": "assets/art/gameplay/mechanics/shutter-nine-slice-v1/bottom-right.png",
+      "width": 80,
+      "height": 84,
+      "bytes": 5381,
+      "sha256": "374c098878f4420c0b9738a286769ea182fa2ae0822b8df5f882f2c9d2361cd2",
+      "rgbaSha256": "45d7002701c0ec55fde96a6ed7c21310f4547c33789a64377b2502ebba60cacb"
+    },
+    {
+      "part": "top",
+      "source": "图层 7.png",
+      "url": "assets/art/gameplay/mechanics/shutter-nine-slice-v1/top.png",
+      "width": 133,
+      "height": 21,
+      "bytes": 3788,
+      "sha256": "6b6a10ef724e7d3dc30ff0792ac91c30cabdfcef53006ff220b33dbdee11d301",
+      "rgbaSha256": "5b3f24d577225be86afb99f549759e6917f67f08599dffd81eb498c7625b044d"
+    },
+    {
+      "part": "bottom",
+      "source": "图层 3.png",
+      "url": "assets/art/gameplay/mechanics/shutter-nine-slice-v1/bottom.png",
+      "width": 133,
+      "height": 22,
+      "bytes": 3611,
+      "sha256": "d246cc164947ebdbe7d7a16838d8cee32624ce92d17f58ef5f8d9b73b393e7f1",
+      "rgbaSha256": "83e8755427787f5a1ce4e2bcc544efcef7bd65720e039486e94a1ed3db76b8c5"
+    },
+    {
+      "part": "left",
+      "source": "图层 9.png",
+      "url": "assets/art/gameplay/mechanics/shutter-nine-slice-v1/left.png",
+      "width": 20,
+      "height": 135,
+      "bytes": 3539,
+      "sha256": "1099ff79e8d451588dc74335b98e7e7866faae76983458b7476c4c9df88ee992",
+      "rgbaSha256": "d9ee193f6f09fd0ff49e322c34f685026cf1a7113dc12ee3d2dee38c0cdfe099"
+    },
+    {
+      "part": "right",
+      "source": "图层 5.png",
+      "url": "assets/art/gameplay/mechanics/shutter-nine-slice-v1/right.png",
+      "width": 21,
+      "height": 134,
+      "bytes": 3563,
+      "sha256": "9fbb7dec6a15363d5f65b8fd99de74e8c21136217be8d6168d4e4c8c9b92b96a",
+      "rgbaSha256": "e1d1f4a2f40261ed81317b82cae753fa3eb80957a7d6dcba0ad7b4dee6056929"
+    }
+  ]
+}

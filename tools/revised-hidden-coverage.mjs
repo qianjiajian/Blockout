@@ -7,6 +7,7 @@
 const REVISED_PROFILES = new Set([
   'revised-2026-09-21', 'revised-2026-09-21-v1.1', 'revised-2026-09-21-v1.2',
   'revised-2026-09-23-v1.3', 'revised-2026-09-23-v1.4',
+  'revised-2026-09-27-v1.5',
 ]);
 // A resource guard, not an additional gameplay size rule; oversized input fails
 // explicitly as unaudited rather than hanging or receiving a truncated pass.

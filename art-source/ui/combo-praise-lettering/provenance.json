@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "sourceBindings": {
+    "art-source/ui/combo-praise-lettering/LilitaOne-Regular.ttf": "f5b641c45c69d772ee4eda687bc9fda411d5cad6b0b45371491da4580cbc8d59",
+    "art-source/ui/combo-praise-lettering/OFL.txt": "255d5debbb80eb2ea762644311f266a279e8778f00156655a516e2b7781a63e1",
+    "art-source/ui/combo-praise-lettering/FONTLOG.txt": "5e324e1bb38125eaeeea4678ec10d8ab4da0b7fa037608ec78d9096221dbae50",
+    "art-source/ui/combo-praise-lettering/tooling/opentype-1.3.4.cjs": "aca3813e716a07e06c2e32c736d841508b15451cf39483f289acbd879c64d09f",
+    "art-source/ui/combo-praise-lettering/tooling/LICENSE.txt": "a5b87c9bc191e7f9c06b07bd7cbbed3ed846dfdb50e859484b2c245aa1ab2e61",
+    "tools/generate-combo-lettering.mjs": "424fe2fd1a979b09aaf134095ff34f87c588261fa5cb192260c65cb3dee0f344"
+  },
+  "font": {
+    "path": "art-source/ui/combo-praise-lettering/LilitaOne-Regular.ttf",
+    "sha256": "f5b641c45c69d772ee4eda687bc9fda411d5cad6b0b45371491da4580cbc8d59",
+    "version": "Version 1.002",
+    "family": "Lilita One",
+    "copyright": "Copyright (c) 2011 Juan Montoreano (juan@remolacha.biz), with Reserved Font Names \"Lilita One\"",
+    "sourceUrl": "https://raw.githubusercontent.com/google/fonts/main/ofl/lilitaone/LilitaOne-Regular.ttf",
+    "license": {
+      "path": "art-source/ui/combo-praise-lettering/OFL.txt",
+      "sourceUrl": "https://raw.githubusercontent.com/google/fonts/main/ofl/lilitaone/OFL.txt"
+    },
+    "fontlog": {
+      "path": "art-source/ui/combo-praise-lettering/FONTLOG.txt",
+      "sourceUrl": "https://raw.githubusercontent.com/google/fonts/main/ofl/lilitaone/FONTLOG.txt"
+    }
+  },
+  "parser": {
+    "path": "art-source/ui/combo-praise-lettering/tooling/opentype-1.3.4.cjs",
+    "version": "1.3.4",
+    "sha256": "aca3813e716a07e06c2e32c736d841508b15451cf39483f289acbd879c64d09f",
+    "note": "Build-only parser archived byte-for-byte from the parent-provided distribution; never imported by product code.",
+    "license": {
+      "path": "art-source/ui/combo-praise-lettering/tooling/LICENSE.txt",
+      "sourceUrl": "https://raw.githubusercontent.com/opentypejs/opentype.js/1.3.4/LICENSE"
+    }
+  },
+  "transform": {
+    "reference": "QQ20261009-150339.mp4",
+    "layout": "independent x/y normalization to centered fixed word bounds",
+    "kerning": true,
+    "hinting": false,
+    "coordinateDecimalPlaces": 4,
+    "colorAndAnimation": "Applied by comboAnimation.ts; not part of outline data"
+  },
+  "words": [
+    {
+      "tier": "good",
+      "text": "Good!",
+      "width": 133,
+      "height": 34,
+      "sourceBounds": {
+        "x1": 30,
+        "y1": -710,
+        "x2": 2442,
+        "y2": 10
+      },
+      "commandCount": 128,
+      "commandSha256": "74638b83b16cfbb03868676c8a58725779c38c688bc6f80d60a74dc42509f086"
+    },
+    {
+      "tier": "great",
+      "text": "Great!",
+      "width": 141,
+      "height": 34,
+      "sourceBounds": {
+        "x1": 30,
+        "y1": -710,
+        "x2": 2618,
+        "y2": 10
+      },
+      "commandCount": 191,
+      "commandSha256": "ede2baa1d980fcac02149cc6959bdfd442a4e2128e44230626d6ceb5cfb3a575"
+    },
+    {
+      "tier": "excellent",
+      "text": "Excellent!",
+      "width": 221,
+      "height": 34,
+      "sourceBounds": {
+        "x1": 50,
+        "y1": -710,
+        "x2": 4139,
+        "y2": 10
+      },
+      "commandCount": 259,
+      "commandSha256": "72675fb6a50f930da7a9aee5821181965ae009984fb196d5e52a3fb91759e498"
+    }
+  ],
+  "output": {
+    "path": "src/game/comboPraiseLettering.ts",
+    "sha256": "27ee35109a0411870a7ff4e9798042c48c003f810a9e4e031beb526570a1e3c9"
+  }
+}

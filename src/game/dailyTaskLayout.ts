@@ -17,6 +17,7 @@ export interface DailyTaskRowLayout {
   progress: DailyTaskRect;
   reward: DailyTaskRect;
   claim: DailyTaskRect;
+  claimedCheck: DailyTaskRect;
 }
 
 export const DAILY_TASK_ARTBOARD = { width: 720, height: 1584 } as const;
@@ -75,6 +76,12 @@ export const dailyTaskRowLayout = (id: DailyTaskId, index: number): DailyTaskRow
     progress: { ...DAILY_TASK_LAYOUT.rowProgress, y: DAILY_TASK_LAYOUT.rowProgressTop[slot] },
     reward: { ...DAILY_TASK_LAYOUT.rowClaim, y: DAILY_TASK_LAYOUT.rowClaimTop[slot] - 37, height: 31 },
     claim: { ...DAILY_TASK_LAYOUT.rowClaim, y: DAILY_TASK_LAYOUT.rowClaimTop[slot] },
+    claimedCheck: {
+      x: DAILY_TASK_LAYOUT.rowClaim.x + (DAILY_TASK_LAYOUT.rowClaim.width - 80) / 2,
+      y: DAILY_TASK_LAYOUT.rowClaimTop[slot] - 32,
+      width: 80,
+      height: 80,
+    },
   };
 };
 

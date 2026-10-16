@@ -1,0 +1,163 @@
+{
+  "sourceRoot": "C:/Users/Administrator/Desktop/block out/联赛-头像框/联赛结算",
+  "purpose": "User-supplied league season-settlement art; original PNG bytes copied without re-encoding.",
+  "referencePolicy": "All season, rank, score, tier, stars and coin values use the real pending settlement. User confirmed direct claiming without a video icon.",
+  "runtimeBackground": {
+    "reused": "assets/art/ui/formal-pages/collection/background.png",
+    "note": "Existing blue geometric background selected after visual comparison with the supplied references."
+  },
+  "archiveOnly": [
+    {
+      "originalName": "示意图1.png",
+      "archivedAs": "reference-annotated.png",
+      "role": "annotated season-settlement layout reference; archive only",
+      "width": 720,
+      "height": 1584,
+      "sha256": "1931ae3dea27680074be8a39e104418acecdf47c9787a53c37a08865e40bf98e"
+    },
+    {
+      "originalName": "示意图2.png",
+      "archivedAs": "reference-clean.png",
+      "role": "clean season-settlement layout reference; archive only",
+      "width": 720,
+      "height": 1584,
+      "sha256": "bd0feec351dee5180008f174bb006f6e7e5108e7df5c0208f464566676059170"
+    },
+    {
+      "originalName": "广告.png",
+      "archivedAs": "advertisement-reference.png",
+      "role": "advertisement reference; archive only",
+      "width": 54,
+      "height": 41,
+      "sha256": "b5f420fc5d47137e277492bee17199160c372f75fee4f507795fdfb3513dc1d3"
+    }
+  ],
+  "importedAssets": [
+    {
+      "key": "back-button",
+      "originalName": "1.png",
+      "archivedAs": "back-button.png",
+      "sha256": "e7df3953ac8fa606db56e4f1709cc5a1daf82c020787bbb3438a67423e4acbc5"
+    },
+    {
+      "key": "glow",
+      "originalName": "光.png",
+      "archivedAs": "glow.png",
+      "sha256": "4ee28c369b6a1a02c4f497cbcbc0bdcf14289aaaec536d98ba87f1333a4cf5bd"
+    },
+    {
+      "key": "divider",
+      "originalName": "分界线.png",
+      "archivedAs": "divider.png",
+      "sha256": "c2a7d03a99e62957721cbae4890cf181e6b8c55440ed2a72a975b33e577a8e3c"
+    },
+    {
+      "key": "bronze",
+      "originalName": "勋章1.png",
+      "archivedAs": "bronze.png",
+      "sha256": "ce7f4e4166f436ce1773c2195d54f5ea9a2d3ddbf3fe4d9b0c2622da42560381"
+    },
+    {
+      "key": "silver",
+      "originalName": "勋章2-1.png",
+      "archivedAs": "silver.png",
+      "sha256": "462c021831f047cdd7706a13dccdc537f4e193fe3b09080f79b875fc4c7d537a"
+    },
+    {
+      "key": "silver-hero",
+      "originalName": "勋章2.png",
+      "archivedAs": "silver-hero.png",
+      "sha256": "e17e2eee40e27058508f020e0557297bbd70cc711b111da5c7306c67e97c9cbe"
+    },
+    {
+      "key": "gold",
+      "originalName": "勋章3.png",
+      "archivedAs": "gold.png",
+      "sha256": "56a5661b412f2ca361eaac14906222d68b8c9d7643660345c3514789d96ae9fe"
+    },
+    {
+      "key": "platinum",
+      "originalName": "勋章4.png",
+      "archivedAs": "platinum.png",
+      "sha256": "27787e89ed84af8ab422339195f3ed69e0e9d0857b7ff7374a590c8e77148f4e"
+    },
+    {
+      "key": "emerald",
+      "originalName": "勋章5.png",
+      "archivedAs": "emerald.png",
+      "sha256": "0702d84d9603a1d7d4e039b9131adce083b7e3b6e122bdeae27fa41b886d8e9c"
+    },
+    {
+      "key": "diamond",
+      "originalName": "勋章6.png",
+      "archivedAs": "diamond.png",
+      "sha256": "f6b833a7750948d713a23c1e7ba546bd86913f427de8e2dc51eabaeeb1e4383f"
+    },
+    {
+      "key": "master",
+      "originalName": "勋章7.png",
+      "archivedAs": "master.png",
+      "sha256": "181b3df28c3055084b25c558027f7d08982f7a18dfecb47e0c3142aab24de185"
+    },
+    {
+      "key": "glory",
+      "originalName": "勋章8.png",
+      "archivedAs": "glory.png",
+      "sha256": "6d2a649ce6da684cecc94650019b50f2c8876ee2e27498beb8097a2b5bf95609"
+    },
+    {
+      "key": "stage-panel",
+      "originalName": "底1.png",
+      "archivedAs": "stage-panel.png",
+      "sha256": "2254140bcc4cd4c475c5929a3832a9f474368a0d96a8d058f87f548eda2aaca8"
+    },
+    {
+      "key": "result-panel",
+      "originalName": "底2.png",
+      "archivedAs": "result-panel.png",
+      "sha256": "713e5751d4038e7482791ce6b3aa1c5972ff0afa5e092206ae361429c135e7aa"
+    },
+    {
+      "key": "claim-button",
+      "originalName": "按钮1.png",
+      "archivedAs": "claim-button.png",
+      "sha256": "ec8d3627670df83acf540930cf739165072c9329fdfe93b89f541755be5172a5"
+    },
+    {
+      "key": "rank-icon",
+      "originalName": "排行.png",
+      "archivedAs": "rank-icon.png",
+      "sha256": "531c7b6fa86e6e9101fa96dee64218d91c531e64603b9a4956fbc9a94fe109ac"
+    },
+    {
+      "key": "star",
+      "originalName": "星.png",
+      "archivedAs": "star.png",
+      "sha256": "e87ff5dd5aebee2e15072be42d8ca2412a25c63b4ba4da861c5cc4102cda4f7a"
+    },
+    {
+      "key": "sparkles",
+      "originalName": "星2.png",
+      "archivedAs": "sparkles.png",
+      "sha256": "72afe5241b0b2cbc808c63fa475a9510788fbb9a31882bf4144b4d248a5c52ee"
+    },
+    {
+      "key": "score-icon",
+      "originalName": "积分.png",
+      "archivedAs": "score-icon.png",
+      "sha256": "614b7f373bcecc552c47a40307b2987bdd47450bf5d49740232b3b8178c185eb"
+    },
+    {
+      "key": "arrow",
+      "originalName": "箭头1.png",
+      "archivedAs": "arrow.png",
+      "sha256": "f168e2546c0091deee0fcf688d0955c383ef00f52793359b6457de2907f3c854"
+    },
+    {
+      "key": "coin",
+      "originalName": "金币.png",
+      "archivedAs": "coin.png",
+      "sha256": "b3395279211b23572e3bc1ed6fce96a7da1caab29d02533ef5447241352bd14c"
+    }
+  ]
+}

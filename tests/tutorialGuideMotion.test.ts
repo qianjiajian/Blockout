@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { tutorialGuideMotion } from "../src/game/tutorialGuideMotion";
+import { tutorialGuideMotion, tutorialTapMotion } from "../src/game/tutorialGuideMotion";
 
 describe("tutorial guide motion", () => {
   it("travels only toward the target before fading and resetting invisibly", () => {
@@ -25,5 +25,16 @@ describe("tutorial guide motion", () => {
   it("stays still when reduced motion is enabled", () => {
     expect(tutorialGuideMotion(0, true)).toEqual({ progress: 0.28, alpha: 0.78 });
     expect(tutorialGuideMotion(99, true)).toEqual({ progress: 0.28, alpha: 0.78 });
+  });
+
+  it("presses vertically in place for the rocket rescue cue", () => {
+    const rest = tutorialTapMotion(0, false);
+    const pressed = tutorialTapMotion(0.36, false);
+    const released = tutorialTapMotion(0.9, false);
+    expect(rest.offsetY).toBe(0);
+    expect(pressed.offsetY).toBeGreaterThan(0);
+    expect(pressed.scale).toBeLessThan(1);
+    expect(released.offsetY).toBe(0);
+    expect(tutorialTapMotion(99, true)).toEqual({ offsetY: 0, scale: 1, alpha: 0.86 });
   });
 });

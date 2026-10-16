@@ -1,0 +1,1 @@
+const r=require('./deliverables/league-regeneration-20261004/formal/late-65-100.json'); for(const x of r.blocked||[]){if(x.difficulty==='hard') console.log(JSON.stringify({i:x.index,attempts:x.attempts?.length,reasons:x.failureReasons,upper:x.upper,lower:x.lower},null,0));}

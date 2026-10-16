@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "generator": "built-in image_gen",
+  "useCase": "background-extraction / precise-object-edit",
+  "reference": "reference.png",
+  "referenceOriginal": "C:/Users/Administrator/AppData/Local/Temp/codex-clipboard-62b3bd9a-dbe2-4c6e-bb25-cfc505b8cc54.png",
+  "referenceSize": {
+    "width": 520,
+    "height": 924
+  },
+  "referencePopupBounds": {
+    "x": 72,
+    "y": 210,
+    "width": 382,
+    "height": 504
+  },
+  "generatedOriginal": "generated-original.png",
+  "generatedOriginalLocation": "C:/Users/Administrator/.codex/generated_images/01a11724-baeb-7fc3-a4ec-a460328faaa5/exec-6c1caa90-6d47-41c3-a0a8-48aa9df1c50e.png",
+  "generatedSize": {
+    "width": 1091,
+    "height": 1441
+  },
+  "processing": {
+    "operation": "crop transparent margins only; original pixels and alpha retained; lossless PNG encoding; no resize",
+    "alphaContentThresholdForBounds": 4,
+    "alphaContentBounds": {
+      "left": 70,
+      "top": 84,
+      "right": 1033,
+      "bottom": 1360
+    },
+    "crop": {
+      "left": 62,
+      "top": 76,
+      "width": 980,
+      "height": 1294
+    }
+  },
+  "output": "panel.png",
+  "runtime": "public/assets/art/ui/formal-pages/booster-purchase-reference-v1/panel.png",
+  "outputSize": {
+    "width": 980,
+    "height": 1294
+  },
+  "outputBytes": 1707965,
+  "layout": {
+    "artboard": {
+      "width": 496,
+      "height": 1078
+    },
+    "panel": {
+      "x": 65.8153846153846,
+      "width": 364.3692307692308,
+      "height": 481.1161067503925,
+      "y": 298.4419466248038
+    },
+    "uniformScale": 0.37180533751962325
+  },
+  "runtimeContent": {
+    "quantity": 1,
+    "prices": {
+      "time": 300,
+      "rocket": 400,
+      "pulse": 400
+    },
+    "drawnByRuntime": [
+      "title",
+      "booster icon",
+      "quantity",
+      "description",
+      "purchase label",
+      "coin icon",
+      "price"
+    ]
+  },
+  "visualReview": {
+    "generatedOriginal": true,
+    "croppedOutput": true,
+    "preserved": [
+      "purple layered frame",
+      "raised blank title plaque",
+      "red close button with white X",
+      "purple recessed panel with rays",
+      "blank green purchase button"
+    ],
+    "removed": [
+      "all gameplay background",
+      "all words and digits",
+      "central booster icon",
+      "button coin icon"
+    ],
+    "pixelIdenticalToReference": false,
+    "note": "ImageGen adaptation from screenshot; geometry measured against final asset rather than claiming literal screenshot pixel identity."
+  }
+}

@@ -1,3 +1,6 @@
+export { PROFILE_SUPPLIED_ART } from "./profileSuppliedArt";
+export { WELFARE_SUPPLIED_ART } from "./welfareSuppliedArt";
+
 export interface CollectionAlbumArtUrls {
   readonly background: string;
   readonly topHeader: string;
@@ -31,6 +34,7 @@ export interface AchievementArtUrls {
   readonly rowInactive: string;
   readonly medalInactive: string;
   readonly medalActive: string;
+  readonly claimedCheck: string;
   readonly summaryPanel: string;
   readonly buttonGreen: string;
   readonly buttonGrey: string;
@@ -103,6 +107,7 @@ export const ACHIEVEMENT_ART_URLS = {
   rowInactive: "assets/art/ui/formal-pages/achievements-v2/row-inactive.png",
   medalInactive: "assets/art/ui/formal-pages/achievements-v2/medal-inactive.png",
   medalActive: "assets/art/ui/formal-pages/achievements-v2/medal-active.png",
+  claimedCheck: "assets/art/ui/formal-pages/achievements-v2/claimed-check.png",
   summaryPanel: "assets/art/ui/formal-pages/achievements-v2/summary-panel.png",
   buttonGreen: "assets/art/ui/formal-pages/achievements-v2/button-green.png",
   buttonGrey: "assets/art/ui/formal-pages/daily-tasks-v2/button-grey.png",
@@ -118,6 +123,7 @@ export interface DailyTaskArtUrls {
   readonly taskTrophy: string;
   readonly taskShield: string;
   readonly taskBooster: string;
+  readonly claimedCheck: string;
   readonly chest: string;
   readonly calendar: string;
   readonly summaryPanel: string;
@@ -129,6 +135,94 @@ export interface DailyTaskArtUrls {
   readonly bonusPanel: string;
 }
 
+export interface DailyChallengeArtUrls {
+  readonly panelFrame: string;
+  readonly closeButton: string;
+  readonly rewardBanner: string;
+  readonly difficultyDiamond: string;
+  readonly difficultyDiamond2: string;
+  readonly difficultyDiamond3: string;
+  readonly rewardCard: string;
+  readonly firstClearTag: string;
+  readonly challengeButton: string;
+  readonly coinIcon: string;
+  readonly gemIcon: string;
+  readonly claimedCheck: string;
+}
+
+export const DAILY_CHALLENGE_ART_URLS = {
+  panelFrame: "assets/art/ui/daily-challenge-supplied-v1/panel-frame.png",
+  closeButton: "assets/art/ui/daily-challenge-supplied-v1/close-button.png",
+  rewardBanner: "assets/art/ui/daily-challenge-supplied-v1/reward-banner.png",
+  difficultyDiamond: "assets/art/ui/daily-challenge-supplied-v1/difficulty-1.png",
+  difficultyDiamond2: "assets/art/ui/daily-challenge-supplied-v1/difficulty-2.png",
+  difficultyDiamond3: "assets/art/ui/daily-challenge-supplied-v1/difficulty-3.png",
+  rewardCard: "assets/art/ui/daily-challenge-supplied-v1/reward-card.png",
+  firstClearTag: "assets/art/ui/daily-challenge-supplied-v1/first-clear-tag.png",
+  challengeButton: "assets/art/ui/daily-challenge-supplied-v1/challenge-button.png",
+  coinIcon: "assets/art/ui/daily-challenge-supplied-v1/coin-icon.png",
+  gemIcon: "assets/art/ui/daily-challenge-supplied-v1/inspiration-icon.png",
+  claimedCheck: "assets/art/ui/formal-pages/daily-tasks-v2/claimed-check.png",
+} as const satisfies DailyChallengeArtUrls;
+
+/** Historical art retained for archived layouts; never loaded by the daily page. */
+export const LEGACY_DAILY_CHALLENGE_ART_URLS = [
+  "assets/art/ui/daily-challenge-v1/entry-icon.png",
+  "assets/art/ui/daily-challenge-v1/lock-icon.png",
+  "assets/art/ui/daily-challenge-v1/plus-icon.png",
+  "assets/art/ui/daily-challenge-v2/panel-frame.png",
+  "assets/art/ui/daily-challenge-v2/header-bar.png",
+  "assets/art/ui/daily-challenge-v2/reward-banner.png",
+  "assets/art/ui/daily-challenge-v2/row-frame.png",
+  "assets/art/ui/daily-challenge-v2/reward-card.png",
+  "assets/art/ui/daily-challenge-v2/first-clear-tag.png",
+  "assets/art/ui/daily-challenge-v2/challenge-button.png",
+  "assets/art/ui/daily-challenge-v2/locked-button.png",
+  "assets/art/ui/daily-challenge-v2/close-button.png",
+  "assets/art/ui/daily-challenge-v2/attempt-badge.png",
+  "assets/art/ui/daily-challenge-v2/difficulty-diamond.png"
+,
+  "assets/art/ui/profile-unlocks-v1/avatar-15.png"
+,
+  "assets/art/ui/profile-unlocks-v1/avatar-16.png"
+,
+  "assets/art/ui/profile-unlocks-v1/avatar-17.png"
+,
+  "assets/art/ui/profile-unlocks-v1/avatar-18.png"
+,
+  "assets/art/ui/profile-unlocks-v1/avatar-19.png"
+,
+  "assets/art/ui/profile-unlocks-v1/avatar-20.png"
+,
+  "assets/art/ui/profile-unlocks-v1/avatar-21.png"
+,
+  "assets/art/ui/profile-unlocks-v1/avatar-22.png"
+,
+  "assets/art/ui/profile-unlocks-v1/avatar-23.png"
+,
+  "assets/art/ui/profile-unlocks-v1/avatar-24.png"
+,
+  "assets/art/ui/profile-unlocks-v1/frame-9.png"
+,
+  "assets/art/ui/profile-unlocks-v1/frame-10.png"
+,
+  "assets/art/ui/profile-unlocks-v1/frame-11.png"
+,
+  "assets/art/ui/profile-unlocks-v1/frame-12.png"
+,
+  "assets/art/ui/profile-unlocks-v1/frame-13.png"
+,
+  "assets/art/ui/profile-unlocks-v1/frame-14.png"
+,
+  "assets/art/ui/profile-unlocks-v1/frame-15.png"
+,
+  "assets/art/ui/profile-unlocks-v1/frame-16.png"
+,
+  "assets/art/ui/profile-unlocks-v1/frame-17.png"
+,
+  "assets/art/ui/profile-unlocks-v1/frame-18.png"
+] as const;
+
 export const DAILY_TASK_ART_URLS = {
   panel: "assets/art/ui/formal-pages/daily-tasks-v2/panel.png",
   close: "assets/art/ui/formal-pages/daily-tasks-v2/close.png",
@@ -136,6 +230,7 @@ export const DAILY_TASK_ART_URLS = {
   taskTrophy: "assets/art/ui/formal-pages/daily-tasks-v2/task-trophy.png",
   taskShield: "assets/art/ui/formal-pages/daily-tasks-v2/task-shield.png",
   taskBooster: "assets/art/ui/formal-pages/daily-tasks-v2/task-booster.png",
+  claimedCheck: "assets/art/ui/formal-pages/daily-tasks-v2/claimed-check.png",
   chest: "assets/art/ui/formal-pages/daily-tasks-v2/chest.png",
   calendar: "assets/art/ui/formal-pages/daily-tasks-v2/calendar.png",
   summaryPanel: "assets/art/ui/formal-pages/daily-tasks-v2/summary-panel.png",
@@ -350,17 +445,25 @@ export const GAME_ART = {
       navigationSelected: "assets/art/ui/home-v3/navigation-selected.png",
       navigationDivider: "assets/art/ui/home-v3/navigation-divider.png",
       shopIcon: "assets/art/ui/home-v3/shop-icon.png",
+      featureLock: "assets/art/ui/home-v3/feature-lock.png",
+      shopIconLocked: "assets/art/ui/home-v3/shop-icon-locked.png",
       leaderboardIcon: "assets/art/ui/home-v3/leaderboard-icon.png",
+      leaderboardIconLocked: "assets/art/ui/home-v3/leaderboard-icon-locked.png",
       homeIcon: "assets/art/ui/home-v3/home-icon.png",
       journeyIcon: "assets/art/ui/home-v3/journey-icon.png",
+      journeyIconLocked: "assets/art/ui/home-v3/journey-icon-locked.png",
       collectionIcon: "assets/art/ui/home-v3/collection-icon.png",
       collectionAlbumEntry: "assets/art/ui/home-v3/collection-album-entry.png",
       dailyTaskEntry: "assets/art/ui/home-v3/daily-tasks-entry.png",
+      sideEntryBase: "assets/art/ui/home-v3/side-entry-base.png",
+      leagueEntry: "assets/art/ui/home-v3/league-entry.png",
+      dailyChallengeEntry: "assets/art/ui/home-v3/daily-challenge-entry.png",
       achievementEntry: "assets/art/ui/home-v3/achievements-entry.png",
     },
     collectionAlbum: COLLECTION_ALBUM_ART_URLS,
     collectionCardAtlases: COLLECTION_CARD_ATLAS_URLS,
     dailyTasks: DAILY_TASK_ART_URLS,
+    dailyChallenge: DAILY_CHALLENGE_ART_URLS,
     achievements: ACHIEVEMENT_ART_URLS,
     musicLibrary: MUSIC_LIBRARY_ART_URLS,
     formalPages: {
@@ -538,7 +641,9 @@ export const GAME_ART = {
     boosters: "assets/art/ui/icons/booster-icons-v1.png",
     boosterUnlockBanner: "assets/art/ui/notifications/booster-unlock-banner-v1.png",
     discoveryBadge: "assets/art/ui/notifications/discovery-badge-v1.png",
+    lockedHintPanel: "assets/art/ui/formal-pages/supplied-popups-v1/scene/locked-hint-panel.png",
     onboardingDaily: "assets/art/ui/icons/onboarding-daily-icons-v1.png",
+    tutorialHand: "assets/art/ui/icons/tutorial-hand-supplied-v2.png",
     universalPanel: "assets/art/ui/chrome/universal-panel-v2.png",
     buttons: "assets/art/ui/chrome/buttons-v2.png",
     systemIcons: "assets/art/ui/icons/system-icons-v1.png",
@@ -659,4 +764,292 @@ export const ART_ATLASES = {
   layerPreviewBadges: { columns: 4, rows: 2, order: ["red", "blue", "green", "yellow", "purple", "orange", "pink", "cyan"] },
   buttons: { columns: 3, rows: 1, order: ["primary", "secondary", "danger"] },
   systemIcons: { columns: 4, rows: 3, order: ["coin", "star", "clock", "undo", "pause", "back", "home", "grid", "trophy", "shop", "settings", "lock"] },
+} as const;
+
+export const BOOSTER_PURCHASE_ART = {
+  panel: "assets/art/ui/formal-pages/supplied-popups-v1/booster/panel.png",
+  adButton: "assets/art/ui/formal-pages/supplied-popups-v1/booster/ad-button.png",
+  buyButton: "assets/art/ui/formal-pages/supplied-popups-v1/booster/buy-button.png",
+  close: "assets/art/ui/formal-pages/supplied-popups-v1/booster/close.png",
+  time: "assets/art/ui/formal-pages/supplied-popups-v1/booster/time.png",
+  rocket: "assets/art/ui/formal-pages/supplied-popups-v1/booster/rocket.png",
+  pulse: "assets/art/ui/formal-pages/supplied-popups-v1/booster/pulse.png",
+  coinIcon: "assets/art/ui/formal-pages/supplied-popups-v1/booster/coin-icon.png",
+  videoIcon: "assets/art/ui/formal-pages/supplied-popups-v1/booster/video-icon.png",
+} as const;
+
+// Reuse the purchase artwork, with independently owned popup image handles.
+export const LIFE_REFILL_ART = {
+  panel: BOOSTER_PURCHASE_ART.panel,
+  adButton: BOOSTER_PURCHASE_ART.adButton,
+  buyButton: BOOSTER_PURCHASE_ART.buyButton,
+  close: BOOSTER_PURCHASE_ART.close,
+  heartIcon: GAME_ART.ui.home.heartIcon,
+  coinIcon: BOOSTER_PURCHASE_ART.coinIcon,
+  videoIcon: BOOSTER_PURCHASE_ART.videoIcon,
+} as const;
+
+// User-supplied unlock card slices, loaded only for its reveal phase.
+export const FEATURE_UNLOCK_ART = {
+  panel: "assets/art/ui/formal-pages/feature-unlock-supplied-v1/panel.png",
+  titleZh: "assets/art/ui/formal-pages/feature-unlock-supplied-v1/title-zh.png",
+  titleEn: "assets/art/ui/formal-pages/feature-unlock-supplied-v1/title-en.png",
+  glow: "assets/art/ui/formal-pages/feature-unlock-supplied-v1/glow.png",
+  sparkles: "assets/art/ui/formal-pages/feature-unlock-supplied-v1/sparkles.png",
+  rankIcon: "assets/art/ui/formal-pages/feature-unlock-supplied-v1/rank-icon.png",
+  nameLeft: "assets/art/ui/formal-pages/feature-unlock-supplied-v1/name-left.png",
+  nameRight: "assets/art/ui/formal-pages/feature-unlock-supplied-v1/name-right.png",
+  divider: "assets/art/ui/formal-pages/feature-unlock-supplied-v1/divider.png",
+  button: "assets/art/ui/formal-pages/feature-unlock-supplied-v1/button.png",
+  laterLine: "assets/art/ui/formal-pages/feature-unlock-supplied-v1/later-line.png",
+} as const;
+
+// Generated league art is loaded only on the league screen and released on exit.
+export const LEAGUE_VIDEO_ART = {
+  "bronze": "assets/art/ui/league-rank-badges-v2/bronze.png",
+  "silver": "assets/art/ui/league-rank-badges-v2/silver.png",
+  "gold": "assets/art/ui/league-rank-badges-v2/gold.png",
+  "platinum": "assets/art/ui/league-rank-badges-v2/platinum.png",
+  "emerald": "assets/art/ui/league-rank-badges-v2/emerald.png",
+  "diamond": "assets/art/ui/league-rank-badges-v2/diamond.png",
+  "master": "assets/art/ui/league-rank-badges-v2/master.png",
+  "glory": "assets/art/ui/league-rank-badges-v2/glory.png",
+  "row": "assets/art/ui/league-supplied-v1/row-regular.png",
+  "round-button": "assets/art/ui/league-video-v1/round-button.png",
+  "score-token": "assets/art/ui/league-supplied-v1/score-token.png",
+  "continue-button": "assets/art/ui/league-video-v1/continue-button.png",
+  "self-row": "assets/art/ui/league-supplied-v1/self-row.png",
+  "parchment": "assets/art/ui/league-video-v1/parchment.png",
+  "coin-reward": "assets/art/ui/league-supplied-v1/coin-reward.png",
+  "glory-star": "assets/art/ui/league-video-v1/glory-star.png",
+  "background": "assets/art/ui/league-video-v1/background.png",
+  "stage-background": "assets/art/ui/league-supplied-v1/stage-background.png",
+  "top-header": "assets/art/ui/league-supplied-v1/top-header.png",
+  "bottom-footer": "assets/art/ui/league-supplied-v1/bottom-footer.png",
+  "list-panel": "assets/art/ui/league-supplied-v1/list-panel.png",
+  "title-base": "assets/art/ui/league-supplied-v1/title-base.png",
+  "timer-panel": "assets/art/ui/league-supplied-v1/timer-panel.png",
+  "tier-name-base": "assets/art/ui/league-supplied-v1/tier-name-base.png",
+  "row-first": "assets/art/ui/league-supplied-v1/row-first.png",
+  "row-second": "assets/art/ui/league-supplied-v1/row-second.png",
+  "row-third": "assets/art/ui/league-supplied-v1/row-third.png",
+  "back-button": "assets/art/ui/league-supplied-v1/back-button.png",
+  "info-button": "assets/art/ui/league-supplied-v1/info-button.png",
+  "challenge-button": "assets/art/ui/league-supplied-v1/challenge-button.png",
+  "arrow-left": "assets/art/ui/league-supplied-v1/arrow-left.png",
+  "arrow-right": "assets/art/ui/league-supplied-v1/arrow-right.png",
+  "level-star": "assets/art/ui/league-supplied-v1/level-star.png",
+  "detail-panel": "assets/art/ui/league-supplied-v1/detail-panel.png",
+  "close-button": "assets/art/ui/league-supplied-v1/close-button.png",
+} as const;
+
+/** Archived trophies stay declared for provenance; the league loads the v2 badges above. */
+export const LEGACY_LEAGUE_TROPHY_ART_URLS = [
+  "assets/art/ui/league-video-v1/row.png",
+  "assets/art/ui/league-video-v1/self-row.png",
+  "assets/art/ui/league-video-v1/score-token.png",
+  "assets/art/ui/league-video-v1/coin-reward.png",
+  "assets/art/ui/league-video-v1/bronze.png",
+  "assets/art/ui/league-video-v1/silver.png",
+  "assets/art/ui/league-video-v1/gold.png",
+  "assets/art/ui/league-video-v1/platinum.png",
+  "assets/art/ui/league-video-v1/emerald.png",
+  "assets/art/ui/league-video-v1/diamond.png",
+  "assets/art/ui/league-video-v1/master.png",
+  "assets/art/ui/league-video-v1/glory.png",
+] as const;
+
+/** Supplied season-settlement artwork; the stage background reuses the blue geometric collection background. */
+export const LEAGUE_SETTLEMENT_ART = {
+  "back-button": "assets/art/ui/league-settlement-supplied-v1/back-button.png",
+  "glow": "assets/art/ui/league-settlement-supplied-v1/glow.png",
+  "divider": "assets/art/ui/league-settlement-supplied-v1/divider.png",
+  "bronze": "assets/art/ui/league-settlement-supplied-v1/bronze.png",
+  "silver": "assets/art/ui/league-settlement-supplied-v1/silver.png",
+  "silver-hero": "assets/art/ui/league-settlement-supplied-v1/silver-hero.png",
+  "gold": "assets/art/ui/league-settlement-supplied-v1/gold.png",
+  "platinum": "assets/art/ui/league-settlement-supplied-v1/platinum.png",
+  "emerald": "assets/art/ui/league-settlement-supplied-v1/emerald.png",
+  "diamond": "assets/art/ui/league-settlement-supplied-v1/diamond.png",
+  "master": "assets/art/ui/league-settlement-supplied-v1/master.png",
+  "glory": "assets/art/ui/league-settlement-supplied-v1/glory.png",
+  "stage-panel": "assets/art/ui/league-settlement-supplied-v1/stage-panel.png",
+  "result-panel": "assets/art/ui/league-settlement-supplied-v1/result-panel.png",
+  "claim-button": "assets/art/ui/league-settlement-supplied-v1/claim-button.png",
+  "rank-icon": "assets/art/ui/league-settlement-supplied-v1/rank-icon.png",
+  "star": "assets/art/ui/league-settlement-supplied-v1/star.png",
+  "sparkles": "assets/art/ui/league-settlement-supplied-v1/sparkles.png",
+  "score-icon": "assets/art/ui/league-settlement-supplied-v1/score-icon.png",
+  "arrow": "assets/art/ui/league-settlement-supplied-v1/arrow.png",
+  "coin": "assets/art/ui/league-settlement-supplied-v1/coin.png",
+  "background": "assets/art/ui/formal-pages/collection/background.png",
+} as const;
+
+export const PROFILE_REFERENCE_ART = [
+  "assets/art/ui/profile-reference-v1/avatar-0.png",
+  "assets/art/ui/profile-reference-v1/avatar-1.png",
+  "assets/art/ui/profile-reference-v1/avatar-10.png",
+  "assets/art/ui/profile-reference-v1/avatar-11.png",
+  "assets/art/ui/profile-reference-v1/avatar-12.png",
+  "assets/art/ui/profile-reference-v1/avatar-13.png",
+  "assets/art/ui/profile-reference-v1/avatar-14.png",
+  "assets/art/ui/profile-reference-v1/avatar-2.png",
+  "assets/art/ui/profile-reference-v1/avatar-3.png",
+  "assets/art/ui/profile-reference-v1/avatar-4.png",
+  "assets/art/ui/profile-reference-v1/avatar-5.png",
+  "assets/art/ui/profile-reference-v1/avatar-6.png",
+  "assets/art/ui/profile-reference-v1/avatar-7.png",
+  "assets/art/ui/profile-reference-v1/avatar-8.png",
+  "assets/art/ui/profile-reference-v1/avatar-9.png",
+  "assets/art/ui/profile-reference-v1/coin.png",
+  "assets/art/ui/profile-reference-v1/edit.png",
+  "assets/art/ui/profile-reference-v1/frame-0.png",
+  "assets/art/ui/profile-reference-v1/frame-1.png",
+  "assets/art/ui/profile-reference-v1/frame-2.png",
+  "assets/art/ui/profile-reference-v1/frame-3.png",
+  "assets/art/ui/profile-reference-v1/frame-4.png",
+  "assets/art/ui/profile-reference-v1/frame-5.png",
+  "assets/art/ui/profile-reference-v1/frame-6.png",
+  "assets/art/ui/profile-reference-v1/frame-7.png",
+  "assets/art/ui/profile-reference-v1/frame-8.png",
+  "assets/art/ui/profile-reference-v1/header.png",
+  "assets/art/ui/profile-reference-v1/panel.png",
+  "assets/art/ui/profile-reference-v1/save.png",
+  "assets/art/ui/profile-reference-v1/stat-0.png",
+  "assets/art/ui/profile-reference-v1/stat-1.png",
+  "assets/art/ui/profile-reference-v1/stat-2.png"
+] as const;
+
+/** Approved profile slices and stable-ID replacement avatars; originals above remain archived. */
+export const PROFILE_SUPPLIED_ART_URLS = [
+  "assets/art/ui/profile-supplied-v2/stats-panel.png",
+  "assets/art/ui/profile-supplied-v2/editor-panel.png",
+  "assets/art/ui/profile-supplied-v2/rename-panel.png",
+  "assets/art/ui/profile-supplied-v2/title-zh.png",
+  "assets/art/ui/profile-supplied-v2/title-en.png",
+  "assets/art/ui/profile-supplied-v2/close.png",
+  "assets/art/ui/profile-supplied-v2/id-field.png",
+  "assets/art/ui/profile-supplied-v2/stat-card.png",
+  "assets/art/ui/profile-supplied-v2/stat-value.png",
+  "assets/art/ui/profile-supplied-v2/stat-highest.png",
+  "assets/art/ui/profile-supplied-v2/stat-stars.png",
+  "assets/art/ui/profile-supplied-v2/stat-rank.png",
+  "assets/art/ui/profile-supplied-v2/edit-badge.png",
+  "assets/art/ui/profile-supplied-v2/edit-name.png",
+  "assets/art/ui/profile-supplied-v2/copy.png",
+  "assets/art/ui/profile-supplied-v2/sparkle.png",
+  "assets/art/ui/profile-supplied-v2/joined.png",
+  "assets/art/ui/profile-supplied-v2/avatar-page.png",
+  "assets/art/ui/profile-supplied-v2/frame-page.png",
+  "assets/art/ui/profile-supplied-v2/catalog-panel.png",
+  "assets/art/ui/profile-supplied-v2/tab-button.png",
+  "assets/art/ui/profile-supplied-v2/selected.png",
+  "assets/art/ui/profile-supplied-v2/save-button.png",
+  "assets/art/ui/profile-supplied-v2/rename-button.png",
+  "assets/art/ui/profile-supplied-v2/rename-input.png",
+  "assets/art/ui/profile-supplied-v2/coin.png",
+  "assets/art/ui/profile-supplied-v2/avatar-0.png",
+  "assets/art/ui/profile-supplied-v2/avatar-1.png",
+  "assets/art/ui/profile-supplied-v2/avatar-2.png",
+  "assets/art/ui/profile-supplied-v2/avatar-3.png",
+  "assets/art/ui/profile-supplied-v2/avatar-4.png",
+  "assets/art/ui/profile-supplied-v2/avatar-5.png",
+  "assets/art/ui/profile-supplied-v2/avatar-6.png",
+  "assets/art/ui/profile-supplied-v2/avatar-7.png",
+  "assets/art/ui/profile-supplied-v2/avatar-8.png",
+  "assets/art/ui/profile-supplied-v2/avatar-9.png",
+  "assets/art/ui/profile-supplied-v2/avatar-10.png",
+  "assets/art/ui/profile-supplied-v2/avatar-11.png",
+  "assets/art/ui/profile-supplied-v2/avatar-12.png",
+  "assets/art/ui/profile-supplied-v2/avatar-13.png",
+  "assets/art/ui/profile-supplied-v2/avatar-14.png",
+  "assets/art/ui/profile-supplied-v2/avatar-15.png",
+  "assets/art/ui/profile-supplied-v2/avatar-16.png",
+  "assets/art/ui/profile-supplied-v2/avatar-17.png",
+  "assets/art/ui/profile-supplied-v2/avatar-18.png",
+  "assets/art/ui/profile-supplied-v2/avatar-19.png",
+] as const;
+
+/** Supplied PNGs 1..19 keep frame IDs 0..18; PNG 20 is archive-only. */
+export const PROFILE_SUPPLIED_FRAME_ART_URLS = [
+  "assets/art/ui/profile-frames-supplied-v1/frame-0.png",
+  "assets/art/ui/profile-frames-supplied-v1/frame-1.png",
+  "assets/art/ui/profile-frames-supplied-v1/frame-2.png",
+  "assets/art/ui/profile-frames-supplied-v1/frame-3.png",
+  "assets/art/ui/profile-frames-supplied-v1/frame-4.png",
+  "assets/art/ui/profile-frames-supplied-v1/frame-5.png",
+  "assets/art/ui/profile-frames-supplied-v1/frame-6.png",
+  "assets/art/ui/profile-frames-supplied-v1/frame-7.png",
+  "assets/art/ui/profile-frames-supplied-v1/frame-8.png",
+  "assets/art/ui/profile-frames-supplied-v1/frame-9.png",
+  "assets/art/ui/profile-frames-supplied-v1/frame-10.png",
+  "assets/art/ui/profile-frames-supplied-v1/frame-11.png",
+  "assets/art/ui/profile-frames-supplied-v1/frame-12.png",
+  "assets/art/ui/profile-frames-supplied-v1/frame-13.png",
+  "assets/art/ui/profile-frames-supplied-v1/frame-14.png",
+  "assets/art/ui/profile-frames-supplied-v1/frame-15.png",
+  "assets/art/ui/profile-frames-supplied-v1/frame-16.png",
+  "assets/art/ui/profile-frames-supplied-v1/frame-17.png",
+  "assets/art/ui/profile-frames-supplied-v1/frame-18.png",
+] as const;
+
+export const DAILY_SUCCESS_ART_URLS = {
+  panel: "assets/art/ui/daily-success-supplied-v1/panel.png",
+  continueButton: "assets/art/ui/daily-success-supplied-v1/continue.png",
+  close: "assets/art/ui/formal-pages/daily-tasks-v2/close.png",
+} as const;
+
+// User-supplied independent popup slices; all dynamic values remain runtime data.
+export const SUPPLIED_SETTLEMENT_ART = {
+  panel: "assets/art/ui/formal-pages/supplied-popups-v1/settlement/panel.png",
+  titleEn: "assets/art/ui/formal-pages/supplied-popups-v1/settlement/title-en.png",
+  titleZh: "assets/art/ui/formal-pages/supplied-popups-v1/settlement/title-zh.png",
+  levelBadge: "assets/art/ui/formal-pages/supplied-popups-v1/settlement/level-badge.png",
+  starCenter: "assets/art/ui/formal-pages/supplied-popups-v1/settlement/star-center.png",
+  starSide: "assets/art/ui/formal-pages/supplied-popups-v1/settlement/star-side.png",
+  starEmpty: "assets/art/ui/formal-pages/supplied-popups-v1/settlement/star-empty.png",
+  criterionRow: "assets/art/ui/formal-pages/supplied-popups-v1/settlement/criterion-row.png",
+  criterionPass: "assets/art/ui/formal-pages/supplied-popups-v1/settlement/criterion-pass.png",
+  criterionIdle: "assets/art/ui/formal-pages/supplied-popups-v1/settlement/criterion-idle.png",
+  coinPile: "assets/art/ui/formal-pages/supplied-popups-v1/settlement/coin-pile.png",
+  rewardPill: "assets/art/ui/formal-pages/supplied-popups-v1/settlement/reward-pill.png",
+  coinIcon: "assets/art/ui/formal-pages/supplied-popups-v1/settlement/coin-icon.png",
+  continueButton: "assets/art/ui/formal-pages/supplied-popups-v1/settlement/continue-button.png",
+  close: "assets/art/ui/formal-pages/supplied-popups-v1/settlement/close.png",
+  unlockPanel: "assets/art/ui/formal-pages/supplied-popups-v1/settlement/unlock-panel.png",
+  progressTrack: "assets/art/ui/formal-pages/supplied-popups-v1/settlement/progress-track.png",
+  progressFill: "assets/art/ui/formal-pages/supplied-popups-v1/settlement/progress-fill.png",
+  unlockCrown: "assets/art/ui/formal-pages/supplied-popups-v1/settlement/unlock-crown.png",
+  unlockCheck: "assets/art/ui/formal-pages/supplied-popups-v1/settlement/unlock-check.png",
+  artworkFrame: "assets/art/ui/formal-pages/supplied-popups-v1/settlement/artwork-frame.png",
+} as const;
+
+export const SUPPLIED_RANK_ART = {
+  panel: "assets/art/ui/formal-pages/supplied-popups-v1/rank/panel.png",
+  titleZh: "assets/art/ui/formal-pages/supplied-popups-v1/rank/title-zh.png",
+  titleEn: "assets/art/ui/formal-pages/supplied-popups-v1/rank/title-en.png",
+  rankArrow: "assets/art/ui/formal-pages/supplied-popups-v1/rank/rank-arrow.png",
+  gainArrow: "assets/art/ui/formal-pages/supplied-popups-v1/rank/gain-arrow.png",
+} as const;
+
+
+// Superseded source is retained for artwork provenance, never requested by the popup.
+export const LEGACY_SUPPLIED_POPUP_ART_URLS = [
+  "assets/art/ui/formal-pages/booster-purchase-reference-v1/panel.png",
+] as const;
+
+export const SUPPLIED_REVEAL_ART = {
+  painting: {
+    banner: "assets/art/ui/formal-pages/supplied-popups-v1/painting/banner.png",
+    titleZh: "assets/art/ui/formal-pages/supplied-popups-v1/painting/title-zh.png",
+    titleEn: "assets/art/ui/formal-pages/supplied-popups-v1/painting/title-en.png",
+    button: "assets/art/ui/formal-pages/supplied-popups-v1/painting/continue-button.png",
+    close: "assets/art/ui/formal-pages/supplied-popups-v1/painting/close.png",
+  },
+  scene: {
+    titleZh: "assets/art/ui/formal-pages/supplied-popups-v1/scene/title-zh.png",
+    titleEn: "assets/art/ui/formal-pages/supplied-popups-v1/scene/title-en.png",
+    button: "assets/art/ui/formal-pages/supplied-popups-v1/scene/confirm-button.png",
+    range: "assets/art/ui/formal-pages/supplied-popups-v1/scene/range-panel.png",
+  },
 } as const;

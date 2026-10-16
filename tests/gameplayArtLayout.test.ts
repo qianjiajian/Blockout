@@ -138,15 +138,15 @@ describe("formal gameplay artwork layout", () => {
     }
   });
 
-  it("keeps the undo and pause hit targets on their fixed HUD images when safe areas are present", () => {
+  it("removes the undo control while keeping pause on its fixed HUD image when safe areas are present", () => {
     expect(gameSource).not.toMatch(/offsetRect\(BUTTONS\.(?:undo|pause),\s*0,\s*safe\.top\)/);
-    expect(gameSource).toContain("this.interactionHit(point, BUTTONS.undo)");
+    expect(gameSource).not.toContain("BUTTONS.undo");
     expect(gameSource).toContain("this.interactionHit(point, BUTTONS.pause)");
-    expect(gameSource).toContain('target("undo", BUTTONS.undo)');
+    expect(gameSource).not.toContain('target("undo",');
     expect(gameSource).toContain('target("pause", BUTTONS.pause)');
-    expect(gameSource).toContain('add("undo", BUTTONS.undo)');
+    expect(gameSource).not.toContain('add("undo",');
     expect(gameSource).toContain('add("pause", BUTTONS.pause)');
-    expect(gameSource).toContain('this.drawPressable("undo", BUTTONS.undo');
+    expect(gameSource).not.toContain('this.drawPressable("undo",');
     expect(gameSource).toContain('this.drawPressable("pause", BUTTONS.pause');
   });
 

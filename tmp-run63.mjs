@@ -1,0 +1,5 @@
+import fs from 'node:fs';
+import { loadSpatialApi, searchSpatial } from './tools/continuation211-colored-witness.mjs';
+import { loadContinuationRuntime } from './tools/continuation211-runtime.mjs';
+const e=JSON.parse(fs.readFileSync('deliverables/league-regeneration-20261004/mid-experiments/level63-variant7-rejected.json','utf8'));const level=e.level;const api=await loadSpatialApi();const rt=await loadContinuationRuntime();
+for(const opt of [{ms:12000,states:1000000,trans:12000000,norm:true},{ms:12000,states:1000000,trans:12000000,norm:false},{ms:30000,states:3000000,trans:30000000,norm:true}]){const u=searchSpatial(level,api,{floor:31,maxStates:opt.states,maxTransitions:opt.trans,maxMilliseconds:opt.ms,normalize:opt.norm,orderSeed:7});console.log(JSON.stringify({opt,status:u.status,term:u.termination,explored:u.exploredStates,states:u.discoveredStates,max:u.maxClearsSeen,cost:u.cost,drags:u.drags?.length}));if(u.drags){const r=rt.replayRevisedRoute(level,u.drags);console.log(JSON.stringify({valid:r.valid,complete:r.complete,non:r.nonClearingDrags,errors:r.errors?.slice?.(0,3)}));break;}}
