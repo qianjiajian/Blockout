@@ -20,6 +20,14 @@ export function instrumentGooglePlayPrivacyState(source) {
         && !this.featureUnlockGuide && !this.collectionIntro && !this.journeyPresentation
         && !this.lifeRefillOpen && !this.pendingButtonPress && this.activePointer === undefined
         && !this.isHomeEpisodeUnlockPending() && !this.pendingSettlement && !this.pendingLifeStart
+        && !this.homeCoinFlight && !this.directLevelTransition && !this.collectionRestorationGuide
+        && !this.temporaryLevelTestSession && !this.temporaryLevelSelector
+        && !this.pendingSettlementAbandon && !this.pendingLifeRefill && !this.pendingSupplyPurchase
+        && !this.pendingBoosterPurchase && !this.pendingJourneyClaim && !this.pendingJourneyThemeSelection
+        && !this.pendingLanguageSelection && !this.pendingDailyTaskClaim && !this.pendingAchievementClaim
+        && !this.pendingCollectionRestoration && !this.welfareTransactionActive()
+        && !this.lifeRefillAdTransactionActive() && !this.boosterRewardAdTransactionActive()
+        && !this.dailyChallengeRewardAdTransactionActive()
         && !this.pendingProfileSave && !this.pendingRankingSave && !this.leagueTransaction?.pending,
       settings: { language: this.save.language },
       viewportTransform: this.viewportTransform(),

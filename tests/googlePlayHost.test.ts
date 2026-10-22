@@ -21,6 +21,21 @@ function setup() {
 
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); vi.useRealTimers(); });
 describe("Google Play host visibility and startup ownership", () => {
+  it("connects a level-eight success to the separate prepare and launch review commands", async () => {
+    vi.useFakeTimers(); const s = setup();
+    s.host.onGooglePlayLifecycle({ phase: "success", owner: {}, levelId: 8, mode: "campaign" });
+    const flow = s.host.reviews.sync(() => true);
+    const prepare = s.requests.at(-1)!;
+    expect(prepare.type).toBe("reviewPrepare");
+    s.native({ type: "result", id: prepare.id, ok: true, status: "review-prepared" });
+    await Promise.resolve();
+    const launch = s.requests.at(-1)!;
+    expect(launch.type).toBe("reviewLaunch");
+    s.native({ type: "result", id: launch.id, ok: true, status: "review-flow-finished" });
+    await flow;
+    expect(s.host.reviews.pending).toBe(false);
+    s.host.dispose();
+  });
   it("lets an unavailable-ad button reach native recovery instead of permanently disabling it", async () => {
     vi.useFakeTimers(); const s = setup();
     s.native({ type: "state", state: { consentReady: false, rewardedReady: false } });
