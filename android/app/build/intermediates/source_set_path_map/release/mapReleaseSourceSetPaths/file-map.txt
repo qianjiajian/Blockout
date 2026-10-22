@@ -1,0 +1,10 @@
+com.blockout.app-core-1.1.0-0 C:\Users\Administrator\.gradle\caches\8.9\transforms\6f61606391ba590d6ca80cbdda7a3ded\transformed\core-1.1.0\res
+com.blockout.app-webkit-1.12.1-1 C:\Users\Administrator\.gradle\caches\8.9\transforms\9febd1cf1c3effdc2e76418da84a7529\transformed\webkit-1.12.1\res
+com.blockout.app-annotation-experimental-1.4.1-2 C:\Users\Administrator\.gradle\caches\8.9\transforms\ec2a3d141c180ad55e2138fcc3be2e8c\transformed\annotation-experimental-1.4.1\res
+com.blockout.app-pngs-3 X:\android\app\build\generated\res\pngs\release
+com.blockout.app-resValues-4 X:\android\app\build\generated\res\resValues\release
+com.blockout.app-packageReleaseResources-5 X:\android\app\build\intermediates\incremental\release\packageReleaseResources\merged.dir
+com.blockout.app-packageReleaseResources-6 X:\android\app\build\intermediates\incremental\release\packageReleaseResources\stripped.dir
+com.blockout.app-release-7 X:\android\app\build\intermediates\merged_res\release\mergeReleaseResources
+com.blockout.app-main-8 X:\android\app\src\main\res
+com.blockout.app-release-9 X:\android\app\src\release\res

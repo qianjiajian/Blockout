@@ -13,6 +13,7 @@ import {
   temporaryLevelSelectorPageForLevel,
 } from "../src/game/temporaryLevelSelector";
 import { FORMAL_201_210_LEVELS, FORMAL_211_220_LEVELS, FORMAL_221_230_LEVELS, LEVELS, getLevelStrict } from "../src/core/levels";
+import { FORMAL_231_240_LEVELS } from "../src/core/formal231to240Data";
 import {
   TEMPORARY_TEST_LEVEL_COUNT,
   TEMPORARY_TEST_LEVEL_IDS,
@@ -20,7 +21,7 @@ import {
   getTemporaryTestLevelStrict,
 } from "../src/game/temporaryTestLevelCatalog";
 
-const expectedTemporaryIds = Array.from({ length: 230 }, (_, index) => index + 1);
+const expectedTemporaryIds = [...Array.from({ length: 230 }, (_, index) => index + 1), ...FORMAL_231_240_LEVELS.map(level => level.id)];
 
 const intersects = (
   left: { x: number; y: number; width: number; height: number },
@@ -61,18 +62,18 @@ describe("temporary level selector geometry", () => {
     expect(layout.cells[0]).toMatchObject({ slotIndex: 0, levelId: 41, selected: true });
   });
 
-  it("lists exactly production 1–200 and all three accepted continuation batches", () => {
+  it("lists exactly production 1–200 and the accepted continuation registries", () => {
     expect(TEMPORARY_TEST_LEVEL_IDS).toEqual(expectedTemporaryIds);
-    expect(TEMPORARY_TEST_LEVEL_COUNT).toBe(230);
+    expect(TEMPORARY_TEST_LEVEL_COUNT).toBe(expectedTemporaryIds.length);
     expect(TEMPORARY_TEST_LEVEL_COUNT).toBe(TEMPORARY_TEST_LEVEL_IDS.length);
-    expect(new Set(TEMPORARY_TEST_LEVEL_IDS).size).toBe(230);
+    expect(new Set(TEMPORARY_TEST_LEVEL_IDS).size).toBe(expectedTemporaryIds.length);
     const displayedIds = Array.from({ length: temporaryLevelSelectorPageCount(TEMPORARY_TEST_LEVEL_IDS) }, (_, page) => (
       temporaryLevelSelectorLayout(TEMPORARY_TEST_LEVEL_IDS, page).cells.map((cell) => cell.levelId)
     )).flat();
     expect(displayedIds).toEqual(expectedTemporaryIds);
   });
 
-  it("places 211–220 on page eleven and preserves 221–230 on the partial twelfth page", () => {
+  it("places 211–220 on page eleven and 221 onward on page twelve", () => {
     expect(temporaryLevelSelectorPageCount(TEMPORARY_TEST_LEVEL_IDS)).toBe(12);
     expect(temporaryLevelSelectorPageForLevel(200, TEMPORARY_TEST_LEVEL_IDS)).toBe(9);
     expect(temporaryLevelSelectorPageForLevel(201, TEMPORARY_TEST_LEVEL_IDS)).toBe(10);
@@ -98,7 +99,8 @@ describe("temporary level selector geometry", () => {
     expect(temporaryLevelSelectorLevelAt(10, 20, TEMPORARY_TEST_LEVEL_IDS)).toBeUndefined();
     expect(temporaryLevelSelectorLevelAt(11, 0, TEMPORARY_TEST_LEVEL_IDS)).toBe(221);
     expect(temporaryLevelSelectorLevelAt(11, 9, TEMPORARY_TEST_LEVEL_IDS)).toBe(230);
-    expect(temporaryLevelSelectorLevelAt(11, 10, TEMPORARY_TEST_LEVEL_IDS)).toBeUndefined();
+    expect(temporaryLevelSelectorLevelAt(11, 10, TEMPORARY_TEST_LEVEL_IDS)).toBe(231);
+    expect(temporaryLevelSelectorLevelAt(11, expectedTemporaryIds.length - 220, TEMPORARY_TEST_LEVEL_IDS)).toBeUndefined();
   });
 
   it("uses explicit catalog positions for a sparse final page and leaves an empty catalog empty", () => {
@@ -131,7 +133,11 @@ describe("temporary level selector geometry", () => {
       expect(getTemporaryTestLevelStrict(id)).toBe(FORMAL_221_230_LEVELS[id - 221]);
       expect(() => getLevelStrict(id)).toThrow(RangeError);
     }
-    for (const invalid of [0, 231, 201.5, 211.5, 229.5, NaN, Infinity]) {
+    for (const level of FORMAL_231_240_LEVELS) {
+      expect(getTemporaryTestLevelStrict(level.id)).toBe(level);
+      expect(() => getLevelStrict(level.id)).toThrow(RangeError);
+    }
+    for (const invalid of [0, 241, 201.5, 211.5, 229.5, NaN, Infinity]) {
       expect(() => getTemporaryTestLevelStrict(invalid)).toThrow(RangeError);
     }
   });
@@ -145,9 +151,10 @@ describe("temporary level selector geometry", () => {
     expect(getAdjacentTemporaryTestLevelId(211, -1)).toBe(210);
     expect(getAdjacentTemporaryTestLevelId(220, 1)).toBe(221);
     expect(getAdjacentTemporaryTestLevelId(221, -1)).toBe(220);
-    expect(getAdjacentTemporaryTestLevelId(230, 1)).toBe(230);
+    expect(getAdjacentTemporaryTestLevelId(230, 1)).toBe(231);
+    expect(getAdjacentTemporaryTestLevelId(expectedTemporaryIds.at(-1)!, 1)).toBe(expectedTemporaryIds.at(-1));
     expect(getAdjacentTemporaryTestLevelId(1, -1)).toBe(1);
-    for (const invalid of [0, 231, 211.5, 221.5, NaN]) {
+    for (const invalid of [0, 241, 211.5, 221.5, NaN]) {
       expect(() => getAdjacentTemporaryTestLevelId(invalid, -1)).toThrow(RangeError);
       expect(() => getAdjacentTemporaryTestLevelId(invalid, 1)).toThrow(RangeError);
     }

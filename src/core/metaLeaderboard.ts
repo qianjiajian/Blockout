@@ -1,4 +1,4 @@
-import { RANKING_PLAYER_NAMES } from "./playerNames";
+import { localizedRankingPlayerName, rankingLanguage, RANKING_PLAYER_NAMES } from "./playerNames";
 import { PROFILE_AVATAR_COUNT, PROFILE_FRAME_COUNT } from "./playerProfile";
 import type { OpponentType } from "./opponentPacing";
 import { LEADERBOARD_PROVINCES, normalizeLeaderboardProvince } from "./rankingProvince";
@@ -74,6 +74,8 @@ export interface MetaLeaderboardClock {
   readonly province?: string;
   readonly weeklyStars?: number;
   readonly weekBaselineMs?: number;
+  /** Locale captured from the player's first device session. */
+  readonly opponentLanguage?: string;
 }
 
 /**
@@ -92,6 +94,8 @@ export interface MetaLeaderboardInput {
   province?: string;
   weeklyStars?: number;
   weekBaselineMs?: number;
+  /** Locale used for generated opponent display names. */
+  opponentLanguage?: string;
 }
 
 export const META_LEADERBOARD_LABELS: Readonly<Record<MetaLeaderboardMode, string>> = {
@@ -164,9 +168,22 @@ const placeholderName = (rank: number): string => {
   return `${base}${Math.ceil(rank / PLACEHOLDER_NAMES.length)}`;
 };
 
+const localizedIdentityName = (identity: MainlineOpponentIdentity, language: unknown): string => {
+  const locale = rankingLanguage(language);
+  // Keep the established Chinese ordering for existing saves and screenshots.
+  if (locale === "zh-CN" && identity.nameIndex < 100) return placeholderName(identity.nameIndex);
+  // The Chinese local roster historically used a separate poetic catalog; keep
+  // it for continuity while all other locales use their native catalog.
+  if (locale === "zh-CN" && identity.nameIndex >= 100) {
+    return LOCAL_OPPONENT_NAMES[(identity.nameIndex - 100) % LOCAL_OPPONENT_NAMES.length];
+  }
+  return localizedRankingPlayerName(locale, identity.nameIndex);
+};
+
 interface MainlineOpponentIdentity {
   id: string;
-  name: string;
+  /** Stable ordinal used only to project a localized display name. */
+  nameIndex: number;
   avatar: number;
   frame: number;
   type: OpponentType;
@@ -187,7 +204,7 @@ const typeAt = (index: number): OpponentType => {
 
 const NATIONAL_OPPONENTS: readonly MainlineOpponentIdentity[] = Array.from({ length: META_LEADERBOARD_BOT_COUNT }, (_, index) => ({
   id: `meta-bot-${String(index + 1).padStart(2, "0")}`,
-  name: placeholderName(index + 1),
+  nameIndex: index + 1,
   avatar: META_LEADERBOARD_AVATARS[index % META_LEADERBOARD_AVATARS.length],
   frame: 0,
   type: typeAt(index),
@@ -199,7 +216,7 @@ const NATIONAL_OPPONENTS: readonly MainlineOpponentIdentity[] = Array.from({ len
 const LOCAL_OPPONENT_NAMES: readonly string[] = (() => {
   const prefixes = ["岚", "禾", "鹿", "晴", "竹", "墨", "星", "月", "海棠", "银杏", "栀子", "青竹", "松林", "云溪", "晓月", "远帆", "晚星", "木棉", "石榴", "雪松", "山茶", "听雨", "南栀", "野鹤"];
   const endings = ["汀", "川", "梦", "游", "微风", "晴空", "拾光", "小径", "听风", "漫游", "星河", "问月", "归途", "慢行", "小屋", "晚照", "望远山", "听晚风", "伴星行", "看云归"];
-  const used = new Set(NATIONAL_OPPONENTS.map((bot) => bot.name));
+  const used = new Set(NATIONAL_OPPONENTS.map((bot) => placeholderName(bot.nameIndex)));
   const buckets = [2, 3, 4, 5].map(() => [] as string[]);
   for (const prefix of prefixes) for (const ending of endings) {
     const name = `${prefix}${ending}`;
@@ -220,7 +237,7 @@ const provinceOpponents = (province: string): readonly MainlineOpponentIdentity[
   const cached = provinceRosters.get(province);
   if (cached) return cached;
   const result = NATIONAL_OPPONENTS.filter((bot) => bot.province === province);
-  const usedNames = new Set(result.map((bot) => bot.name));
+  const usedNames = new Set(result.map((bot) => localizedIdentityName(bot, "zh-CN")));
   const provinceIndex = LEADERBOARD_PROVINCES.findIndex((entry) => entry.code === province);
   let nameCursor = provinceIndex * 7;
   let localIndex = 0;
@@ -237,7 +254,7 @@ const provinceOpponents = (province: string): readonly MainlineOpponentIdentity[
       localIndex += 1;
       result.push({
         id: `meta-province-${province}-${String(localIndex).padStart(2, "0")}`,
-        name,
+        nameIndex: 100 + nameCursor - 1,
         avatar: (localIndex - 1 + provinceIndex) % META_LEADERBOARD_AVATARS.length,
         frame: 0,
         type,
@@ -282,7 +299,7 @@ const buildPlaceholderEntries = (
     const weeklyStars = Math.max(0, current.stars - baseline.stars);
     return {
       id: identity.id,
-      name: identity.name,
+      name: localizedIdentityName(identity, clock.opponentLanguage),
       avatar: identity.avatar,
       frame: identity.frame,
       province: identity.province,
@@ -333,7 +350,8 @@ export const buildMetaLeaderboard = (
   const nowMs = safeEpoch(input.nowMs, Date.now());
   const groupCreatedAtMs = safeEpoch(input.groupCreatedAtMs, nowMs);
   return source.getSnapshot(safeMode, sanitizePlayer(input), { nowMs, groupCreatedAtMs,
-    province: input.province, weeklyStars: input.weeklyStars, weekBaselineMs: input.weekBaselineMs });
+    province: input.province, weeklyStars: input.weeklyStars, weekBaselineMs: input.weekBaselineMs,
+    opponentLanguage: input.opponentLanguage });
 };
 
 export const buildAllMetaLeaderboards = (

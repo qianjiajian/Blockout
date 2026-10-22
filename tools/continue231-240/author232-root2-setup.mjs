@@ -1,0 +1,13 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+let code=fs.readFileSync('tools/continue231-240/author232-root.mjs','utf8');
+const marker='const rows=[];let accepted;';
+assert(code.includes(marker));
+code=code.slice(0,code.indexOf(marker));
+code=code.replace("const start=Number(process.argv[2]??1),count=Number(process.argv[3]??100),run=out+`/run-${start}-${Date.now()}`;fs.mkdirSync(run);fs.copyFileSync(new URL(import.meta.url),run+'/author-source.mjs');",'');
+code=code.replace('function make(seed)','export function make(seed)');
+code=code.replace('score:p.b.shape.length*4+p.b.y+rand()*2','score:p.b.y*2+p.b.shape.length+rand()*5');
+code=code.replace("name:'双帘·折返升降'","name:'双帘·连环升降'");
+code=code.replace('提供8格真实空间；其余全新排布。','提供8格真实空间；其余全新排布，另四个普通体按深度和形状混合选择而不一律选最大体。');
+assert(!fs.existsSync('tools/continue231-240/author232-root2-generator.mjs'));
+fs.writeFileSync('tools/continue231-240/author232-root2-generator.mjs',code);

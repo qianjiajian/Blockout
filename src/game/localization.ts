@@ -77,8 +77,8 @@ export const resolvePreferredLanguage = (
 };
 
 const CORE_ENGLISH_TRANSLATIONS = {
-  "app.title": "Block Escape",
-  "app.canvasLabel": "Block Escape game canvas",
+  "app.title": "脑王的诞生",
+  "app.canvasLabel": "脑王的诞生 game canvas",
 
   "common.ok": "OK",
   "common.gotIt": "Got it",
@@ -429,8 +429,8 @@ export type TranslationParams<Key extends TranslationKey> = (
 type TranslationDictionary = Readonly<Record<TranslationKey, string>>;
 
 const ZH_CN_TRANSLATIONS = {
-  "app.title": "方块出逃",
-  "app.canvasLabel": "方块出逃游戏画布",
+  "app.title": "脑王的诞生",
+  "app.canvasLabel": "脑王的诞生游戏画布",
   "common.ok": "确定", "common.gotIt": "知道了", "common.cancel": "取消", "common.close": "关闭", "common.retry": "重试", "common.loading": "正在加载…", "common.full": "已满", "common.use": "使用", "common.complete": "完成", "common.level": "关卡", "common.levelNumber": "第 {level} 关", "common.lvNumber": "Lv {level}",
   "navigation.start": "开始", "navigation.shop": "商店", "navigation.leaderboard": "排行", "navigation.home": "主页", "navigation.journey": "旅程", "navigation.collection": "收藏",
   "settings.title": "设置", "settings.music": "音乐", "settings.haptics": "震动", "settings.effects": "动效", "settings.language": "语言", "settings.chooseLanguage": "选择语言", "settings.languageSaved": "语言已切换为{language}", "settings.languageSaveFailed": "语言保存失败，请重试。", "settings.clearProgress": "清除游戏进度", "settings.clearTitle": "清除进度？", "settings.clearIrreversible": "此操作无法撤销", "settings.clearDescription": "关卡、星星、金币、道具和成就将恢复初始状态。", "settings.preferencesRetained": "声音、语言等设备偏好会保留", "settings.clearFailed": "清档失败，请检查存储后重试。", "settings.confirmClear": "确认清档",
@@ -441,8 +441,8 @@ const ZH_CN_TRANSLATIONS = {
 } satisfies CoreTranslationDictionary;
 
 const ZH_TW_TRANSLATIONS = {
-  "app.title": "方塊出逃",
-  "app.canvasLabel": "方塊出逃遊戲畫布",
+  "app.title": "脑王的诞生",
+  "app.canvasLabel": "脑王的诞生遊戲畫布",
   "common.ok": "確定", "common.gotIt": "知道了", "common.cancel": "取消", "common.close": "關閉", "common.retry": "重試", "common.loading": "載入中…", "common.full": "已滿", "common.use": "使用", "common.complete": "完成", "common.level": "關卡", "common.levelNumber": "第 {level} 關", "common.lvNumber": "Lv {level}",
   "navigation.start": "開始", "navigation.shop": "商店", "navigation.leaderboard": "排行", "navigation.home": "主頁", "navigation.journey": "旅程", "navigation.collection": "收藏",
   "settings.title": "設定", "settings.music": "音樂", "settings.haptics": "震動", "settings.effects": "動效", "settings.language": "語言", "settings.chooseLanguage": "選擇語言", "settings.languageSaved": "語言已切換為{language}", "settings.languageSaveFailed": "無法儲存語言，請重試。", "settings.clearProgress": "清除遊戲進度", "settings.clearTitle": "清除進度？", "settings.clearIrreversible": "此操作無法復原", "settings.clearDescription": "關卡、星星、金幣、道具和成就將恢復初始狀態。", "settings.preferencesRetained": "聲音、語言等裝置偏好會保留", "settings.clearFailed": "清除失敗，請檢查儲存後重試。", "settings.confirmClear": "確認清除",
@@ -453,7 +453,7 @@ const ZH_TW_TRANSLATIONS = {
 } satisfies CoreTranslationDictionary;
 
 const JA_TRANSLATIONS = {
-  "app.title": "ブロックエスケープ", "app.canvasLabel": "ブロックエスケープのゲーム画面",
+  "app.title": "脑王的诞生", "app.canvasLabel": "脑王的诞生のゲーム画面",
   "common.ok": "OK", "common.gotIt": "わかった", "common.cancel": "キャンセル", "common.close": "閉じる", "common.retry": "再試行", "common.loading": "読み込み中…", "common.full": "満杯", "common.use": "使用", "common.complete": "完了", "common.level": "レベル", "common.levelNumber": "レベル {level}", "common.lvNumber": "Lv {level}",
   "navigation.start": "スタート", "navigation.shop": "ショップ", "navigation.leaderboard": "ランキング", "navigation.home": "ホーム", "navigation.journey": "ジャーニー", "navigation.collection": "コレクション",
   "settings.title": "設定", "settings.music": "音楽", "settings.haptics": "振動", "settings.effects": "演出", "settings.language": "言語", "settings.chooseLanguage": "言語を選択", "settings.languageSaved": "言語を{language}に変更しました", "settings.languageSaveFailed": "言語を保存できませんでした。もう一度お試しください。", "settings.clearProgress": "ゲーム進行を消去", "settings.clearTitle": "進行を消去しますか？", "settings.clearIrreversible": "この操作は取り消せません", "settings.clearDescription": "レベル、スター、コイン、ブースター、実績が初期状態に戻ります。", "settings.preferencesRetained": "サウンド、言語、端末設定は保持されます", "settings.clearFailed": "消去できませんでした。ストレージを確認して再試行してください。", "settings.confirmClear": "進行を消去",
@@ -464,7 +464,7 @@ const JA_TRANSLATIONS = {
 } satisfies CoreTranslationDictionary;
 
 const KO_TRANSLATIONS = {
-  "app.title": "블록 이스케이프", "app.canvasLabel": "블록 이스케이프 게임 화면",
+  "app.title": "脑王的诞生", "app.canvasLabel": "脑王的诞生 게임 화면",
   "common.ok": "확인", "common.gotIt": "알겠어요", "common.cancel": "취소", "common.close": "닫기", "common.retry": "다시 시도", "common.loading": "불러오는 중…", "common.full": "가득 참", "common.use": "사용", "common.complete": "완료", "common.level": "레벨", "common.levelNumber": "레벨 {level}", "common.lvNumber": "Lv {level}",
   "navigation.start": "시작", "navigation.shop": "상점", "navigation.leaderboard": "순위", "navigation.home": "홈", "navigation.journey": "여정", "navigation.collection": "컬렉션",
   "settings.title": "설정", "settings.music": "음악", "settings.haptics": "진동", "settings.effects": "효과", "settings.language": "언어", "settings.chooseLanguage": "언어 선택", "settings.languageSaved": "언어를 {language}(으)로 변경했습니다", "settings.languageSaveFailed": "언어를 저장할 수 없습니다. 다시 시도해 주세요.", "settings.clearProgress": "게임 진행 초기화", "settings.clearTitle": "진행을 초기화할까요?", "settings.clearIrreversible": "이 작업은 되돌릴 수 없습니다", "settings.clearDescription": "레벨, 별, 코인, 부스터와 업적이 초기 상태로 돌아갑니다.", "settings.preferencesRetained": "사운드, 언어와 기기 설정은 유지됩니다", "settings.clearFailed": "초기화하지 못했습니다. 저장 공간을 확인하고 다시 시도하세요.", "settings.confirmClear": "진행 초기화",
@@ -475,7 +475,7 @@ const KO_TRANSLATIONS = {
 } satisfies CoreTranslationDictionary;
 
 const ES_TRANSLATIONS = {
-  "app.title": "Escape de Bloques", "app.canvasLabel": "Lienzo del juego Escape de Bloques",
+  "app.title": "脑王的诞生", "app.canvasLabel": "Lienzo del juego 脑王的诞生",
   "common.ok": "Aceptar", "common.gotIt": "Entendido", "common.cancel": "Cancelar", "common.close": "Cerrar", "common.retry": "Reintentar", "common.loading": "Cargando…", "common.full": "Lleno", "common.use": "Usar", "common.complete": "Completado", "common.level": "Nivel", "common.levelNumber": "Nivel {level}", "common.lvNumber": "Nv. {level}",
   "navigation.start": "JUGAR", "navigation.shop": "TIENDA", "navigation.leaderboard": "CLASIFICACIÓN", "navigation.home": "INICIO", "navigation.journey": "VIAJE", "navigation.collection": "COLECCIÓN",
   "settings.title": "Ajustes", "settings.music": "Música", "settings.haptics": "Vibración", "settings.effects": "Efectos", "settings.language": "Idioma", "settings.chooseLanguage": "Elegir idioma", "settings.languageSaved": "Idioma cambiado a {language}", "settings.languageSaveFailed": "No se pudo guardar el idioma. Inténtalo de nuevo.", "settings.clearProgress": "Borrar progreso", "settings.clearTitle": "¿Borrar el progreso?", "settings.clearIrreversible": "Esta acción no se puede deshacer", "settings.clearDescription": "Los niveles, estrellas, monedas, potenciadores y logros se reiniciarán.", "settings.preferencesRetained": "Se conservarán el sonido, el idioma y las preferencias del dispositivo", "settings.clearFailed": "No se pudo borrar. Comprueba el almacenamiento e inténtalo de nuevo.", "settings.confirmClear": "Borrar progreso",
@@ -486,7 +486,7 @@ const ES_TRANSLATIONS = {
 } satisfies CoreTranslationDictionary;
 
 const PT_TRANSLATIONS = {
-  "app.title": "Fuga dos Blocos", "app.canvasLabel": "Tela do jogo Fuga dos Blocos",
+  "app.title": "脑王的诞生", "app.canvasLabel": "Tela do jogo 脑王的诞生",
   "common.ok": "OK", "common.gotIt": "Entendi", "common.cancel": "Cancelar", "common.close": "Fechar", "common.retry": "Tentar novamente", "common.loading": "Carregando…", "common.full": "Cheio", "common.use": "Usar", "common.complete": "Concluído", "common.level": "Fase", "common.levelNumber": "Fase {level}", "common.lvNumber": "Nv. {level}",
   "navigation.start": "JOGAR", "navigation.shop": "LOJA", "navigation.leaderboard": "RANKING", "navigation.home": "INÍCIO", "navigation.journey": "JORNADA", "navigation.collection": "COLEÇÃO",
   "settings.title": "Configurações", "settings.music": "Música", "settings.haptics": "Vibração", "settings.effects": "Efeitos", "settings.language": "Idioma", "settings.chooseLanguage": "Escolher idioma", "settings.languageSaved": "Idioma alterado para {language}", "settings.languageSaveFailed": "Não foi possível salvar o idioma. Tente novamente.", "settings.clearProgress": "Apagar progresso", "settings.clearTitle": "Apagar o progresso?", "settings.clearIrreversible": "Esta ação não pode ser desfeita", "settings.clearDescription": "Fases, estrelas, moedas, itens e conquistas serão reiniciados.", "settings.preferencesRetained": "Som, idioma e preferências do dispositivo serão mantidos", "settings.clearFailed": "Não foi possível apagar. Verifique o armazenamento e tente novamente.", "settings.confirmClear": "Apagar progresso",
@@ -497,7 +497,7 @@ const PT_TRANSLATIONS = {
 } satisfies CoreTranslationDictionary;
 
 const FR_TRANSLATIONS = {
-  "app.title": "Évasion de Blocs", "app.canvasLabel": "Zone de jeu Évasion de Blocs",
+  "app.title": "脑王的诞生", "app.canvasLabel": "Zone de jeu 脑王的诞生",
   "common.ok": "OK", "common.gotIt": "Compris", "common.cancel": "Annuler", "common.close": "Fermer", "common.retry": "Réessayer", "common.loading": "Chargement…", "common.full": "Plein", "common.use": "Utiliser", "common.complete": "Terminé", "common.level": "Niveau", "common.levelNumber": "Niveau {level}", "common.lvNumber": "Niv. {level}",
   "navigation.start": "JOUER", "navigation.shop": "BOUTIQUE", "navigation.leaderboard": "CLASSEMENT", "navigation.home": "ACCUEIL", "navigation.journey": "AVENTURE", "navigation.collection": "COLLECTION",
   "settings.title": "Paramètres", "settings.music": "Musique", "settings.haptics": "Vibration", "settings.effects": "Effets", "settings.language": "Langue", "settings.chooseLanguage": "Choisir la langue", "settings.languageSaved": "Langue définie sur {language}", "settings.languageSaveFailed": "Impossible d’enregistrer la langue. Réessayez.", "settings.clearProgress": "Effacer la progression", "settings.clearTitle": "Effacer la progression ?", "settings.clearIrreversible": "Cette action est irréversible", "settings.clearDescription": "Les niveaux, étoiles, pièces, bonus et succès seront réinitialisés.", "settings.preferencesRetained": "Le son, la langue et les préférences de l’appareil seront conservés", "settings.clearFailed": "Échec de l’effacement. Vérifiez le stockage et réessayez.", "settings.confirmClear": "Effacer",
@@ -508,7 +508,7 @@ const FR_TRANSLATIONS = {
 } satisfies CoreTranslationDictionary;
 
 const DE_TRANSLATIONS = {
-  "app.title": "Blockflucht", "app.canvasLabel": "Spielfläche von Blockflucht",
+  "app.title": "脑王的诞生", "app.canvasLabel": "Spielfläche von 脑王的诞生",
   "common.ok": "OK", "common.gotIt": "Verstanden", "common.cancel": "Abbrechen", "common.close": "Schließen", "common.retry": "Erneut versuchen", "common.loading": "Wird geladen…", "common.full": "Voll", "common.use": "Verwenden", "common.complete": "Abgeschlossen", "common.level": "Level", "common.levelNumber": "Level {level}", "common.lvNumber": "Lv. {level}",
   "navigation.start": "START", "navigation.shop": "SHOP", "navigation.leaderboard": "RANGLISTE", "navigation.home": "STARTSEITE", "navigation.journey": "REISE", "navigation.collection": "SAMMLUNG",
   "settings.title": "Einstellungen", "settings.music": "Musik", "settings.haptics": "Vibration", "settings.effects": "Effekte", "settings.language": "Sprache", "settings.chooseLanguage": "Sprache wählen", "settings.languageSaved": "Sprache auf {language} geändert", "settings.languageSaveFailed": "Die Sprache konnte nicht gespeichert werden. Bitte erneut versuchen.", "settings.clearProgress": "Zurücksetzen", "settings.clearTitle": "Fortschritt löschen?", "settings.clearIrreversible": "Dies kann nicht rückgängig gemacht werden", "settings.clearDescription": "Level, Sterne, Münzen, Booster und Erfolge werden zurückgesetzt.", "settings.preferencesRetained": "Ton, Sprache und Geräteeinstellungen bleiben erhalten", "settings.clearFailed": "Löschen fehlgeschlagen. Speicher prüfen und erneut versuchen.", "settings.confirmClear": "Fortschritt löschen",
@@ -519,7 +519,7 @@ const DE_TRANSLATIONS = {
 } satisfies CoreTranslationDictionary;
 
 const RU_TRANSLATIONS = {
-  "app.title": "Побег блоков", "app.canvasLabel": "Игровое поле «Побег блоков»",
+  "app.title": "脑王的诞生", "app.canvasLabel": "Игровое поле «脑王的诞生»",
   "common.ok": "ОК", "common.gotIt": "Понятно", "common.cancel": "Отмена", "common.close": "Закрыть", "common.retry": "Повторить", "common.loading": "Загрузка…", "common.full": "Заполнено", "common.use": "Выбрать", "common.complete": "Готово", "common.level": "Уровень", "common.levelNumber": "Уровень {level}", "common.lvNumber": "Ур. {level}",
   "navigation.start": "ИГРАТЬ", "navigation.shop": "МАГАЗИН", "navigation.leaderboard": "РЕЙТИНГ", "navigation.home": "ГЛАВНАЯ", "navigation.journey": "ПУТЬ", "navigation.collection": "КОЛЛЕКЦИЯ",
   "settings.title": "Настройки", "settings.music": "Музыка", "settings.haptics": "Вибрация", "settings.effects": "Эффекты", "settings.language": "Язык", "settings.chooseLanguage": "Выбрать язык", "settings.languageSaved": "Выбран язык: {language}", "settings.languageSaveFailed": "Не удалось сохранить язык. Повторите попытку.", "settings.clearProgress": "Сбросить прогресс", "settings.clearTitle": "Сбросить прогресс?", "settings.clearIrreversible": "Это действие нельзя отменить", "settings.clearDescription": "Уровни, звёзды, монеты, усилители и достижения будут сброшены.", "settings.preferencesRetained": "Звук, язык и настройки устройства сохранятся", "settings.clearFailed": "Сброс не удался. Проверьте хранилище и повторите попытку.", "settings.confirmClear": "Сбросить прогресс",

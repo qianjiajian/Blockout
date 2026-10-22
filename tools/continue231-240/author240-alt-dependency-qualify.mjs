@@ -1,0 +1,20 @@
+import fs from'node:fs';import assert from'node:assert/strict';import{createHash}from'node:crypto';
+import{joinDependencyMasks,feedbackMinimum,bitCount}from'./author232-prefix-dependency-core.mjs';
+import{unionPaths}from'./author240-alt-blocker-bound.mjs';
+import{ROOT,ruleGate,writeNew}from'./common.mjs';ruleGate();
+function feedback(rows){let best=rows.length;for(let removed=0;removed<1<<rows.length;removed++){const state=Array(rows.length).fill(0);let cycle=false;const visit=i=>{if(state[i]===1){cycle=true;return;}if(state[i]===2||cycle)return;state[i]=1;for(let j=0;j<rows.length;j++)if(!(removed&(1<<j))&&(rows[i]&(1<<j)))visit(j);state[i]=2;};for(let i=0;i<rows.length;i++)if(!(removed&(1<<i)))visit(i);if(!cycle)best=Math.min(best,bitCount(removed));}return best;}
+let randomState=493221;const random=()=>((randomState=(Math.imul(randomState,1664525)+1013904223)>>>0)/4294967296),cases=[];
+for(let sample=0;sample<48;sample++){
+ const bits=27,n=4,base=(1<<bits)-1,sparse=[0,9,18,26],paths=Array.from({length:n},(_,i)=>Array.from({length:2+sample%3},()=>{let obs=0,dep=0;for(const p of sparse)if(random()<.35)obs|=1<<p;for(let j=0;j<n;j++)if(j!==i&&random()<.4)dep|=1<<j;return obs|(dep<<bits);}));
+ let minimum=Infinity,products=0;const labels=[];
+ const walk=(i,obstacles,rows,label)=>{if(i===n){const F=feedback(rows);assert.equal(feedbackMinimum(rows).count,F);minimum=Math.min(minimum,bitCount(obstacles)+F);products++;labels.push(label);return;}for(const path of paths[i])walk(i+1,obstacles|(path&base),[...rows,path>>>bits],label|BigInt(path&base)|(BigInt(path>>>bits)<<BigInt(bits+i*n)));};walk(0,0,[],0n);
+ const joined=joinDependencyMasks(paths,{obstacleBits:27,maxJoined:100000});assert.equal(joined.status,'complete');assert.equal(joined.minimum,minimum);const minimal=joined.antichainLabels.map(BigInt);for(const full of labels)assert(minimal.some(m=>(m&full)===m));for(const m of minimal)assert(labels.includes(m));
+ // Path labels occupy bit30, so confirm union fixed point at the actual edge
+ // of the supported31-bit domain using exhaustive sparse subset reachability.
+ const activeBits=[0,9,18,26,27,28,29,30],graph={neighbors:[[1,2],[0,3],[0,3,4],[1,2,5],[2,5],[3,4]],occupied:Array.from({length:6},(_,i)=>i?activeBits.reduce((m,b)=>random()<.22?m|(1<<b):m,0):0),start:0,goals:[5]},actual=unionPaths(graph,{maxLabels:100000,maxMilliseconds:1000});assert.equal(actual.status,'complete');
+ const feasible=[];for(let subset=0;subset<256;subset++){const mask=activeBits.reduce((m,b,i)=>subset&(1<<i)?m|(1<<b):m,0),seen=new Set([0]),queue=[0];for(let h=0;h<queue.length;h++)for(const to of graph.neighbors[queue[h]])if(!seen.has(to)&&!(graph.occupied[to]&~mask)){seen.add(to);queue.push(to);}if(seen.has(5))feasible.push(mask);}
+ const expected=feasible.filter(a=>!feasible.some(b=>b!==a&&(a&b)===b)).sort((a,b)=>a-b);assert.deepEqual([...actual.masks].sort((a,b)=>a-b),expected);
+ cases.push({sample,targets:n,blockerBits:27,totalPathBits:31,combinedBits:43,rawProducts:products,minimum,antichain:joined.antichainLabels.length,sparsePathSubsets:256});
+}
+const files=['tools/continue231-240/author240-alt-dependency-bound.mjs','tools/continue231-240/author240-alt-dependency-qualify.mjs','tools/continue231-240/author232-prefix-dependency-core.mjs','tools/continue231-240/author240-alt-blocker-bound.mjs'],out=`${ROOT}/author240-alt/dependency-qualification-${Date.now()}.json`;
+writeNew(out,{status:'PASS',method:'Independent exhaustive four-target path products with all27 blocker positions and four dependency bits verify the joint minimum and componentwise antichain cover.48 sparse path graphs independently enumerate all256 active-bit subsets, exercising bit30 at the supported31-bit boundary. Feedback minima use independent DFS cycle detection over all16 removed-vertex subsets. No actual candidate lower search was run.',cases,rawProducts:cases.reduce((n,c)=>n+c.rawProducts,0),sourceRawSha256:Object.fromEntries(files.map(f=>[f,createHash('sha256').update(fs.readFileSync(f)).digest('hex')]))});console.log(JSON.stringify({out,status:'PASS',cases:cases.length,rawProducts:cases.reduce((n,c)=>n+c.rawProducts,0)}));

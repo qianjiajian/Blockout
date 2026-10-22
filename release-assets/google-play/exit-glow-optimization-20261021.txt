@@ -1,0 +1,31 @@
+Slide Jam: Block Puzzle — Google Play 0.1.16 / versionCode 17
+2026-10-21；规则 v1.198.0；测试包，没有上传或发布。
+
+本次已完成
+出口发光保留原颜色、光束、连续亮度、模糊公式及出门时点，改为在小区域画布中绘制，再按物理像素合成回主画布。每个游戏画布复用一张缓冲，RGBA像素预算最多2 MiB；尺寸变化先缩后扩，分配失败或不支持时回退原绘制。没有全局关闭阴影，也没有改变计时、移动或消除逻辑。
+仅GP构建投影和专属helper改变。共享游戏源码、微信/抖音保持；最新包体图标保持。16项既有GP运行源码/广告配置、239项APK原生图片资源及2113项其它渠道/共享文件核对未变。关卡projection深相等，HTML仅bundle引用变化。
+
+验证结果
+桌面Chromium / SwiftShader软件Canvas、CPU4倍限速、393×852、实际画布DPR1.5；隔离内存存档、真实触控、自然时钟，两轮交替旧新版本：
+  旧0.1.15 → 新0.1.16，出口帧间隔中位数：190.5→94.4ms；185.5→100.6ms。
+  两轮下降50.4%和45.8%。首次触发与后续复用均有改善。
+这不是手机FPS，也不证明所有卡顿已消失。
+393×852和320×568各真实三拖、自然计时、三星保存及自动进入第2关通过。
+121个连续强度复用单缓冲、尺寸预算、状态恢复、resize、回退与恢复检查通过。
+96个常规视觉场景最大RGBA通道差2，无丢失/新增亮像素。人工贴画布边缘压力场景局部最大差27；人为fractional clip穿高光局部最大差119，实际调用路径没有此clip。旧严格像素FAIL保留；另行视觉复核认为常规效果可接受，不宣称逐像素等价。
+TypeScript通过；assembleRelease/bundleRelease/lintRelease通过，lint0错误24条既有警告。签名、953项包内游戏资产、bundletool及四ABI的16KB对齐通过。
+
+文件
+artifacts/google-play/SlideJam-0.1.16-googleplay-exit-glow.apk
+  SHA256 4f487b7d8b6006aa819a849548416240eb8b470e685c9f2a163f015e34c15a10
+artifacts/google-play/SlideJam-0.1.16-googleplay-exit-glow.aab
+  SHA256 e1facdd0ec3de421145b68ba03785339462f3ceda87aae5d5d7d98636e2c6200
+包名com.SlideJam.SweetPotato；与此前gp2026签名一致。仍为官方测试广告、统计关闭、私有聚合wrapper停用的联调包，不是已完成上架验收的正式包。
+
+证据
+.codex-temp/google-play-exit-glow-20261021/validation/summary.json
+.codex-temp/google-play-exit-glow-20261021/impl/scratch-report.json
+.codex-temp/google-play-exit-glow-20261021/scope-parity.json
+artifacts/google-play/SlideJam-0.1.16-googleplay-exit-glow-checks.json
+全内容后续热点见同目录full-performance-audit-20261021.txt。
+当前指定MuMu ADB仍无可操作设备，没有在用户手机安装、清档或测帧率。

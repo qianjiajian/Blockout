@@ -1,0 +1,15 @@
+Google Play 测试包 0.1.21 / versionCode 22
+包名：com.SlideJam.SweetPotato
+APK：artifacts/google-play/SlideJam-0.1.21-googleplay-overlays.apk
+AAB：artifacts/google-play/SlideJam-0.1.21-googleplay-overlays.aab
+
+修复上版遗漏的功能入口引导挖孔遮罩：遮罩铺满屏幕，按钮高亮孔和触控坐标保持。同步修正已审计的旅程奖励/加载、藏品详情、机制教学、成功/失败、个人资料/改名、联赛说明/详情及脉冲遮罩的固定范围写法。只用于Google Play。
+
+已复现0.1.20旧包亮边；新包5类引导实际触控、排行榜6组尺寸/安全区、四角与两侧像素遮罩、非目标拒绝与正确点击通过。57项单测、tsc、Gradle/lint、签名/953项Web资源/16KB验证通过；2113受保护文件不变。其他奖励/失败分支通过投影与代码核查，未逐一实战触发。
+ADB未检测到设备，未真机安装或读取真实存档；保留官方测试广告，不是上架就绪配置。未上传发布。
+
+SlideJam-0.1.21-googleplay-overlays.apk
+SHA256: 86fec5be57389f44f735311f1d5beacfd809e359050323804d023b4864103442
+
+SlideJam-0.1.21-googleplay-overlays.aab
+SHA256: 1e9f1a43fda0baf929e163ed6f5369f6f3e5f40e645ae46cabb143fe3a3687cb

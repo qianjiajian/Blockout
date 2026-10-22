@@ -1,0 +1,20 @@
+Slide Jam: Block Puzzle — Google Play 0.1.19 / code20
+首次默认英文，2026-10-21
+
+新玩家首次打开时固定使用英文，不再跟随手机语言。已有存档的语言选择保留，仍可在游戏设置中手动切换，并在重进游戏后恢复。覆盖安装不会强制清除原先保存的中文或其它语言。
+
+GooglePlayHost提供固定英文首选；启动HTML、ES5错误保护、自有原生错误/重试/广告反馈使用英文。正常游戏启动进度和应用内隐私说明随游戏当前语言；首次为英文，手动切换后按选择显示。第三方广告/同意表单、外部网页使用各自语言规则，本次未修改第三方SDK配置。
+
+仅Google Play版本生效，微信、抖音、普通Web/旧Android工程保持。包含此前拖动跟手优化、满体力广告+1并可溢出的修复。已保存的进度、体力、金币和语言不重置；没有访问真实玩家存档。
+
+语言回归70项和TypeScript检查通过；最终Web模拟不同系统语言的首次英文及手动切换重载检查见最终报告。APK/AAB构建、Android单元测试、签名/资源/bundletool及lint检查通过（0错误、24项既有警告）。本轮没有手机安装验证。
+
+APK：artifacts/google-play/SlideJam-0.1.19-googleplay-english-default.apk
+65,537,718字节，SHA256 642f99c31cba5721a739bb626f7a66836f0af735eed0f8cc5f469ff87718384a
+AAB：artifacts/google-play/SlideJam-0.1.19-googleplay-english-default.aab
+65,034,079字节，SHA256 f7283014fdc2e2eba88d2a1d257a225c0b29a1c6654f3030887d7900c36297c8
+同包名com.SlideJam.SweetPotato及gp2026签名，仍为官方测试广告配置，未上传发布。
+
+最终证据：artifacts/google-play/SlideJam-0.1.19-googleplay-english-default-validation.json
+包检查：artifacts/google-play/SlideJam-0.1.19-googleplay-english-default-checks.json
+本次应用内隐私文字已同步。privacy-policy-draft.html是历史离线草稿，未当作现版政策修改或发布。

@@ -4,7 +4,7 @@
         android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
-        android:label="方块出逃"
+        android:label="脑王的诞生"
         android:resizeableActivity="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">

@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+  <title>DRAFT — 脑王的诞生 / Block Out! 隐私政策草稿</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, "Microsoft YaHei", sans-serif; line-height: 1.75; color: #172033; background: #f5f7fa; }
+    body { margin: 0; padding: 24px 16px 64px; }
+    main { max-width: 860px; margin: auto; padding: 28px; background: white; border-radius: 12px; }
+    h1 { font-size: 1.7rem; line-height: 1.35; }
+    h2 { margin-top: 2rem; font-size: 1.3rem; }
+    h3 { font-size: 1.1rem; }
+    a { color: #0758a3; overflow-wrap: anywhere; }
+    .draft { padding: 18px; border: 3px solid #a33a00; background: #fff1e5; font-weight: 650; }
+    .missing { color: #9a2600; font-weight: 700; }
+    .meta { color: #526079; }
+    li { margin: 6px 0; }
+    hr { margin: 36px 0; border: 0; border-top: 1px solid #d9dfe8; }
+    @media (max-width: 480px) { main { padding: 18px; } h1 { font-size: 1.4rem; } }
+  </style>
+</head>
+<body>
+<main>
+  <div class="draft" role="note">历史 0.1.9 离线版草稿：不适用于 0.1.10 SDK 测试包或后续联网广告版本。Historical offline draft; not applicable to the SDK test build. DRAFT / 未完成草稿 — 不可作为最终隐私政策提交 Google Play。本草稿尚未部署到公开网站。用户已提供运营主体、邮箱和政策网址；网址可访问，但远程正文与当前离线基础包不一致，仍待修订。适用年龄、地区及邮件支持数据留存安排尚待确认；必须完成核对后才可生效。</div>
+  <h1>脑王的诞生 / Block Out!<br>隐私政策草稿 · Privacy Policy Draft</h1>
+  <p class="meta">草稿核对日期 / Draft review date: 2026-10-19<br>限定范围 / Scope: Google Play 离线基础测试版本 0.1.9（versionCode 10），包名 <code>com.SlideJam.SweetPotato</code>。此版本正在准备，以下描述须与最终产物再核对。</p>
+  <p><a href="#zh">中文</a> · <a href="#en">English</a> · <a href="#review">发布前待办 / Before publication</a></p>
+
+  <section id="zh" lang="zh-CN">
+    <h2>中文草稿</h2>
+    <p>本说明描述当前离线基础测试版如何在您的设备上处理游戏资料。它不适用于未来接入广告、统计、在线账号、联网排行榜或其他网络服务后的版本。</p>
+    <h3>1. 运营主体和联系方式</h3>
+    <ul>
+      <li>运营主体：Nanjing sweet potato network technology（按用户提供的名称；正式商店资料应采用相同的真实主体名称）</li>
+      <li>隐私联系邮箱：<a href="mailto:hongshugame@gmail.com">hongshugame@gmail.com</a></li>
+      <li>用户提供的公开政策网址：<a href="https://sweetpotato-net.web.app/privacy.html?bundle=com.SlideJam.SweetPotato">查看当前公开网页</a>。<span class="missing">网页可访问，但尚未更新为本草稿所描述的离线版本政策；不能据此认定上架资料已完成。</span></li>
+      <li>生效日期：<span class="missing">[尚未生效；完成确认后填写]</span></li>
+    </ul>
+    <h3>2. 设备本地处理的信息及用途</h3>
+    <ul>
+      <li><strong>玩家资料：</strong>随机生成的本地玩家编号、默认或您输入的昵称、选择的内置头像和头像框、首次建立资料的时间。用于本机资料展示；编号不是广告标识符，也不是联网注册账号。本版不要求真实姓名、手机号或邮箱，不上传照片。</li>
+      <li><strong>游戏存档：</strong>关卡进度、最佳星级和步数、尝试及连胜记录、游戏内金币、体力和道具、收藏、旅程、成就、每日任务及挑战、联赛和排行相关状态、领取记录与计时数据。用于保存游戏进度、计算恢复时间、任务及游戏内奖励。</li>
+      <li><strong>设置：</strong>游戏语言、音乐和音效、曲目、震动及减弱动画等选择。首次启动时在本机读取设备提供的语言偏好，以选择默认游戏语言。</li>
+      <li><strong>本地排行显示：</strong>当前版本未配置联网地区识别服务。显示用地区可由程序随机分配并保存，不代表读取 GPS 或识别您的真实住址；模拟排行数据在设备上生成，不向其他玩家广播您的昵称或成绩。</li>
+      <li><strong>运行信息：</strong>为适配显示和排查启动问题，应用会在本机使用显示尺寸、系统及 WebView 版本等运行信息，并可能将版本、加载失败或崩溃信息写入 Android 本机诊断日志。本版不自动上传这些日志。</li>
+      <li><strong>复制操作：</strong>您主动使用资料页的复制功能时，应用会尝试将选定的本地玩家编号写入系统剪贴板，不读取剪贴板中的其他内容。系统输入法和剪贴板的自身处理由您使用的系统或输入法决定。</li>
+    </ul>
+    <p>上述存档通过应用内 WebView 的本地存储保存在设备上。它们不是“完全不处理任何数据”；但在本草稿所限的离线测试版中，应用不将这些资料发送给开发者或广告、统计服务。</p>
+    <h3>3. 联网、广告和第三方服务</h3>
+    <p>本离线基础测试版不启用 INTERNET 权限，不接入聚合广告、Google Mobile Ads、Firebase Analytics/Crashlytics 或 Solar 统计 SDK，不提供云存档、联网登录或真实广告展示。游戏资源随安装包提供；本地资源加载地址不表示向外部网站传输资料。应用使用 Android 系统 WebView 运行内置游戏内容。</p>
+    <p>您主动点击“隐私政策”时，应用调用外部浏览器打开上述公开网页；浏览器访问网站会按其自身方式处理网络信息（包括可能向网站或托管服务提供 IP 地址）。这不是游戏在后台上传存档。您主动点击联系邮箱时，应用尝试打开邮件应用；由您决定是否发送及发送内容。应用不会自动附加玩家编号、存档或诊断日志。外部浏览器和邮件应用的网络权限独立于本游戏。</p>
+    <p>Google Play、Android 系统、设备厂商或输入法在自身服务中处理的信息，不由本应用的离线实现决定，应另行查看对应服务的说明。如未来加入联网或第三方 SDK，必须重新核对实际数据流、更新本政策及商店 Data safety 信息，并在适用时取得用户同意。</p>
+    <h3>4. 保存期限、删除和安全</h3>
+    <p>本地存档通常保留到您在 Android 系统设置中清除本应用的存储数据，或卸载并选择移除应用数据为止；不同系统的菜单名称可能不同。清除数据会删除本地进度，应用没有服务器副本可供恢复。应用当前关闭 Android 自动备份；设备厂商迁移、系统保留数据选项及用户自行制作的备份应单独管理。</p>
+    <p>本版没有联网账号，因此本地玩家编号不对应需要向服务器申请注销的账号。存档位于应用的本地存储范围；本说明不承诺设备丢失、系统被修改或数据被用户复制后仍无法被访问。若您主动向开发者发送邮件、截图或诊断文件，请先检查其中内容；收件方会收到您选择发送的邮件地址、正文及附件。<span class="missing">[此类支持请求的处理目的、接收人员、保存期限及删除流程仍需运营主体确认；不在草稿中虚构留存期限。]</span></p>
+    <h3>5. 适用年龄、地区及政策变更</h3>
+    <p class="missing">[待确认目标年龄、是否面向儿童、发行国家/地区及对应支持方式；不能将此草稿视为已完成儿童或地区隐私要求。]</p>
+    <p>政策生效前须完成下方待办；后续数据行为改变时应先更新说明及必要的应用内选择，再发布对应版本。</p>
+  </section>
+
+  <hr>
+  <section id="en" lang="en">
+    <h2>English draft</h2>
+    <p>This notice describes on-device processing in the offline foundation test build only. It does not cover a future build with advertising, analytics, online accounts, online leaderboards, or other network services.</p>
+    <h3>1. Operator and contact</h3>
+    <ul>
+      <li>Operator: Nanjing sweet potato network technology (as provided by the user; use the same genuine operator identity in the store listing)</li>
+      <li>Privacy contact: <a href="mailto:hongshugame@gmail.com">hongshugame@gmail.com</a></li>
+      <li>Supplied public policy URL: <a href="https://sweetpotato-net.web.app/privacy.html?bundle=com.SlideJam.SweetPotato">Open the current public page</a>. <span class="missing">The page is accessible, but its content does not yet match this offline build. It must be revised before being treated as the final policy for this release.</span></li>
+      <li>Effective date: <span class="missing">[Not effective; fill in after review and completion]</span></li>
+    </ul>
+    <h3>2. Information processed on your device</h3>
+    <ul>
+      <li><strong>Player profile:</strong> a randomly generated local player number, a default or player-entered nickname, a selected built-in avatar and frame, and the time the profile was created. These support the local profile display. The number is not an advertising identifier or a registered online account. This build does not require a real name, phone number or email address, and does not upload photos.</li>
+      <li><strong>Game saves:</strong> level progress, best stars and moves, attempts and win streaks, virtual coins, energy and items, collection, journey, achievement, daily task and challenge records, league and ranking state, reward records and timestamps. These maintain progress, timers and in-game rewards.</li>
+      <li><strong>Preferences:</strong> language, music and sound, selected tracks, vibration and reduced motion. On first launch, the app reads the language preferences provided by the device locally to select a default language.</li>
+      <li><strong>Local ranking display:</strong> no online region lookup service is configured for this build. A display region can be randomly assigned and saved; it is not GPS location or your actual address. Simulated ranking data is generated on the device. Your nickname and scores are not broadcast to other players.</li>
+      <li><strong>Runtime information:</strong> display dimensions and Android/WebView version information are used locally for display compatibility and startup diagnostics. Version information, loading failures or crash details may appear in Android's local diagnostic logs. The app does not automatically upload these logs.</li>
+      <li><strong>Copy action:</strong> when you choose the copy action on the profile page, the app attempts to write the selected local player number to the system clipboard. It does not read other clipboard content. Your system and keyboard provider control their own input and clipboard processing.</li>
+    </ul>
+    <p>Saves are kept in the application's WebView local storage on the device. This is local data processing, rather than an absence of all data processing. In the offline test build covered by this draft, the app does not transmit this information to the developer or advertising/analytics services.</p>
+    <h3>3. Network access, advertising and third parties</h3>
+    <p>This offline foundation test build does not enable the INTERNET permission or integrate mediation advertising, Google Mobile Ads, Firebase Analytics/Crashlytics, or Solar analytics SDKs. It has no cloud save, online sign-in or live ad delivery. Game resources are bundled with the installation; local asset URLs do not indicate transmission to an external website. Android's system WebView runs the bundled game.</p>
+    <p>Choosing the privacy-policy action opens the supplied website in an external browser. Browser visits can disclose network information such as your IP address to the website or its hosting provider; this is separate from uploading game saves. Choosing the contact action opens a mail application where you decide whether to send a message and what to include. The game does not automatically attach a player number, save file or diagnostic log. The browser and mail application have their own network permissions and data practices.</p>
+    <p>Google Play, Android, device manufacturers and keyboard services may process information for their own services under their respective notices. Their independent behavior is not determined by this app's offline implementation. Any future network or SDK integration requires a fresh data-flow review, updates to this policy and the Play Data safety form, and user consent where applicable.</p>
+    <h3>4. Retention, deletion and security</h3>
+    <p>Local saves normally remain until you clear the app's storage in Android settings or uninstall it and choose to remove its data. Menu labels vary by device. Clearing storage deletes local progress; the app has no server copy to restore. Android automatic backup is currently disabled for the app. Manufacturer migration tools, system data-retention options and backups you create must be managed separately.</p>
+    <p>This build has no online account: a local player number is not an account requiring a server deletion request. Saves are stored within the application's local storage. This notice does not promise protection after device loss, system modification or a user-made copy. Review any message, screenshot or diagnostic file before voluntarily sending it to the developer. The recipient receives the email address, text and attachments you choose to send. <span class="missing">[The operator must confirm the purposes, access, retention and deletion arrangements for support requests; no retention period is invented in this draft.]</span></p>
+    <h3>5. Audience, regions and changes</h3>
+    <p class="missing">[Confirm target ages, whether the game is directed at children, release countries/regions and support arrangements. This draft does not establish compliance with child-specific or regional privacy requirements.]</p>
+    <p>Complete the review items below before this policy becomes effective. If data practices change, update the notice and necessary in-app choices before releasing the corresponding build.</p>
+  </section>
+
+  <hr>
+  <section id="review">
+    <h2>发布前待办 / Before publication</h2>
+    <ol>
+      <li>将已提供的运营主体和邮箱与商店资料核对，确认最终中英文应用名称、年龄/地区、邮件支持处理安排及政策生效日期。Check the provided operator/contact against the store listing; confirm app names, audience, regions, support-data handling and effective date.</li>
+      <li>以最终 AAB/APK 的依赖、合并 Manifest、网络测试和实际功能复核本文；若接 SDK 或网络功能必须重写相应章节。Recheck this notice against the final artifact and actual data flows.</li>
+      <li>修订用户已提供的公开政策网页，使其与实际离线版本一致，并复核应用内入口及 Play Console 链接；当前远程模板不是本草稿，不能仅凭网址可访问判定完成。Update the supplied public policy to match the actual offline release, then check the in-app and Play Console links.</li>
+      <li>移除草稿横幅和待填项只应发生在以上事项完成后；当前文件不可直接作为正式政策。Remove draft markers only after completion; do not submit this file as a final policy.</li>
+    </ol>
+    <p>参考 / Sources checked 2026-10-19:</p>
+    <ul>
+      <li><a href="https://support.google.com/googleplay/android-developer/answer/10144311?hl=en">Google Play User Data — privacy policy and account deletion requirements</a></li>
+      <li><a href="https://support.google.com/googleplay/android-developer/answer/10787469?hl=en">Google Play Data safety — SDK disclosures and on-device processing</a></li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>

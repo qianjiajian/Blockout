@@ -15,11 +15,11 @@ export type LeagueArt=Record<typeof LEAGUE_ART_NAMES[number],HTMLImageElement>;
 export const LEAGUE_ART_PATHS=LEAGUE_ART_NAMES.map(n=>`/${LEAGUE_VIDEO_ART[n]}`);
 export function leagueCountdown(end:number,now:number):string{const s=Math.max(0,Math.ceil((end-now)/1000));return `${Math.floor(s/86400)}天 ${String(Math.floor(s%86400/3600)).padStart(2,"0")}:${String(Math.floor(s%3600/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`;}
 export function gloryTitle(s:number):string{return s>=100?"荣耀·传奇":s>=50?"荣耀·永恒":s>=30?"荣耀·至尊":s>=10?"荣耀·崇高":"荣耀";}
-export function leagueRows(s:LeagueState){
-  const names=leagueBotNames(s.seed,s.season.index);
+export function leagueRows(s:LeagueState, opponentLanguage: unknown = "zh-CN"){
+  const names=leagueBotNames(s.seed,s.season.index, opponentLanguage);
   return [...s.season.bots.map((b,i)=>({...b,name:names[i],player:false})),{id:"player",name:"我",avatar:0,score:s.season.score,player:true}].sort((a,b)=>b.score-a.score||Number(b.player)-Number(a.player)||a.id.localeCompare(b.id)).map((r,i)=>({...r,rank:i+1}));
 }
-export interface LeagueView{state?:LeagueState;now:number;scroll:number;tier:number;tierPosition?:number;playerLevel?:number;info:boolean;introPage?:LeagueIntroPage;challengeNotice?:boolean;persistence?:"unknown"|"rejected";action?:"open"|"refresh"|"claim"|"intro";artError?:boolean;settlementArtError?:boolean}
+export interface LeagueView{state?:LeagueState;now:number;scroll:number;tier:number;tierPosition?:number;playerLevel?:number;info:boolean;introPage?:LeagueIntroPage;challengeNotice?:boolean;persistence?:"unknown"|"rejected";action?:"open"|"refresh"|"claim"|"intro";artError?:boolean;settlementArtError?:boolean;language?:string}
 export interface LeaguePaint{button:(key:string,rect:LeagueRect,text:string,color?:string)=>void;pressable?:(key:string,rect:LeagueRect,draw:()=>void)=>void;popup?:(key:string,bounds:LeagueRect,draw:()=>void)=>void;drawAvatar?:(avatar:number,player:boolean,rect:LeagueRect)=>void;avatars?:HTMLImageElement[];art?:LeagueArt;settlementArt?:LeagueSettlementArt}
 export function drawLeague(ctx:CanvasRenderingContext2D,v:LeagueView,p:LeaguePaint):void{
   if(v.state?.pending && v.introPage===undefined){drawLeagueSettlement(ctx,{pending:v.state.pending,persistence:v.persistence,action:v.action,artError:v.settlementArtError},p,p.settlementArt);return;}
@@ -56,7 +56,7 @@ export function drawLeague(ctx:CanvasRenderingContext2D,v:LeagueView,p:LeaguePai
   if(v.tier<7)press("league.tierNext",LEAGUE_UI.tierNext,()=>image(a["arrow-right"],{x:459,y:292,width:24,height:38},true));
   image(a["tier-name-base"],LEAGUE_SUPPLIED_LAYOUT.tierName,true);
   text(v.tier===7?gloryTitle(s.season.tier===7?s.season.stars:0):LEAGUE_TIERS[v.tier],248,418,27,"#fff");
-  const offset=clampLeagueScroll(v.scroll),rows=leagueRows(s);
+  const offset=clampLeagueScroll(v.scroll),rows=leagueRows(s,v.language);
   const avatar=(n:number,player:boolean,r:LeagueRect)=>{if(p.drawAvatar)p.drawAvatar(n,player,r);else image(p.avatars?.[n%(p.avatars.length||1)],r,true);};
   const row=(r:typeof rows[number],y:number,self=false)=>{
     const ny=(y-LEAGUE_ART_OFFSET_Y)/LEAGUE_ART_SCALE;

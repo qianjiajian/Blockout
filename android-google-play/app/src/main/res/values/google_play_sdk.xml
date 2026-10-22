@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- UMP must resolve this app's privacy messages, so use its real application ID.
+         All three ad UNIT IDs remain Google's official test inventory in every build.
+         There is deliberately no Gradle property that switches on live ad units. -->
+    <string name="admob_app_id" translatable="false">ca-app-pub-7759314205132332~6582382843</string>
+    <string name="splash_unit_id" translatable="false">ca-app-pub-3940256099942544/9257395921</string>
+    <string name="inter_unit_id" translatable="false">ca-app-pub-3940256099942544/1033173712</string>
+    <string name="reward_unit_id" translatable="false">ca-app-pub-3940256099942544/5224354917</string>
+    <string name="Solar_APP_KEY" translatable="false"></string>
+    <string name="game_activity" translatable="false">com.blockout.app.MainActivity</string>
+    <bool name="is_portrait">true</bool>
+    <integer name="inter_preload_count">1</integer>
+    <integer name="reward_preload_count">1</integer>
+    <!-- Supplied production ad UNIT IDs and Solar key remain inactive.
+         The provided app ID is duplicated here as an input/provenance reference. -->
+    <string name="provided_admob_app_id" translatable="false">ca-app-pub-7759314205132332~6582382843</string>
+    <string name="provided_splash_unit_id" translatable="false">ca-app-pub-7759314205132332/1960611553</string>
+    <string name="provided_inter_unit_id" translatable="false">ca-app-pub-7759314205132332/3078252103</string>
+    <string name="provided_reward_unit_id" translatable="false">ca-app-pub-7759314205132332/8083166777</string>
+    <string name="provided_solar_app_key" translatable="false">2f0602b4f5cd9387</string>
+</resources>

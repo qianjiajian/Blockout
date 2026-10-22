@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.7.3" type="incidents">
+
+    <incident
+        id="DiscouragedApi"
+        severity="warning"
+        message="Should not restrict activity to fixed orientation. This may not be suitable for different form factors, causing the app to be letterboxed.">
+        <location
+            file="${:app*release*MAIN*sourceProvider*0*manifest*0}"
+            line="15"
+            column="13"
+            startOffset="586"
+            endLine="15"
+            endColumn="49"
+            endOffset="622"/>
+    </incident>
+
+    <incident
+        id="SetJavaScriptEnabled"
+        severity="warning"
+        message="Using `setJavaScriptEnabled` can introduce XSS vulnerabilities into your application, review carefully">
+        <location
+            file="${:app*release*MAIN*sourceProvider*0*javaDir*0}/com/blockout/app/MainActivity.java"
+            line="201"
+            column="9"
+            startOffset="9503"
+            endLine="201"
+            endColumn="44"
+            endOffset="9538"/>
+    </incident>
+
+</incidents>

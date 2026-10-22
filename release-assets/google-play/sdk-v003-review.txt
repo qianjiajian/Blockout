@@ -1,0 +1,68 @@
+Sdk_Mediation_v0.0.3.aar 接入审查与提供方修复清单
+审查日期：2026-10-19
+范围：仅 Google Play；包名 com.SlideJam.SweetPotato。微信、抖音版本不在本次范围。
+
+审查对象
+- 文件：C:/Users/Administrator/Downloads/Sdk_Mediation_v0.0.3.aar
+- 大小：231722 字节
+- SHA-256：70c881e8aee717143b935e4409e9025ea3d99c85ac7cd4b92a8975f9de639eba
+- 实际 Java 包：com.hs.admob；共31个class。文档的 com.hs.topon_sdk 导入路径已过时。
+- 本次采用 ZIP/XML 与 javap 静态检查，没有执行 AAR、使用真实广告ID请求广告，或发送统计事件。
+
+结论
+该文件包含广告展示、奖励回调与关卡事件封装，但目前不能直接采用 SDKUtils.initSDK/onCreate 作为正式包初始化入口。以下初始化和同意处理需要提供方修复。仅把 AAR 放入构建，不代表这些功能已启用或真机验收通过。
+
+1. 必须修复 UMP 超时后绕过请求许可
+SDKUtils 的 consent update failure 和 consent form dismissed 两条分支，在 errorCode=4 且 canRequestAds=false 时，直接设置 allowDataCollection=true，并初始化 Solar 与 Mobile Ads。日志明确写明将超时视为非欧洲地区。
+期望：任何错误都不能推断用户地区或授权；只在 UMP canRequestAds=true 时初始化/请求广告，失败时游戏继续运行且不展示广告。必须分别回归首次离线、超时、已有有效历史同意、拒绝/部分同意和表单加载失败。
+
+2. 统计初始化应独立于广告初始化并支持禁用
+当非超时错误或表单结果不允许请求广告时，SDKUtils 仍会调用 initializeSolarOnce。SolarManager.init 会执行 preInit/initialize，然后调用 FirebaseManager.init；allowDataCollection=false 只改变部分采集/共享参数，不是停止所有统计上传。
+期望：分别提供 Solar/Firebase 开关、初始化时机与同意状态参数；未满足对应条件时不调用其初始化与事件接口。撤回同意后的停止、缓存处理与再次启用行为需要文档说明及测试。
+
+3. 不得以 UMP 汇总状态代替细分授权
+SDKUtils 在 canRequestAds=true 且 ConsentStatus 为 NOT_REQUIRED 或 OBTAINED 时，统一把 allowDataCollection 设为true。SolarManager 将其同时用于 adPersonalizationEnabled 与 adUserDataEnabled。
+期望：分别传递与用户实际选择一致的个性化广告、向Google共享数据和统计授权，不将 OBTAINED 解释成同意所有用途。UMP 可以请求广告不等于可开启任意第三方分析服务。
+
+4. 儿童/未成年设置与日志必须可配置
+SolarManager.init 硬编码 setCoppaEnabled(false)、setKidsAppEnabled(false)，并无条件 logEnabled()。SDKUtils 的 ConsentRequestParameters 也没有宿主可传的年龄设置。
+期望：由宿主明确配置适龄/COPPA/未达同意年龄状态，初始化前生效；正式包默认关闭SDK详细日志，不在日志打印配置和事件内容。不能把未提供年龄信息当作已确认不面向儿童。
+
+5. 广告类应支持安全的外部初始化
+InterAd、RewardVideoAd 和 SplashAd 的预加载依赖 SDKUtils.isMobileAdsInitialized()。该函数读取 SDKUtils 私有标志；宿主直接调用官方 Mobile Ads 初始化并不会设置此标志。
+期望：提供公开且有文档的外部初始化完成入口或注入状态，不迫使宿主调用存在上述问题的初始化流程。宿主不应反射修改私有字段来绕过流程。
+
+6. Manifest 不应默认接管宿主应用入口
+AAR 声明 com.hs.admob.MApplication，并加入 exported=true、MAIN/LAUNCHER 的 SplashActivity。SplashActivity 会调用 SDKUtils.initSDK，且按 game_activity 字符串反射进入游戏。
+期望：宿主选择是否使用独立开屏Activity；库不要默认新增Launcher或替换Application。第一启动不展示/第二次冷启动起展示等规则由宿主控制。提供准确的Manifest合并说明。
+本次静态检查中 MApplication.onCreate 只打印日志并读取 debuggable 标志，没有自身启动 Solar/Firebase/GMA；仍应避免它无意覆盖宿主Application。
+
+7. 更新文档与依赖说明
+- 正确导入 com.hs.admob.SDKUtils 与 com.hs.admob.interfaces.*。
+- 实际提供的是 trackCustomEvent/trackLevelStart/trackLevelEnd；send* 是宿主桥接命名，不能直接当作AAR类方法。
+- AAR须作为运行时 implementation 依赖，不能用 compileOnly 代替打入APK。
+- AAR调用 GMA Next-Gen 命名空间，不要混入 Legacy play-services-ads。
+- 补充完整依赖版本、SDK数据采集与存储地区、正式调试开关及升级兼容说明。
+
+已确认的事件行为
+- trackLevelStart(String, JSONObject) 上报 level_start；trackLevelEnd 上报 level_end；level_id 写为传入字符串。
+- result、duration 由宿主传入，AAR本身不计算关卡耗时、不决定胜负。
+- 关卡/自定义事件只走Solar；广告event、eventAdImpression、eventAdClick另调用Firebase事件层。
+- SolarManager/FirebaseManager的事件函数没有自动初始化调用；静态初始化仅建立字段/正则。未初始化时事件不上传。这是静态路径判断，不是网络抓包结论。
+- Solar_APP_KEY 为空时 SolarManager.init 提前返回，也不会从该函数触发 FirebaseManager.init。但 Firebase 依赖自身可能通过Provider自动初始化，宿主测试包仍须独立关闭分析采集。
+
+当前项目可采用的边界
+- 由宿主采用官方 GMA Next-Gen 与 UMP 建立严格同意门控及广告回调；不调用上述 AAR 初始化/Launcher，不反射修改它的私有状态。
+- 本轮测试配置应保持 Solar 未初始化，Firebase 分析采集停用；不得把提供的AppKey存在于文档中等同于其产品/存储地区和数据策略已核实。
+- 后续修正版 AAR 的接入，需重新验真实回调、首次/二次冷启动、前后台、共享CD、重复回调及拒绝/撤回同意流程。
+- 当前AAR本体没有.so；所有传递依赖与最终AAB的64位/16KB检查仍须单独完成。
+
+供核对的官方文档
+UMP：https://developers.google.com/admob/android/next-gen/privacy
+Solar Android 1.3.4：https://help.solar-engine.com/en/docs/Android-SDK-Integration-Documentation
+Solar GDPR开关：https://help.solar-engine.com/en/docs/GDPR-JppR
+Solar 自定义事件：https://help.solar-engine.com/en/docs/Custom-Events
+
+静态证据
+.codex-temp/google-play-sdk-20261019/aar-review/independent-review.json
+.codex-temp/google-play-sdk-audit-20261019/solar-review/*.txt

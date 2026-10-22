@@ -1,0 +1,67 @@
+公开隐私政策与 Google Play 离线基础包的一致性审核
+核验日期：2026-10-19（Asia/Shanghai）
+目标版本：0.1.9 / versionCode 10
+用户已授权的 applicationId：com.SlideJam.SweetPotato
+用户指定运营主体：Nanjing sweet potato network technology
+用户指定邮箱：hongshugame@gmail.com
+用户提供网页：https://sweetpotato-net.web.app/privacy.html?bundle=com.SlideJam.SweetPotato
+
+结论
+该网页真实可访问，邮箱一致，但目前正文仍按带广告及服务器收集的应用模板描述，不能作为当前离线、无广告/统计SDK基础包已经上架就绪的证据。本次只更新本地准备资料；没有修改或发布网站。
+
+已确证的页面行为
+1. 通过本机HTTPS及隔离Chromium访问成功，无需登录。web.open工具访问失败不代表网站不可访问。此次只证明本测试环境可访问，不能断言所有国家/地区均可访问。
+2. HTML自身仅1901字节的页面框架，正文由同域config.js和render.js生成。页面标题为Privacy Policy，应用名为Slide Jam: Block Puzzle。
+3. bundle参数是前端配置选择条件：脚本按包名（忽略大小写）匹配gameConfigs，再代入应用名、日期、邮箱和第三方列表。它不是Android包名修改指令，也不证明商店已登记该包。用户在本轮另外明确授权改包名，因此当前目标包已与参数对应。
+4. 提供的com.SlideJam.SweetPotato可正常显示；原com.blockout.app参数显示Invalid bundle，去掉参数显示Missing bundle parameter。这两种错误仍返回HTTP200，不能仅依赖HTTP状态判定正文有效。
+5. 页面加载记录只有文档、config.js、render.js，未观察到广告或统计网络请求。这只描述本次政策网页加载，不代表对服务器日志、全部网站行为或其他App做过审计。
+
+需修订或确认的具体项目
+一、应用名及运营主体
+- 网页：Slide Jam: Block Puzzle；当前APK中文显示名：脑王的诞生；项目名：Block Out!。包名改为com.SlideJam.SweetPotato并不自动确认英文商店名或改中文名。应确认这几个名称是同一游戏的语言版本，并使商店、应用内说明及政策明确对应。
+- 网页运营主体末尾带“Co.”，用户明确指定的名称不带此后缀。本地草稿按用户提供的Nanjing sweet potato network technology填写，不自行追加Co.；公开页与最终商店主体应统一为真实名称。
+- 邮箱hongshugame@gmail.com一致。确认实际支持请求处理方式后再填保存期限，不能因为有邮箱就假定已建立完整数据删除流程。
+
+二、广告与第三方SDK
+- 页面称广告支持，并列Google Play Services及AdMob。当前基础包没有广告、Firebase或Solar SDK，也无INTERNET权限，不能把政策中的SDK名称当成实际已接入。
+- config.js的全局目录虽列Firebase Analytics、Crashlytics等，但本游戏使用默认列表[1,2]，实际渲染的仅Google Play Services与AdMob。不能误报页面已为本游戏披露了Firebase/Solar。
+- 若上架当前离线版本，应修改为实际使用的组件及数据处理。若以后接广告，应在真实SDK接入并核对字段、用途、第三方及同意流程后重新修订，不能让当前无SDK基础包套用未来版本的数据声明。
+
+三、注册、设备标识和数据上传
+- 当前页面描述可选注册、设备唯一标识/IP及使用信息的自动获取、定期向外部服务传数据。当前游戏只有本机随机玩家编号/昵称、内置头像/框、存档和偏好，没有联网注册账号或后台游戏数据上传。
+- 政策应区分本机处理与离设备收集：本机资料、进度、任务奖励/时间记录和语言/音乐等偏好均确实被处理，不能写“完全不处理任何数据”；但当前游戏不自动把这些记录发给运营者或广告分析服务。
+- 系统/WebView版本及启动错误会写本机诊断日志；这不等于接入崩溃自动上报。
+- 当前省份服务端点为空，排行的地区为本机随机兜底；不能写成读取GPS或真实住址。
+
+四、保留、删除及主动联系
+- 页面提出自动采集数据最长保留24个月、服务器删除等安排，而当前基础版没有游戏服务器存档。应写明本地存档随用户清除应用存储/移除应用数据而删除，且没有云端恢复；不要虚构服务器保留期。
+- 新版设置中的隐私链接由用户主动打开外部浏览器；浏览器访问网站可能向网站/托管服务暴露IP等网络信息。应区分此用户主动网页访问与游戏后台上传，不能用游戏无INTERNET推断浏览器也不会联网。
+- 联系入口由用户主动打开邮件应用，用户决定是否发送及正文/附件；游戏不自动附加编号、存档或日志。发送后运营者会收到邮件地址、正文和用户选择的附件。支持邮件的处理目的、接收人员、保存期限和删除流程尚待运营者确认，不填任意数字。
+
+五、年龄、日期及同意
+- 页面排除13岁以下用户，并写2026-02-23生效；本轮尚未确认目标年龄、发行地区、该日期是否适用于这款离线新版本。不能将公开模板内容自动当作用户已确认的产品设置。
+- 页面将使用或继续使用概括为同意。若未来广告/统计需明确同意与可修改隐私选项，单靠此段不能代替实际流程；当前基础版没有UMP/广告流程，不应写成已经完成。
+
+建议处理顺序
+1. 在本地草稿使用用户已提供的主体、邮箱和URL；保留DRAFT及远程正文待更新说明。
+2. 确认官方中英文应用名、目标年龄/地区、有效日期及主动邮件支持的数据处理安排。
+3. 按当前实际离线版修订该bundle对应的公开政策；若网站模板为多游戏共用，不应把所有其他游戏的广告政策一起改成离线，需为本游戏建立独立版本内容或配置。
+4. 在用户授权的发布流程中更新网站后，再抓取完整渲染正文核对。随后按最终AAB的实际行为填写Data safety与广告声明。此次未进行网站发布或Play Console操作。
+
+证据文件
+.codex-temp/google-play-privacy-contact-20261019/independent-privacy-review.json
+.codex-temp/google-play-privacy-contact-20261019/http-evidence.json
+.codex-temp/google-play-privacy-contact-20261019/browser-evidence.json
+.codex-temp/google-play-privacy-contact-20261019/provided-rendered.txt
+.codex-temp/google-play-privacy-contact-20261019/provided-rendered.png
+.codex-temp/google-play-privacy-contact-20261019/provided-config.js
+.codex-temp/google-play-privacy-contact-20261019/provided-render.js
+这些文件是2026-10-19读取时的快照；网站日后更新需重新核对，不能用旧快照代表新版。
+
+官方依据（2026-10-19核验）
+Google Play User Data：隐私政策需准确披露应用数据处理、应用/运营者身份、联系和保留/删除安排。
+https://support.google.com/googleplay/android-developer/answer/10144311?hl=en
+Google Play Data safety：按真实应用及第三方SDK的数据行为填写；仅本机处理而不传出设备的数据与“收集”区分。
+https://support.google.com/googleplay/android-developer/answer/10787469?hl=en
+Google Mobile Ads Next-Gen：未来选择该SDK时需独立核对初始化、同意及预加载行为。
+https://developers.google.com/admob/android/next-gen/quick-start

@@ -1,0 +1,15 @@
+Google Play 分辨率适配测试包 0.1.20 / versionCode 21
+包名：com.SlideJam.SweetPotato
+APK：artifacts/google-play/SlideJam-0.1.20-googleplay-viewport.apk
+AAB：artifacts/google-play/SlideJam-0.1.20-googleplay-viewport.aab
+
+修复：刘海区域不再整体留黑条，背景铺满；完整首页素材和底部导航文字位于安全区；两侧不再露出错位背景；弹窗遮罩覆盖整个画布。点击与绘制使用同一缩放/偏移。只修改 Google Play，保留英文默认语言、广告体力超上限及已有拖动优化。
+
+验证：7组浏览器尺寸/安全区，含720×1600截图比例；首页/每日任务/体力/设置/语言/对局/暂停、动态窗口变化及触控通过。45项单元测试、类型检查、Android单测和构建/lint、签名/包资源一致性/16KB对齐通过。2113个受保护文件不变。
+ADB未发现设备，尚未完成真机复测。当前仍使用官方测试广告，非可提交的正式上架配置。未安装到设备，未读取真实存档，未上传发布。
+
+SlideJam-0.1.20-googleplay-viewport.apk
+SHA256：fdf790ed2e0d16c479ac5b18fde368557c32220b30ee057bf6aa7b9a2f03fe49
+
+SlideJam-0.1.20-googleplay-viewport.aab
+SHA256：83b51d5c628b96255361222aacbbecb244d6df2e20b96a704c5ca55038a4c2f2

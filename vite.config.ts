@@ -137,7 +137,9 @@ export default defineConfig({
     rollupOptions: {
       input: {
         game: resolve(projectRoot, "index.html"),
-        boardEditor: resolve(projectRoot, "board-editor.html"),
+        ...(process.env.VITE_BUILD_TARGET === "android" && process.env.VITE_ANDROID_RELEASE === "true"
+          ? {}
+          : { boardEditor: resolve(projectRoot, "board-editor.html") }),
       },
     },
   },

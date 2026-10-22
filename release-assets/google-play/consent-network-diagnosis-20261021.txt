@@ -1,0 +1,18 @@
+Google Play 激励广告未展示 — 2026-10-21 日志诊断
+
+设备：用户截图标明 OPPO PDVM00 / Android 11 / API 30。
+截图：reward requested: consent=failed initialized=false loaded=false；随后consent update started及reward request result=consent-pending。说明按钮已到原生桥，正在重试UMP；截图本身没有完整失败原因。
+
+新发现日志：F:/ruanjian/xwechat_files/wxid_70xc4dsnvhlm21_58d6/msg/file/2026-10/logcat(2).txt
+原文件SHA256：d79b98bbf663aa798dabeed5e119f28045e737ec3c5480de025345267cde076a
+该日志16:21:18.526开始隐私请求，16:21:25.702出现Google UMP警告，应用及PID15426与16:26截图一致：
+  The server timed out.
+  java.net.SocketTimeoutException: failed to connect to fundingchoicesmessages.google.com ... port 443 ... after 10000ms ... ETIMEDOUT
+证据位置：第4523行、5867–5868行。
+
+已确认：该次请求在建立到Google隐私服务的HTTPS连接时超时。它发生于广告SDK初始化/广告加载之前。截图中的“缺少本地IAB...”或“添加调试设备”是SDK诊断信息，不能当作这次网络超时的根因。
+未确认：是网络限制、路由、应用联网权限还是其它连接问题；后台隐私消息是否配置正确，以及连通后的实际广告填充。本日志没有服务返回的后台配置错误，不应直接判定AppID/机型/Google Play服务缺失。
+
+下一步：在这台手机换用确实可连接Google服务的测试网络，检查游戏允许联网；重新打开现有0.1.14，等待隐私检查和测试广告预加载，再点激励按钮。无需卸载或清档。若依旧失败，按tag:SlideJamAds查看当前这一轮结果，区分consent错误与reward-load错误。
+本轮不盲目重包、不把超时当同意、不启用正式广告位；微信/抖音和生产代码未改。
+官方流程依据：https://developers.google.com/admob/android/privacy#request_ads_with_user_consent

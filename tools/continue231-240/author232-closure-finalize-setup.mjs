@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+let s=fs.readFileSync('tools/continue231-240/author232-prefix-finalize.mjs','utf8');
+s=s.replaceAll('author232-prefix-finalize.mjs','author232-closure-finalize.mjs');
+s=s.replace("if(now.cleared<6){assert(now.shutters.every(s=>!s.revealed));assert(now.gates.filter(g=>!['red','blue'].includes(g.color)).every(g=>g.frozen>0));}","if(now.cleared<11){assert(now.shutters.every(s=>!s.revealed));}");
+s=s.replace("if(before.cleared<6)assert(['red','blue'].includes(before.blocks.find(b=>b.id===g.blockId).color));","if(before.cleared<11)assert(!before.blocks.find(b=>b.id===g.blockId).shutterId);");
+s=s.replace('authoredOrdinaryOpeningBodies:6','authoredOrdinaryOpeningBodies:level.blocks.filter(b=>!b.shutterId&&[\'red\',\'blue\'].includes(b.color)).length');
+s=s.replace('actualBeforeSixClosure:true','actualBeforeElevenClosure:true');
+s=s.replace("'tools/continue231-240/author232-prefix-bound.mjs'","'tools/continue231-240/author232-prefix-closure-bound.mjs','tools/continue231-240/author232-prefix-closure-core.mjs','tools/continue231-240/author232-fast-route.mjs'");
+s=s.replace("qualificationFile,sourceLedger", "qualificationFile,out+'/prefix-fast-route-qualification-1792401360756.json',out+'/prefix-binary-independent-review-1792400637942.json',sourceLedger");
+fs.writeFileSync('tools/continue231-240/author232-closure-finalize.mjs',s,{flag:'wx'});

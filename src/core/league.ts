@@ -1,4 +1,4 @@
-import { RANKING_PLAYER_NAMES } from "./playerNames";
+import { localizedRankingPlayerName, rankingLanguage, RANKING_PLAYER_NAMES } from "./playerNames";
 import { advanceLeagueOpponent, createLeagueOpponentProgress, LEAGUE_OPPONENT_MAX_CLEARED,
   type LeagueOpponentProgress } from "./leagueOpponent";
 
@@ -56,7 +56,12 @@ const LEAGUE_NAME_POOLS = [2, 3, 4, 5].map(length =>
  * Assign before score sorting so each opponent keeps its name when its rank changes.
  * This is a display projection; it never migrates or writes account data.
  */
-export function leagueBotNames(seed: number, seasonIndex: number): string[] {
+export function leagueBotNames(seed: number, seasonIndex: number, opponentLanguage: unknown = "zh-CN"): string[] {
+  const locale = rankingLanguage(opponentLanguage);
+  if (locale !== "zh-CN") {
+    const offset = Math.floor(noise(seed, seasonIndex, 0, 17) * 320);
+    return Array.from({ length: 49 }, (_, i) => localizedRankingPlayerName(locale, offset + i + 1));
+  }
   const usedNames = new Set<string>();
   return Array.from({ length: 49 }, (_, i) => {
     const pool = LEAGUE_NAME_POOLS[i % LEAGUE_NAME_POOLS.length];

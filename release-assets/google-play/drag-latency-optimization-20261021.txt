@@ -1,0 +1,44 @@
+Slide Jam: Block Puzzle — Google Play 0.1.17 / code18
+持续拖动跟手优化，2026-10-21
+
+本次针对“拖动过程中色块持续落后于手指”。保留原触控坐标和完整输入顺序，复用静止色块、内外壳和整块冰皮的阴影绘制结果，减少每帧重复模糊。正在拖动或运动中的色块仍走原绘制路径；同时移除未使用的出口查询及无关页面的旅程边界计算。
+
+仅 Google Play 构建生效；微信、抖音、共享游戏源码及关卡数据保持。没有更改碰撞、转弯、消除、5px起拖阈值、松手吸附、计时或存档规则。仍为测试广告包，没有发布。
+
+受控比较
+旧0.1.16→新0.1.17→旧→新，电脑 Chromium / 软件 Canvas / CPU4倍降速，逐轮同一真实关卡、相同触控路径。每关每轮48个连续触控事件，45个实际移动并绘制的样本。数据表示“事件时间戳到CPU绘制提交”，不是安卓屏幕显示延迟或手机FPS。
+
+第106关中位延迟：88.6→58.3ms，95.1→67.0ms，下降34.2%和29.5%。
+第198关中位延迟：126.5→63.8ms，127.0→67.6ms，下降49.6%和46.8%。
+第1关：43.0→46.1ms、75.9→47.7ms，波动较大，不认定稳定收益。
+第198关p95：140.0→87.3ms、141.8→82.4ms；第106关p95第一轮101.2→129.9ms回退，第二轮107.4→79.3ms改善。因此不能宣称所有长尾延迟都已解决。
+
+首次创建缓存有成本：第106关第一次playing绘制CPU由32.5/40.6ms变为147.3/100.7ms，第198关由40.1/38.3ms变为143.4/152.3ms，均为上述桌面CPU4倍降速环境。后续帧复用缓存。本轮改善的是持续拖动，不宣称入关首帧加快。
+
+验证
+- TypeScript检查通过；输入真实源码前后对照8项及连续拖动33项，共41项测试通过。
+- 真实浏览器触控：3个关卡取消拖动、贴墙立即反向通过；第1关90度转弯及松手通过。106/198所选开局无自由转角，该项未覆盖，不当作通过。所有测试存档均为内存fixture。
+- 最终包393×852及320×568双屏，各3次实际出门、自然计时、三星结算并自动进入第2关通过，0页面异常。
+- 128个像素场景通过。正常图最大RGBA通道差5、冰壳叠层最大差2；旧旋转图走原路径，保持原像素。不是宣称每像素绝对相同。
+- 40帧暖缓存无重复阴影源绘制；缓存RGBA像素上限8MiB/128项，浏览器总内存还包括对象及驱动开销。尺寸、关卡、缩放失效及分配失败/上下文丢失回退通过。
+- Gradle APK/AAB/lint通过，lint 0错误、24项既有警告；签名、953项Web资源、四ABI 16KB对齐、bundletool通过。
+- 2113项共享/其它渠道保护文件、16项既有GP运行文件、239项原生图片保持；关卡投影深相等。
+
+包文件
+artifacts/google-play/SlideJam-0.1.17-googleplay-drag-latency.apk
+65,538,122字节；SHA256 e8e93caeaf7ebb86ae30d2bf992dc418159f3d9216be0813f4c624a9b7556a90
+artifacts/google-play/SlideJam-0.1.17-googleplay-drag-latency.aab
+65,035,070字节；SHA256 0e41bb9f01d3ea1ac9975fb44b1f9f6e088df362d0c1098cca630565066b80ba
+包名com.SlideJam.SweetPotato，原gp2026签名，可覆盖安装同签名旧版。
+测试广告、统计关闭、私有聚合wrapper停用及submissionReady=false保持；AAB不是已验收上架版本。
+
+手机验证限制
+最后使用用户指定 D:/MuMuPlayer/nx_main/adb.exe 查询，设备列表仍为空。本轮未在手机安装、采帧、卸载或清档；以上改善不能直接等同手机上的改善幅度。请使用新版APK在原先卡顿的关卡连续拖动、贴墙反向和进出口体验。
+
+证据
+.codex-temp/google-play-drag-latency-20261021/validation/summary.json
+.codex-temp/google-play-drag-latency-20261021/audit/implementation-result.json
+.codex-temp/google-play-drag-latency-20261021/audit/input-path.json
+.codex-temp/google-play-drag-latency-20261021/scope-parity.json
+artifacts/google-play/SlideJam-0.1.17-googleplay-drag-latency-checks.json
+artifacts/google-play/SlideJam-0.1.17-googleplay-drag-latency-validation.json

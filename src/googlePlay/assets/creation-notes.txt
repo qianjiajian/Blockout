@@ -1,0 +1,18 @@
+Google Play startup artwork — Slide Jam: Block Puzzle
+Created 2026-10-21 with built-in image_gen (text-localization edit).
+Original shared file remains unchanged: public/assets/art/ui/startup-v1/loading-background.jpg
+Selected generated PNG: exec-d696784e-7910-44f2-9b9f-5acd74bdcc63.png
+Local PNG: slide-jam-startup-v1.png
+Runtime JPEG: slide-jam-startup-v1.jpg (941 x 1671; quality92 mozjpeg; no resize/cropping)
+Only the isolated Google Play build overlays its loading-background.jpg. Live progress is rendered by code.
+
+Initial prompt:
+Use case: text-localization.
+Asset type: production portrait startup/loading background for the Android game Google Play edition.
+Edit target: the supplied existing 941x1672 blue/purple game loading illustration.
+Primary request: replace the Chinese game title with the exact official English name "Slide Jam: Block Puzzle". Render "Slide Jam:" as the main title on one line and "Block Puzzle" as a smaller readable second line directly below. Keep the same polished chunky glossy 3D gold and icy-cyan game lettering, white edge highlights and royal blue shadow/outline. Retain the crown motif above the title, the blue-violet glow, rays, little stars and translucent floating puzzle blocks. Keep the title grouped in the upper third of the portrait, with the whole English title confined to the central 68% of the image width so it remains complete on tall narrow phones. No Chinese text anywhere.
+Remove the entire bottom loading bar, sample percentage, loading text and four-line notice. Fill those deleted areas naturally with the same continuous blue/purple background. Keep the lower central area clean and unobstructed for a live progress bar that the game will render; do not draw any progress bar or other text there.
+Preserve the existing overall composition, colors, material, portrait aspect ratio about 9:16 and visual quality. Final output is the actual full background bitmap, not a phone mockup or screenshot. Opaque background. Exact text only: "Slide Jam:" and "Block Puzzle".
+
+Final refinement prompt:
+Edit only the logo group (the crown and both lines "Slide Jam:" and "Block Puzzle") in this existing loading background. Reduce the entire logo group to 78% of its current width and height, keeping it centered horizontally and with its center at the same location. The new logo must fit wholly between x=17% and x=83% of the full image width including glow and outline. Fill the vacated logo area with matching blue radial light background. Keep exact text and spelling "Slide Jam:" and "Block Puzzle", same typeface, gold/cyan materials and crown. Preserve all other image parts and the full original portrait canvas unchanged. No added text, loading bar or percentage. This is to keep the entire title visible on tall 21:9 phones.

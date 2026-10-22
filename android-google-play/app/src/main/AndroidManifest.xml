@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_BASIC_PHONE_STATE" tools:node="remove" />
+    <application
+        android:name="android.app.Application"
+        tools:replace="android:name"
+        android:allowBackup="false"
+        android:fullBackupContent="false"
+        android:dataExtractionRules="@xml/google_play_data_extraction_rules"
+        android:appCategory="game"
+        android:enableOnBackInvokedCallback="false"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/ic_slidejam_launcher"
+        android:label="Slide Jam: Block Puzzle"
+        android:resizeableActivity="true"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <!-- The supplied wrapper's launcher and initialization bypass consent on UMP
+             timeout. Preserve the vendor AAR, but never activate those entry points. -->
+        <activity android:name="com.hs.admob.view.SplashActivity" tools:node="remove" />
+        <!-- SDK dependencies and matching Firebase resources are compiled, but this
+             test build must not start analytics/attribution from a ContentProvider. -->
+        <provider android:name="com.reyun.solar.engine.lifecycle.SystemLifecycleContentProvider" tools:node="remove" />
+        <provider android:name="com.google.firebase.provider.FirebaseInitProvider" tools:node="remove" />
+        <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/admob_app_id" />
+        <!-- This test release must never upload analytics, even if another library
+             tries to enable collection at runtime. A production change is explicit. -->
+        <meta-data android:name="firebase_analytics_collection_deactivated" android:value="true" />
+        <meta-data android:name="firebase_analytics_collection_enabled" android:value="false" />
+        <meta-data android:name="google_analytics_adid_collection_enabled" android:value="false" />
+        <meta-data android:name="google_analytics_default_allow_analytics_storage" android:value="false" />
+        <meta-data android:name="google_analytics_default_allow_ad_storage" android:value="false" />
+        <meta-data android:name="google_analytics_default_allow_ad_user_data" android:value="false" />
+        <meta-data android:name="google_analytics_default_allow_ad_personalization_signals" android:value="false" />
+        <activity
+            android:name="com.blockout.app.MainActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden|uiMode"
+            android:exported="true"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

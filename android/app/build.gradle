@@ -2,6 +2,17 @@ plugins {
     id "com.android.application"
 }
 
+// Keep the long-lived release key and its passwords outside the repository.
+def releaseSigningFile = file(System.getenv("BLOCKOUT_RELEASE_SIGNING_PROPERTIES")
+        ?: "${System.getProperty('user.home')}/.android/blockout-release/signing.properties")
+def releaseSigning = new Properties()
+if (releaseSigningFile.isFile()) {
+    releaseSigningFile.withInputStream { releaseSigning.load(it) }
+}
+def hasReleaseSigning = ["storeFile", "storePassword", "keyAlias", "keyPassword"].every {
+    releaseSigning.getProperty(it)?.trim()
+}
+
 android {
     namespace "com.blockout.app"
     compileSdk 35
@@ -10,12 +21,25 @@ android {
         applicationId "com.blockout.app"
         minSdk 23
         targetSdk 35
-        versionCode 3
-        versionName "0.1.2"
+        versionCode 8
+        versionName "0.1.7"
+    }
+
+    signingConfigs {
+        release {
+            if (hasReleaseSigning) {
+                storeFile file(releaseSigning.getProperty("storeFile"))
+                storePassword releaseSigning.getProperty("storePassword")
+                keyAlias releaseSigning.getProperty("keyAlias")
+                keyPassword releaseSigning.getProperty("keyPassword")
+            }
+        }
     }
 
     buildTypes {
         release {
+            debuggable false
+            signingConfig signingConfigs.release
             minifyEnabled false
             shrinkResources false
         }
@@ -24,6 +48,16 @@ android {
     sourceSets {
         main {
             assets.srcDirs = [providers.gradleProperty("webAssetsDir").getOrElse("../../dist")]
+        }
+    }
+}
+
+tasks.configureEach {
+    if (name == "preReleaseBuild") {
+        doFirst {
+            if (!hasReleaseSigning) {
+                throw new GradleException("Release signing is missing. Configure BLOCKOUT_RELEASE_SIGNING_PROPERTIES or ~/.android/blockout-release/signing.properties; no debug-key fallback is allowed.")
+            }
         }
     }
 }

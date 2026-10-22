@@ -1,0 +1,3 @@
+import fs from 'node:fs';let s=fs.readFileSync('tools/continue231-240/author232-shapes.mjs','utf8');
+s=s.replace("const items=inv.map(([color,s],j)=>({id:`l232-hidden${i}-${j}`,color,shape:chooseShape(native[s].length)}));", "const tri=inv.map(([color,s],j)=>native[s].length===3?j:-1).filter(j=>j>=0),vertical=tri[Math.floor(rand()*tri.length)],allVertical=i===3&&rand()<.4;const items=inv.map(([color,s],j)=>({id:`l232-hidden${i}-${j}`,color,shape:native[native[s].length===3?(j===vertical||allVertical?3:9):native[s].length===2?2:7]}));");
+fs.writeFileSync('tools/continue231-240/author232-tiles.mjs',s,{flag:'wx'});

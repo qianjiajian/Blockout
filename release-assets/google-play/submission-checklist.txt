@@ -1,0 +1,65 @@
+Google Play 提交检查单 — SDK 测试包，非上架就绪
+资料核对日期：2026-10-19（Asia/Shanghai）
+目标产物：0.1.10 / versionCode 11 / com.SlideJam.SweetPotato
+说明：本文件是待办清单，不是已通过清单。实际构建、签名、Manifest、资源与测试结果以本轮最终产物检查报告为准。本轮不上传、不发布，不改微信或抖音版本。
+
+一、当前交付边界
+- 本轮准备 Google Play 独立 SDK 测试版本；正式密钥签名不代表可以直接上架。
+- Google 官方测试广告、UMP 和受限原生桥正在集成；Firebase 配置已匹配，但统计收集停用，Solar 不初始化。
+- AAR、Firebase 文件、AdMob App ID/三个广告位 ID、Solar AppKey 已全部收到，不再列为缺件。
+- 私有 Sdk_Mediation_v0.0.3 原件存在同意超时绕过等问题，暂不启用其 SDKUtils/MApplication/SplashActivity 初始化；不能声称聚合封装或各广告源已联调。详见 sdk-v003-review.txt。
+- 广告位只使用官方测试 ID，不按“第二天”自动切换真实广告位；0.1.14的AdMob应用ID使用用户提供值以匹配UMP消息，正式广告位保持停用。实际数据流与纯离线基础版不同。
+- 用户提供公司 Nanjing sweet potato network technology、邮箱 hongshugame@gmail.com、公开政策URL https://sweetpotato-net.web.app/privacy.html?bundle=com.SlideJam.SweetPotato。公开政策正文须按最终启用服务更新。
+- 用户于2026-10-21确认Google Play正式名称为 Slide Jam: Block Puzzle，所有游戏语言保持该品牌名；包名 com.SlideJam.SweetPotato。同日追加确认首次默认英文，不跟随手机语言；保留已有语言和之后的手动选择。应用内说明同步，历史离线隐私草稿不作为现版政策。
+- privacy-policy-draft.html 仅为历史 0.1.9 离线版未生效草稿，不能用于本次联网 SDK 测试包或未来商业化版本。
+- 玩家存档仍只在本机；浏览器/邮件外跳不自动附加存档。加入广告后必须另核 SDK 网络数据，不能再宣称整个应用无联网。
+- 广告和分析 SDK 不是上架本身的强制条件，按实际产品需求和最终启用状态申报。
+
+二、正式提交前必须完成
+[x] 用户已确认Google Play包名com.SlideJam.SweetPotato、主体Nanjing sweet potato network technology、邮箱hongshugame@gmail.com及所提供的政策URL；首次发布后不要随意改变应用ID。
+[ ] 统一应用/商店/政策中的中英文名称和主体写法；确认发行国家/地区、目标年龄及开发者账号类型。此项不要求重新选择已确认的包名或主体。
+[ ] 最终 AAB 以 release 配置和上传密钥签名；配置 Play App Signing，明确应用签名密钥与上传密钥的角色。若要求与同包名侧载 Release APK 覆盖升级，首次 Play App Signing 设置应采用兼容的应用签名方案并实际验证，不能仅比较上传证书。新包com.SlideJam.SweetPotato不能覆盖旧com.blockout.app，即使证书相同也不会自动读取旧包存档。
+[ ] 新应用 targetSdkVersion 至少 36；当前官方要求自 2026-08-31 起生效。compileSdk 应支持目标 API；SDK 自身写 compile 35+ 不会把 Play 的 target 36 要求降为35。不要默认已获延期。
+[ ] 合并 Manifest 无 debuggable/testOnly、无意外权限和导出组件；检查包内无开发入口、示例或秘密信息。
+[ ] 逐项核对 SDK 测试包仅使用官方测试广告 ID、Firebase 停用、Solar 不初始化、私有聚合入口关闭；核对 package/version、签名和内置 Web 资源一致。生产版必须另行验收正式配置和数据行为。
+[ ] 检查最终依赖是否包含 native .so。若有，验证 64 位支持、ELF/RELRO 16 KB 对齐、ZIP 对齐、AAB 派生 APK 和 16 KB 设备运行；单独 zipalign 通过不能代替全部验证。纯 Java/Kotlin 且所有依赖也无 native 代码时仍建议做 16 KB 运行回归。
+[ ] 完成真机/模拟器回归：首次安装、新包独立安装并与旧com.blockout.app并存且不自动迁移其存档、今后同applicationId同签名版本的覆盖升级和进度保留、首启语言、全屏/刘海/手势与三键导航、键盘改名、后台恢复、低内存、关卡通关/存档、退出/返回、隐私说明可达。桌面浏览器尺寸矩阵不能声称覆盖所有品牌真机。
+[ ] 按实际商店功能完成内容分级、目标年龄、广告声明、应用访问说明、商店文案/图标/截图/联系方式及可用性检查；不要以未来广告计划填写当前包“含广告”。若保留尚不可用的广告奖励入口，需让玩家明确知道其不可用，不发虚假观看奖励。
+[ ] 使用已提供的运营主体和邮箱完成最终隐私政策，修订现有公开网页的广告/注册/设备ID与IP采集/24个月服务器留存等不匹配内容；游戏正式名称已确认 Slide Jam: Block Puzzle，目标年龄、地区、有效日期及主动邮件支持数据的保存/删除安排仍需核对。网页需公开、无地域封锁、非PDF，在应用内和Play Console均可访问；当前网页可访问不等于内容已适配。
+[ ] 按最终包真实数据流填写 Data safety，包含所有 SDK 和应用控制的 WebView。仅设备本地处理且从未传出设备的数据按官方口径不属于需披露的“收集”；不能因此说应用没有本地资料，也不能沿用无SDK版申报至广告版。
+[ ] 如果未来增加应用内创建在线账号，另实现应用内及外部网页的账号删除请求路径，并说明保留事项；当前随机本地玩家编号不应冒称在线账号。
+[ ] 在 Play Console 上传前再核对政策、依赖和控制台实际提示；本次尚未访问或填写用户控制台。
+
+三、账号和发布轨道
+[ ] 确认开发者身份/联系方式及控制台要求，判断账号是组织还是个人及创建时间。
+[ ] 若为2023-11-13之后创建的个人开发者账号：封闭测试至少12名测试者连续加入至少14天，再申请生产访问权限，并提供测试反馈/改进情况。14天结束不会自动批准上线。
+[ ] 仅内部测试轨道可豁免 Data safety 表；封闭测试、公开测试及生产轨道须按要求提交。隐私与数据说明仍应准确。
+[ ] 上传后查看自动预审和预发布报告，修复并重测，再按用户授权进行后续轨道发布。本轮未上传、未获得审核通过。
+
+当前冷启动修复包（2026-10-21）：Google Play 专属包已升至 0.1.11/code12，修复了 0.1.10 在 `Window.getInsetsController()` 空 decor 路径上的五次启动崩溃。APK/AAB 与校验报告位于 `artifacts/google-play/SlideJam-0.1.11-googleplay-crash-fix*`；仍是官方测试广告联调包，不是提交候选。没有可用 ADB/真机，需在小米8及目标机型安装回归后再进行 Play 上传检查。
+
+四、历史离线基础版的数据核对依据（0.1.9，仅作本机存档对照）
+- src/game/ColorEscapeGame.ts：SaveData；本机 key=color-escape-save-v1。
+- src/platform/WebHost.ts：localStorage JSON读写、navigator语言、点击后写剪贴板、本地资源加载。
+- src/core/playerProfile.ts：随机本地编号、昵称、内置头像/框、加入时间、游戏尝试/连胜。
+- src/core/mainlineRankingProgress.ts：本机排行进度及时间戳。
+- src/platform/leaderboardRegionConfig.ts：网络地区端点为空；使用本机随机地区兜底，并非GPS。
+- android-google-play/app/src/main/AndroidManifest.xml：0.1.9 时无 INTERNET；0.1.10 已引入 SDK 网络权限，仍 allowBackup=false。须检查最终合并 Manifest。
+- android-google-play的MainActivity.java：Android/WebView版本及失败信息写本机Logcat；新增外部浏览器/邮件入口须核对只在主动点击后发生、不自动附加存档。历史无 SDK 上传结论不可套用到 0.1.10 或后续广告版本。
+
+五、官方资料（2026-10-19直接核验）
+1. 新App使用AAB：
+https://developer.android.com/guide/app-bundle
+2. Play App Signing、上传密钥和应用签名密钥：
+https://developer.android.com/studio/publish/app-signing
+3. target API36，自2026-08-31起的新应用/更新要求：
+https://support.google.com/googleplay/android-developer/answer/11926878?hl=en
+4. 新个人账号12人/连续14天封测：
+https://support.google.com/googleplay/android-developer/answer/14151465?hl=en
+5. 隐私政策/数据处理/条件性账号删除：
+https://support.google.com/googleplay/android-developer/answer/10144311?hl=en
+6. Data safety及本机处理、第三方SDK、各轨道范围：
+https://support.google.com/googleplay/android-developer/answer/10787469?hl=en
+7. 16KB兼容检查：
+https://developer.android.com/guide/practices/page-sizes
+  注：当前2026-10-16更新页写API35+应用在Google Play的64位设备须支持16KB，并写2027-02-01起不合格的更新不能发布。历史2025博客曾写2025-11-01；本清单按当前能力要求验证，不把历史日期当本轮控制台结论。

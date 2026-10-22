@@ -1,0 +1,22 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url "https://maven-android-cn.solar-engine.com/repository/se_sdk_for_android/"
+            content { includeGroupByRegex "com\\.reyun.*" }
+        }
+    }
+}
+
+rootProject.name = "BlockOutGooglePlay"
+include(":app")

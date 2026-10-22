@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';import{liftPayload,runNativeLift}from'./author232-native.mjs';
+import{each,normalizeClears,NONE,assertStateMatches}from'../continuation211-optional-lift-domain.mjs';
+import{digest}from'./common.mjs';
+export function qualify(level,drags,api){const{p,c}=liftPayload(level,api),states=[],seen=new Set(),push=s=>{const k=[...s].join(',');if(!seen.has(k)){seen.add(k);states.push(s.slice());}};push(c.initial);for(let i=0;i<states.length&&states.length<75;i++)each(c,states[i],s=>{push(s);return states.length<75;});
+ const model=new api.PuzzleModel(level),ages=c.covers.map(()=>NONE);model.startCountdown();
+ const recordReveal=()=>{const snap=model.snapshot();for(let j=0;j<c.covers.length;j++)if(snap.shutters[j].revealed&&ages[j]===NONE)ages[j]=snap.cleared;};
+ for(const d of drags){model.beginAction();for(const q of d.path){assert(model.moveBlockStep(d.blockId,...q));recordReveal();}if(d.exitSide){assert(model.tryExit(d.blockId,d.exitSide).ok);recordReveal();}assert(model.commitAction());const snap=model.snapshot();const state=Uint16Array.from([...level.blocks.map(b=>{const a=snap.blocks.find(a=>a.id===b.id);return a?a.y*c.W+a.x:NONE;}),...ages]);assertStateMatches(c,state,snap);push(state);}
+ assert(model.snapshot().complete);const canonical=s=>{const a=[...normalizeClears(c,s).s];for(const g of p.groups){const vals=g.map(i=>a[i]).sort((a,b)=>a-b);g.forEach((i,j)=>a[i]=vals[j]);}return a.join(',');};const result=runNativeLift({...p,successorsOnly:true,states:states.map(s=>[...s])});let transitions=0;
+ for(let i=0;i<states.length;i++){const expected=new Set();each(c,states[i],(s,k)=>expected.add(k+':'+canonical(s)));assert.equal(result.rows[i].normalized,canonical(states[i]));assert.deepEqual([...result.rows[i].successors].sort(),[...expected].sort());transitions+=expected.size;}
+ return{passed:true,states:states.length,transitions,actualRouteTransitions:drags.length,actualSnapshotMatches:true,levelSha256:digest(level),native:result,method:'Complete held-gesture successors in independent optional-lift JS domain vs native; 75 branch states and every original-route real-model state; normalized exact final-body removals only'};
+}

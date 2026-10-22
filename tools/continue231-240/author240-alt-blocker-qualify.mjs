@@ -1,0 +1,13 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';import crypto from 'node:crypto';
+import {unionPaths,popcount} from './author240-alt-blocker-bound.mjs';
+import {ROOT,ruleGate} from './common.mjs';ruleGate();
+let randomSeed=918272;const rand=()=>((randomSeed=(Math.imul(randomSeed,1664525)+1013904223)>>>0)/4294967296);
+const reachable=(g,mask)=>{if(g.occupied[g.start]&~mask)return false;const seen=new Set([g.start]),queue=[g.start];for(let i=0;i<queue.length;i++){if(g.goals.includes(queue[i]))return true;for(const to of g.neighbors[queue[i]])if(!seen.has(to)&&!(g.occupied[to]&~mask)){seen.add(to);queue.push(to);}}return false;};
+const minimal=xs=>xs.filter(a=>!xs.some(b=>a!==b&&(a&b)===b)).sort((a,b)=>a-b),cases=[];
+for(let seed=0;seed<40;seed++){
+ const B=4+seed%5,N=7+seed%7,graphs=[];for(let target=0;target<4;target++){const neighbors=Array.from({length:N},()=>[]);for(let a=0;a<N;a++)for(let b=a+1;b<N;b++)if(b===a+1||rand()<.14){neighbors[a].push(b);neighbors[b].push(a);}const occupied=Array.from({length:N},(_,i)=>i?((1<<Math.floor(rand()*B))|(rand()<.2?1<<Math.floor(rand()*B):0)):0);graphs.push({neighbors,occupied,start:0,goals:[N-1]});}
+ const outputs=graphs.map(g=>unionPaths(g,{maxLabels:100000,maxMilliseconds:1000}));assert(outputs.every(r=>r.status==='complete'));
+ let joint=[0];for(let t=0;t<4;t++){const brute=[];for(let m=0;m<(1<<B);m++)if(reachable(graphs[t],m))brute.push(m);assert.deepEqual(minimal(brute),[...outputs[t].masks].sort((a,b)=>a-b));joint=minimal([...new Set(joint.flatMap(a=>outputs[t].masks.map(b=>a|b)))]);}
+ const expected=[];for(let m=0;m<(1<<B);m++)if(graphs.every(g=>reachable(g,m)))expected.push(m);assert.deepEqual(joint,minimal(expected));cases.push({seed,blockerBits:B,posesPerGraph:N,singleTargetCases:4,allSubsetsEnumerated:1<<B,jointMinimum:Math.min(...joint.map(popcount)),labels:outputs.reduce((n,r)=>n+r.created,0)});
+}
+const file='tools/continue231-240/author240-alt-blocker-bound.mjs',out=ROOT+'/author240-alt/blocker-antichain-qualification.json';fs.mkdirSync(ROOT+'/author240-alt',{recursive:true});fs.writeFileSync(out,JSON.stringify({status:'PASS',source:file,sourceRawSha256:crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'),cases,method:'Independent subset-exhaustive reachability BFS checks all minimal feasible obstacle masks for each of160 single-target graphs and40 four-target joint graphs. Graphs share4–8 blocker variables,7–13 poses, loops and multiple paths. This checks the union-antichain algorithm; level-specific no-nonpurple-clear-before4 applicability still required.'},null,2));console.log(JSON.stringify({out,passed:true,singleTargetGraphs:160,jointGraphs:40}));

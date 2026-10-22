@@ -1,0 +1,40 @@
+Google Play SDK 接入状态（2026-10-19）
+范围：com.SlideJam.SweetPotato；仅 Google Play，微信、抖音和旧 Android 工程保持。
+
+本轮已收到
+- slide_jam_tech_requirements.md v1.1；AdMob App ID 和开屏/插屏/激励三个完整广告位 ID。
+- google-services.json：实际 Firebase 项目 slide-jam-block-puzzle；Android 包名大小写完全匹配。
+- Solar AppKey 已提供；不再列为缺失。
+- Sdk_Mediation_v0.0.3.aar 原件已提供，231722 字节，SHA256 70c881e8aee717143b935e4409e9025ea3d99c85ac7cd4b92a8975f9de639eba。
+- 公司、邮箱和公开政策 URL 已提供；原公开政策仍须结合最终 SDK 行为修订。
+
+AAR 实际核验
+- 实际类名为 com.hs.admob.SDKUtils；旧文档 com.hs.topon_sdk 不能照抄。
+- 方法为 trackCustomEvent / trackLevelStart / trackLevelEnd；新文档 send* 并非此二进制真实方法。
+- SDKUtils 的 UMP 超时错误分支会在 canRequestAds=false 时继续初始化广告、统计并设置允许收集。
+- 该库初始化硬编码儿童标记为 false，未提供外部完整控制；不能在目标年龄尚未确定时直接启用。
+- InterAd / RewardVideoAd / SplashAd 依赖 SDKUtils 私有初始化状态，不能靠在外部初始化 GMA 就安全独立复用。
+- 不修改原 AAR，不通过反射更改私有初始化状态；原件可打包供后续修复对接，包入不等于已运行接通。
+- 完整证据及给 SDK 提供方的修复项见 sdk-v003-review.txt 和 .codex-temp/google-play-sdk-20261019/aar-review/。
+
+本轮技术方案
+- 独立 Google Play 官方 GMA Next-Gen + UMP 测试广告通路；只在 canRequestAds 允许后初始化和请求广告。
+- 所有构建固定 Google 官方测试广告 ID，不按日期自动切换真实 ID。
+- Firebase 配置接入但统计收集停用；Solar 不初始化，不向真实统计项目发送联调数据。
+- 私有聚合 SDKUtils.initSDK/onCreate 不启用；不能声称聚合封装、Solar 后台事件或各广告源填充已验收。
+- 版本延续 0.1.10/code11，不把已有 versionCode 倒退到 1；target36 保持。
+- 2026-10-21用户已确认：首次默认英文，不跟随手机语言；保留已有存档语言及之后的手动选择，取代此前手机语言首选要求。
+- 构建、单元测试、浏览器和包校验完成状态以最终 checks 报告为准，此清单不是 PASS 报告。
+
+仍需用户或运营确认
+1. 主要发行国家/地区、目标年龄及是否面向儿童。
+2. 语言默认方式已确认首次英文（仍可切换），不再待答。
+3. Solar AppKey 是否来自 SolarEngine 海外版且后台绑定 com.SlideJam.SweetPotato。
+4. 实际启用哪些聚合广告源，以及 AdMob 后台的聚合组、广告位映射和隐私消息配置。
+5. SDK 提供方修复初始化和同意处理；提供新的 AAR 或可审查源码。
+6. 最终隐私政策、Data Safety 和广告声明按启用的实际版本核对。
+7. Android 真机测试、测试广告显示/取消/完整观看/恢复前台、真实后台事件验证待相应环境完成。
+
+未上传 Google Play、未发布网站、未访问真实玩家存档；无真机不能宣称各品牌实测。
+
+2026-10-21 冷启动修复：0.1.10 user-signed 测试APK的5次崩溃均定位到 MainActivity 在 setContentView 前调用 Window.getInsetsController。0.1.11/code12 已改为先建立内容视图、从 decor view 获取控制器并保留预附着回退；修复版包与回归证据见 `artifacts/google-play/SlideJam-0.1.11-googleplay-crash-fix*`。仍未完成真机/OEM、广告后台和正式上架验收。

@@ -1,0 +1,21 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {ROOT,ruleGate,loadApi,audit,replay,digest,BANDS} from './common.mjs';
+ruleGate();
+const ids=process.argv.slice(2).map(Number).sort((a,b)=>a-b);
+assert(ids.length&&new Set(ids).size===ids.length);
+const {api}=await loadApi();
+const packets=ids.map(id=>{
+ const normalized=`${ROOT}/author${id}/qualified${id}-schema.json`;
+ const file=fs.existsSync(normalized)?normalized:`${ROOT}/author${id}/qualified${id}.json`,p=JSON.parse(fs.readFileSync(file));
+ assert(p.level.mechanismAdaptation.userAuthorized&&p.level.mechanismAdaptation.change);
+ assert(!Object.hasOwn(p.level.mechanismAdaptation,'sourceReference'));
+ assert.equal(p.level.id,id);assert.equal(digest(p.level),p.levelSha256);assert.equal(digest(p.drags),p.routeSha256);
+ audit(p.level,api);assert(replay(p.level,p.drags,api,{complete:true,requirePointerCompatible:true}).valid);
+ const L=p.L??p.certifiedLowerBound,U=p.U??p.witnessUpperBound,[lo,hi]=BANDS[p.level.difficulty];assert(L>=lo&&L<=U&&U<=hi);
+ return {file,p,L,U};
+});
+const evidence=packets.map(({file,p,L,U})=>({id:p.level.id,levelSha256:p.levelSha256,routeSha256:p.routeSha256,L,U,starMoves:p.drags.length,qualification:file,evidence:`${ROOT}/formal-adoption/level-${p.level.id}${p.schemaRebind?'-schema':''}.json`}));
+const text=`import type { LevelSpec } from "./types";\n\n// Independent continuation registry. Production LEVELS and saved progress stay at 200.\n// Each adoption record binds this exact object and two real Pointer runs.\nexport const FORMAL_231_240_LEVELS: readonly LevelSpec[] = ${JSON.stringify(packets.map(x=>x.p.level),null,2)};\n\nexport const FORMAL_231_240_EVIDENCE = ${JSON.stringify(evidence,null,2)} as const;\n\nexport const getFormal231to240LevelStrict = (id: number): LevelSpec => {\n  const level = Number.isInteger(id) ? FORMAL_231_240_LEVELS.find(level => level.id === id) : undefined;\n  if (!level) throw new RangeError(\`Level \${id} is not in the formal 231–240 registry\`);\n  return level;\n};\n`;
+fs.writeFileSync('src/core/formal231to240Data.ts',text);
+console.log(JSON.stringify({staged:ids,formalPointerStillRequired:true,productionBoundary:200}));

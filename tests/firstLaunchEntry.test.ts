@@ -11,6 +11,7 @@ const startupGame = (
   visible = true,
   setMode: "commit" | "unknown-after-write" = "commit",
   audioPreparation?: GameHost["prepareAudio"],
+  preferredLocales: readonly string[] = ["zh-CN"],
 ) => {
   const storage = {
     read: clone(initial),
@@ -23,7 +24,7 @@ const startupGame = (
     context: {},
     viewport: () => ({ width: 496, height: 1078, pixelRatio: 1, safeTop: 0, safeBottom: 0 }),
     isVisible: () => visible,
-    preferredLocales: () => ["zh-CN"],
+    preferredLocales: () => preferredLocales,
     prefersReducedMotion: () => false,
     onPointer: vi.fn(),
     onResize: vi.fn(),
@@ -146,6 +147,30 @@ describe("first-entry audio preparation", () => {
     expect(prepare).toHaveBeenCalledExactlyOnceWith("menu", { music: true, sound: true });
     expect(game.startupAudioPending).toBe(false);
     expect(game.startupEntryPending).toBe(false);
+  });
+});
+
+describe("first-launch language selection", () => {
+  it.each([
+    { locales: ["en-US"], expected: "en" },
+    { locales: ["ja-JP", "en-US"], expected: "ja" },
+    { locales: ["zh-TW"], expected: "zh-TW" },
+    { locales: ["xx-YY", "fr-FR"], expected: "fr" },
+  ])("uses the first supported device locale for a fresh install: $locales", ({ locales, expected }) => {
+    const { game } = startupGame({ status: "missing" }, true, "commit", undefined, locales);
+    expect(game.save.language).toBe(expected);
+    expect(game.save.leaderboardLanguage).toBe(expected);
+  });
+
+  it("keeps an existing saved language instead of replacing it with the device locale", () => {
+    const { game } = startupGame(
+      { status: "ok", value: { ...oldSave(1), language: "ko" } },
+      true,
+      "commit",
+      undefined,
+      ["en-US"],
+    );
+    expect(game.save.language).toBe("ko");
   });
 });
 

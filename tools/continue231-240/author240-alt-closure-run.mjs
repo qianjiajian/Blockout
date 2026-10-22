@@ -1,0 +1,17 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
+import { prefixBound240 } from './author240-alt-closure-bound.mjs';
+import { ROOT, ruleGate, loadApi, digest, writeNew } from './common.mjs';
+ruleGate();
+const candidate = process.argv[2];
+assert(candidate);
+const value = JSON.parse(fs.readFileSync(candidate, 'utf8')), level = value.level ?? value;
+const qualification = `${ROOT}/author240-alt/closure-qualification-1792402419146.json`;
+const qualified = JSON.parse(fs.readFileSync(qualification, 'utf8'));
+for (const [file, hash] of Object.entries(qualified.sourceRawSha256)) assert.equal(createHash('sha256').update(fs.readFileSync(file)).digest('hex'), hash);
+const options = { maxLabels: 100000, maxMilliseconds: 1200, maxStates: 100000, searchMilliseconds: 5000, threshold: 21, goalClears: 31 };
+const { api } = await loadApi(), lower = prefixBound240(level, api, options);
+const file = `${ROOT}/author240-alt/closure-lower-${Date.now()}.json`;
+writeNew(file, { candidate, sourceLevelSha256: digest(level), candidateRawSha256: createHash('sha256').update(fs.readFileSync(candidate)).digest('hex'), qualification, qualificationRawSha256: createHash('sha256').update(fs.readFileSync(qualification)).digest('hex'), options, lower });
+console.log(JSON.stringify({ file, status: lower.status, L: lower.provenLowerBound, reason: lower.reason, rows: lower.rows.length, search: lower.search }));

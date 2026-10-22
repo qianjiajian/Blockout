@@ -1,0 +1,1 @@
+import fs from'node:fs';let text=fs.readFileSync(new URL('./author232-room-hybrid.mjs',import.meta.url),'utf8');text=text.replace("from './author232-fast-route.mjs'","from './author232-guided-route.mjs'");text=text.replace('area===3?native[3]','area===3?native[rand()<.7?3:4]');fs.writeFileSync(new URL('./author232-room-guided-hybrid.mjs',import.meta.url),text,{flag:'wx'});

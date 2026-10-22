@@ -1,0 +1,139 @@
+import groovy.json.JsonSlurper
+
+plugins {
+    id "com.android.application"
+    id "com.google.gms.google-services"
+}
+
+// Signing material remains outside every source/build distribution directory.
+def releaseSigningFile = file(System.getenv("GOOGLE_PLAY_RELEASE_SIGNING_PROPERTIES")
+        ?: "${System.getProperty('user.home')}/.android/slidejam-google-play/signing.properties")
+def releaseSigning = new Properties()
+if (releaseSigningFile.isFile()) {
+    releaseSigningFile.withInputStream { releaseSigning.load(it) }
+}
+def hasReleaseSigning = ["storeFile", "storePassword", "keyAlias", "keyPassword"].every {
+    releaseSigning.getProperty(it)?.trim()
+}
+
+// An explicit path must be absolute, so invoking Gradle from another directory
+// cannot accidentally select Web, WeChat, or legacy Android assets.
+def configuredWebAssets = providers.gradleProperty("webAssetsDir").orNull
+if (configuredWebAssets != null && !new File(configuredWebAssets).isAbsolute()) {
+    throw new GradleException("Google Play webAssetsDir must be an absolute path.")
+}
+def googlePlayWebAssets = configuredWebAssets != null
+        ? file(configuredWebAssets).canonicalFile
+        : rootProject.file("../.codex-temp/google-play-review-20261022/web").canonicalFile
+
+android {
+    namespace "com.blockout.app"
+    compileSdk 36
+
+    defaultConfig {
+        applicationId "com.SlideJam.SweetPotato"
+        minSdk 24
+        targetSdk 36
+        versionCode 23
+        versionName "0.1.22"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    signingConfigs {
+        release {
+            if (hasReleaseSigning) {
+                storeType releaseSigning.getProperty("storeType", "PKCS12")
+                storeFile file(releaseSigning.getProperty("storeFile"))
+                storePassword releaseSigning.getProperty("storePassword")
+                keyAlias releaseSigning.getProperty("keyAlias")
+                keyPassword releaseSigning.getProperty("keyPassword")
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            debuggable false
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            shrinkResources false
+        }
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile "src/main/AndroidManifest.xml"
+            // Google Play owns its native behavior; legacy Android stays unchanged.
+            java.srcDirs = ["src/main/java"]
+            res.srcDirs = [rootProject.file("../android/app/src/main/res"), file("src/main/res")]
+            assets.srcDirs = [googlePlayWebAssets]
+        }
+    }
+}
+
+def verifyGooglePlayAssets = tasks.register("verifyGooglePlayAssets") {
+    group = "verification"
+    description = "Reject missing or non-Google-Play Web assets before packaging."
+    doLast {
+        def markerFile = new File(googlePlayWebAssets, "google-play-build.json")
+        if (!markerFile.isFile()) {
+            throw new GradleException("Google Play assets require google-play-build.json in webAssetsDir. Build the dedicated Google Play Web assets first.")
+        }
+        def marker
+        try {
+            marker = new JsonSlurper().parse(markerFile, "UTF-8")
+        } catch (Exception ignored) {
+            throw new GradleException("google-play-build.json must be valid JSON.")
+        }
+        if (!(marker instanceof Map) || marker.target != "google-play") {
+            throw new GradleException("Google Play assets marker must have target=google-play; other platform assets are not accepted.")
+        }
+        if (marker.applicationId != "com.SlideJam.SweetPotato") {
+            throw new GradleException("Google Play assets must match applicationId=com.SlideJam.SweetPotato.")
+        }
+        if (marker.versionName != "0.1.22" || marker.versionCode != 23) {
+            throw new GradleException("Google Play asset version must match versionName=0.1.22 and versionCode=23.")
+        }
+        if (marker.adsEnabled != true || marker.adsMode != "official-test"
+                || marker.analyticsEnabled != false || marker.submissionReady != false) {
+            throw new GradleException("This SDK integration build requires official-test ads, analytics disabled and submissionReady=false.")
+        }
+        if (!new File(googlePlayWebAssets, "index.html").isFile()) {
+            throw new GradleException("Google Play assets are missing index.html.")
+        }
+    }
+}
+
+tasks.configureEach {
+    if (name == "preBuild") dependsOn verifyGooglePlayAssets
+    if (name == "preReleaseBuild") {
+        doFirst {
+            if (!hasReleaseSigning) {
+                throw new GradleException("Release signing is missing. Configure GOOGLE_PLAY_RELEASE_SIGNING_PROPERTIES or ~/.android/slidejam-google-play/signing.properties; no legacy-channel or debug-key fallback is allowed.")
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation "com.google.android.play:review:2.0.2"
+    implementation "androidx.webkit:webkit:1.12.1"
+    implementation "androidx.appcompat:appcompat:1.6.1"
+    implementation "androidx.browser:browser:1.8.0"
+    implementation files("libs/Sdk_Mediation_v0.0.3.aar")
+    implementation "com.google.android.libraries.ads.mobile.sdk:ads-mobile-sdk:1.5.0"
+    implementation "com.google.android.ump:user-messaging-platform:4.0.0"
+    implementation platform("com.google.firebase:firebase-bom:34.11.0")
+    implementation "com.google.firebase:firebase-analytics"
+    implementation "com.reyun.solar.engine.oversea:solar-engine-core:1.3.4"
+    testImplementation "junit:junit:4.13.2"
+}
+
+configurations.configureEach {
+    exclude group: "com.google.android.gms", module: "play-services-ads"
+    exclude group: "com.google.android.gms", module: "play-services-ads-lite"
+}

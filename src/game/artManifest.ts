@@ -409,6 +409,7 @@ export const GAME_ART = {
   backgrounds: {
     home: "assets/art/ui/home-v3/background.jpg",
     gameplay: "assets/art/backgrounds/gameplay-formal-v1.png",
+    startup: "assets/art/ui/startup-v1/loading-background.jpg",
   },
   ui: {
     gameplay: {

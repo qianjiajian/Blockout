@@ -1,3 +1,37 @@
+## 个人资料弹窗多语言补齐（2026-10-17，v1.198，本地Web已更新）
+
+- 个人资料统计、头像/头像框、解锁状态、昵称编辑、加载/重试与复制/保存反馈统一接入 `zh-CN`、`zh-TW`、`en`、`ja`、`ko`、`es`、`pt`、`fr`、`de`、`ru` 十种语言；中文和英文继续使用正式标题资源，其余语言绘制对应本地化标题，避免沿用中文文案。
+- `tests/profileLocalization.test.ts` 及既有个人资料相关测试共 76 项、TypeScript 和 Web 构建通过；未改玩法、关卡或存档，未重打微信包、未上传发布。
+
+## 启动加载重复进度层修复（2026-10-17，v1.198，本地Web已更新）
+
+- 根因是正式启动背景图已经包含底部进度条、百分比和四行健康提示，启动渲染又按逻辑坐标绘制了一组动态内容；在窄屏 cover 布局下两组错位并同时可见。
+- 正式启动图分支现在不再绘制上方逻辑进度组，改在背景图的物理坐标位置更新唯一进度条和“加载资源 N%”，健康提示保留一组；进度条填充、渐变和文字与正式资源比例对齐，失败重试仍可用，真实 shell/gameplay 解码进度保持动态。
+- 宽内部浏览器视口改用 contain，避免 `cover` 放大后裁掉上下内容；两侧用蓝色背景补齐，普通手机比例继续满屏 cover。720×1584、685×885、390×844 本地截图均只显示完整启动图、一条进度条和一组提示；`tests/startupProgress.test.ts` 3/3、TypeScript、Web构建和规则锁通过。`homeArtLayout.test.ts` 的2项既有静态资产/源码断言仍失败，未归因于本次启动层修复；未自动重打微信包、未上传发布。
+
+## 排行榜对手名称按首次设备语言本地化（2026-10-17，v1.198，本地Web已更新）
+
+- 主线周榜/全国榜/省榜与荣耀联赛的生成对手名称改为按首次启动时解析的手机语言投影，支持简体/繁体中文、英语、日语、韩语、西班牙语、葡萄牙语、法语、德语和俄语；玩家自己的昵称、对手ID、头像、分数、排名、时钟和省榜交集保持不变。
+- 新增独立的 `leaderboardLanguage` 存档字段：新安装取首次设备语言，旧v1存档缺字段时迁移已有界面语言；设置页后续切换只改变界面语言，不改变已确定的对手名称语言。排行榜缓存键和联赛结算动画均带入该语言，避免切换后复用旧名称。
+- 通过排行榜/联赛/首启语言回归测试（8个文件、153项聚焦测试）、`pnpm run typecheck`；本轮只更新源码和Web验证，不自动重打微信包、上传或发布。
+
+## 正式启动加载图接入（2026-10-17，v1.198，本地Web已更新）
+
+- 找回此前生成的“脑王的诞生”启动图，作为 `public/assets/art/ui/startup-v1/loading-background.jpg` 正式资源接入 shell 加载批次；使用同一视觉稿的四行健康提示排版，资源压缩为 174,188B JPEG，保留原始生成图在 Codex 资源目录。
+- 启动页在图片解码后使用该背景，进度条和“加载资源 N%”继续绑定真实 shell/gameplay 解码进度，样例图中的静态68%不会覆盖实际进度；未完成 shell 解码时保留纯代码回退画面。健康提示、重试状态和启动输入门禁保持。
+- `pnpm run typecheck`、`pnpm run build:web`、`tests/startupProgress.test.ts`（3项）及 `tools/playtest-startup-art-loading.mjs`（202资源、延迟/失败/重试场景）通过；202规则锁通过。仅更新源码、启动图与Web验证脚本，未重打微信包、未上传发布。
+
+## 正式名称统一（2026-10-17，v1.198）
+
+- 按用户确认将正式名称统一为“脑王的诞生”：多语言 `app.title`、画布无障碍名称、Web/Android入口标题、Android应用标签、微信工程描述、上架文案和项目简报均已更新；棋盘编辑器入口标题同步更新。
+- 本地化字典覆盖与占位符检查保持通过（10种语言，核心305/305、每日任务26/26、收藏41/41、福利35/35）；TypeScript及相关本地化测试通过。本次未重打微信包、未上传发布。
+
+## 正式启动加载进度界面（2026-10-16，v1.198，本地Web已更新）
+
+- 将启动页改为无框体的文本与进度条界面：显示正式名称“脑王的诞生”、青色进度条、动态“加载资源 N%”及参考图样式的两行健康游戏提示语；移除启动阶段对旧装饰面板的依赖，首批资源尚未完成时也会绘制加载反馈。
+- 进度绑定实际图片解码：Shell 资源映射4%–38%，Gameplay 资源映射38%–96%，音频与启动收尾完成后为100%；加载失败显示失败状态并支持重试，重试会重置对应阶段进度。惰性页面资源不计入启动门禁，避免百分比虚高。
+- `tests/startupProgress.test.ts` 覆盖批次逐图进度、失败回滚释放及阶段百分比；TypeScript、启动/首进/帧调度/微信图片/微信桥接/本地化测试共136项通过，Web构建通过。仅更新源码与Web产物，未重新打微信包、未上传发布、未访问真实存档。
+
 ## 旅途优化同步微信包（2026-10-15，用户明确更新，本地构建及校验完成）
 
 - 用户明确“更新微信包”，本轮按当前源码重建dist-wechat，包含旅途20图首屏/章节渐进/终点按需与局部重试、章节资源分包迁移，以及已在本地完成的首关音频预热和每日挑战存档兼容修复。首轮构建期间仅formalDailyChallenge300Data.ts被并行任务更新，源稳定性门禁拒绝该轮；原失败result/build.log及source-drift.json保留，不重标成功。
@@ -53,6 +87,42 @@
 - 相关profile129项、Host缓存59项、资源政策19项共207/207通过，TypeScript、202规则锁、Web构建通过。全局art verify仍因旧lifeRefill.referencePanel URL缺失失败；额外replacement政策6通过1失败为既有shop三图退役断言过期，未重标或扩改无关内容。
 - 隔离MemoryHost 405×882/320×568双屏真实Pointer全19框选中，锁定灰列表/彩预览/无保存，6款保存后首页/主线/联赛一致；无旧框加载或真实Storage访问，最终源哈希不漂移。最终playtest-results/profile-frames-supplied-20261015/acceptance-1792056048031/report.json；上一轮因并行修改Game的FAIL原样保留。根目检最终大屏目录及小屏联赛榜；未冒称真机测试。
 - 汇总playtest-results/profile-frames-supplied-20261015/status.json；Web ./assets/game-DEpOVGT0.js SHA 8cfd0b7c0e5a85bba02ce4c8e4ad53db3e125561660fde221c7c382081b06037，5173与dist及19新图逐字节匹配；未改变真实玩家存档、未上传或发布。
+
+## 每日挑战外壳D2-10主线151新图待唯一数学（2026-10-19，v1.198，正式仍77/300）
+
+- 改用主线151正常5×6/30格，保参考右上完整紫SQ2、右中橙SQ2及八门；中央蓝SQ2和右下蓝SQ2重铺为蓝/粉H2、蓝/紫H2，真重分区8格、无单格，12体15层及三壳。采用 `.codex-temp/prepare-shell-d210-source151-new01-revision2.mjs`，旧paper01末步碰撞报告 `1644aa7ca356a29fd14e1cfcaf223f1cdfb3da4ea53de14287a4db9597f1eeff` 保持；revision2仅交换末两拖，41先粉H2右清、42蓝H2顶清，paper02 `1f3997e57baae36fbd9e62bb2cb521bb502f1700cd9d6771d55e8b8e7a311d89` 通过后唯一落input，预先选普通projected provided一次9999+1，不native/fallback。
+- 目录 `design/shell-d2-10-source151-new-01`；input SHA `bd41a16dbecfc7146c6a4b44552ace84e5f7365044fa47c9014542495a756bfb`，level `f9418b7d6566f73bf493c02062b76100c5c74ba7d96a359720432615f5a82ac4`，route `21ce7f807e152045a97578df3cf576fcec5b8670e1fd1eff93b78882528d30b4`。作者static `1a0b46f72585906da9f4dadcf8def4022e895e9103bcc5fe3710e68332561d77`、独审 `e467985fb8b48b977ceab965244ab47723425bb2616774384eabe517225281d7`核30满铺/邻同0/18原向请求、103保留及77正式最高22/30、主线10/30。unsealed `5111d72bacf488c47c3048bcf8b4bc938ce01df96ff46da960b49a9d1c62aced`核204stocks/205inputs/2同源；actual finite `87f8fd60072538a8e31d52fcb5d0f1474317a1fd74ab23f24733d380301836ec`为42起点92锚点15出口3剥层，errors[]。
+- 根实际view PNG `c55f987c8cd7f227a58d102bda236091e6ca93c5b5d6f64b00b4eec5a75f1e43`，rootvisual `5f934ac82f041115b235c5065fa64a108c8706eab33cc4e600b67591c12b0fbe`。685绑定preflight `3240bf243e0cb2a71467cbdd46bb26d98de29778cf2d95ac3207eee083ba74fe`已落，继全局17n03 indexe99f/review3e77，source151真父 `3801eff32870609fb43795f0d33b4103d102485f46b9d364fd5477e3ee56c346`及receipt08927保持。当前无execution目录，未数学、未claim、未正式接入；待准确独审后由root唯一执行 `.codex-temp/execute-d210-s151-n01-compact.mjs`。42拖减15清的27仅声明路线上界算术，不是已证必挪。用户插问含义，已说明取所有无道具完整通关路线中非清除非剥层有效拖动的最少次数；未改变规则。
+- 并行未来native行政适配只写新helper和metadata测试，旧history10 disabled flags及冻结数学保持；第三方源码独审尚未完成，不用于本151或旧失败图，不将准备工具计正式关卡。主线200、真实存档、包与发布保持。
+
+## 每日挑战外壳D2-10主线17第三版下界未通过（2026-10-19，v1.198，正式保持77/300）
+
+- 最终 revision2 真重铺顶紫H3为紫H2+红S、下右青2×3改粉及右上粉2×3改青，绿右门6/2移4/2；13体16层、43拖16清。唯一input `design/shell-d2-10-source17-new-03/input.json` SHA `2a7afd27cdc03094be72a3fd304560172466ef0c93a0b6f2feb4c8b410013615`，level `c4fce63a86a06e1f4022a4a6888ec859fc162bb929334d60016db5844150487c`、route `6b1a947dbe840271f519bc3e46a6d36b486cdef073618703575b02e3ca4a170a`。作者static `3aafe28b431a3549a6b5f4d204bd11d6a1d7a9f761be0f753b6433cebec16df1`、独审 `df08276f59f45ecc5d086a1250495704b01fd60e2cf1cae1cc9aa6def76972c7`核48满铺/邻同0/19原向请求，来源数字冰实算1并绑定追加纠正；103保留最高33/48、77正式最高.3125、主线.125。unsealed `c9e2f294b597cab363f86779eb5ff11fefdc0d83f402eb23e24d7acdf6be33ca`核203stocks/204inputs/2同源，cycle `b6edd94a86553ed3924c93f7c410e9efa31febda9b147bdbdbd60b1fc07faf44`零闭环。
+- 有限逐格独审 `5ce13cc2f0bd4f5ff296a525d604bc7c36efa45743f8b4debebe35cdbea76043`核43起点133锚点16出口3剥层/0剩余；根实际view原向PNG `725b77166f2bb2f0cf3228f54cfc9e2ebc469d3a5de500c070858a5658d3145a`，rootvisual `dc917bc2498ab58f3dbb44bd37754164242007e6ce5a8fa0ab72b62c883a11ec`。准确687绑定preflight `ddab0be7e52efbeef84a5e6262ec03f1c9439e3134a3b93539267a621d3d5c88`及独审 `b97bf194e5b2f06844332e0aa9ea628fe103a647cef231dbe971085a5dcdd471`后，根唯一普通projected provided数学实际失败：原图两路完整43拖16清/U27，lower找到cost6放宽完整捷径，729登记+1终止额度=730/10000、111ms、非cap，L=null/UNKNOWN_LOWER。不能将U27或放宽6当真实最优/通过；PASS后机制/兼容/Pointer/资格/注册均未执行，不换native重试。
+- receipt `design/shell-d2-10-source17-new-03-execution-01/candidate.json` SHA `d552e05aa48e90c112bfa8b9f9b6c8b91cb229edb994e8bfd5b2d4c48230331a`；completion/head `47814ffbea20e7b6fc8b7bfa06bb4819de0a85672d67bcbebd22eef1f5841546`，index `e99f8c6e4fe95dc6d76a2d9357f28cc1b360cccfda3bc183fa092af1bcbcb349`。后继独审 `proof/shell-d2-10-source17-new-03-successor-index-independent-01/report.json` SHA `3e777dc7089021850b85a927d4a7371200e753a2e96faa9bd00ea72fa572d62c`闭合全部旧前缀/7根，现137912files/20362worlds/15223records；source17真实失败父 `bc9fd3673c5fd319ffc853ef90b433378de3335a85a5aad854494da3965436d0`与两封条保持，其它父不变。下一全未封预计204stocks/205inputs，同源17为3，须实核。
+- 保存捷径显示底紫H3左移后，右橙V3及粉Rect下移一格即可让绿壳从row4提前离场；移门未强化预期约束。继续同槽选择不同主线正常棋盘的较高下界基底，真正换形换色与空间重排，不借旧图证书。正式仍77/300，主线200、已有正式对象和失败证据保持；未打包、发布或访问真实存档。
+
+## 每日挑战外壳D2-10主线17第二版（2026-10-19，v1.198，正式保持77/300）
+
+- 针对n01已保存放宽捷径，恢复参考全部八门及蓝V3/青与粉2×3归属；右下3×4十二格真重铺为青2×3@(3,4)、橙V3@(5,4)、紫H3@(3,7)，12体15层、红→紫/绿→黄/蓝→橙三壳，原两炸弹删除。36步声明路线、15清，完整上界及下界仍待唯一数学；纸面有限不冒称已通过。紫H3在第25步0,4首次匹配左门，未继续0,3。
+- 唯一builder `.codex-temp/prepare-shell-d210-source17-new02.mjs` SHA `5546d9e6da6ad1cdf7bdb04d9bd411859271cfa8c7b2a672fe8f1c23fc086c38`，纸面finite `5f19b2b78337ba90c8008b25b1b77cdd47dc358edff90802294b53656bcf3a46` 后首次落input。目录 `design/shell-d2-10-source17-new-02`；input `93c7ab3dff126b2289c90b7e8e825d9662f2e84dec2dbe56d4c64485b154e052`、level `dd3eee8a35ae4190f33568b61cbb78d8d4a5217effcdc196919e421a81b545d6`。作者static `1882905821d6a1d540ca0887f62c90966946c24dbe7b268caeb37be4e8e0a490`、独审 `632014d33e409be9a883a996bb00fc7656a59af1847255c60aab93c079aff0eb` 核48满铺/邻同0/18原向请求，103保留最大.75、77正式最大.3125、主线.125。unsealed `b9570767d80c14d489f425d7d7e2627738ad037ec55b496a3778fcbb6cb50160` 保202stocks/203inputs/1同源，完整20358world/15221record及7根；真实父b8b2d743，不刷旧图。
+- actual有限报告 `fc6e52ad52491afcda827fd60fd83b3a6a9e1e0d3923a8927e02b96a13bdcc26` 核36起点112锚点15完整出口3剥/0剩余，cycle `4642e39b4f8e3bd0b40bc2366d96748e7261d813d9d7413c116739cd0d0ba6b7` 零闭环。根实际view静态PNG `33f29a1743bc359cb8fbe3698ae104609cf2f0071216788c8fc06a0bfeb7a2a5`，rootvisual `419292a98f245b030c396e1aa6db2907eb0faa0d57ead19c3c28ca6473dfcf16`。准确677绑定preflight `ed4b0b9bbf025c3a09e7b7f28f1ff99775a95b69e8a8d7cd6082da71e6ea6c4b`、独审 `a4269b72e5c80b90586e7a0a7edc2fc0c8bb7872ab737a180cfe812ab870c929` 已通过，根已启动唯一普通projected provided数学，9999+1，无native/fallback。结果须以execution-01实际completion/receipt为准，不能重复执行。PASS后机制/兼容/资格/双屏Pointer与正式接入尚未执行，正式77/主线200保持。
+
+- n02唯一数学实际未通过：两路完整36拖15清/U21；lower找到cost12放宽完整捷径，1341登记+1终止额度=1342/10000、357ms、非cap，L=null/UNKNOWN_LOWER。receipt `design/shell-d2-10-source17-new-02-execution-01/candidate.json` SHA `a677fdd5f0c97a94a6cea440155ce6ad2c202d9661c2dad30e707a3348d7cdba`，completion/head `054e4c257360efd661708440f6e5893346a92a749ac91078ca52bc7e948a1171`，index `e5a7f6d76b75dae3dd9702335f668c22f59782ae1679a3ca39c127dd6852d9e1`。后继独审 `proof/shell-d2-10-source17-new-02-successor-index-independent-01/report.json` SHA `5cd3cf4e2365e118cb947480a3bdc5dc7a216d7bdcd29d51f7dd2b426de17b1c` 已闭合旧前缀/7根/677绑定，现137897files/20360worlds/15222records。source17真失败父更新为 `41e0069e2f39d451c2a989f48b0fd6fa13001b88a24d4ab109ab48e9b6e690e0`，两封条保持，其它父不变。没有执行PASS后工具或注册；正式仍77。下一全未封预计203stocks/204inputs/同源17为2，须实核。
+- 已保存12捷径中黄H3可先直接停0,7，底紫H3不必提前上抬；绿H3较早由row6清除后，右下青Rect和左青Rect都可较早直达底口，作者旧路线若干停车并非必需。只读分析 `proof/shell-d210-source17-new02-saved-shortcut-review-01.json` SHA `30b98db3b51edf22d325f9aee4d8526755a359eb966966aa682304e3ef9edb8a`；不把放宽12当原图最优。新n03当前纸面将顶紫H3拆紫H2+红S、下右青改粉/右上粉改青，最终再将绿右门6/2移为4/2；绿色在3,6停车，待粉Rect离场后上3,5剥。43拖16清、算术27非数学证明。旧42拖纸面builder已创建但未input，保留并另出revision2，先独立finite/static/fresh再唯一input，禁止重刷n02。
+
+- 来源说明更正另存 `proof/source17-static-inventory-metadata-correction-01.json` SHA `e9961fcac4c848f32a3bc14e0d44e2d18406845d8b446026a47a62cfae93617e`：绑定的当前/冻结/目录主线17均实际26体、3壳、1个数字冰（cc-017-b1-12/frozen1）。n01/n02独立static的sourceInventory.numericIceBodies=7是遗留叙述硬编码，保持已封报告原字节并在此纠正；未影响实际改编图或失败数学，不重标任何旧PASS/FAIL。n03必须实算1并绑定更正报告。
+
+## 每日挑战外壳D2-10主线17恢复制作（2026-10-19，v1.198，正式保持77/300）
+
+- 本轮重新完整读取活动规则并通过202版本锁；正式注册表SHA仍a9b0c7c84a5e1ec341e7e9aaa7a3691bf9b76702edfe628e25195d932133ca85，下一槽D2-10。前轮属实质进展：完成source4 n02唯一数学失败及全史后继闭合，改为source17正常6×8大块布局。原author在定稿前工具额度中断，本轮实际live agents仅root、source17新目录和builder均不存在，未假定旧工作仍在运行，也未重启旧数学。新author/audit/review分工恢复。
+- source17几何参考selection/merged-116-v2/daily-mechanisms-bomb-120-d1-03.json SHAe81cb9d3747cbc083b1d77d11a709b3222d28bd39a76483d49daba1de0a198c8。真实最新失败父e489c9b964f8b2fe6c2716713898527e441fdfccd55d1fbd081dfded1361c40d，receipt design/low-band-thirtytwo-math-01/candidate-016.json SHA008bf54d70e903824daa383598766abeae261726173dac4a0a4ef5114533f205；普通parent入口，不能first-source。全局最新index仍b7d20b8cf5f7f5fdf8fbffb222a0ddf4682814dacbdfdf6afdcacc789d395e57/独审e77852507ccd4f658f3b25e0fe48daba9adf4bf2f878c5c08f438a3616b6e3ee。下一完整未封并集预期201stocks/202inputs/0同源17须实核。
+- 当前唯一纸面保48格，右下3×4的原4体12格改red Rect21@(3,4)/purple Rect21@(3,6)，13→11体/无单格；去原两炸弹。原blueV3改cyan→orange壳，左cyan2×3改blue，右pink2×3改green；其余两壳redH3→purple、greenH3→yellow。cyan底门改3/1，green右门改5/3，其他原门保持。根已给32个逐格声明拖/14清的完整纸面，不称已证U18。右greenRect必须先到0,0停车、尾部再到4,5右清。旧greenV3高度3对右绿门高度2不匹配、旧31拖/14清/U17方案已纸面排除，未生成输入；禁止把redRect左0,3再下0,6的同一拖拆开凑数。
+- 预先选择普通projected provided唯一一次9999+1，无native/fallback。现只有行政source准备；作者需先全史fresh/全池/原向/来源/有限检查再唯一输入，根执行数学；失败对象保持。当前仅artManifest在旧D209兼容源对比中变化：旧e6fbf85b653bcda02ec631cb42ba6b26e581e78710e3a9667510c78e78288d0a→a2ff4d1e8150fff788f13959191077b20b1d37c6584d3c3db63b3e5f3d56d345，其他已登记sourcePairs及冻结源不变。PASS后兼容行政source另存review-d210-s17-n01-current-domain-20261019.mjs，要求当前完整GAME_ART.gameplay与冻结深等及实际PNG逐字节同，不修改旧兼容工具/证据。尚未执行该报告、求解或正式接入；主线200/玩家存档/包与发布保持。
+
+- 本轮实际唯一输入已落：`design/shell-d2-10-source17-new-01/input.json` SHA `8b0c13b5beeff3f766595391cd7f7c8af50678c89995362cea3e86d888640719`，level `780d91fb6385174405685a5bf1883a08434fabcf50771c7e4c2e99a67b958d46`/route `1d6fa53e5728cbe7fa334ad439478c999531abc0d94c87c08a507cecc106baf1`。作者static `57392b56ddc6442f528c2cea8ca7d020e40e8b628ea5bcda573ffc3eb587123f`、独审 `745d718711e52b9749e09379f64fbc7fc872e5309d285da7d15f6eb4f4ac1dd3`、unsealed `67452a0e8237bb3dc53ea33e0a678666047af71d52bec5778b66d841a5f1f1b4` 核201stocks/202inputs/0同源、103保留/77正式、48满铺11体14层3壳、17原向请求。actual有限报告 `d865fb84f081a06888ec2edc1a8e444072f3b932215e2679cfba463d9b18b363` 核32起点98锚点14完整出口3剥层；cycle `36158694ce1ee6c0e166f9974c899121c948951e48533b6bea9e47e339e00297`。根实际view PNG `1df6997f08cba8520032a6869dd760a88f7bce079ac1eba15b2ed07bf52c2efe`，rootvisual `3004b8d6fcc97c7e40278b0b87bcad393f1066365cf899ee3974d3d18b2a14b1`。
+- 准确678绑定preflight `458faf5a24fdf397fd8771bc595a1b77b9cdc87580b226424916578f17645546`、独审 `20fe775034b91504827869a863ead3c2374f9c032a8f1510b709d9f999ffceca` 后唯一数学未通过：canonical/independent完整32拖14清/U18；外层放宽找到cost4完整捷径，115登记+1终止余量=116/10000、24ms，L=null/UNKNOWN_LOWER，非预算耗尽。receipt `design/shell-d2-10-source17-new-01-execution-01/candidate.json` SHA `1cfc67e832b768085c51cd834cb400c53eeaa9438f6e154933cde30309bb751d`；未运行PASS后的机制/兼容/资格/Pointer/正式注册。不能把放宽4当原图最优，不换native重刷。
+- 后继独审 `proof/shell-d2-10-source17-new-01-successor-index-independent-01/report.json` SHA `43d9500257e250e965e8ab543e14e7ae677f2465fa7a09e1c3de7dda9f662957` 已闭合：最新index `e31a6b5ea7216efc177d3662a3e997f4ba40ba5f874a4674a6a2023a2346d82c`/completion与head `2bebcb711eaaf647ca854bc123be91f076a5cd4400ee4565a83262b470e18230`；保旧前缀与7根，新总137882files/20358worlds/15221records，source17真实失败父为 `b8b2d743eba29df1159b894235521689263a5c865c2e9469dedfc75745cef1a1`，其他来源父不变。下一未封并集应202stocks/203inputs/同源17为1，须实际重核。保存捷径中底部两Rect先左/下互换，green右门5/3使绿H3提前row5清，随后蓝Rect直接底清，破坏原全盘腾挪约束。继续D210真正换形换色及重排，未定稿n02、未生成新input；正式77/主线200保持。
 
 ## 每日挑战外壳D2-10主线4第二版准备（2026-10-16，v1.198，正式保持77/300）
 
@@ -7870,3 +7940,248 @@
 - 用户要求新增功能后更新APK；重新构建比对发现954个代码/资源文件逐字节一致，另2个构建审计JSON仅序列化键序不同、解析后深度相等，未发现新的功能内容。用户确认“如果相同，那就没有新增的内容了”。
 - 沿用已交付 `artifacts/android/BlockOut-0.1.2-debug.apk`，SHA `22844414ebf6f7f57b54c4cc7cab13141e41e35e201d31a40e52c283c62a5002` 保持；撤销本轮临时版本号增量，恢复code3/0.1.2。用户确认前已完成的临时0.1.3内部构建不交付、不作为新功能版本。
 - 本轮类型检查及实际构建双屏缺.at启动/首关通关/保存回归PASS；源输入1285项稳定。比对与处置证据 `artifacts/android/update-0.1.3/disposition.json`，未修改玩法/存档、未重新更新微信包、未上传发布。
+
+## 小米8沉浸式与画布适配修复、Android 0.1.3（2026-10-16，规则 v1.198.0）
+
+- 针对小米8照片反馈修复 Android 窗口：API23–29 增加 `FULLSCREEN|HIDE_NAVIGATION|IMMERSIVE_STICKY`，API30+ 使用 `WindowInsetsController.hide(systemBars)`，前台恢复/重新获得焦点时重入沉浸式；保留真实 display cutout 安全区并启用刘海短边布局，避免状态栏/导航栏 inset 再次压缩 WebView。
+- 网页画布改为填满 WebView，保留 `viewportTransform` 的 contain 逻辑以避免页面角落被裁；物理画布先铺场景背景，逻辑画幅外不再显示黑色边带。未改关卡、玩法、存档或微信包。
+- `pnpm run typecheck`、`pnpm run build:web`、Android `assembleDebug` 通过；APK `artifacts/android/BlockOut-0.1.3-debug.apk`，versionCode 4/versionName 0.1.3，大小 57,583,388 字节，SHA-256 `892a2f96a4c215d0a07be40cab96fe269327bac020d4f3ec9ec6936e5a085a01`，v1/v2 签名及 zipalign 通过，与旧包证书一致，可覆盖安装。
+- 当前电脑无连接 Android 真机或 AVD，ADB devices 为空；小米8实际状态栏、黑边和页面裁切仍待安装此包回测。未上传或发布。
+
+## 主流设备族兼容审计（2026-10-16，Android 0.1.3）
+
+- 用当前 APK 对应的 Web 资源运行 14 项隔离矩阵：小屏/16:9、19.5:9、20:9/21:9、高屏、折叠尺寸、平板、横屏、无音频、4 倍 CPU 限速均通过；4 项缺失旧 API/模块加载故障均正确显示中文错误和重试。正常场景 page/console/HTTP 错误均为0。
+- 静态覆盖 API23–29 legacy immersive、API28+ display cutout、API30–35 `WindowInsetsController`/edge-to-edge、三键/手势导航隐藏路径；Manifest 固定竖屏，因此横屏矩阵只代表网页布局，不代表原生横屏模式。
+- 不能从桌面视口推断所有品牌真机通过。仍需小米/红米 API27 刘海机、MIUI API29/Android15、OPPO/OnePlus/realme、vivo/iQOO、荣耀、三星、Pixel、折叠/分屏、三键导航、键盘、GPU/低内存真机回测；当前 physicalDevices=0、AVD=0、adb devices 为空。报告 `playtest-results/android-device-matrix-20261015/2026-10-16T08-21-53-075Z/report.json`，摘要证据 `artifacts/android/BlockOut-0.1.3-compatibility.json`。
+
+## Android 0.1.4 重新打包与宽屏溢出修复（2026-10-16，规则 v1.198.0）
+
+- 重新打包前复核发现旧 0.1.3 APK 未包含最新 `canvas min-width:0; min-height:0` CSS；该修复已加入当前网页并用于新包，解决极宽横屏 915×412 下 canvas 高度溢出 45.5px 的问题。原生 Activity 仍固定竖屏，竖屏全屏行为保持。
+- 新 APK `artifacts/android/BlockOut-0.1.4-debug.apk`，versionCode 5/versionName 0.1.4，大小 56,895,674 字节，SHA-256 `209f6979a292a5d067d3fcc0b3f701ce0e002c1f68dfdb459a08255c8e7fc18b`；v1/v2 签名、zipalign、APK 内置 index 与构建资源一致，证书与旧包相同，可覆盖安装。
+- TypeScript、Web 构建、Android assembleDebug 及当前 14 项隔离矩阵通过（10 正常视口、4 故障重试）；真机/AVD 仍为0，未更新微信包、未上传发布。摘要 `artifacts/android/BlockOut-0.1.4-compatibility.json`，矩阵报告 `playtest-results/android-device-matrix-20261015/2026-10-16T08-41-03-775Z/report.json`。
+
+## Android 首次启动按设备语言与 0.1.4 当前源码重打包（2026-10-17，规则 v1.198.0）
+
+- 首次启动语言逻辑已核对：Android WebView 通过 `navigator.languages` / `navigator.language` 提供手机语言；无有效 v1 存档时取第一个受支持语言，已保存或玩家手动选择的语言保持不变，不支持的语言回退英文。新增首启/已保存语言回归覆盖，相关 83 项测试通过。
+- 从当前源码重新执行 Web 构建并重打 `artifacts/android/BlockOut-0.1.4-debug.apk`，版本 code5/name0.1.4，大小 56,942,244 字节，SHA-256 `de81740474b50bb88c143a66cc6bf46f1c1beaf5ec3b05c220d15406304d7387`；APK 内置资源逐项与构建目录一致，v1/v2 签名、zipalign、Android assembleDebug 通过。
+- 当前 10 个正常视口与 4 个故障重试场景均通过，矩阵报告 `playtest-results/android-device-matrix-20261015/2026-10-17T04-24-48-953Z/report.json`；无连接真机或 AVD，不能替代小米 8 实机回测。未更新微信包、未上传、未发布。
+
+## Android 启动页仅 APK 隐藏健康提示文案与 0.1.5（2026-10-17，规则 v1.198.0）
+
+- 用户确认只在 APK 隐藏启动图红框内四行健康提示。新增 `VITE_BUILD_TARGET=android` 构建目标：Android APK 绘制层按原图坐标覆盖提示区域并移除 fallback 文案；普通 Web 构建保留原文案，微信构建替换为 `IS_ANDROID_BUILD=false`，不受本次改动影响。未改玩法、关卡、存档或系统栏逻辑。
+- 新 APK `artifacts/android/BlockOut-0.1.5-debug.apk`，versionCode 6/versionName 0.1.5，大小 57,755,032 字节，SHA-256 `4f00d960d086488e938a9709d7f9e8f5b717dcf521b190671ae6ea08ad8f1349`；APK 内置 Android 资源逐项匹配，v1/v2 签名、zipalign、Android assembleDebug 通过。
+- 默认 Web 构建仍包含健康提示文本，Android 构建 JavaScript 不含该文本；Android 10 个正常视口和4个故障重试矩阵通过，真机/AVD仍为0。未更新微信包、未上传、未发布。证据 `artifacts/android/BlockOut-0.1.5-compatibility.json`。
+
+## 最新源码 Android APK 0.1.6（2026-10-17，规则 v1.198.0）
+
+- 按当前源码重新生成 Android 专用 Web 资源并打包，包含最新资料页、排行榜/本地化等生产改动；APK 仍仅在 `VITE_BUILD_TARGET=android` 下隐藏启动页红框文案，默认 Web 产物已恢复并确认保留原文案，微信构建开关为 false。
+- APK `artifacts/android/BlockOut-0.1.6-debug.apk`，versionCode 7/versionName 0.1.6，大小 57,075,596 字节，SHA-256 `141e97012d2922b1e547f0e4b4ab09dc3290f09de91eb9bd1ee89e7be2f8af67`；内置资源逐项匹配当前 Android 资源目录，v1/v2 签名、zipalign、Android assembleDebug 通过。
+- 当前 Android 资源矩阵 10 个正常视口与 4 个故障重试场景通过；无真机/AVD，未更新微信包、未上传、未发布。证据 `artifacts/android/BlockOut-0.1.6-compatibility.json`。
+
+## 首个独立正式签名 Android Release 0.1.7（2026-10-19，规则 v1.198.0）
+
+- 用户明确要求打正式APK，本轮以最新源码生成独立 Android Release 资源；版本 code8/name0.1.7，包名仍 `com.blockout.app`。使用仓库外持久保存的 RSA3072 正式密钥，不复用 Debug 证书；Gradle 缺正式签名时失败，不降级为测试签名。签名目录仅本机用户及SYSTEM可访问，未提交或分发私钥/密码。
+- Release 显式非debuggable并关闭 WebView 调试；通过 `VITE_ANDROID_RELEASE=true` 关闭临时测试选关、清档入口及对应命中/绘制，排除棋盘编辑器入口，诊断桥仅暴露脱离游戏对象的快照。普通 Web/Android Debug 保留原开发入口，微信仍关闭开发入口；仅APK隐藏启动页提示、全屏/安全区与首启语言合同保持。未改关卡、玩法、经济或存档数据。
+- APK `artifacts/android/BlockOut-0.1.7-release.apk`，56,459,381字节，SHA-256 `ee2443011b195e0d1bcccc38bb8e9659dd3a93f882cd27ca63a670cf86adadf3`；证书SHA-256 `bfcd8592c9a73a9f02a9565e0ee71dcb2754dabaebd1ffcb256110bdfc8cebb9`。v1/v2签名、zipalign、Manifest非debuggable/testOnly、951内置资源逐项一致、1293源文件构建前后稳定均通过。
+- TypeScript、6文件97测试、assembleRelease通过；lintRelease为0错误5警告（平台属性/竖屏/JS/备份建议），未冒称警告清零。实际Release资源10正常场景与4故障重试矩阵通过；额外真实触控首关3拖三星/自然入第2关及393×818、320×568首页设置开发入口禁用/快照隔离通过，首页设置采用独立12关内存fixture，真实Storage/IndexedDB访问0。默认Web独立构建保留提示、测试选关与编辑器。
+- 汇总 `artifacts/android/BlockOut-0.1.7-release-checks.json`；矩阵 `playtest-results/android-device-matrix-20261015/2026-10-19T04-49-08-118Z/report.json`；正式UI `.codex-temp/android-release-0.1.7-20261019/release-ui-check.json`。无连接真机/AVD，未更新微信包、未上传发布、未接广告SDK。正式证书不同于旧Debug，不能直接覆盖旧测试包；卸载会丢本地存档，已在交付说明明确。
+
+## Google Play 独立基础测试包 0.1.8（2026-10-19，规则 v1.198.0）
+
+- 用户在审阅《Google Play谷歌聚合.docx》后授权执行，并限定仅Google Play、不改微信/抖音；用户回复聚合AAR、google-services.json、AdMob/Solar标识以及隐私运营主体、邮箱、公开网址均未准备。本轮完成独立离线基础包，不冒称广告已接入或正式上架就绪。
+- 新增 `android-google-play/`、`vite.google-play.config.ts`、`scripts/build-google-play-web.mjs`、`src/googlePlay/`。AGP8.9.2/Gradle8.11.1/JDK17，min24/compile36/target36，com.blockout.app，name0.1.8/code9；只接受GooglePlay目标/版本/无广告marker资源，不回退旧dist。原渠道及共享源2135项哈希保持，没有改关卡、玩法、存档或微信/抖音构建产物。
+- GooglePlay专属设置页增加简中/繁中/英文隐私说明，保留首启语言、全屏、APK启动提示隐藏及正式开发入口禁用；本渠道禁止IP地区联网查询。独立Activity合并cutout/captionBar安全边距、关闭file访问，Manifest保留WebView历史返回兼容；专属XML排除云备份及设备迁移。无INTERNET、无广告/统计SDK、不做模拟广告发奖。
+- 正式签名沿用0.1.7证书。APK `artifacts/google-play/BlockOut-0.1.8-googleplay-release.apk`，56,366,506字节，SHA256 `c458bfd07fae8e910cbc818865fd8b023178c0f2163f5640737f003c5f768762`；AAB `artifacts/google-play/BlockOut-0.1.8-googleplay-release.aab`，56,118,233字节，SHA256 `c8a0655cae686d78d1f3913797c9610c103d30f0046a94cefcd7a97d25b1a8d0`。签名、953项Web资源逐字节匹配、无.so、AAB bundletool验证与派生APK对齐/资源检查通过；派生APK仅在临时目录用Debug签名检验，不交付为Release。
+- TypeScript、97项相关单测、bundleRelease/assembleRelease通过；lintRelease 0错误5警告（新平台属性、竖屏、JS用途）。最终固定资源10正常场景与4故障重试通过：`playtest-results/android-device-matrix-20261015/2026-10-19T06-43-27-890Z/report.json`。实际CDP触控首关3拖三星进Lv2及4尺寸/语言隐私流程通过，内存fixture无真实存档访问；报告 `.codex-temp/google-play-0.1.8-20261019/privacy-ui-final.json`。修复滚动后首击close可能不派发click的问题，改有效pointerup关闭；旧失败证据保留，平板无需滚动的错误测试断言另录纠正，不重标旧报告。
+- 汇总 `artifacts/google-play/BlockOut-0.1.8-googleplay-checks.json`；包检查 `tools/verify-google-play-package.py`。隐私政策草稿与待补清单在 `release-assets/google-play/`，草稿不是生效政策。实际SDK接入、公开隐私资料、Play Console声明/签名设置/测试资格仍待完成。没有连接真机/AVD，不能宣称各品牌验证、原生返回/系统栏或覆盖升级已实测；未上传、未发布、未访问玩家真实存档。
+
+## Google Play 身份及隐私联系方式更新 0.1.9（2026-10-19，规则 v1.198.0）
+
+- 用户提供公司 `Nanjing sweet potato network technology`、邮箱 `hongshugame@gmail.com`、URL `https://sweetpotato-net.web.app/privacy.html?bundle=com.SlideJam.SweetPotato`，并明确确认Google Play applicationId改为 `com.SlideJam.SweetPotato`。仅GP改名，namespace/Java包仍com.blockout.app且Launcher完整类名；versionName0.1.9/code10。新包独立安装，不自动迁移旧com.blockout.app存档；未访问真实玩家数据。
+- 本渠道三语设置隐私说明加入exact公司、邮箱及公开政策链接；长名称和URL换行，焦点循环包含链接。原生仅允许内置HTTPS主页面运行；精确政策URL交ACTION_VIEW、精确mailto交ACTION_SENDTO，其它导航及外部子资源拒绝，无处理程序时toast且保留游戏。无INTERNET、无SDK/JSBridge，未向他人发邮件；微信/抖音/旧Android及共享代码产物2135项hash保持。
+- 公开站点经HTTPS+隔离Chromium动态渲染可访问；bundle为前端配置选择，原com.blockout.app/缺参数均HTTP200软错误。提供页面仍写Ad Supported/可选注册/设备ID与IP采集/定期上传/24个月保留，与当前离线基础包不符；公司末尾Co.及英文应用名也需与用户资料/商店统一。证据 `.codex-temp/google-play-privacy-contact-20261019/`，清单 `release-assets/google-play/public-policy-review.txt`；本地草稿已填资料但仍未生效，未发布或改网站。
+- APK `artifacts/google-play/BlockOut-0.1.9-googleplay-release.apk`，56,368,506字节，SHA256 `4d787495d0de850e43b663f995244b0937d9ad7ff9bb2000437f96cdf50d60e1`；AAB `artifacts/google-play/BlockOut-0.1.9-googleplay-release.aab`，56,120,208字节，SHA256 `4049b1ab1092ad7036ea9735f6209c2693af138e3405257c7a1949b2afecba06`。沿用正式证书；包名/Launcher/签名/953项资产一致/无.so/bundletool及内部Debug派生APK验证PASS，旧applicationId marker正确拒绝。
+- TypeScript、bundleRelease/assembleRelease、专属5项UI回归PASS；lint0错误5警告。UI含首关实际CDP触控通关及四尺寸语言的联系方式、真实链接点击事件、双向焦点链、长URL无溢出、滚动关闭返回和存档保持；浏览器测试拦截了链接默认外跳，不能冒称原生浏览器/邮件应用实际唤起已测。报告 `.codex-temp/google-play-0.1.9-20261019/privacy-ui-check.json`；汇总 `artifacts/google-play/BlockOut-0.1.9-googleplay-checks.json`。旧0.1.8的97单测/14矩阵报告不重标为本轮结果。仍无真机/AVD，广告材料/政策正文修订/Console配置与发布审核待完成，本轮未上传发布。
+
+## 231–240续作进行中（2026-10-19，规则v1.198.0）
+
+- 用户要求根据桌面参考视频继续制作200关以后关卡。核201–230均已有独立正式数据后，本轮从新来源231–240制作原创下一批；简/普/普/难/简/普/难/简/普/超和主线5–10/11–15/16–20/21–30保持，未套每日±3。开始基线及十关计划：`deliverables/continue231-240-20261019/before.json`。
+- 当前已完成正式数据对象双屏真实Pointer、自然钟、实际三星的6关为231/233/234/236/237/238；L/U=5/10、11/15、16/17、11/15、16/20、5/6，总拖39/38/36/39/44/27。逐关正式记录位于该目录`formal-adoption/level-ID.json`，进度`status.json`；不是全十关完成。独立数据文件`src/core/formal231to240Data.ts`另暂存235/239待最终Pointer对象，不把暂存数量当验收数量。
+- 235（完整3FIFO+升降）已L5/U8/47拖，239（4钥匙/锁4+双层+FIFO）已L11/U15/49拖，二者小屏通过、大屏待独立CPU窗口复测。234大屏首测仅2星失败完整保留；省略路线中间截图后在原75秒/54秒星/36拖下正式大屏实际三星通过，不改评分或计时。所有失败记录不重标。
+- 232由audit_pipeline继续两帘11+两升降全42体同图证明；240由audit_mainline和video_facts分文件新图/新证明策略继续，未认证L21不计正式。所有源事实与原创适配分列，保q0/满铺/颜色/机关/完整库存。231/233源与数学绑定独立复核PASS：`independent-review/review231-233-and-packet-scan.json`，并显式列内部digest(Buffer)编码口径与raw SHA映射。
+- 当前生产LEVELS/严格活动查询/存档边界仍200，原1–230规范对象哈希均与before相符。未接临时选关新批（待收齐验收后接入）；未打包、上传、发布，未访问真实玩家存档。新增候选工具与证据在`tools/continue231-240/`及本批deliverables。恢复先读manifest/完整活动规则/本WORKSTATE并运行规则锁，核实际Pointer/agent状态。
+
+### 231–240 数据字段复核与运行验收续记
+
+- 8个已完成数学证明的包另存 `authorID/qualifiedID-schema.json`：仅把来源说明映射到现有LevelSpec字段；235删除冗余generator.size，rimSpan保持3。原包、旧Pointer PASS/FAIL和数学文件不改。235 native payload深相等，8关319个实际模型前缀逐一等同（235仅排除无效size字段），独立报告 `deliverables/continue231-240-20261019/independent-review/schema-rebind-review-1792399520026.json`。新对象需重新做正式双屏，不能直接重标旧PASS。
+- 新独立注册表8关的TypeScript检查通过。235大屏自然钟复测仍存在2星/超时失败；报告完整保留。测试脚本将参考模型预计算移到开局前、减少重复调试读取，并保留路线全部转弯/直线终点；逐格展开验证与原路线相同，生产0.08格碰撞扫掠、时限、动画和星目标保持。新的输入结果尚待完成。
+- 232继续完整42体/两帘+两升降的新独立布局，240已有紫普通门保持的L24–26前缀证明但完整U尚未达标；均不得冒称接入。其它项目的并行求解进程未终止，旧1–230数据及生产边界200继续保持。
+
+### 231–240 已接入8关，可从临时选关试玩（2026-10-19）
+
+- 最新schema正式对象已完整验收231/233/234/235/236/237/238/239，共8关；各自L/U为5/10、11/15、16/17、5/8、11/15、16/20、5/6、11/15，总拖39/38/36/47/39/44/27/49。`status.json`与`formal-adoption/level-ID-schema.json`记录最新接受对象；原`level-ID.json`和所有失败报告原样保留。
+- 新对象小屏8关报告`pointer-1792399840668-320x568-26560/report.json`；大屏235/239报告`pointer-1792399553724-496x1078-6556/report.json`，其余6关报告`pointer-1792400287907-496x1078-24700/report.json`（均位于本批deliverables）。实际3星、逐步模型、自然钟全部tick回放、可信Pointer和q0原向绘制均通过。235大屏47拖70.59秒，原75秒时间星保持。
+- 已将上述8关加入`src/game/temporaryTestLevelCatalog.ts`；当前临时选关共238条，232/240尚不列入，没有占位补数。入口双屏实际点击、每关正式注册表对象身份、前后导航、退出回原关2及内存存档字节保持全部通过：`selector-1792400888208/report.json`。先前selector测试页缺base导致资源加载失败，旧FAIL保留；只修独立测试页，不改生产加载逻辑。
+- TypeScript通过；相关2文件19测试通过，另补几何指纹排除仅改ID/文字/颜色冒充独立布局的验证。生产200及原1–230数据摘要仍与before一致，未打包上传发布。232/240仍在新图数学及完整路线阶段，未声称十关完成；前缀证明与其独立资格工具只用于新对象，历史UNKNOWN不重标。
+
+### 231–240 本轮有限候选验证收尾（2026-10-19）
+
+- 正式接受仍为231/233/234/235/236/237/238/239这8关，临时选关第12页可玩；232/240没有合格packet，未放入注册表或选关，也未用占位补数。全部已启动候选搜索结束，不把构造次数或单独完整路线当正式关数。当前生产边界200、原1–230对象和玩家存档保持。
+- 232作者汇总 `deliverables/continue231-240-20261019/author232/status-1792402697969.json` 列27批实际文件；最新80个构造尝试中，8730有完整U15/57拖但新静态停车放宽仅证L3，8761有U12/54拖但放宽仅证L5，均未得到普通档所需L11。L3/L5是该放宽的结果，不是实际原关卡最优。根代理233次额外构造尝试独立汇总 `alternate232/finite-runs-summary-1792402672505.json`，有L11的新SQ3候选但完整U≤15未知。旧失败不重标，不继续放大同一失败图预算。
+- 232新增前11次消除的初始足迹停车放宽工具 `tools/continue231-240/author232-prefix-closure-bound.mjs`，保全部42体、两帘11和两同区升降，执行真实门计数，停过的块仍需完整初态到出口路径。独立资格 `author232/prefix-closure-qualification-1792402291676.json` 包含22,596个停车集合、13,108个消除顺序状态、6,656次实际图投影BFS；工具资格不代表候选通过。后续可用真正新对象尝试中央两片4×3帘/升降及侧通道，需全新布局、来源差异和完整上下界，不复刷本轮失败图。
+- 240交接 `author240/handoff-1792402791232.json`：完整路线新图50012为L8/U30、50022为L9/U21（L为静态放宽证据，未证超难下限21）；新双SQ3+原向S4+S及27个单格体的51000/51001/51002均有有效L22，但完整U未知。三图的有限搜索已结束。后续需在新真实布局增加大块通路外的停车空间，不能沿用旧失败图提高预算。7冰门源色/计数、普通紫门、31体50格和q0素材继续保持。
+- 纠正本批哈希口径说明：`tools/revised-preview-validation-v160.mjs` 的 `digest(Buffer)` 实际一直按原始文件字节计算SHA-256；此前aggregate文字及 `legacyJsonBufferSha256` 字段名误称Buffer JSON序列化，数值本身一直正确。保旧aggregate、`file-digests.json`、正式接受记录和Pointer报告字节，新增 `file-digests-v2.json` 逐项验证独立raw SHA与digest(Buffer)一致，并更新可变 `status.json` 说明。8关canonical对象和路线哈希未改变，重新执行adopt核对仍全部通过。
+- 最终独立复核 `deliverables/continue231-240-20261019/independent-review/final-eight-review-1792402943937.json` 为PASS：8正式ID/packet/status/selector一致，16屏实际三星及自然时钟日志指纹匹配，原1–230基线保持；共核1,399个绑定文件，Pointer仅有允许的后接选关catalog变化，selector当前零漂移，证明代码无非许可漂移。相关2文件19测试本次一次全通过，规则锁 `rules-lock-final.txt` PASS202。本轮未打包、上传或发布。
+
+## Google Play SDK 专属测试包 0.1.10（2026-10-19，规则 v1.198.0）
+
+- 用户补齐 `slide_jam_tech_requirements.md`、`google-services.json`、AdMob应用及三个广告位ID、Solar AppKey和 `Sdk_Mediation_v0.0.3.aar`。Firebase实际配置项目为 `slide-jam-block-puzzle`，Android包名匹配 `com.SlideJam.SweetPotato`；不再将这些核心输入标为缺失。仅Google Play渠道接入，name0.1.10/code11，正式签名沿用0.1.7证书。
+- 对原始AAR做ZIP/javap静态复核：真实包为 `com.hs.admob`；UMP错误码4且canRequestAds=false时仍初始化广告与统计，部分其它拒绝路径仍初始化Solar，并硬编码儿童参数及日志。原始AAR完整打入但其初始化/Launcher保持禁用；不反射改私有字段或修补二进制。修复清单 `release-assets/google-play/sdk-v003-review.txt`；原AAR SHA256 `70c881e8aee717143b935e4409e9025ea3d99c85ac7cd4b92a8975f9de639eba`。
+- 当前实际广告接入使用官方GMA Next-Gen1.5.0及UMP4.0.0，所有构建固定官方测试ID；提供的正式ID单独保存但不启用。Solar不初始化、Firebase自动初始化及分析采集关闭，关卡事件已桥接但不上报后台。共享120秒前台冷却、Lv6起实际结算、第二次冷启动起且仅加载期允许开屏、奖励实际回调防重复、前后台和隐私表单暂停恢复均实现；没有请求正式广告或发送真实统计。
+- 采用Google Play专属构建插件的6个唯一锚点注入精确关卡生命周期，原共享游戏源码不改；前端新增原生协议桥及三语隐私说明/UMP选项入口。构建前后2113项保护文件哈希保持，微信、抖音和旧Android产物未改；未访问玩家真实存档。手机首选语言保持，文档英文默认与既有授权冲突仍待用户定项。
+- APK `artifacts/google-play/SlideJam-0.1.10-googleplay-sdk-test.apk`，64,868,957字节，SHA256 `12d3078e06524838ce7645166f917be79cda3fc865e1e3a07bdd009c3a87b070`；AAB `artifacts/google-play/SlideJam-0.1.10-googleplay-sdk-test.aab`，64,378,350字节，SHA256 `d57d30ff04442e3e484a1918c5860613ae0804fbe02f0141a318e2eb776d23c5`。953项游戏资产一致、APK/AAB签名、bundletool验证、四ABI新增原生库16KB LOAD对齐及zipalign通过；AAB派生APK仅内部Debug签名核验，不作为正式交付。
+- TypeScript、新增20项TS测试、13项原生JUnit、78项既有奖励回归及生命周期注入漂移拒绝检查通过；完整 `testReleaseUnitTest bundleRelease assembleRelease lintRelease` 成功，lint为0错误16警告。最终资源5项隐私UI场景、3项真实触控/自然钟关卡生命周期（含120秒自然超时）、独立UMP入口触控通过。浏览器原生协议使用替身，隔离内存存档；不等同真机广告/UMP或后台验收。旧失败报告原样保留。
+- 汇总 `artifacts/google-play/SlideJam-0.1.10-googleplay-integration-checks.json`，包检查 `SlideJam-0.1.10-googleplay-sdk-test-checks.json`，证据目录 `.codex-temp/google-play-sdk-20261019/`，最终规则锁PASS202。仍无真机/AVD，未上传或发布；本包仅SDK联调测试，不能作为已完成正式聚合接入或可直接上架。待提供方修复初始化、确认受众/地区及Solar海外配置、广告平台与聚合广告源配置、正式隐私政策/Data Safety和真实设备/后台联调后再启用生产配置。
+
+
+## Google Play 用户提供密钥接入（2026-10-19，规则 v1.198.0）
+
+- 用户提供 `C:/Users/Administrator/Downloads/keystore/`，含googleplay.jks和密码说明。已验证库密码、私钥签名能力、唯一别名gp2026；实际格式PKCS12/RSA2048，有效至2051-02-22，证书SHA256 `924681dde5a276afe36c0ec94f7dfe5cf83589fb63bfb1ed80eb031fbee037d5`，不同于此前bfcd…证书。公开证书已导出，未输出密码；私钥/配置保存在仓库外 `.android/slidejam-google-play/`，ACL仅当前用户和SYSTEM，原下载文件及旧blockout-release配置保持。
+- 仅修改GP Gradle为 `GOOGLE_PLAY_RELEASE_SIGNING_PROPERTIES` 或独立外部默认路径，不回退旧Android密钥；更新本渠道README为当前SDK-test真实状态。实际assembleRelease/bundleRelease成功；版本仍0.1.10/code11，非签名载荷逐项与上一轮已验包一致，未重新宣称玩法/广告真机验收。
+- 新APK `SlideJam-0.1.10-googleplay-sdk-test-user-signed.apk`，SHA256 `98f967e3b111e9a09b71422a9000217837f8a02c74438b29d00524350d652a8c`；新AAB `SlideJam-0.1.10-googleplay-sdk-test-user-signed.aab`，SHA256 `ca866caff76f1f665e7979cae0eefe553cd92ae16d059234cd3845d30ce613d7`，均位于 `artifacts/google-play/`。独立新证书、APK签名/zipalign16KB、AAB签名/全载荷签署/bundletool校验通过；旧交付包和旧检查文件不改，2113项共享及其他渠道保护文件哈希保持。
+- 汇总 `artifacts/google-play/SlideJam-0.1.10-googleplay-sdk-test-user-signed-checks.json`；证据 `.codex-temp/google-play-signing-20261019/`。新签名不能直接覆盖旧证书安装，卸载会删除本地存档；没有实际安装或卸载。仍为官方测试广告/关闭分析/聚合初始化禁用，非商店提交候选；Console上传证书身份尚未核对，无真机或新后台验收，未上传发布。
+
+
+### Google Play 本轮改回测试版及安装授权（2026-10-19）
+
+- 用户先要求开始正式上架包，随后明确“还给我测试版吧”；本轮按后者仅交付现有0.1.10 user-signed测试APK，停止正式配置准备。此前受众/地区/默认语言/平台后台问题本轮无需回答，不因无回答启用任何生产配置。正式准备只做只读审查，没有修改生产源或重新打包。
+- 用户明确本游戏安装允许删除本地存档；可先尝试覆盖，若同包名签名冲突可卸载本游戏旧版再安装。ADB本轮无连接设备，未执行安装、卸载或清档。已核最新APK SHA256与既有user-signed-checks一致（98f967e3…652a8c），仍官方测试广告/分析停用。
+- 未来正式版待办新增只读发现：部分英文标题、启动/错误提示、每日挑战和联赛仍硬编码中文，不能把选择en称全英文；旧截图工具使用已禁用loadLevel并写浏览器localStorage，后续应使用隔离内存fixture与真实交互。此记录不是本轮修复完成或重新验收。
+
+## Google Play 0.1.11 冷启动崩溃修复（2026-10-21，规则 v1.198.0）
+
+- 用户提供的 `SlideJam-0.1.10-googleplay-sdk-test-user-signed.apk` 与 `logcat(1).txt` 已逐项核对。日志包含5次同一应用崩溃，均为 `PhoneWindow.getInsetsController` 在 `MainActivity.enterImmersiveMode` 中通过空 decor 触发的 `NullPointerException`，调用发生在 `setContentView` 之前；原始APK SHA256 为 `98f967e3b111e9a09b71422a9000217837f8a02c74438b29d00524350d652a8c`。
+- 仅修改 Google Play 专属 `android-google-play/app/src/main/java/com/blockout/app/MainActivity.java`：先建立内容视图再进入沉浸式模式，从 decor view 获取 `WindowInsetsController`，预附着时回退旧系统栏 flags，并保留 onResume/窗口焦点重试。共享游戏、关卡、存档、微信和抖音未改。
+- 版本升至 0.1.11/code12，沿用 gp2026 签名。APK `artifacts/google-play/SlideJam-0.1.11-googleplay-crash-fix.apk`（64,868,961 字节，SHA256 `e8afe17a344bfd7b09ec59c9a49afc34ccd93e0babb59b14ae98fe6477af889a`）；AAB `artifacts/google-play/SlideJam-0.1.11-googleplay-crash-fix.aab`（64,377,807 字节，SHA256 `d5835ad5cef167800bb3078c26a83e129dbf6acf98c14057aea89eaa16e6adc9`）。
+- 证据：规则锁PASS202；Gradle `testReleaseUnitTest assembleRelease bundleRelease lintRelease`成功；953项Web资产与2113项保护文件保持；APK/AAB包校验、签名及四ABI 16KB LOAD对齐通过；`.codex-temp/google-play-crash-20261020/immersive-regression/report.json` 对原始空decor崩溃和缺少回退均复现，并对API24/28/29/30/35/36及附着/重复生命周期共10种修复场景PASS。
+- 本轮没有可用的ADB/真机，因此没有冒称小米8、OPPO或其他机型的实际安装验证；需在小米8和目标机型安装此新包确认运行。该包仍为官方测试广告、Firebase/Solar运行停用的联调包，`submissionReady=false`，未上传或发布。
+
+## Google Play 0.1.12 启动文本及背景修复（2026-10-21，规则 v1.198.0）
+
+- 用户提供两张视频截图：普通启动出现“正在启动脑王的诞生/首次打开需要加载游戏资源”，随后25%进度只有纯蓝渐变。实际收到图片而非原视频；已在0.1.11最终Web资产复现两现象。第一项来自共享HTML的启动保护层；第二项是39张shell图全部完成后才赋值startupBackground，进度4%–38%期间绘制层只见临时fallback。APK含原背景JPEG且与public同hash，并非漏打包。
+- 仅通过 `tools/google-play-startup-plugin.mjs`、Google Play入口/辅助函数及独立Vite配置修正。HTML先显示现有标题原画，隐藏普通提示并遮住原图样例68%/健康提示；原startup-guard真实错误诊断和重新打开保留。游戏单独加载/持有startup图后再加载38张shell图，提前可绘制，shell失败不释放背景且重试复用；真实进度包含该图。画布绘制完正式加载帧/可重试错误帧或完整游戏帧才交接，覆盖首RAF晚于artReady场景。
+- 共享HTML/startup-guard/游戏源、旧Android和其它渠道2113项保护文件hash保持；关卡projection语义一致。TypeScript、20项相关TS测试、13项原生JUnit、10项浏览器场景均PASS。浏览器报告 `.codex-temp/google-play-startup-20261021/browser-regression/run-1792565263127/report.json`，绑定最终 `game-CZc_rvA8.js`，含旧包复现、慢模块/慢shell、320×568与393×852、脚本失败、背景失败、shell失败真实触控重试及延迟首RAF。旧报告run-1792565196499保留其测试读取错误字段的FAIL，不重标。独立评审发现并复验延迟首RAF遮罩问题已修正。
+- 完整Gradle构建通过，lint0错误16警告；首次长路径含`!`触发Lint工具自身异常，保留build.log，经已核映射X:短路径重跑成功，最终build-final.log。APK/AAB校验、953项Web资产一致、签名、bundletool及四ABI 16KB对齐通过。工具链ADB实际存在，本轮`adb devices -l`无设备，未真机安装/卸载/改真实存档。
+- 交付 `artifacts/google-play/SlideJam-0.1.12-googleplay-startup-fix.apk`（65,044,149字节，SHA256 `b7f699650d87458140b68bf71263fcbbb6d069bcf8370fbce754940425315887`），AAB同名前缀（64,552,988字节，SHA256 `e1383b9e462941d0f94877ec5df059a0cbee8a35997f4d707f2c53866bc27841`）。code13、gp2026签名同0.1.11，可按同签名版本升级；仍官方测试广告/分析关闭/私有聚合停用，非正式上架候选，未上传发布。
+
+## Google Play 正式名称及启动图更新 0.1.13（2026-10-21，规则 v1.198.0）
+
+- 用户确认正式名称为 `Slide Jam: Block Puzzle`，要求更新启动背景并检查其它改名位置。仅Google Play专属构建统一HTML标题、加载失败回退名、10语种app.title/canvasLabel、初始无障碍标签及三语隐私说明；原生Manifest应用名已正确，图标无旧文字。内部类名、namespace、存档键与首次按手机语言选择逻辑保持。
+- 使用imagegen编辑参考旧启动图，生成专属英文标题和蓝紫方块背景，再缩小标题至长屏安全区；最终素材 `src/googlePlay/assets/slide-jam-startup-v1.png/.jpg`，完整提示词和生成方式见同目录 `creation-notes.txt`。共享public原图保持，专属构建只覆盖隔离输出图片；HTML首帧与Canvas加载页共用新图，代码绘制真实进度，不含图片自带样例百分比。沿用0.1.12提前加载、错误重试和已绘制帧交接修复。
+- TypeScript及45项相关TS测试通过；10语种品牌投影验证通过，其余3030条翻译保持。20项浏览器场景通过，包含旧缺陷复现、正常/慢资源/故障真实触控重试/延迟首RAF及中英文各5种尺寸（320×568、393×852、360×840、768×1024、1024×768）。报告 `.codex-temp/google-play-brand-20261021/browser-regression/run-1792566516372/report.json` 绑定最终 `game-GxVbW1iw.js`；旧run-1792566461469的辅助标签过严断言FAIL保留，不重标。最终APK/AAB与回归HTML/JS/图片哈希绑定见 `final-package-browser-binding.json`。
+- 完整Gradle `testReleaseUnitTest assembleRelease bundleRelease lintRelease` 成功，13项原生JUnit保持通过，lint0错误16警告；包签名、bundletool、953项Web资产及四ABI的16KB对齐通过。2113项共享/其它渠道保护文件未变，关卡projection语义保持。规则锁PASS202，无微信/抖音构建、上传、发布或真实存档访问。
+- APK `artifacts/google-play/SlideJam-0.1.13-googleplay-brand.apk`（65,005,861字节，SHA256 `50b3a8846eeed0b8cd8362e83a3e182d6a40ce3861dbb14004ac879bfc36718b`）；AAB同名前缀（64,515,385字节，SHA256 `412db86c7f17a34fe085c9d96ab1652fbd319c52aeef357b31cbddec376ebbc9`）。name0.1.13/code14，包名 `com.SlideJam.SweetPotato`，gp2026签名与0.1.12相同；仍官方测试广告/分析关闭/私有聚合停用，submissionReady=false。
+- 审计清单 `release-assets/google-play/brand-review-20261021.txt`：联赛、每日挑战和部分错误提示仍有硬编码中文，商店截图/宣传图需同步新名；公开政策本轮未重新在线核验，历史0.1.9草稿不能当当前正式政策。上述未完成项不冒称已修。ADB无连接设备，未做小米8或其它品牌真机验证；五种视口只代表浏览器布局验收。
+
+## Google Play 卡顿及激励广告恢复 0.1.14（2026-10-21，规则 v1.198.0）
+
+- 用户反馈主页/拖块持续卡顿，点击激励广告无反应；本轮没有新手机日志或连接设备，未断言网络或UMP后台故障已定位。只修改GP专属构建/前端/Java；2113项共享/其它渠道保护文件保持，关卡projection语义与0.1.13一致，未触碰真实存档或发布。
+- 性能专属投影：普通游戏物理背景只补逻辑画幅外边带，中心由后续背景绘制，避免重复全屏填充；启动页仍完整显示。新增 `tools/google-play-performance-plugin.mjs`、`src/googlePlay/rendering.ts`，6尺寸Canvas逐RGBA对照差异0。GP画布DPR上限从2降至1.5，每帧高DPR像素量约降44%，有轻微锐度取舍；CSS/全屏/安全区/触控坐标及阴影动画保持。
+- 隐私层每次pointerup原读取约80k字符的完整诊断，现通过GP专属投影 `getGooglePlayPrivacyState()` 仅读screen/language/viewportTransform；release公开诊断深拷贝保持。最终4视口/语言隐私流程自动完整诊断调用0，关闭/返回/resize/隐私选项/隔离存档通过。桌面采样全量4.28–5.71ms/次、轻状态0.00166–0.00324ms/次，不外推手机FPS。
+- 同393×852/deviceDPR2/CPU4倍限速对照：0.1.13游戏5秒65帧，0.1.14为120帧，帧间隔p95 93.6→49.3ms；输入采样p95 109.2→56.4ms。环境实际为SwiftShader/software Canvas，静止主页无RAF且未复现静止卡顿，不能把对照当真机帧率；汇总 `.codex-temp/google-play-performance-20261021/performance-summary.json`。最终393×852/320×568、设备DPR3/实际1.5，首关真实touch三拖、自然时钟、三星保存和自动Lv2通过：`input-1792568208346/report.json`。
+- 广告确定性缺陷修复：前端由库存gate改为请求能力gate，点击可进入原生恢复但不伪装rewardedReady；UMP/初始化首次失败可在resume或点击限频恢复，20秒加载/UMP及30秒init超时配令牌丢弃旧回调。使用用户真实AdMob App ID查询本应用消息，三个广告位仍官方demo。未就绪即时中英Toast说明阶段，之后加载只缓存、不自动晚弹；保canRequestAds、后台拒绝及shown/earned/dismissed三回调发一次奖励。新增 `SlideJamAds` 本地错误日志；统计和私有聚合仍停用。
+- TypeScript、240项TS、18项实际Gradle JUnit通过；实际原生桥配离线SDK替身24断言通过，涵盖失败恢复/timeout/迟到回调/不晚弹/后台/奖励防重。20启动场景、4隐私场景、6像素场景与双屏真实触控全部通过，均绑定最终 `game-CMMJV7FZ.js`。旧启动两轮版本断言错误FAIL和输入两轮教学计时/自动Lv2断言错误FAIL原样保留，未以其冒称产品缺陷或重标。
+- 完整Gradle testReleaseUnitTest/assembleRelease/bundleRelease/lintRelease成功，签名、bundletool、953项Web资产及四ABI 16KB对齐通过。APK `artifacts/google-play/SlideJam-0.1.14-googleplay-performance-ads.apk`（65,022,537字节，SHA256 `70f4b91ee37ad62428f200d74246d224f7a255f5de2c35a7194e2d0d42b8b777`）；AAB同名前缀（64,520,880字节，SHA256 `70e0adf5e9cdd659a32f87677a5a2604bcf7d1b281f01d3f54ea88b4ab3a2853`）。versionCode15，同gp2026签名；包内真实AppID与三个测试广告位已核。总验证 `SlideJam-0.1.14-googleplay-performance-ads-validation.json`。
+- 用户说明和只读ADB采集脚本在 `release-assets/google-play/performance-ads-fix-20261021.txt`、`collect-slidejam-diagnostics.ps1`；未在真机运行采集、安装或卸载。仍需手机联网确认实际广告及流畅度，submissionReady=false，未更新微信/抖音或上传发布。
+
+### Google Play 0.1.14 未展示广告的手机网络证据（2026-10-21）
+
+- 用户提供照片和Logcat截图，设备实际为OPPO PDVM00/Android11/API30。截图PID15426显示reward requested: consent=failed initialized=false loaded=false，随后consent update started、consent-pending，确认请求已到原生桥且在重试隐私检查。
+- 在此前用户日志目录发现今天新增 `logcat(2).txt`（SHA256 `d79b98bbf663aa798dabeed5e119f28045e737ec3c5480de025345267cde076a`），同应用/PID的16:21:25.702第5867–5868行明确 `SocketTimeoutException`：连接 `fundingchoicesmessages.google.com:443`，10000ms后 `ETIMEDOUT`。该次UMP连接失败发生在广告初始化和加载之前；不能拿截图的添加测试设备提示或IAB本地信息缺失当根因。
+- 诊断 `release-assets/google-play/consent-network-diagnosis-20261021.txt`。已确认请求连接超时，具体网络限制/路由/权限原因以及后台消息配置尚未确认。下一步需手机网络连通后用现有0.1.14回测；电脑ADB仍无设备，未修改生产代码、重新打包、清存档、强制跳过UMP或发布。用户网络情况的异步问题仍待回复；原要求补全日志因已找到此文件已有关键证据。
+
+### Google Play 0.1.14 广告问题用户确认闭合（2026-10-21）
+
+- 用户回复“已经播放广告了，不需要再查原因了”，并确认 OPPO 当前网络能正常打开 Google Play 商店。停止本次网络/广告故障排查，不再要求补日志。此为用户报告的广告播放成功；没有据此宣称所有广告形式、奖励到账、性能、其它手机或生产广告配置已验收。
+
+## Google Play 包体图标替换 0.1.15（2026-10-21，规则 v1.198.0）
+
+- 用户提供 `C:/Users/Administrator/Downloads/微信图片_20261019150816_1662_374.png`，要求作为游戏包体图标。原始2048×2048 RGB图按字节保存在 `release-assets/google-play/icon/user-supplied-20261021.png`，SHA256 `573f4cb36d2c03bdd0847bc5cacf601188ed71b2b5d21fce11d2e49df4f5dad3`；没有AI重绘或改动原画。
+- 仅GP新增独立 `ic_slidejam_launcher` 五密度48/72/96/144/192像素资源和API26 adaptive图标，108dp层中84dp原画居中、各12dp留边、紫色背景。Manifest的icon指向新mipmap；未强制legacy roundIcon。`tools/build-google-play-icons.mjs`可重新生成，资源哈希在同目录resource-manifest.json。共享Android旧图标、微信/抖音不改。
+- 版本0.1.15/code16，同包名 `com.SlideJam.SweetPotato`、同gp2026证书；保测试广告、统计关闭和私有聚合wrapper停用。953项Web资源中JS/HTML/游戏图全同0.1.14，只有版本marker及projection输入对象键序变化，projection深相等；证据 `.codex-temp/google-play-icon-20261021/web-parity.json`。未改广告/游戏运行逻辑、关卡或玩家存档。
+- 最终 `assembleRelease bundleRelease lintRelease` 成功16秒，lint 0错误24警告；包含legacy原图全不透明的图标形状建议、未提供monochrome主题图，以及既有警告。本轮保留用户完整原图，不生成额外主题图。包签名、AAB bundletool、953资源、四ABI 16KB对齐及2113项保护文件保持通过。静态4种mask已视觉检查，中央黄块/白箭头完整、白色原图外角未露出；预览是几何模拟，不是手机桌面实拍。
+- APK `artifacts/google-play/SlideJam-0.1.15-googleplay-icon.apk`（65,535,822字节，SHA256 `2d8f276cf4ab51b6d922ec62aa0cc5b1c0ad801446bf083598f97e58e48496fa`）；AAB同名前缀（65,032,774字节，SHA256 `456b1a07677de3d9ea96131ca263b71184a6f8f260f5cb712062de6cf017d639`）。检查 `SlideJam-0.1.15-googleplay-icon-checks.json`；图标专项证据 `.codex-temp/google-play-icon-20261021/review/`。
+- 规则锁PASS202。ADB只有offline设备，没有可操作的手机；未安装/卸载/清档，未上传发布。仍为测试联调包、submissionReady=false；本次没有重新进行游戏/广告真机验收。
+
+## Google Play 拖动进入出口卡顿诊断（2026-10-21，规则 v1.198.0）
+
+- 用户表示电脑已USB连接安卓手机且游戏打开，要求查拖动色块进入出口卡顿，并指定 `D:/MuMuPlayer/nx_main/adb.exe` 由助手连接。实际先发现5037服务来自雷电，已在空设备列表下正常重启为用户指定MuMu ADB36.0.0，5037当前进程43584；临时5038服务已关闭。指定ADB和项目ADB、独立端口等待一分钟及默认服务切换后均无设备。Windows初见一个USB描述符失败（不能确证属于手机），后来无Android/WPD/ADB硬件。证据 `.codex-temp/google-play-exit-jank-20261021/connection-current.json` 与 `device-20261021-172352/connection.json`；没有获取手机型号/运行版本/真机帧率，不能沿用此前OPPO当本次设备。
+- 已通过异步问题请求手机开启USB调试、重插线并允许调试，等待型号及授权弹窗情况。准备只读采集脚本 `collect-device.py`（当前指定MuMu/5037）：只采设备/本游戏包信息、WebView、gfx帧统计、应用进程日志/CPU和温度，不安装、不输入操作、不停游戏、不清日志/存档；本轮由于无ADB设备只落连接证据，采集步骤没有执行。
+- 并行只读源码审计 `audit/source-hotspots.json`：出口闪光21461行动态shadowBlur/lighter/渐变、多次stroke，48/蓝青56粒子；ghost22396每帧snapshot/BFSclip/阴影且.26秒吞入后仍绘制至.63秒；pointermove高频snapshot/候选clone。视觉delta上限50ms会把低于20fps时的动画拉长，但不是低帧率根因。普通逐次消除不等同同步写localStorage，素材计划有缓存。以上非真机根因断言。
+- 最终0.1.15 Web资源隔离桌面采样：首关真实触控三次出门、自然时钟、仅内存fixture，不碰真实存档。有效5组baseline/no-shadow/no-ghost/no-flash-shadow/no-flash均三拖成功。环境明确Chromium SwiftShader/software Canvas、CPU4x，不能外推安卓真机FPS。baseline拖动帧间隔p50/p95=29/32.4ms，出口169.4/186.3ms，出口JS callback仅3.8/8.7ms；全局禁Canvas shadowBlur降至39.3/43.4ms；仅drawGateExitFlash作用域禁shadowBlur降至87.7/99.2ms；整段no-flash90.9/112.2ms；no-ghost仍168.1/175.7ms。说明本环境动态模糊出口光效明确贡献绘制/raster开销，非唯一热点；ghost不是本轮主要瓶颈，剩余阴影差距未继续隔离。
+- 证据 `browser-audit/diagnosis.txt`、有效 `run-1792574737840/report.json` 与 `run-1792574830414/report.json`、CPUprofiles；源bundle SHA `bca4ce05ac984ae8d2eec46fbe4bf860e4c1675035c599bae1bedc0d2bf465db`。首轮run-1792574664532因服务器路径导致计时wrapper未注入，只保原记录，不纳入有效阶段结论。禁用效果仅诊断内存开关，未改生产呈现。
+- 本轮未修改生产代码或重打包，2113保护文件校验零变化，未发布。下一步手机授权后先采真实出门帧，核对WebView/CPU/合成路径；如优化应限定GP并保留出口效果和机制完成时点，不能未经验证直接删效果、丢触控路径或改计时合同。
+
+## Google Play 出口光效优化与全内容性能巡检 0.1.16（2026-10-21，规则 v1.198.0）
+
+- 用户先要求优化出口发光模糊阴影，随后要求检查游戏所有内容是否有同类卡顿。本轮按manifest→完整v1.198→WORKSTATE→规则锁顺序，起止规则锁均PASS202；仅GP专属helper/构建投影、版本和记录修改。2113共享/其它渠道保护文件最终零变化；16既有GP运行源码/广告配置、239项APK原生图片保持，关卡projection深相等。微信/抖音未构建，未上传发布、未访问玩家真实存档。
+- 新增src/googlePlay/gateExitGlow.ts，tools/google-play-performance-plugin.mjs仅包裹原drawGateExitFlash主体：保原光效公式/颜色/光束/连续强度/时间，以局部物理像素Canvas绘制，主Canvas一次lighter合成。每owner一张复用buffer，2MiB像素预算，resize重置、尺寸先缩后扩，不支持/分配失败/contextlost回退原绘制。无全局关阴影、无强度量化、无改消除/拖动/自然钟。121强度复用、状态/预算/回退检查及TypeScript通过；实现hash helper547a055e3cf8c0238c6d1203eac67cb99fc08b9e764ba461cb4ec2a1414a216f、pluginf58f15a685001f17173c15c43e3570f976daa449638ee74ebed676d0d769c77f。
+- 最终0.1.16 bundle game-CrKv3ezr.js SHA256 ea0fd8b82bc22d709815c936d65b27ce32fdaba8cf85915b10c463ec15089785。桌面Chromium/SwiftShader软件Canvas、CPU4x，真实触控首关旧新两轮交替出口帧间隔p50 190.5→94.4ms、185.5→100.6ms，下降50.4%/45.8%；首用/复用均改善。不是手机FPS或所有卡顿闭合。393×852/320×568真实三拖/自然钟/三星内存保存/自动Lv2通过。
+- 视觉严格矩阵旧FAIL保留：96常规场景最大RGBA差2，无缺/漏亮像素；16物理边缘压力最大27/能量差最多.156%，20人为fractionalclip穿高光最大119。实际调用无该clip，独立前后PNG复核常规可接受；不称逐像素等价。证据.codex-temp/google-play-exit-glow-20261021/validation/summary.json与impl/scratch-report.json。
+- 用户追加全内容检查：只读覆盖23个Screen枚举/21界面系统族及200关getLevelStrict生产初态；full-audit/render-audit.json、logic-audit.json、level-inventory.json。真实触控UI32组/12种Screen及资料/联赛规则，静止1.5秒0–2RAF，无持续菜单空转证据；首次语言/图鉴/福利CPU峰值受短时外部任务干扰，只作探索，未冒称受控手机卡顿。9种低频/失败Screen主要源码检查，win只结算行为验证，未声称全部动画/所有品牌已测。
+- 新确认桌面热点：每块/壳/冰皮逐帧阴影。最终包真实homePlay+触控诊断106/198关，正式效果与仅drawBlock作用域shadow-off对照（仅内存诊断，不入包）；106静止/选中静持/小幅移动p50 66.8/62.7/57.6→49.7/49.5/52.3ms，198为74.3/72.1/76.1→55.3/52.4/53.8ms，两关moves0、块数不变。单轮探索尾部有抖动；123关结束1次消除，按混合事件保留，不用其移动数据归因纯棋盘成本。证据full-audit/boards-1792576627487/report.json。
+- 其它待专项实测/优化候选：冰碎批量模糊渐变、道具解锁/名画翻转/领奖及9切片阴影，高频输入重复snapshot/clone和每帧多快照、frame无关屏幕也反复构造排序journey目录。广告异步、音频去重/未变音乐快速返回、轻隐私/素材计划缓存已存在；普通每次拖动消除非都写localStorage。主线200关strategyNudge/Focus为空，不误报旧引导BFS为当前原因。本轮没有修改这些新增候选的生产行为。
+- Gradle assembleRelease/bundleRelease/lintRelease成功，lint0错误24既有警告；签名/953游戏资源/bundletool/四ABI16KB对齐通过。APK artifacts/google-play/SlideJam-0.1.16-googleplay-exit-glow.apk，65,536,894字节，SHA256 4f487b7d8b6006aa819a849548416240eb8b470e685c9f2a163f015e34c15a10；AAB同名前缀，65,033,829字节，SHA256 e1facdd0ec3de421145b68ba03785339462f3ceda87aae5d5d7d98636e2c6200。code17/同com.SlideJam.SweetPotato和gp2026签名，仍官方测试广告/统计关闭/私有wrapper停用，submissionReady=false。
+- 总检查artifacts/google-play/SlideJam-0.1.16-googleplay-exit-glow-validation.json，状态COMPLETED_WITH_DOCUMENTED_LIMITATIONS，另checks.json包检查PASS。交付说明release-assets/google-play/exit-glow-optimization-20261021.txt与full-performance-audit-20261021.txt。用户指定MuMu ADB最后devices列表仍空；未安装/卸载/清档或做真机帧采样。下一步可优先优化密集棋盘块/冰壳阴影并保外观，剩余特殊事件逐项实测，不以本轮源码巡检当全部性能通过。
+
+## Google Play 持续拖动跟手优化 0.1.17（2026-10-21，规则 v1.198.0）
+
+- 用户明确“拖动过程中，色块持续落后于手指”。按manifest→完整v1.198→WORKSTATE→规则锁恢复，PASS202；检查确认原持续拖动无额外插值拖尾，handleMove到绘制使用同一连续pose。本轮不改5px起拖阈值、松手归格、触控坐标/合并样本顺序、连续扫掠/碰撞/转弯/出口、自然钟或存档。
+- 仅GP新增 `src/googlePlay/blockSpriteCache.ts`，由 `tools/google-play-performance-plugin.mjs` 投影到静止主棋盘块：单图和原阴影缓存，内层/壳层/冰皮各自保绘制顺序及alpha一次合成。选中/拖动/归格/提示块、移动机关、升降/生成clip、整盘运动、旋转/反射、滤镜/特殊合成均走原路径。8MiB RGBA像素/128项上限，不等同浏览器总内存；level/尺寸/基础变换失效，精确小数对齐/图像/阴影/alpha键、LRU置0释放、失败及contextloss回退。既有出口光效helper不变。
+- `tools/google-play-input-performance-plugin.mjs` 仅移除sole caller不消费的sync尾部portal结果，无出口侧时不复制全盘快照，非旅程页不计算journey边界；保提前出口终止、真实model顺序及clone。真实共享方法和投影方法8项对照+连续拖动33项，共41PASS，tsc通过；无共享源码改写。
+- 最终128像素场景PASS：96普通最大通道差5、8冰壳叠层最大2、24旧旋转原路径像素一致。40暖帧无阴影源重绘；200不同键压力最终39面/8358480字节；状态恢复/解码未完成/分配失败/缓存失效通过。初次探索旋转边缘差异旧记录保留，最终主动回原路径，不重标旧失败。证据 `.codex-temp/google-play-drag-latency-20261021/audit/implementation-result.json`。
+- 最终bundle `game-pZCcKDAY.js` SHA256 `c27ad08917983c39ec33afe69f6086da378343bf3874ee6fb3d41cf9e727f341`。受控桌面Chromium软件Canvas/CPU4x，独占性能窗口旧→新→旧→新，Lv1/106/198每轮45个实际连续移动绘制样本。事件到CPU绘制提交p50：106为88.6→58.3、95.1→67.0ms（降34.2%/29.5%）；198为126.5→63.8、127→67.6ms（降49.6%/46.8%）。1关43→46.1/75.9→47.7波动大，不认定稳定收益；106p95首轮101.2→129.9回退、次轮107.4→79.3，不能称全部长尾改善。198p95两轮降37.6%/41.9%。不是安卓屏幕显示延迟/FPS或全机型实测。
+- 冷入关代价单列：106首次playing绘制CPU32.5/40.6→147.3/100.7ms；198为40.1/38.3→143.4/152.3ms，后续帧复用缓存，不能称首次进入更快。106/198采样前各经真实触控出门一块留出移动空间（37→36、30→29，moves0→1），所有轮同开局；不是对被墙挡住的块测“跟手”。旧首轮误把pointerup关联最后样本、探索采样与短单测重叠均只保历史，不进最终受控比较。
+- 真实取消回滚3/3、贴墙立即反向3/3通过，第1关自然90°转弯/松手通过；106/198所选开局无自由转角，明确未覆盖。41单测含窄口/宽尾/四向出口、实际49/139/166机制轨迹。性能及触控证据 `.codex-temp/google-play-drag-latency-20261021/validation/summary.json`；测试均隔离内存fixture，不访问真实存档。
+- Gradle assembleRelease/bundleRelease/lintRelease成功15秒，lint0错误24既有警告；同com.SlideJam.SweetPotato/gp2026签名，953游戏资源/APK与AAB/bundletool/四ABI16KB通过。APK `artifacts/google-play/SlideJam-0.1.17-googleplay-drag-latency.apk` 65,538,122字节，SHA256 `e8e93caeaf7ebb86ae30d2bf992dc418159f3d9216be0813f4c624a9b7556a90`；AAB同名前缀65,035,070字节，SHA256 `0e41bb9f01d3ea1ac9975fb44b1f9f6e088df362d0c1098cca630565066b80ba`。测试广告/统计关闭/私有wrapper停用/submissionReady=false保持，无发布。
+- 最终范围 `scope-parity.json` PASS：2113共享/其它渠道文件、16既有GP运行文件、239原生图片保持；关卡投影深相等，HTML只换bundle引用，marker只改17/code18。微信抖音未构建。用户指定MuMu ADB仍无设备，本轮未手机安装/卸载/清档或采帧。交付说明 `release-assets/google-play/drag-latency-optimization-20261021.txt`；最终汇总 `artifacts/google-play/SlideJam-0.1.17-googleplay-drag-latency-validation.json` 绑定包、受控样本、像素和输入检查。后续以手机同关拖动体验及真机采样验证效果，不把桌面改善外推全部机型。
+- 最终双屏追加通过：393×852/320×568真实三拖出门、moves1/2/3及剩余2/1/0，自然计时1.15/1.133秒、实际三星内存结算、自动Lv2，0页面异常。`validation/dual-screen-1792578473034/report.json` 绑定最终c27ad089 bundle和原始输入报告/截图；旧证据均保持。
+
+## Google Play 满体力广告入口修复 0.1.18（2026-10-21，规则 v1.198.0）
+
+- 用户明确满体力后仍可看广告增加并超过上限。起始按manifest→完整v1.198→WORKSTATE→规则锁PASS202，另核v1.186/187：福利站本已支持溢出，本次发现顶部体力弹窗两处额外拦截，满时画居中广告按钮但lifeRefillTargets无hit，startLifeRefillAd又按missingLives=0拒绝。当前上下文仅GP，不改微信抖音或共享规则实现。
+- 新增 `tools/google-play-life-reward-plugin.mjs`，GP构建仅投影lifeRefillTargets和startLifeRefillAd两个方法：5或>5仍登记居中广告hit并允许开始原广告事务。底层grantLives/sanitize/reconcile/receipt/persist本就保留超额，不重复实现奖励。自然恢复上限5及30分钟间隔、金币仅补不足5、福利站日额度、进行中互斥和同候选保存重试保持。没有全局改MAX_LIVES或直接加体力。
+- `tests/googlePlayLifeReward.test.ts` 25项最终PASS，真实原类仅替换两投影方法，保实际pointer/receipt/persist/sanitize链；含5→6→7、离线重载、满时金币noop、取消/无填充/错误/错请求、进行中互斥、prepare/receipt/reward各拒绝或写后未知6种重试。首轮fixture漏host.viewport导致14项测试失败，补fixture后25项复测通过，生产plugin未变，原失败日志保留。既有6文件199项首轮全PASS，不重复跑；合计224项通过，独立执行汇总targeted-summary.json。
+- 最终未改bundle双屏真实触控393×852/320×568：5→6→7、pending重复点击不重开、重复结果不重发、取消/无填充仍7、真实reload保7无重播、福利站7→8通过；满时无金币buy target且金币1000保持。无native能力5不变、4点花100金币补至5也通过。只模拟原生WebMessage广告结果和内存存档，不改游戏方法/时钟，不是真机广告验收。证据 `.codex-temp/google-play-life-overflow-20261021/validation/browser-1792579363897/report.json`，bundle `game-VG9uxWVW.js` SHA256 `e8f2b79367ae6ee4828eebf1dd9198e0309c44afab5f08ffbe37c3d404c9ce4b`。
+- Gradle assembleRelease/bundleRelease/lintRelease成功20秒，lint0错误24既有警告；同com.SlideJam.SweetPotato/gp2026签名、953Web资源/bundletool/四ABI16KB检查PASS。APK `artifacts/google-play/SlideJam-0.1.18-googleplay-life-overflow.apk` 65,538,098字节，SHA256 `25b2b9f38761cfcd792d20a72e4bd7305bd8e1bb1af41f44e5f88619a14d3876`；AAB同名前缀65,035,047字节，SHA256 `031fea8dbfda4b85ef0998e707ff46b64ca3a39218857191ee29b39d3da03340`。测试广告/统计关闭/私有wrapper停用/submissionReady=false保持；本轮未安装手机、接触真实存档或发布。
+- 范围证据 `scope-parity.json` PASS：2113共享/其它渠道保护文件、16既有GP运行文件、239原生图片保持，关卡projection深相等，HTML仅bundle引用，marker仅18/code19；0.1.17拖动优化helper/plugin哈希保持。交付说明 `release-assets/google-play/life-overflow-20261021.txt`；最终包与验证汇总 `artifacts/google-play/SlideJam-0.1.18-googleplay-life-overflow-validation.json`。不将模拟广告完成当真实网络/手机验收。
+- 最终测试文件完成后tsc --noEmit exit0；汇总状态PASS_WITH_PHYSICAL_DEVICE_UNVERIFIED，最终规则锁PASS202。新增GP插件hash `ee98d87284c896ef988ce7faa5ba2367ee87f28a5bcc5cfad9ed1e93c68d0601`，测试hash `e51ccd989805ac402c9ad5473896f0fa4b76ad1d9f8e4240f8853c319fe1c9b1`。
+
+## Google Play 首次默认英文 0.1.19（2026-10-21，规则 v1.198.0）
+
+- 用户明确“无论手机是什么语言，apk包默认语言都使用英文”，取代之前首启跟随手机语言的要求；上下文仍仅Google Play。起始manifest→完整v1.198→WORKSTATE→锁PASS202；不是强制每次覆盖已存语言，不清档、不取消手动切换，旧v1无language存档的历史中文迁移保留。
+- `GooglePlayHost.preferredLocales()`固定返回en，首次languageForStorageRead使用该值；有效已存语言和后续selectLanguage/persistVerified原行为保持。`privacy.ts`三语“语言设置”说明同步；README及SDK待办/提交清单登记已确认英文，不再列待答。历史0.1.9离线隐私草稿保持，未发布政策网站。
+- 新 `tools/google-play-language-plugin.mjs` 只投影GP HTML为lang=en、启动/Retry/Details/noscript英文，输出ES5startup-guard失败/超时提示英文；drawStartupStatus图像解码前回退及两个retry改用已有本地化key。正常进度和隐私页读save.language，手动选择后继续随游戏语言。MainActivity及GooglePlaySdkBridge只改应用自身错误/重试/外跳失败/广告反馈英文并删Locale分支，不改广告或UMP流程；第三方广告、同意表单和外部网页语言仍由各自服务控制。
+- 语言相关70项单轮全PASS（GPHost12含新增8、platformPreferredLocales6、firstLaunchEntry52），最终测试文件后tsc通过。证据 `.codex-temp/google-play-english-default-20261021/targeted-summary.json`。覆盖中文/日文/法文设备偏好仍en、旧已选中日文保留、实际手选保存与重载、普通Web/微信原locale行为保持。
+- 第一版浏览器发现Canvas备用加载文字硬编码中文，旧FAIL `validation/browser-1792580437393/report.json`保留；修GP投影后第二轮中日法首次英文和4项guard分支通过，手选阶段因测试在页面过渡结束前点击超时，旧 `browser-1792580674499/report.json` 保留。语言插件缺pre优先级的一次构建失败保留 `web-build-projection-order-failure.log`，已补enforce:pre并成功重建；初始包移存intermediate-before-fallback，未交付该版。
+- 最终Web bundle `game-`对应SHA256 `b07f95d5261b29fc2e3d34534de5142b52d977e63bba57febba9126197cbae23`；最终语言plugin SHA256 `a4d73c7495d58340bf26ee1a937c6c6e9b5db8607f772a025da0bf9f165fa8a3`。初次含Android单测的Gradle构建成功25秒；最后Web文案修补重建APK/AAB/lint成功18秒，0错误24既有警告，同包名/gp2026签名、953Web资源/bundletool/四ABI16KB通过。
+- APK `artifacts/google-play/SlideJam-0.1.19-googleplay-english-default.apk` 65,537,718字节，SHA256 `642f99c31cba5721a739bb626f7a66836f0af735eed0f8cc5f469ff87718384a`；AAB同名前缀65,034,079字节，SHA256 `f7283014fdc2e2eba88d2a1d257a225c0b29a1c6654f3030887d7900c36297c8`。测试广告/统计关闭/私有wrapper停用/submissionReady=false保持。交付说明 `release-assets/google-play/english-default-20261021.txt`，包检查checks.json；本轮未手机安装或接触真实玩家存档，未上传发布。
+- 最终9项浏览器检查全PASS：guard脚本错误/超时/不支持/ready四支、中日法新账号首次英文三支、手动中文/日文真实点击及reload保选择两支。`validation/browser-1792580867407/report.json`绑定最终 `game-0TlIJvNa.js`/b07f95d5 bundle，0页面异常。第三份旧FAIL `browser-1792580759488`同属脚本200ms早于0.32秒弹窗输入解锁；最终自然等450ms后取坐标，生产无额外修改。全部历史FAIL保留。
+- 最终范围核对：2113共享/其它渠道保护文件保持，GP既有16运行文件只有本任务Host/privacy/MainActivity/SdkBridge四项改变；关卡投影深相等，游戏图片和前轮渲染/输入/体力插件哈希保持。最终汇总 `artifacts/google-play/SlideJam-0.1.19-googleplay-english-default-validation.json`，规则锁PASS202，状态PASS_WITH_PHYSICAL_DEVICE_UNVERIFIED。
+
+
+### 2026-10-21 Google Play 720×1600 适配修复（0.1.20/code21）
+- 当前规则 v1.198.0，入口必读已完成，锁校验202 PASS。用户反馈顶部空白、底部导航裁切和弹窗侧边露亮；仅处理 Google Play，不改机制/关卡/微信/抖音、不发布。
+- 原因：MainActivity 对 cutout 整体 padding；496×1078 contain 不包含首页720×1584素材多出的13.2逻辑高度；drawDim只遮逻辑框，两边物理背景漏出。
+- GP Activity 移除 cutout 原生留边并转换实际 WebView/CSS 比例传入安全区（API28–29/30+），caption保原生保护；GP专用viewport插件统一输入/绘制安全区变换、24逻辑高度余量、固定canvas、完整背景/首尾装饰条和物理画布遮罩。共享源字节保持；其他渠道构建不加载此插件。
+- 验收：45 targeted tests PASS、tsc PASS、Android unit/build/lint PASS；最终包的7组viewport/insets、首页/每日任务/补体力和设置/语言/playing/pause/resume/live resize真实浏览器触控 PASS（隔离内存存档，未访问真实玩家数据）。最终报告 `.codex-temp/google-play-viewport-20261021/validation/browser-1792581611167/report.json`。早期报告保留其当时结果，首轮失败是测试按钮名错误，不改标。
+- 产物 `artifacts/google-play/SlideJam-0.1.20-googleplay-viewport.apk`、同名AAB及 checks/validation.json；953项web资源同对象比对、签名/16KB/bundletool通过，2113受保护文件未变。说明 `release-assets/google-play/viewport-20261021.txt`。
+- 限制：ADB devices为空，未真机验证/安装，不能称各品牌真机通过。仍官方测试广告，analytics关闭、聚合wrapper休眠、submissionReady=false。无上传发布。下一步为用户手机覆盖安装复测顶部刘海/底部导航及两弹窗。
+
+
+### 2026-10-21 Google Play 引导挖孔遮罩补漏（0.1.21/code22）
+- 规则 v1.198.0，必读/锁202 PASS；用户实机照片显示排行榜入口focus遮罩只盖设计框。0.1.20只修drawDim，遗漏drawFeatureUnlockGuide的evenodd外路径；旧包真实浏览器复现，证据 `.codex-temp/google-play-overlays-20261021/validation/browser-1792582438526/report.json`，不重标旧验收为全面通过。
+- 新GP专用 overlays helper/plugin：外路径按当前Canvas变换逆映射整个物理画布，孔/手指/描边/输入坐标保持；7处直接fill遮罩（旅程3、藏品1、机制1、胜利1、失败1）、profile2、league3及pulse bounds投影到全屏。背景色/棋盘裁剪不做全局替换；共享源、微信/抖音及关卡/真实存档不动。
+- 最终14项浏览器检查PASS：4 startup guard、5种功能引导focus/真实touch/非目标拒绝/正确entry确认、排行榜另5尺寸（共6组viewport/insets）。四角/左右边像素符合0.78遮罩，孔仍亮，最终bundle SHA256 35813822ed54782425a38f4d9a61a1b13d4a05a4d6ad69eb618f6c4a3e14ddc0；报告 `.codex-temp/google-play-overlays-20261021/validation/browser-1792582443398/report.json`。先前两次测试因debug interactionTargets在引导分支无targets嵌套而失败，旧报告保留；仅修测试读取，未改生产路由。
+- 57 targeted tests PASS、tsc最终PASS；Gradle assemble/bundle/lint成功18秒，签名/953Web资源/bundletool/四ABI16KB PASS，2113受保护文件保持。产物 `artifacts/google-play/SlideJam-0.1.21-googleplay-overlays.apk`、同名AAB/checks/validation；说明 `release-assets/google-play/overlays-20261021.txt`。
+- ADB devices仍空，未真机验证/安装，不称所有机型通过。额外奖励/失败遮罩经代码/投影核查，未每分支完整实战。官方测试广告、analytics禁用、wrapper休眠、submissionReady=false保持，未上传发布。下一步用户覆盖安装复测排行榜高亮引导周围亮边。

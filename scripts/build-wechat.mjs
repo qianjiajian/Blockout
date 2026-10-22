@@ -56,7 +56,7 @@ await build({
       // path separators; esbuild normalizes Windows paths differently between
       // the resolver and onLoad hooks.
       bundler.onLoad({ filter: /buildTarget[.]ts$/ }, () => ({
-        contents: 'export const BUILD_TARGET = "wechat"; export const IS_WECHAT_BUILD = true;',
+        contents: 'export const BUILD_TARGET = "wechat"; export const IS_WECHAT_BUILD = true; export const IS_ANDROID_BUILD = false; export const IS_ANDROID_RELEASE_BUILD = false; export const HIDE_DEVELOPER_CONTROLS = true;',
         loader: "js",
       }));
       bundler.onLoad({ filter: /[\\/]src[\\/]core[\\/](?:leagueLevelData|formalDailyChallengeData|clonePlainData)\.ts$/ }, ({ path }) => {

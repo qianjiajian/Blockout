@@ -1,0 +1,19 @@
+Slide Jam: Block Puzzle — Google Play 0.1.18 / code19
+满体力广告入口修复，2026-10-21
+
+玩家体力已满5点或已超过5点时，顶部体力弹窗内的广告按钮仍可点击。每次完整观看并成功保存奖励后增加1点，例如5→6→7。超过上限的体力按原存档规则保留，不在重进游戏时裁回5。
+
+原因：原账户奖励本就支持超过5点，福利站也已支持；但体力弹窗虽然在满体力时绘制了居中广告按钮，却没有登记点击区域，并且广告开始函数另外拒绝满体力。本次只在Google Play构建投影中解除这两处限制。
+
+自然恢复上限仍为5；5点以上停止自然恢复，消耗到4点后按原30分钟规则恢复。满体力时不提供金币补满。福利站已有每日额度保持；体力弹窗使用原独立广告奖励事务，不占用福利站额度。
+
+保留广告完成后发奖、提前关闭/无广告/错误不发奖、保存失败重试同一候选、进行中不可重复请求、重载恢复与去重。没有提供真实广告的模拟替代；验证中的模拟回调只存在隔离测试环境。
+
+仅Google Play生效，微信、抖音和共享游戏源码保持。包含0.1.17的持续拖动优化，仍为官方测试广告配置；未上传或发布。
+
+APK：artifacts/google-play/SlideJam-0.1.18-googleplay-life-overflow.apk
+AAB：artifacts/google-play/SlideJam-0.1.18-googleplay-life-overflow.aab
+同包名com.SlideJam.SweetPotato及gp2026签名，可覆盖安装同签名旧版。
+测试与包哈希以以下最终报告为准：
+artifacts/google-play/SlideJam-0.1.18-googleplay-life-overflow-validation.json
+artifacts/google-play/SlideJam-0.1.18-googleplay-life-overflow-checks.json

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "397668840019",
+    "project_id": "slide-jam-block-puzzle",
+    "storage_bucket": "slide-jam-block-puzzle.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:397668840019:android:0fc70aacd2e42ecb9d0ca6",
+        "android_client_info": {
+          "package_name": "com.SlideJam.SweetPotato"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHgl8dSH534Lr28iUnk7_c51EWLiFAxjs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

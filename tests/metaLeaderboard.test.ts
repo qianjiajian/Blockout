@@ -68,6 +68,55 @@ describe("meta leaderboard", () => {
     ]);
   });
 
+  it("localizes every opponent roster from the first device language without changing identity or ranking", () => {
+    const epoch = Date.UTC(2026, 9, 5) - 8 * 3_600_000;
+    const languages = ["zh-CN", "zh-TW", "en", "ja", "ko", "es", "pt", "fr", "de", "ru"] as const;
+    const snapshots = languages.map((opponentLanguage) => buildMetaLeaderboard("world", {
+      ...completeProgress(42), opponentLanguage, nowMs: epoch, groupCreatedAtMs: epoch,
+    }));
+    const reference = snapshots[0];
+    const referenceIds = reference.entries.map((entry) => entry.id);
+    const referenceProgress = reference.entries.map((entry) => ({ id: entry.id,
+      totalStars: entry.totalStars, weeklyStars: entry.weeklyStars, lifetimeStars: entry.lifetimeStars,
+      cleared: entry.cleared, rank: entry.rank }));
+
+    for (const snapshot of snapshots) {
+      expect(snapshot.entries).toHaveLength(99);
+      expect(new Set(snapshot.entries.map((entry) => entry.name)).size).toBe(99);
+      expect(snapshot.entries.map((entry) => entry.id)).toEqual(referenceIds);
+      expect(snapshot.entries.map((entry) => ({ id: entry.id,
+        totalStars: entry.totalStars, weeklyStars: entry.weeklyStars, lifetimeStars: entry.lifetimeStars,
+        cleared: entry.cleared, rank: entry.rank }))).toEqual(referenceProgress);
+      expect(snapshot.player).toMatchObject({ totalStars: reference.player.totalStars, rank: reference.player.rank });
+    }
+
+    // A localized roster is data-driven: switching the device language changes
+    // all visible opponent names, while the deterministic identity and scores
+    // remain shared across every locale.
+    const namesByLanguage = snapshots.map((snapshot) => snapshot.entries.map((entry) => entry.name));
+    expect(new Set(namesByLanguage.map((names) => JSON.stringify(names))).size).toBe(languages.length);
+    const scriptByLanguage: Partial<Record<typeof languages[number], RegExp>> = {
+      en: /[A-Za-z]/, es: /[A-Za-z]/, pt: /[A-Za-z]/, fr: /[A-Za-z]/, de: /[A-Za-z]/,
+      ja: /[\u3040-\u30ff\u3400-\u9fff]/, ko: /[\uac00-\ud7af]/, ru: /[\u0400-\u04ff]/,
+    };
+    languages.forEach((language, index) => {
+      const script = scriptByLanguage[language];
+      if (script) expect(namesByLanguage[index].every((name) => script.test(name))).toBe(true);
+    });
+  });
+
+  it("uses the same localized roster for weekly and province tabs", () => {
+    const epoch = Date.UTC(2026, 9, 5) - 8 * 3_600_000;
+    const input = { ...completeProgress(42), opponentLanguage: "en" as const, province: "44",
+      groupCreatedAtMs: epoch, nowMs: epoch + 60 * 3_600_000, weeklyStars: 7 };
+    const snapshots = buildAllMetaLeaderboards(input);
+    for (const mode of ["weekly", "country"] as const) {
+      expect(snapshots[mode].entries).toHaveLength(99);
+      expect(new Set(snapshots[mode].entries.map((entry) => entry.name)).size).toBe(99);
+      expect(snapshots[mode].entries.every((entry) => /[A-Za-z]/.test(entry.name))).toBe(true);
+    }
+  });
+
   it("gives every ranked bot a unique 2-to-5-character Chinese name", () => {
     const snapshot = buildMetaLeaderboard("world", completeProgress(1));
     const names = snapshot.entries.map((entry) => entry.name);
@@ -211,6 +260,19 @@ describe("meta leaderboard", () => {
       expect(snapshot.entries.filter((entry) => entry.totalStars >= 10 && entry.totalStars <= 21)).toHaveLength(35);
       expect(snapshot.entries.filter((entry) => entry.totalStars >= 22 && entry.totalStars <= 36)).toHaveLength(20);
       expect(snapshot.entries.filter((entry) => entry.totalStars >= 37 && entry.totalStars <= 48)).toHaveLength(4);
+    }
+  });
+
+  it("keeps localized province rosters unique for every supported device language", async () => {
+    const { LEADERBOARD_PROVINCES } = await import("../src/core/rankingProvince");
+    const epoch = Date.UTC(2026, 9, 5) - 8 * 3_600_000;
+    const languages = ["zh-CN", "zh-TW", "en", "ja", "ko", "es", "pt", "fr", "de", "ru"] as const;
+    for (const opponentLanguage of languages) {
+      for (const { code } of LEADERBOARD_PROVINCES) {
+        const snapshot = buildMetaLeaderboard("country", { ...completeProgress(1), province: code,
+          opponentLanguage, nowMs: epoch, groupCreatedAtMs: epoch });
+        expect(new Set(snapshot.entries.map((entry) => entry.name)).size).toBe(99);
+      }
     }
   });
 

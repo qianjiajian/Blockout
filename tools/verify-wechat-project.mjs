@@ -25,7 +25,7 @@ const projectRoot = fileURLToPath(new URL("../", import.meta.url));
 const output = resolveWechatOutput(projectRoot);
 const outputLabel = relative(projectRoot, output).replaceAll("\\", "/");
 const expectedIdentity = {
-  description: "方块出逃 - 竖屏颜色滑块益智微信小游戏",
+  description: "脑王的诞生 - 竖屏颜色滑块益智微信小游戏",
   compileType: "game",
   appid: "wx8d67feab4925babb",
   projectname: "color-escape",

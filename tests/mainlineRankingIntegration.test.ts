@@ -143,6 +143,24 @@ describe("actual mainline ranking save integration", () => {
     expect(after.player).toMatchObject({ avatar: 4, frame: 3, name: "新名字" });
     expect(after.entries).toEqual(before.entries);
   });
+  it("keeps opponent names in the first device language when the UI language changes", () => {
+    const { game } = fixture();
+    game.save.leaderboardLanguage = "ja";
+    game.save.language = "en";
+    game.beginRankingPage();
+    const first = game.leaderboardSnapshot("world");
+    const progress = game.save.mainlineRanking;
+    const profile = game.save.playerProfile;
+    const expected = buildMetaLeaderboard("world", {
+      highestLevel: game.save.highestLevel, bestStars: game.save.bestStars,
+      playerId: profile.id, playerName: profile.name, playerAvatar: profile.avatar, playerFrame: profile.frame,
+      opponentLanguage: "ja", nowMs: game.rankingVisitClockMs, groupCreatedAtMs: progress.epochMs,
+      province: progress.province, weeklyStars: progress.weeklyStars, weekBaselineMs: progress.weekBaselineMs,
+    });
+    expect(first.entries.map((entry: any) => entry.name)).toEqual(expected.entries.map((entry) => entry.name));
+    game.save.language = "fr";
+    expect(game.leaderboardSnapshot("world")).toEqual(first);
+  });
   it("uses the same confirmed province and clock for both sides of a national rank improvement", () => {
     const { game } = fixture();
     const pending = game.createPendingSettlement();

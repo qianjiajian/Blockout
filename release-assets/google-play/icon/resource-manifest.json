@@ -1,0 +1,63 @@
+{
+  "source": "user-supplied-20261021.png",
+  "sourceSha256": "573f4cb36d2c03bdd0847bc5cacf601188ed71b2b5d21fce11d2e49df4f5dad3",
+  "operation": "Density resizing and adaptive-layer padding only; original source preserved.",
+  "adaptive": {
+    "layerDp": 108,
+    "artworkDp": 84,
+    "paddingDp": 12,
+    "viewportDp": 72
+  },
+  "outputs": [
+    {
+      "path": "android-google-play/app/src/main/res/mipmap-mdpi/ic_slidejam_launcher.png",
+      "pixels": 48,
+      "sha256": "c5bb7c45649799e3ca301152a9b3f49efe9e12afd3e27cd4294a34b4c4c7145e"
+    },
+    {
+      "path": "android-google-play/app/src/main/res/mipmap-mdpi/ic_slidejam_foreground.png",
+      "pixels": 108,
+      "sha256": "ecad93c7e0bdf366eab881802ee992c72f9837f7702d0798435b3e6e7839bf30"
+    },
+    {
+      "path": "android-google-play/app/src/main/res/mipmap-hdpi/ic_slidejam_launcher.png",
+      "pixels": 72,
+      "sha256": "ec1ce1500c31fa99fb8948744d213d75f6611577e578207988fa9d7bf6ca6376"
+    },
+    {
+      "path": "android-google-play/app/src/main/res/mipmap-hdpi/ic_slidejam_foreground.png",
+      "pixels": 162,
+      "sha256": "a80309af5ca211fa30fa7269b5aafddba11df4051ce6df1ff8cdaba3b2e9531c"
+    },
+    {
+      "path": "android-google-play/app/src/main/res/mipmap-xhdpi/ic_slidejam_launcher.png",
+      "pixels": 96,
+      "sha256": "47e2c38dc0ff59a378638fdcce1754e0ceaa3f31a7fcdf7b54fa80fe53e4071c"
+    },
+    {
+      "path": "android-google-play/app/src/main/res/mipmap-xhdpi/ic_slidejam_foreground.png",
+      "pixels": 216,
+      "sha256": "79f29b003ceb481f9f1e0f5945e66ed5bda0bfc52e7d7c6554d3af11eb8792f1"
+    },
+    {
+      "path": "android-google-play/app/src/main/res/mipmap-xxhdpi/ic_slidejam_launcher.png",
+      "pixels": 144,
+      "sha256": "e5c63730a67c46a0a16a5de958c8c4c2eb226473e80a1e1045a82f07a142ea74"
+    },
+    {
+      "path": "android-google-play/app/src/main/res/mipmap-xxhdpi/ic_slidejam_foreground.png",
+      "pixels": 324,
+      "sha256": "976b524c5cce120d87d00e974a6d36030060d4e5ebf72c1e17092efe3690f298"
+    },
+    {
+      "path": "android-google-play/app/src/main/res/mipmap-xxxhdpi/ic_slidejam_launcher.png",
+      "pixels": 192,
+      "sha256": "be95e180c9ef419c2d36f42d76988630b59ebaf8a279e1bff60bbecc5cc64c9f"
+    },
+    {
+      "path": "android-google-play/app/src/main/res/mipmap-xxxhdpi/ic_slidejam_foreground.png",
+      "pixels": 432,
+      "sha256": "a60f182c8c9db4ac8052d54b9ebcb5d3d221cff6e191b6e35f1f415c3ffaf4a9"
+    }
+  ]
+}

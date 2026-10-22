@@ -21,6 +21,19 @@ function expectCurrentNames(state: LeagueState): void {
 }
 
 describe("league names on restored seasons", () => {
+  it.each([
+    ["zh-TW", /[\u3400-\u9fff]/], ["en", /[A-Za-z]/], ["ja", /[\u3040-\u30ff\u3400-\u9fff]/],
+    ["ko", /[\uac00-\ud7af]/], ["es", /[A-Za-z]/], ["pt", /[A-Za-z]/], ["fr", /[A-Za-z]/],
+    ["de", /[A-Za-z]/], ["ru", /[\u0400-\u04ff]/],
+  ] as const)("projects every league opponent into the device locale %s", (language, script) => {
+    const state = createLeague(NOW, 12345, 0);
+    const names = leagueRows(state, language).filter(row => !row.player).map(row => row.name);
+    expect(names).toHaveLength(49);
+    expect(new Set(names).size).toBe(49);
+    expect(names.every(name => script.test(name))).toBe(true);
+    expect(names).not.toEqual(leagueRows(state).filter(row => !row.player).map(row => row.name));
+  });
+
   it.each([0, 1, 12345, 0x7fffffff])("displays new names over legacy saved names without rewriting seed %i", seed => {
     const state = legacySeason(seed);
     const before = JSON.stringify(state);

@@ -1,4 +1,6 @@
 import { PROFILE_AVATAR_COUNT, PROFILE_FRAME_COUNT, PROFILE_FRAME_COLORS, PROFILE_RENAME_PRICE, profileUnlockLevel, type PlayerProfile } from "../core/playerProfile";
+import { profileText, type ProfileTextKey } from "./profileLocalization";
+import type { GameLanguage } from "./localization";
 import type { ProfileSuppliedArt } from "./profileSuppliedArt";
 
 export type ProfilePage = "stats" | "avatar" | "frame" | "rename";
@@ -70,7 +72,7 @@ export function profileCatalogCells(page: ProfilePage, scrollOffset = 0): Array<
 }
 export interface ProfileView {
   page: ProfilePage; profile: PlayerProfile; draftAvatar: number; draftFrame: number; name: string; coins: number;
-  highest: number; totalStars: number; levelRank: number | null; english: boolean; pending: boolean;
+  highest: number; totalStars: number; levelRank: number | null; language?: GameLanguage; english?: boolean; pending: boolean;
   feedback?: string; loading?: boolean; scrollOffset?: number; saveEnabled?: boolean;
   unlockedAvatars?: readonly boolean[]; unlockedFrames?: readonly boolean[];
   unreadAvatars?: readonly boolean[]; unreadFrames?: readonly boolean[];
@@ -139,7 +141,9 @@ export function drawProfileAvatar(ctx: CanvasRenderingContext2D, art: Pick<Profi
 export function drawPlayerProfile(ctx: CanvasRenderingContext2D, v: ProfileView, art: ProfileArt | undefined,
   press: (key: string, rect: ProfileRect, draw: () => void) => void, paint: ProfilePaint = {}) {
   const l = PROFILE_LAYOUT, ui = art?.ui,
-    stats = v.page === "stats" || (v.page === "rename" && v.renameReturnPage === "stats"), english = v.english;
+    stats = v.page === "stats" || (v.page === "rename" && v.renameReturnPage === "stats"),
+    language = v.language ?? (v.english ? "en" : "zh-CN"), english = language === "en",
+    t = (key: ProfileTextKey, params?: { level?: number }) => profileText(language, key, params);
   const popup = paint.popup ?? ((_key: string, _bounds: ProfileRect, draw: () => void) => draw());
   const unreadAvatar = v.unreadAvatars?.some(Boolean) ?? false;
   const unreadFrame = v.unreadFrames?.some(Boolean) ?? false;
@@ -161,8 +165,9 @@ export function drawPlayerProfile(ctx: CanvasRenderingContext2D, v: ProfileView,
   popup("profile", logical(panel), () => {
     ctx.save(); ctx.translate(0, PROFILE_OFFSET_Y); ctx.scale(PROFILE_SCALE, PROFILE_SCALE);
     image(stats ? ui?.statsPanel : ui?.editorPanel, panel, "#f5ebe3");
-    image(english ? ui?.titleEn : ui?.titleZh, english ? l.titleEn : l.titleZh);
-    if (!ui) text(ctx, english ? "PROFILE" : "个人资料", 360, 375, 60, "#fff", true);
+    const suppliedTitle = language === "zh-CN" ? ui?.titleZh : language === "en" ? ui?.titleEn : undefined;
+    image(suppliedTitle, language === "en" ? l.titleEn : l.titleZh);
+    if (!suppliedTitle) text(ctx, t("title"), 360, 375, 60, "#fff", true, 450);
     if (!v.pending) press("profile.close", logical(l.close), () => {
       image(ui?.close, l.close, "#df4954"); if (!ui) text(ctx, "×", 631, 427, 64, "#fff");
     });
@@ -175,13 +180,13 @@ export function drawPlayerProfile(ctx: CanvasRenderingContext2D, v: ProfileView,
       button("profile.editName", l.statsEditName, art?.edit, "", 30);
       text(ctx, `ID : ${v.profile.id}`, 276, 609, 30, "#582dd8", false, 241, "left");
       image(ui?.copy, l.copy); if (!ui) text(ctx, "▣", 542, 609, 31, "#fff");
-      text(ctx, english ? "General Stats" : "总体统计", 360, 711, 45, "#fff", true, english ? 330 : 195);
-      if (!english) {
+      text(ctx, t("stats"), 360, 711, 45, "#fff", true, english ? 330 : 260);
+      if (language !== "en") {
         image(ui?.sparkle, { x: 226, y: 691, width: 33, height: 39 });
         image(ui?.sparkle, { x: 463, y: 691, width: 33, height: 39 });
       }
       const values = [v.highest, v.totalStars, v.levelRank ?? "—"];
-      const labels = english ? ["Highest Level", "Total Stars", "Level Rank"] : ["最高关卡", "总星级", "关卡排名"];
+      const labels = [t("highestLevel"), t("totalStars"), t("levelRank")];
       const icons = ui ? [ui.statHighest, ui.statStars, ui.statRank] : art?.stats;
       for (let i = 0; i < 3; i++) {
         const x = 145 + 149 * i;
@@ -209,8 +214,8 @@ export function drawPlayerProfile(ctx: CanvasRenderingContext2D, v: ProfileView,
       button("profile.editName", l.editName, art?.edit, "", 30);
       image(v.page === "frame" ? ui?.framePage : ui?.avatarPage, l.avatarPage, "#f5ebe3");
       image(ui?.tabButton, v.page === "frame" ? l.avatarTab : l.frameTab, "#f5ebe3");
-      text(ctx, english ? "Avatar" : "头像", 232, 680, 41, "#7953c6", false, 217);
-      text(ctx, english ? "Frame" : "头像框", 487, 680, 41, "#7953c6", false, 217);
+      text(ctx, t("avatar"), 232, 680, 41, "#7953c6", false, 217);
+      text(ctx, t("frame"), 487, 680, 41, "#7953c6", false, 217);
       notification(l.avatarTab, unreadAvatar);
       notification(l.frameTab, unreadFrame);
       image(ui?.catalogPanel, l.catalog, "#eedbcf");
@@ -249,13 +254,13 @@ export function drawPlayerProfile(ctx: CanvasRenderingContext2D, v: ProfileView,
         const avatarLevel = v.unlockedAvatars?.[v.draftAvatar] === false ? profileUnlockLevel("avatar", v.draftAvatar) : 0;
         const frameLevel = v.unlockedFrames?.[v.draftFrame] === false ? profileUnlockLevel("frame", v.draftFrame) : 0;
         const level = kind === "frame" ? (frameLevel || avatarLevel) : (avatarLevel || frameLevel);
-        text(ctx, level ? (english ? `Complete level ${level} to unlock` : `通过${level}关解锁`) : (english ? "Locked" : "尚未解锁"),
+        text(ctx, level ? t("unlockLevel", { level }) : t("locked"),
           360.5, 1142, english ? 27 : 32, "#7953c6", false, 480);
       } else button(v.pending ? "profile.retry" : "profile.save", l.save, ui?.saveButton ?? art?.save,
-        v.pending ? (english ? "Retry" : "重试保存") : (english ? "Save" : "保存"), 37);
+        v.pending ? t("retry") : t("save"), 37);
     }
     if (v.page !== "rename") {
-      if (v.loading) text(ctx, english ? "Loading…" : "正在加载…", 360, 740, 30, "#7953c6");
+      if (v.loading) text(ctx, t("loading"), 360, 740, 30, "#7953c6");
     }
     ctx.restore();
   });
@@ -267,18 +272,18 @@ export function drawPlayerProfile(ctx: CanvasRenderingContext2D, v: ProfileView,
       if (!v.pending) press("profile.cancelRename", logical(l.renameClose), () => {
         image(ui?.close, l.renameClose, "#df4954"); if (!ui) text(ctx, "×", 631, 625, 64, "#fff");
       });
-      text(ctx, english ? "RENAME" : "修改昵称", 360, 646, 53, "#fff", true, 450);
-      text(ctx, english ? "Enter your name" : "请输入你的昵称", 360, 772, 29, "#8052ef", false, 450);
+      text(ctx, t("renameTitle"), 360, 646, 53, "#fff", true, 450);
+      text(ctx, t("namePlaceholder"), 360, 772, 29, "#8052ef", false, 450);
       image(ui?.renameInput, l.renameInput, "#eee0d4");
       text(ctx, v.name, 154, 859, 36, "#582dd8", false, 410, "left");
       button(v.pending ? "profile.retry" : "profile.rename", l.rename, ui?.renameButton,
-        v.pending ? (english ? "Retry" : "重试保存") : "", 36);
+        v.pending ? t("retry") : "", 36);
       if (!v.pending) {
-        text(ctx, english ? "Rename" : "改名", 306, 989, 36, "#fff", true, 88, "center", "#286e15");
+        text(ctx, t("rename"), 306, 989, 36, "#fff", true, 150, "center", "#286e15");
         image(ui?.coin ?? art?.coin, { x: 355, y: 970, width: 37, height: 38 });
         text(ctx, String(PROFILE_RENAME_PRICE), 430, 989, 36, v.coins < PROFILE_RENAME_PRICE ? "#ed2421" : "#fff", true, 74, "center", "#286e15");
       }
-      if (v.loading) text(ctx, english ? "Loading…" : "正在加载…", 360, 926, 24, "#7953c6");
+      if (v.loading) text(ctx, t("loading"), 360, 926, 24, "#7953c6");
       ctx.restore();
     });
   }

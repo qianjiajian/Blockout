@@ -14,6 +14,7 @@ import { normalizeMainlineRankingProgress, observeMainlineRanking, recordMainlin
 import { isRankingProvince, randomRankingProvince } from "../core/rankingProvince";
 import { normalizePlayerProfile, cleanProfileName, startProfileAttempt, completeProfileAttempt, PROFILE_RENAME_PRICE, PROFILE_AVATAR_COUNT, PROFILE_FRAME_COUNT, profileAvatarPath, profileFramePath, profileAppearanceUnlocked, profileAppearanceUnread, markProfileAppearanceSeen, type ProfileAppearanceKind, type PlayerProfile } from "../core/playerProfile";
 import { drawPlayerProfile, drawProfileAvatar, profileNotificationDotRect, profileTargets, profileCatalogMaxScroll, PROFILE_CATALOG_RECT, PROFILE_STATS_ACTION_BOUNDS, PROFILE_HOME_RECT, PROFILE_INPUT_RECT, PROFILE_SCALE, PROFILE_OFFSET_Y, type ProfileArt, type ProfileView, type ProfilePage } from "./playerProfileUi";
+import { profileText } from "./profileLocalization";
 import { PROFILE_SUPPLIED_ART, type ProfileSuppliedArt, type ProfileSuppliedArtKey } from "./profileSuppliedArt";
 import { ProfileScroll } from "./profileScroll";
 import { GrayscaleImageCache } from "./GrayscaleImageCache";
@@ -39,7 +40,7 @@ import {
 import { MUSIC_CATALOG, isMusicTrack, musicCatalogEntry } from "../audio/musicCatalog";
 import type { MusicCatalogEntry, MusicTrackId } from "../audio/musicCatalog";
 import { PuzzleModel } from "../core/PuzzleModel";
-import { IS_WECHAT_BUILD } from "../platform/buildTarget";
+import { IS_ANDROID_BUILD, HIDE_DEVELOPER_CONTROLS } from "../platform/buildTarget";
 import { drawContinuousGateStrip } from "./continuousGateStrip";
 import { JourneyDeferredArt } from "./JourneyDeferredArt";
 import { CollectionArtworkStore } from "./CollectionArtworkStore";
@@ -938,6 +939,8 @@ interface SaveData {
   haptic: boolean;
   reducedMotion: boolean;
   language: GameLanguage;
+  /** Locale captured on the first device session for generated opponents. */
+  leaderboardLanguage?: GameLanguage;
   selectedMusicTrack?: MusicTrackId;
   /** Unlocked tracks explicitly removed from the playlist by the player. */
   mutedMusicTracks: MusicTrackId[];
@@ -1293,6 +1296,7 @@ const DEFAULT_SAVE: SaveData = {
   haptic: true,
   reducedMotion: false,
   language: "zh-CN",
+  leaderboardLanguage: "zh-CN",
   // Undefined preserves the original menu/gameplay scene mapping until the
   // player explicitly chooses a library track.
   selectedMusicTrack: undefined,
@@ -1345,7 +1349,9 @@ const gameplayArtRect = (placement: GameplayArtPlacement): Rect => ({
 });
 
 const STARTUP_RETRY_ART_RECT = { x: 191, y: 276, width: 338, height: 155 } as const;
-const STARTUP_RETRY_EMERGENCY_RECT = { x: 70, y: 500, width: 356, height: 96 } as const;
+// Keep the emergency retry target aligned with the text-only startup status;
+// the loading screen no longer renders the retired framed button artwork.
+const STARTUP_RETRY_EMERGENCY_RECT = { x: 70, y: 780, width: 356, height: 52 } as const;
 
 const BUTTONS = {
   startupRetry: homeArtRect(STARTUP_RETRY_ART_RECT),
@@ -1847,6 +1853,23 @@ export class ColorEscapeGame {
   private artShellLoadMs = 0;
   private artFullLoadMs = 0;
   private artLoadedImageCount = 0;
+  // Startup progress is reported from the two blocking art batches only.
+  // Lazy page/profile artwork must not make the loading bar jump or reach 100%
+  // before the gameplay batch has completed.
+  private startupProgressValue = 0.04;
+  private startupProgressPhase: "shell" | "deferred" | "ready" | "error" = "shell";
+
+  private updateStartupProgress(phase: "shell" | "deferred", loaded: number, total: number): void {
+    const ratio = total > 0 ? Math.max(0, Math.min(1, loaded / total)) : 0;
+    // Keep the two blocking batches contiguous while reserving a small amount
+    // of headroom for startup bookkeeping and audio preparation.
+    const start = phase === "shell" ? 0.04 : 0.38;
+    const end = phase === "shell" ? 0.38 : 0.96;
+    this.startupProgressPhase = phase;
+    this.startupProgressValue = start + (end - start) * ratio;
+    this.dirty = true;
+    this.scheduleFrame();
+  }
   private artLoadError?: string;
   private artLoadFailurePhase?: "shell" | "deferred";
   private formalBlockArtSignature = "";
@@ -1897,6 +1920,7 @@ export class ColorEscapeGame {
   private musicRecordAngle = 0;
   private art: {
     home?: HTMLImageElement;
+    startupBackground?: HTMLImageElement;
     homeUi?: {
       topHeader: HTMLImageElement;
       resourcePanel: HTMLImageElement;
@@ -2012,6 +2036,7 @@ export class ColorEscapeGame {
     this.save.playerProfile ??= normalizePlayerProfile(undefined);
     this.startupEntryPending = this.hasPendingStartupEntry(initialStorage, this.save);
     this.save.language = this.languageForStorageRead(initialStorage, loaded);
+    this.save.leaderboardLanguage = this.leaderboardLanguageForStorageRead(initialStorage, loaded);
     this.updateCanvasLanguage();
     this.updateToastVisible = false;
     const storedMotionPreference = isPlainRecord(loaded) && typeof loaded.reducedMotion === "boolean";
@@ -2133,12 +2158,17 @@ export class ColorEscapeGame {
     this.scheduleLifeRefreshWatch();
   }
 
-  private async loadImages(paths: readonly string[], concurrency = ART_LOAD_CONCURRENCY): Promise<HTMLImageElement[]> {
+  private async loadImages(
+    paths: readonly string[],
+    concurrency = ART_LOAD_CONCURRENCY,
+    onImageLoaded?: (loaded: number, total: number) => void,
+  ): Promise<HTMLImageElement[]> {
     // Start all required package downloads before bounded decode workers reach
     // their first image in each package. Normal image loads still own failures.
     void this.host.prepareImages?.(paths).catch(() => {});
     const images = new Array<HTMLImageElement>(paths.length);
     let cursor = 0;
+    let loaded = 0;
     let failed = false;
     let firstError: unknown;
     const workerCount = Math.min(Math.max(1, concurrency), paths.length);
@@ -2149,6 +2179,8 @@ export class ColorEscapeGame {
         try {
           images[index] = await this.host.createImage(paths[index]);
           this.artLoadedImageCount += 1;
+          loaded += 1;
+          onImageLoaded?.(loaded, paths.length);
         } catch (error: unknown) {
           if (!failed) firstError = error;
           failed = true;
@@ -2448,6 +2480,7 @@ export class ColorEscapeGame {
     this.artLoadFailurePhase = phase;
     this.artLoadError = error instanceof Error ? error.message : String(error);
     this.artReady = false;
+    this.startupProgressPhase = "error";
     this.dirty = true;
     this.scheduleFrame();
   }
@@ -2461,6 +2494,8 @@ export class ColorEscapeGame {
     if (!phase || !this.artLoadError || this.artReady) return;
     this.artLoadError = undefined;
     this.artLoadFailurePhase = undefined;
+    this.startupProgressPhase = phase;
+    this.startupProgressValue = phase === "shell" ? 0.04 : 0.38;
     this.lastFrame = 0;
     this.dirty = true;
     this.scheduleFrame();
@@ -2478,7 +2513,8 @@ export class ColorEscapeGame {
     // discovering it several decode batches into deferred loading.
     void this.host.prepareImages?.([GAME_ART.gameplay.formalBlocks.blue.solid[1]]).catch(() => {});
     try {
-      const [home, homeTopHeader, homeResourcePanel, homeCoinIcon, homeHeartIcon, homeAddButton, homeSettingsButton, homeLevelPlate, homeArrowLeft, homeArrowRight, homeStarLeft, homeStarCenter, homeStarRight, homeEmptyStarLeft, homeEmptyStarCenter, homeEmptyStarRight, homeStartButton, homeNavigationBar, homeNavigationSelected, homeNavigationDivider, homeShopIcon, homeLeaderboardIcon, homeHomeIcon, homeJourneyIcon, homeCollectionIcon, homeCollectionAlbumEntry, missionsEntryImage, sideEntryBaseImage, leagueEntryImage, dailyChallengeEntryImage, achievementEntryImage, onboarding, uiPanel, homeShopIconLocked, homeLeaderboardIconLocked, homeJourneyIconLocked, lockedHintPanel, homeFeatureLock] = await this.loadImages([
+      const [startupBackground, home, homeTopHeader, homeResourcePanel, homeCoinIcon, homeHeartIcon, homeAddButton, homeSettingsButton, homeLevelPlate, homeArrowLeft, homeArrowRight, homeStarLeft, homeStarCenter, homeStarRight, homeEmptyStarLeft, homeEmptyStarCenter, homeEmptyStarRight, homeStartButton, homeNavigationBar, homeNavigationSelected, homeNavigationDivider, homeShopIcon, homeLeaderboardIcon, homeHomeIcon, homeJourneyIcon, homeCollectionIcon, homeCollectionAlbumEntry, missionsEntryImage, sideEntryBaseImage, leagueEntryImage, dailyChallengeEntryImage, achievementEntryImage, onboarding, uiPanel, homeShopIconLocked, homeLeaderboardIconLocked, homeJourneyIconLocked, lockedHintPanel, homeFeatureLock] = await this.loadImages([
+        GAME_ART.backgrounds.startup,
         GAME_ART.backgrounds.home,
         GAME_ART.ui.home.topHeader,
         GAME_ART.ui.home.resourcePanel,
@@ -2517,8 +2553,9 @@ export class ColorEscapeGame {
         GAME_ART.ui.home.journeyIconLocked,
         GAME_ART.ui.lockedHintPanel,
         GAME_ART.ui.home.featureLock,
-      ]);
+      ], ART_LOAD_CONCURRENCY, (loaded, total) => this.updateStartupProgress("shell", loaded, total));
       this.art = {
+        startupBackground,
         home,
         homeUi: {
           topHeader: homeTopHeader,
@@ -2565,6 +2602,8 @@ export class ColorEscapeGame {
       // the same 720x1584 bitmap twice.
       void this.requestJourneyHomeThemeArt(this.save.selectedJourneyEpisode);
       this.shellArtReady = true;
+      this.startupProgressValue = 0.38;
+      this.startupProgressPhase = "deferred";
       // Prepare the shared interface package (including Journey's map art)
       // without decoding pages or downloading other chapters' Home backgrounds.
       void this.host.prepareImages?.([
@@ -2756,10 +2795,12 @@ export class ColorEscapeGame {
   }
 
   private async loadDeferredArt(): Promise<void> {
+    this.startupProgressPhase = "deferred";
+    this.startupProgressValue = Math.max(this.startupProgressValue, 0.38);
     try {
       const initialPlan = this.formalBlockAssetPlan();
       const initialIcePlan = this.formalIceAssetPlan();
-      const pauseClear = IS_WECHAT_BUILD
+      const pauseClear = HIDE_DEVELOPER_CONTROLS
         ? undefined
         : (await this.loadImages([GAME_ART.ui.pauseSettings.clearProgressButton]))[0];
       const [
@@ -2943,7 +2984,7 @@ export class ColorEscapeGame {
         GAME_ART.fx.formalSelectionFrame,
         ...initialPlan.requests.map((request) => request.path),
         ...initialIcePlan.requests.map((request) => request.path),
-      ]);
+      ], ART_LOAD_CONCURRENCY, (loaded, total) => this.updateStartupProgress("deferred", loaded, total));
       const singleBlocks: Record<BlockColor, HTMLImageElement> = {
         red: redBlock,
         blue: blueBlock,
@@ -3105,6 +3146,8 @@ export class ColorEscapeGame {
       // rather than starting a download on the first block interaction.
       if (this.startupAudioPending) await this.startupAudioPreparation;
       this.artReady = true;
+      this.startupProgressValue = 1;
+      this.startupProgressPhase = "ready";
       this.artLoadError = undefined;
       this.artLoadFailurePhase = undefined;
       this.artFullLoadMs = Date.now() - this.artLoadStartedAt;
@@ -4173,7 +4216,7 @@ export class ColorEscapeGame {
         settlementArtReady: Boolean(this.leagueSettlementArtStore?.art), settlementArtLoading: this.leagueSettlementArtStore?.loading ?? false, settlementArtError: this.leagueSettlementArtStore?.error ?? false,
         infoOpen: this.leagueInfo, introPage: this.leagueIntroPage, introSeen: this.save.leagueIntroSeen===true, persistence: this.leaguePersistence ?? "idle",
         pendingTransaction: this.leagueTransaction?.pending ?? false,
-        state: this.getLeagueState(), rows: this.save.league ? leagueRows(this.save.league) : [],
+        state: this.getLeagueState(), rows: this.save.league ? leagueRows(this.save.league, this.opponentLanguageForSave(this.save)) : [],
       },
       settings: {
         music: this.save.music !== false,
@@ -4181,6 +4224,7 @@ export class ColorEscapeGame {
         haptic: this.save.haptic,
         reducedMotion: this.save.reducedMotion,
         language: this.save.language,
+        leaderboardLanguage: this.save.leaderboardLanguage,
         languageSaveFailed: this.languageSaveFailed,
         languagePersistence: this.pendingLanguageSelection
           ? { status: "unknown", requestedLanguage: this.pendingLanguageSelection.language }
@@ -4983,6 +5027,7 @@ export class ColorEscapeGame {
       pendingCelebration: this.pendingCelebration,
       art: {
         shellReady: this.shellArtReady,
+        startupProgress: { value: this.startupProgressValue, phase: this.startupProgressPhase },
         revisedMechanisms: { ready: missingMechanismArtPaths(this.model.level, this.revisedArt).length === 0,
           currentSceneReady: missingMechanismArtPaths(this.model.level, this.revisedArt).length === 0,
           loading: this.revisedArtLoading, error: this.revisedArtError, loadedImages: this.revisedArt.size },
@@ -5053,6 +5098,22 @@ export class ColorEscapeGame {
       return isGameLanguage(loaded.language) ? loaded.language : "zh-CN";
     }
     return this.deviceLanguage;
+  }
+
+  private leaderboardLanguageForStorageRead(result: StorageReadResult<unknown>, loaded: unknown): GameLanguage {
+    if (result.status === "ok" && isPlainRecord(loaded) && loaded.schemaVersion === 1) {
+      // This field is intentionally independent from the mutable UI language.
+      // Legacy saves have no first-device marker, so their saved language is
+      // the least surprising migration value; fresh installs use the device.
+      if (isGameLanguage(loaded.leaderboardLanguage)) return loaded.leaderboardLanguage;
+      if (isGameLanguage(loaded.language)) return loaded.language;
+      return "zh-CN";
+    }
+    return this.deviceLanguage;
+  }
+
+  private opponentLanguageForSave(save: SaveData): GameLanguage {
+    return save.leaderboardLanguage ?? this.deviceLanguage ?? "zh-CN";
   }
 
   private tr<Key extends TranslationKey>(key: Key, params?: TranslationParams<Key>): string {
@@ -5300,6 +5361,7 @@ export class ColorEscapeGame {
       haptic: typeof source.haptic === "boolean" ? source.haptic : DEFAULT_SAVE.haptic,
       reducedMotion: typeof source.reducedMotion === "boolean" ? source.reducedMotion : DEFAULT_SAVE.reducedMotion,
       language: isGameLanguage(source.language) ? source.language : DEFAULT_SAVE.language,
+      leaderboardLanguage: isGameLanguage(source.leaderboardLanguage) ? source.leaderboardLanguage : undefined,
       selectedMusicTrack: storedMusicTrack,
       mutedMusicTracks,
       featureSeen: boundedStringSet(source.featureSeen),
@@ -6129,7 +6191,7 @@ export class ColorEscapeGame {
   }
 
   private resetProgress(): void {
-    if (IS_WECHAT_BUILD) return;
+    if (HIDE_DEVELOPER_CONTROLS) return;
     if (this.welfareTransactionActive() || this.lifeRefillAdTransactionActive() || this.boosterRewardAdTransactionActive() || this.dailyChallengeRewardAdTransactionActive() || this.pendingRankingSave) return;
     const preferences = {
       music: this.save.music !== false,
@@ -6137,6 +6199,7 @@ export class ColorEscapeGame {
       haptic: this.save.haptic,
       reducedMotion: this.save.reducedMotion,
       language: this.save.language,
+      leaderboardLanguage: this.save.leaderboardLanguage,
       lastSeenUpdate: this.save.lastSeenUpdate,
     };
     const candidate = {
@@ -7016,6 +7079,7 @@ export class ColorEscapeGame {
     const restored = this.recoverInterruptedRun(this.sanitizeSave(loaded ?? copyDefaultSave()));
     restored.playerProfile ??= normalizePlayerProfile(undefined);
     restored.language = this.languageForStorageRead(result, loaded);
+    restored.leaderboardLanguage = this.leaderboardLanguageForStorageRead(result, loaded);
     const storedMotionPreference = isPlainRecord(loaded) && typeof loaded.reducedMotion === "boolean";
     if (!storedMotionPreference && this.host.prefersReducedMotion?.()) restored.reducedMotion = true;
 
@@ -7247,7 +7311,7 @@ export class ColorEscapeGame {
     else if (key === "league.artRetry") this.requestLeagueArt();
     else if (key === "league.info") { this.leagueScroll.cancel(); this.leagueTierSlide = undefined; this.leagueInfo = true; }
     else if (key === "league.dismiss") { this.closePopup("league.info", () => { this.leagueInfo = false; this.leagueChallengeNotice = false; }); }
-    else if (key === "league.self") { if(this.save.league) this.leagueScroll.toRank(leagueRows(this.save.league).find(row=>row.player)!.rank); }
+    else if (key === "league.self") { if(this.save.league) this.leagueScroll.toRank(leagueRows(this.save.league, this.opponentLanguageForSave(this.save)).find(row=>row.player)!.rank); }
     else if (key === "league.challenge") { this.leagueScroll.cancel(); this.leagueTierSlide = undefined; this.leagueChallengeNotice = true; }
     else if (key === "league.tierPrevious") this.shiftLeagueTier(-1);
     else if (key === "league.tierNext") this.shiftLeagueTier(1);
@@ -7427,8 +7491,9 @@ export class ColorEscapeGame {
     const league=this.save.league;
     const priorScore=league&&r.persistence==="committed"?Math.max(0,league.season.score-r.points):league?.season.score??0;
     const priorState=league&&r.persistence==="committed"?{...league,season:{...league.season,score:priorScore}}:league;
-    const oldRows=priorState?leagueRows(priorState):[];
-    const newRows=league?leagueRows(league):[];
+    const opponentLanguage = this.opponentLanguageForSave(this.save);
+    const oldRows=priorState?leagueRows(priorState, opponentLanguage):[];
+    const newRows=league?leagueRows(league, opponentLanguage):[];
     const oldSelf=oldRows.findIndex(row=>row.player),newSelf=newRows.findIndex(row=>row.player);
     const oldStart=Math.max(0,Math.min(Math.max(0,oldRows.length-5),oldSelf-2));
     const newStart=Math.max(0,Math.min(Math.max(0,newRows.length-5),newSelf-2));
@@ -8003,7 +8068,10 @@ export class ColorEscapeGame {
       }
     }
     if (!this.shellArtReady) {
-      if (this.artLoadError) this.render();
+      // Render the text-only loading screen while the shell is still being
+      // decoded; otherwise a slow first batch leaves the canvas blank.
+      this.render();
+      this.dirty = false;
       return;
     }
     if (!this.artReady) {
@@ -8839,6 +8907,7 @@ export class ColorEscapeGame {
       playerName: save.playerProfile?.name,
       playerAvatar: save.playerProfile?.avatar,
       playerFrame: save.playerProfile?.frame,
+      opponentLanguage: this.opponentLanguageForSave(save),
       nowMs: Math.max(nowMs, progress.lastObservedMs),
       groupCreatedAtMs: progress.epochMs,
       province: progress.province,
@@ -9041,13 +9110,15 @@ export class ColorEscapeGame {
     if (visiting) this.rankingVisitClockMs = nowMs;
     const progress = observeMainlineRanking(saved, nowMs);
     const profile = this.save.playerProfile;
+    const opponentLanguage = this.opponentLanguageForSave(this.save);
     const key = JSON.stringify([this.save.highestLevel, this.totalStars(), profile?.id, profile?.name,
-      profile?.avatar, profile?.frame, progress, nowMs]);
+      profile?.avatar, profile?.frame, opponentLanguage, progress, nowMs]);
     if (visiting && this.leaderboardSnapshotCache?.key === key && this.leaderboardSnapshotCache.snapshots[mode])
       return this.leaderboardSnapshotCache.snapshots[mode]!;
     const snapshot = buildMetaLeaderboard(mode, {
       highestLevel: this.save.highestLevel, bestStars: this.save.bestStars,
       playerId: profile?.id, playerName: profile?.name, playerAvatar: profile?.avatar, playerFrame: profile?.frame,
+      opponentLanguage,
       nowMs, groupCreatedAtMs: progress.epochMs, province: progress.province,
       weeklyStars: progress.weeklyStars, weekBaselineMs: progress.weekBaselineMs,
     }, this.leaderboardSource);
@@ -12232,7 +12303,7 @@ export class ColorEscapeGame {
       this.scheduleFrame();
       return;
     }
-    if (!IS_WECHAT_BUILD && this.temporaryLevelSelector) {
+    if (!HIDE_DEVELOPER_CONTROLS && this.temporaryLevelSelector) {
       this.handleTemporaryLevelSelector(point);
       this.dirty = true;
       this.scheduleFrame();
@@ -12335,7 +12406,7 @@ export class ColorEscapeGame {
         this.screen = "supply";
         this.setFormalPageIntent("supply");
         this.playSound("button");
-      } else if (!IS_WECHAT_BUILD && this.interactionHit(point, BUTTONS.temporaryLevelSelector)) {
+      } else if (!HIDE_DEVELOPER_CONTROLS && this.interactionHit(point, BUTTONS.temporaryLevelSelector)) {
         this.openTemporaryLevelSelector();
       } else if (this.interactionHit(point, this.offsetRect(BUTTONS.homePlay, 0, -bottom))) {
         this.playSound("button");
@@ -12594,7 +12665,7 @@ export class ColorEscapeGame {
         this.languageSaveFailed = false;
         this.closePopup("settings", () => { this.screen = "language"; });
         this.playSound("button");
-      } else if (!IS_WECHAT_BUILD && this.interactionHit(point, BUTTONS.settingsReset)) {
+      } else if (!HIDE_DEVELOPER_CONTROLS && this.interactionHit(point, BUTTONS.settingsReset)) {
         this.resetSaveFailed = false;
         this.screen = "resetConfirm";
         this.playSound("button");
@@ -12625,7 +12696,7 @@ export class ColorEscapeGame {
       return;
     }
     if (this.screen === "resetConfirm") {
-      if (IS_WECHAT_BUILD) return;
+      if (HIDE_DEVELOPER_CONTROLS) return;
       if (this.interactionHit(point, BUTTONS.modalPrimary, { anchorY: "end" })) {
         this.resetProgress();
       } else if (this.interactionHit(point, BUTTONS.modalSecondary, { anchorY: "start" })) {
@@ -14847,7 +14918,7 @@ export class ColorEscapeGame {
         ? target(`supply.${this.pendingSupplyPurchase.kind}`, this.supplyBuyRect(this.pendingSupplyPurchase.kind))
         : undefined;
     }
-    if (!IS_WECHAT_BUILD && this.temporaryLevelSelector) {
+    if (!HIDE_DEVELOPER_CONTROLS && this.temporaryLevelSelector) {
       const layout = this.temporaryLevelSelectorLayout();
       matched = target("temporaryLevel.close", layout.close);
       if (matched) return matched;
@@ -14924,7 +14995,7 @@ export class ColorEscapeGame {
         ["homeSupply", this.offsetRect(BUTTONS.homeSupply, 0, safe.top), { anchorY: "end" }],
         ["homePlay", this.offsetRect(BUTTONS.homePlay, 0, -safe.bottom)],
       ];
-      if (!IS_WECHAT_BUILD) homeTargets.splice(5, 0, ["temporaryLevel.open", BUTTONS.temporaryLevelSelector]);
+      if (!HIDE_DEVELOPER_CONTROLS) homeTargets.splice(5, 0, ["temporaryLevel.open", BUTTONS.temporaryLevelSelector]);
       if (this.featureUnlocked("league")) homeTargets.push(["homeLeague", BUTTONS.homeLeague]);
       if (this.featureUnlocked("dailyChallenge")) homeTargets.push(["homeDailyChallenge", homeArtRect(DAILY_CHALLENGE_LAYOUT.entry)]);
       if (this.model.level.id > 1) {
@@ -15046,7 +15117,7 @@ export class ColorEscapeGame {
         if (matched) return matched;
       }
       return target("settingsLanguage", BUTTONS.settingsLanguage)
-        ?? (!IS_WECHAT_BUILD ? target("settingsReset", BUTTONS.settingsReset) : undefined);
+        ?? (!HIDE_DEVELOPER_CONTROLS ? target("settingsReset", BUTTONS.settingsReset) : undefined);
     }
     if (this.screen === "language") {
       matched = target("languageBack", BUTTONS.languageBack);
@@ -15189,8 +15260,8 @@ export class ColorEscapeGame {
     add("homeAchievements", BUTTONS.homeAchievements);
     add("homeMissions", this.dailyTaskHomeEntryRect());
     if (this.featureUnlocked("dailyChallenge")) add("homeDailyChallenge", homeArtRect(DAILY_CHALLENGE_LAYOUT.entry));
-    if (!IS_WECHAT_BUILD) add("temporaryLevel.open", BUTTONS.temporaryLevelSelector);
-    if (!IS_WECHAT_BUILD && this.temporaryLevelSelector) {
+    if (!HIDE_DEVELOPER_CONTROLS) add("temporaryLevel.open", BUTTONS.temporaryLevelSelector);
+    if (!HIDE_DEVELOPER_CONTROLS && this.temporaryLevelSelector) {
       const layout = this.temporaryLevelSelectorLayout();
       add("temporaryLevel.close", layout.close);
       if (layout.canPrevious) add("temporaryLevel.previous", layout.previousPage);
@@ -15205,7 +15276,7 @@ export class ColorEscapeGame {
     add("homeNext", this.offsetRect(BUTTONS.homeNext, 0, this.homeCardOffset(safe.bottom)));
     add("menuBack", BUTTONS.menuBack);
     add("settingsLanguage", BUTTONS.settingsLanguage);
-    if (!IS_WECHAT_BUILD) add("settingsReset", BUTTONS.settingsReset);
+    if (!HIDE_DEVELOPER_CONTROLS) add("settingsReset", BUTTONS.settingsReset);
     (Object.keys(SETTINGS_RECTS) as SettingKind[]).forEach((kind) => add(`settings.${kind}`, this.settingRect(kind)));
     add("languageBack", BUTTONS.languageBack);
     add("achievementClose", BUTTONS.achievementClose);
@@ -15892,35 +15963,67 @@ export class ColorEscapeGame {
     const ctx = this.ctx;
     this.renderedButtonPress = undefined;
 
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.fillStyle = "#090622";
-    ctx.fillRect(0, 0, this.host.canvas.width, this.host.canvas.height);
     const updateOverHome = this.screen === "updates" && this.updateReturnScreen === "home";
     const updateOverSettings = this.screen === "updates" && this.updateReturnScreen === "settings";
     const nativeHomeBackdrop = this.screen === "home" || this.screen === "achievements" || this.screen === "dailyTasks" || this.screen === "dailyChallenge"
       || this.screen === "settings" || this.screen === "musicLibrary" || this.screen === "resetConfirm"
       || updateOverHome || updateOverSettings;
     const backdrop = nativeHomeBackdrop ? undefined : this.art.gameplayBackground;
-    if (backdrop) {
-      const sourceWidth = backdrop.naturalWidth || backdrop.width;
-      const sourceHeight = backdrop.naturalHeight || backdrop.height;
-      const coverScale = Math.max(this.host.canvas.width / sourceWidth, this.host.canvas.height / sourceHeight);
-      const drawWidth = sourceWidth * coverScale;
-      const drawHeight = sourceHeight * coverScale;
-      ctx.drawImage(backdrop, (this.host.canvas.width - drawWidth) / 2, (this.host.canvas.height - drawHeight) / 2, drawWidth, drawHeight);
-    }
-    ctx.setTransform(scale * pixelRatio, 0, 0, scale * pixelRatio, offsetX * pixelRatio, offsetY * pixelRatio);
-    this.drawBackground();
 
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    // Paint the physical viewport before applying the authored 496×1078
+    // transform.  Portrait devices such as Mi 8 are a little wider than the
+    // authored frame; matching the scene background in the remaining pixels
+    // keeps the contain layout free of visible black gutters without cropping
+    // page corners.
+    ctx.fillStyle = "#211f5e";
+    ctx.fillRect(0, 0, this.host.canvas.width, this.host.canvas.height);
+    const physicalBackdrop = !this.artReady && this.art.startupBackground
+      ? this.art.startupBackground
+      : nativeHomeBackdrop
+      ? (this.journeyHomeThemeArt && this.journeyHomeThemeIndex === this.save.selectedJourneyEpisode
+        ? this.journeyHomeThemeArt : this.art.home)
+      : backdrop;
+    if (physicalBackdrop) {
+      const sourceWidth = physicalBackdrop.naturalWidth || physicalBackdrop.width;
+      const sourceHeight = physicalBackdrop.naturalHeight || physicalBackdrop.height;
+      const isStartupBackdrop = !this.artReady && physicalBackdrop === this.art.startupBackground;
+      const viewportRatio = this.host.canvas.width / Math.max(1, this.host.canvas.height);
+      const sourceRatio = sourceWidth / Math.max(1, sourceHeight);
+      // The formal loading artwork is taller than the internal browser's
+      // viewport. Covering a wider viewport would enlarge it and crop the
+      // title/progress copy vertically. Use contain only for that wide case;
+      // normal phone-shaped viewports keep the existing full-bleed cover fit.
+      const backdropScale = isStartupBackdrop && viewportRatio > sourceRatio
+        ? Math.min(this.host.canvas.width / sourceWidth, this.host.canvas.height / sourceHeight)
+        : Math.max(this.host.canvas.width / sourceWidth, this.host.canvas.height / sourceHeight);
+      const drawWidth = sourceWidth * backdropScale;
+      const drawHeight = sourceHeight * backdropScale;
+      if (isStartupBackdrop && viewportRatio > sourceRatio) {
+        const sideFill = ctx.createLinearGradient(0, 0, 0, this.host.canvas.height);
+        sideFill.addColorStop(0, "#2a25c4");
+        sideFill.addColorStop(0.58, "#1e2bb5");
+        sideFill.addColorStop(1, "#29239f");
+        ctx.fillStyle = sideFill;
+        ctx.fillRect(0, 0, this.host.canvas.width, this.host.canvas.height);
+      }
+      ctx.drawImage(physicalBackdrop, (this.host.canvas.width - drawWidth) / 2, (this.host.canvas.height - drawHeight) / 2, drawWidth, drawHeight);
+      if (isStartupBackdrop) {
+        this.drawStartupPhysicalProgress(physicalBackdrop, backdropScale);
+      }
+    }
     // Shell art arrives before gameplay art. Keep every pre-ready screen on the
     // complete shell so a slow deferred image can never reach drawImage as an
     // undefined source (including debug/test level switches during startup).
+    ctx.setTransform(scale * pixelRatio, 0, 0, scale * pixelRatio, offsetX * pixelRatio, offsetY * pixelRatio);
     if (!this.artReady) {
-      if (this.art.home && !(this.startupEntryPending && this.shouldAutoEnterEarlyCampaign())) this.drawHome();
       this.drawStartupStatus();
       this.popupEntrance.endFrame();
       return;
     }
+
+    ctx.setTransform(scale * pixelRatio, 0, 0, scale * pixelRatio, offsetX * pixelRatio, offsetY * pixelRatio);
+    this.drawBackground();
 
     if (this.navigationTransition && this.isMainNavigationScreen(this.screen)) {
       this.drawMainNavigationTransition(this.navigationTransition);
@@ -15990,7 +16093,7 @@ export class ColorEscapeGame {
     if (this.boosterUnlockGuide && this.boosterUnlockGuideEligible()) this.drawBoosterUnlockGuide();
     else if (this.boosterUnlockToast && this.boosterUnlockToastEligible()) this.drawBoosterUnlockToast();
     if (this.collectionIntro && !this.collectionIntro.unlockPreview) this.drawCollectionIntro();
-    if (!IS_WECHAT_BUILD && this.temporaryLevelSelector) this.drawTemporaryLevelSelector();
+    if (!HIDE_DEVELOPER_CONTROLS && this.temporaryLevelSelector) this.drawTemporaryLevelSelector();
     if (this.screen === "paused" && this.pauseUnlocked()) this.drawPause();
     if (this.screen === "feature") this.drawFeature();
     if (this.screen === "win") this.drawWin();
@@ -15998,7 +16101,7 @@ export class ColorEscapeGame {
     if (this.screen === "failed") this.drawFailed();
     if (this.screen === "settlementFailed") this.drawSettlementFailed();
     if (this.screen === "updates") this.drawUpdateNotice();
-    if (!IS_WECHAT_BUILD && this.screen === "resetConfirm") this.drawResetConfirm();
+    if (!HIDE_DEVELOPER_CONTROLS && this.screen === "resetConfirm") this.drawResetConfirm();
     if (this.journeyPresentation?.sceneReveal && this.screen === "home") {
       this.drawJourneySceneReveal();
     } else if (this.isHomeEpisodeUnlockPending() && !this.formalPageReady("levels")) {
@@ -16057,28 +16160,152 @@ export class ColorEscapeGame {
 
   private drawStartupStatus(): void {
     const failed = Boolean(this.artLoadError);
-    const message = failed ? this.tr("startup.loadFailed") : this.tr("startup.preparing");
-    const panel = this.art.homeUi?.resourcePanel;
-    if (!panel) {
+    const ctx = this.ctx;
+    const progress = Math.max(0, Math.min(1, this.startupProgressValue));
+    const formalStartupArt = Boolean(this.art.startupBackground);
+    // Keep the startup surface visually distinct from the game board without
+    // introducing the retired framed loading panel.
+    const gradient = ctx.createLinearGradient(0, 0, 0, LOGICAL_HEIGHT);
+    gradient.addColorStop(0, "#2720a0");
+    gradient.addColorStop(0.62, "#132a9e");
+    gradient.addColorStop(1, "#20155e");
+    // The formal loading artwork is painted in the physical viewport before
+    // this logical surface. Keep that artwork visible while the deferred
+    // gameplay art loads; the gradient remains an overlay instead of hiding it.
+    ctx.save();
+    ctx.globalAlpha = this.art.startupBackground || this.art.home || this.art.gameplayBackground ? 0.12 : 1;
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, LOGICAL_WIDTH, LOGICAL_HEIGHT);
+    ctx.restore();
+
+    // The generated loading artwork already carries the title. Keep a text
+    // fallback for the short window before the shell image has decoded.
+    if (!formalStartupArt) {
+      this.label("脑王的诞生", LOGICAL_WIDTH / 2, 300, 42, "#fff4c7", "center", 1000, "#241a5d", 5, 390);
+    }
+
+    // The formal artwork already contains the bottom loading composition. Its
+    // bar and percentage are updated in physical coordinates immediately after
+    // the cover-fitted image is drawn; do not paint a second logical group.
+    if (formalStartupArt) {
       if (failed) {
         this.drawPressable("startupRetry", STARTUP_RETRY_EMERGENCY_RECT, () => {
-          this.label(this.tr("startup.tapToRetry", { message }), 248, 548, 20, "#ffd0d0", "center", 900, "#2b275f", 2);
+          this.label("点击重试", LOGICAL_WIDTH / 2, 805, 20, "#fff4c7", "center", 900, "#211956", 2, 330);
         });
-      } else {
-        this.label(message, 248, 548, 20, "#f8f6ff", "center", 900, "#2b275f", 2);
       }
       return;
     }
-    this.withHomeArtboard(() => {
-      this.ctx.drawImage(panel, 275, 188);
-      this.label(message, 360, 212, 16, failed ? "#b52736" : "#68432f", "center", 900);
-      if (failed && this.art.homeUi?.startButton) {
-        this.drawPressable("startupRetry", STARTUP_RETRY_ART_RECT, () => {
-          this.ctx.drawImage(this.art.homeUi!.startButton, STARTUP_RETRY_ART_RECT.x, STARTUP_RETRY_ART_RECT.y);
-          this.label(this.tr("startup.retryLoad"), 360, 356, 38, "#fffef2", "center", 1000, "#173d1d", 5, 250);
-        });
-      }
-    });
+
+    const progressBarX = 70;
+    const progressBarY = 700;
+    const progressBarWidth = 356;
+    const progressBarHeight = 18;
+    const progressInnerX = 70;
+    const progressInnerY = 700;
+    const progressInnerWidth = 356;
+    const progressInnerHeight = 18;
+    const progressLabelY = 760;
+    ctx.save();
+    ctx.fillStyle = "rgba(13,46,143,.92)";
+    ctx.fillRect(progressBarX, progressBarY - 6, progressBarWidth, progressBarHeight + 12);
+    ctx.fillStyle = "rgba(255,255,255,.18)";
+    ctx.fillRect(progressInnerX, progressInnerY, progressInnerWidth, progressInnerHeight);
+    ctx.fillStyle = failed ? "#ef6574" : "#55d7f4";
+    ctx.fillRect(progressInnerX, progressInnerY, progressInnerWidth * progress, progressInnerHeight);
+    ctx.strokeStyle = "rgba(255,255,255,.45)";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(progressInnerX, progressInnerY, progressInnerWidth, progressInnerHeight);
+    ctx.restore();
+    const tips = [
+      "抵制不良游戏，拒绝盗版游戏。",
+      "适度游戏益脑，沉迷游戏伤身。",
+      "注意自我保护，合理安排时间。",
+      "谨防受骗上当，享受健康生活。",
+    ];
+    this.label(`${failed ? "资源加载失败" : "加载资源"} ${Math.round(progress * 100)}%`, LOGICAL_WIDTH / 2, progressLabelY, 24, failed ? "#ffb7c0" : "#f8f6ff", "center", 900, "#211956", 2, 390);
+    if (!IS_ANDROID_BUILD) {
+      tips.forEach((tip, index) => this.label(tip, LOGICAL_WIDTH / 2, 820 + index * 34, 14, "#d9d4ff", "center", 700, undefined, 0, 470));
+    }
+    if (failed) {
+      this.drawPressable("startupRetry", STARTUP_RETRY_EMERGENCY_RECT, () => {
+        this.label("点击重试", LOGICAL_WIDTH / 2, 805, 20, "#fff4c7", "center", 900, "#211956", 2, 330);
+      });
+    }
+  }
+
+  /** Update the single progress composition baked into the formal startup art. */
+  private drawStartupPhysicalProgress(image: HTMLImageElement, coverScale: number): void {
+    const ctx = this.ctx;
+    const sourceWidth = image.naturalWidth || image.width;
+    const sourceHeight = image.naturalHeight || image.height;
+    const drawWidth = sourceWidth * coverScale;
+    const drawHeight = sourceHeight * coverScale;
+    const offsetX = (this.host.canvas.width - drawWidth) / 2;
+    const offsetY = (this.host.canvas.height - drawHeight) / 2;
+    const map = (x: number, y: number) => ({ x: offsetX + x * coverScale, y: offsetY + y * coverScale });
+    const rect = (x: number, y: number, width: number, height: number) => {
+      const topLeft = map(x, y);
+      return { x: topLeft.x, y: topLeft.y, width: width * coverScale, height: height * coverScale };
+    };
+    const failed = Boolean(this.artLoadError);
+    const progress = Math.max(0, Math.min(1, this.startupProgressValue));
+    if (IS_ANDROID_BUILD) {
+      // The supplied startup artwork contains a four-line health notice below
+      // the progress label. Keep the artwork and loading percentage, but cover
+      // that notice so only the APK's loading screen hides the extra text.
+      const notice = rect(260, 1360, 440, 260);
+      ctx.save();
+      ctx.globalAlpha = 1;
+      ctx.filter = `blur(${Math.max(3, Math.round(7 * coverScale))}px)`;
+      ctx.drawImage(image, 260, 1610, 440, 62, notice.x, notice.y, notice.width, notice.height);
+      ctx.filter = "none";
+      ctx.globalAlpha = 0.12;
+      ctx.fillStyle = "#173bb8";
+      ctx.fillRect(notice.x, notice.y, notice.width, notice.height);
+      ctx.restore();
+    }
+    // Match the authored bar proportions from the source artwork. Only the
+    // inner fill is repainted; the image's cyan rim and glow stay untouched.
+    const inner = rect(183, 1277, 574, 45);
+    const labelBox = rect(270, 1348, 410, 72);
+    ctx.save();
+    // Hide the image's sample fill while preserving its rounded border and
+    // glow. The gradient keeps the live bar visually consistent with the
+    // supplied loading artwork instead of using a flat rectangle.
+    ctx.beginPath();
+    if (typeof ctx.roundRect === "function") ctx.roundRect(inner.x, inner.y, inner.width, inner.height, inner.height / 2);
+    else ctx.rect(inner.x, inner.y, inner.width, inner.height);
+    ctx.clip();
+    ctx.fillStyle = "#294491";
+    ctx.fillRect(inner.x, inner.y, inner.width, inner.height);
+    const fillGradient = ctx.createLinearGradient(inner.x, inner.y, inner.x, inner.y + inner.height);
+    fillGradient.addColorStop(0, failed ? "#ff8d98" : "#74efff");
+    fillGradient.addColorStop(0.52, failed ? "#ef6574" : "#3dd3f2");
+    fillGradient.addColorStop(1, failed ? "#c43d63" : "#16b8e8");
+    ctx.fillStyle = fillGradient;
+    ctx.fillRect(inner.x, inner.y, inner.width * progress, inner.height);
+    ctx.restore();
+
+    // Hide the image's sample “68%” before drawing the live value. Reuse a
+    // clean blue section from the same artwork so the replacement has no
+    // opaque rectangular panel and stays consistent with the background.
+    ctx.save();
+    ctx.globalAlpha = 0.94;
+    ctx.filter = `blur(${Math.max(2, Math.round(7 * coverScale))}px)`;
+    ctx.drawImage(image, 230, 1110, 450, 100, labelBox.x, labelBox.y, labelBox.width, labelBox.height);
+    ctx.filter = "none";
+    ctx.globalAlpha = 1;
+    ctx.font = `800 ${Math.max(18, Math.round(48 * coverScale))}px "Microsoft YaHei", sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = failed ? "#ffb7c0" : "#f8f6ff";
+    ctx.strokeStyle = "#211956";
+    ctx.lineWidth = Math.max(2, 3 * coverScale);
+    const label = `${failed ? "资源加载失败" : "加载资源"} ${Math.round(progress * 100)}%`;
+    const center = map(475, 1384);
+    ctx.strokeText(label, center.x, center.y);
+    ctx.fillText(label, center.x, center.y);
+    ctx.restore();
   }
 
   private drawBackground(): void {
@@ -16137,7 +16364,7 @@ export class ColorEscapeGame {
       renameReturnPage: this.profileRenameReturnPage,
       ...this.profileNotifications(),
       draftAvatar: this.profileDraftAvatar, draftFrame: this.profileDraftFrame, name: this.profileDraftName,
-      coins: this.save.coins, highest: Math.max(0, ...this.save.rewardedLevels), english: this.save.language === "en",
+      coins: this.save.coins, highest: Math.max(0, ...this.save.rewardedLevels), language: this.save.language, english: this.save.language === "en",
       totalStars: this.totalStars(), levelRank: this.featureUnlocked("leaderboard") ? this.leaderboardSnapshot("world").player.rank : null,
       scrollOffset: this.currentProfileScroll()?.offset ?? 0,
       saveEnabled: profileAppearanceUnlocked("avatar",this.profileDraftAvatar,progress)
@@ -16163,7 +16390,7 @@ export class ColorEscapeGame {
         stats:[ui.statHighest,ui.statStars,ui.statRank] };
     }).catch(() => {
       if(token !== this.profileArtRequestToken)return;
-      this.profileArtError=true;this.profileFeedback=this.notifyButtonFeedback(this.save.language==="en"?"Tap to retry loading":"点击重试加载");
+      this.profileArtError=true;this.profileFeedback=this.notifyButtonFeedback(profileText(this.save.language,"artRetry"));
     }).finally(()=>{
       if(token !== this.profileArtRequestToken)return;
       this.profileArtLoading=false;this.dirty=true;this.scheduleFrame();
@@ -16239,13 +16466,13 @@ export class ColorEscapeGame {
       const baselineSave=this.cloneSave(this.save),candidateSave=this.cloneSave(baselineSave);
       const p=candidateSave.playerProfile ??= normalizePlayerProfile(undefined);
       if(rename){const name=cleanProfileName(this.profileDraftName);
-        if(!name || name===p.name){this.profileFeedback=this.notifyButtonFeedback(this.save.language==="en"?"Enter a different name":"请输入不同的昵称");return;}
-        if(candidateSave.coins<PROFILE_RENAME_PRICE){this.profileFeedback=this.notifyButtonFeedback(this.save.language==="en"?"Not enough coins":"金币不足");return;}
+        if(!name || name===p.name){this.profileFeedback=this.notifyButtonFeedback(profileText(this.save.language,"renameDifferent"));return;}
+        if(candidateSave.coins<PROFILE_RENAME_PRICE){this.profileFeedback=this.notifyButtonFeedback(profileText(this.save.language,"notEnoughCoins"));return;}
         p.name=name;candidateSave.coins-=PROFILE_RENAME_PRICE;
       }else{
         const progress=this.temporaryLevelTestSession?.baselineSave ?? baselineSave;
         if(!profileAppearanceUnlocked("avatar",this.profileDraftAvatar,progress)||!profileAppearanceUnlocked("frame",this.profileDraftFrame,progress)){
-          this.profileFeedback=this.notifyButtonFeedback(this.save.language==="en"?"Appearance is locked":"该外观尚未解锁");return;
+          this.profileFeedback=this.notifyButtonFeedback(profileText(this.save.language,"appearanceLocked"));return;
         }
         p.avatar=this.profileDraftAvatar;p.frame=this.profileDraftFrame;
         markProfileAppearanceSeen(p,"avatar",p.avatar,progress);
@@ -16256,7 +16483,7 @@ export class ColorEscapeGame {
     const pending=this.pendingProfileSave,outcome=this.persistVerified(pending.candidateSave,pending.baselineSave);
     if(outcome!=="committed"){
       if(outcome==="rejected")this.pendingProfileSave=undefined;
-      this.profileFeedback=this.notifyButtonFeedback(this.save.language==="en"?"Save unconfirmed. Tap to retry":"保存未确认，请重试");return;
+      this.profileFeedback=this.notifyButtonFeedback(profileText(this.save.language,"saveUnknown"));return;
     }
     this.save=pending.candidateSave;this.pendingProfileSave=undefined;this.profileFeedback=undefined;
     if(pending.seenOnly){
@@ -16268,7 +16495,7 @@ export class ColorEscapeGame {
     if(pending.rename)this.closePopup("profile.rename",()=>{this.profilePage=this.profileRenameReturnPage;});
     else {
       this.profileDraftAvatar=this.save.playerProfile!.avatar;this.profileDraftFrame=this.save.playerProfile!.frame;
-      this.profileFeedback=this.notifyButtonFeedback(this.save.language==="en"?"Saved successfully":"保存成功");
+      this.profileFeedback=this.notifyButtonFeedback(profileText(this.save.language,"saveSuccess"));
     }
     this.scheduleLifeRefreshWatch();this.playSound("button");
   }
@@ -16301,7 +16528,7 @@ export class ColorEscapeGame {
     else if(key==="profile.close"){this.cancelProfileScroll();this.closePopup(["profile.rename","profile"],()=>{this.profilePage=undefined;this.releaseProfileArt();});}
     else if(key==="profile.edit")this.profilePage="avatar";
     else if(key==="profile.copy")void this.host.copyText?.(this.save.playerProfile!.id).then(ok=>{
-      this.profileFeedback=this.notifyButtonFeedback(this.save.language==="en"?(ok?"ID copied":"Unable to copy"):(ok?"ID已复制":"复制失败"));this.dirty=true;this.scheduleFrame();});
+      this.profileFeedback=this.notifyButtonFeedback(profileText(this.save.language,ok?"copySuccess":"copyFailed"));this.dirty=true;this.scheduleFrame();});
     else if(key==="profile.avatarTab"){this.cancelProfileScroll();this.profilePage="avatar";}
     else if(key==="profile.frameTab"){this.cancelProfileScroll();this.profilePage="frame";}
     else if(key?.startsWith("profile.select.")){
@@ -16344,6 +16571,7 @@ export class ColorEscapeGame {
   private drawLeaguePage(): void {
     const view: LeagueView = { state: this.save.league, now: Date.now(), scroll: this.leagueScroll.offset, tier: this.leagueTier, tierPosition: this.leagueTierPosition(),
       playerLevel: this.save.currentLevel,
+      language: this.opponentLanguageForSave(this.save),
       info: this.leagueInfo, introPage: this.leagueIntroPage, challengeNotice: this.leagueChallengeNotice, persistence: this.leaguePersistence, action: this.leagueAction, artError: this.leagueArtStore?.error || this.leagueAvatarArtStore?.error,
       settlementArtError: this.leagueSettlementArtStore?.error };
     drawLeague(this.ctx, view, {
@@ -16669,7 +16897,7 @@ export class ColorEscapeGame {
         }
       }
 
-      if (!IS_WECHAT_BUILD) {
+      if (!HIDE_DEVELOPER_CONTROLS) {
         const testEntry = TEMPORARY_LEVEL_SELECTOR_HOME_ART_RECT;
         this.drawTemporaryLevelButton(
           "temporaryLevel.open",
@@ -18981,7 +19209,7 @@ export class ColorEscapeGame {
             PAUSE_SETTINGS_LAYOUT.languageButton.width - 30,
           );
         });
-        if (!IS_WECHAT_BUILD && art.clearProgressButton) {
+        if (!HIDE_DEVELOPER_CONTROLS && art.clearProgressButton) {
           this.drawPressable("settingsReset", PAUSE_SETTINGS_LAYOUT.settingsClearButton, () => {
             this.drawNineSlice(
               art.clearProgressButton!,
@@ -19739,7 +19967,7 @@ export class ColorEscapeGame {
   }
 
   private drawResetConfirm(): void {
-    if (IS_WECHAT_BUILD) return;
+    if (HIDE_DEVELOPER_CONTROLS) return;
     this.drawDim();
     this.withPopupEntrance("resetConfirm", { x: 68, y: 216, width: 360, height: 696 }, () => {
       this.drawModal(68, 252, 360, 660, this.tr("settings.clearTitle"));
@@ -24638,7 +24866,7 @@ export class ColorEscapeGame {
   }
 
   private drawTemporaryLevelSelector(): void {
-    if (IS_WECHAT_BUILD) return;
+    if (HIDE_DEVELOPER_CONTROLS) return;
     const selector = this.temporaryLevelSelector;
     if (!selector) return;
     const layout = this.temporaryLevelSelectorLayout();

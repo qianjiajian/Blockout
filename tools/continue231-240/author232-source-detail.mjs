@@ -1,0 +1,7 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';import{ROOT,rect,writeNew}from'./common.mjs';
+const root=ROOT+'/author232',base=JSON.parse(fs.readFileSync(root+'/source-ledger.json'));
+const table=(rows,prefix)=>rows.map(([color,shape,x,y],i)=>({id:prefix+i,color,shape,x,y}));
+const upperL4=[[0,0],[1,0],[1,1],[1,2]],leftL3=[[0,0],[0,1],[1,1]],rightL3=[[0,0],[1,0],[1,1]];
+const hidden=[table([['yellow',rect(1,3),2,2],['red',upperL4,3,2],['blue',rect(1,2),3,3],['pink',rect(1,3),5,2]],'upper-first-'),table([['purple',rect(1,3),2,6],['yellow',rect(2,2),3,6],['blue',rect(1,2),5,6],['green',rect(3,1),3,8]],'lower-first-'),table([['yellow',upperL4,2,2],['blue',rect(1,2),2,3],['red',rect(1,3),4,2],['purple',rect(1,3),5,2]],'upper-deep-'),table([['red',rect(1,3),2,6],['yellow',rightL3,3,6],['blue',leftL3,3,7],['purple',rect(1,3),5,6]],'lower-deep-')];
+for(const rows of hidden){const cells=rows.flatMap(b=>b.shape.map(([x,y])=>[b.x+x,b.y+y].join(',')));assert.equal(cells.length,12);assert.equal(new Set(cells).size,12);}
+writeNew(root+'/source-second-view.json',{...base,hiddenBatches: hidden,secondViewFrames:[ROOT+'/source/frame-133.png',ROOT+'/source-root/frame-163.png',root+'/source/frame-211.png',root+'/source/frame-212.png',root+'/source/frame-213.png',ROOT+'/source-root/frame-237.png'],sourceScope:'26 opening bodies plus 4 genuinely separate hidden cohorts of4; incidental occupants crossing a depleted lift are not an extra batch',allKnownShapeColorsAccounted:true,unknownFields:[]});

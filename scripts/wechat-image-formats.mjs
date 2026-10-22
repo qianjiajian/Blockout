@@ -36,7 +36,12 @@ export const WECHAT_EVENT_IMAGE_ENCODING = Object.freeze({
   auditedDelivery: {
     ruleVersion: '1.197.0',
     png: { compressionLevel: 9, palette: true, colours: 256, quality: 100, effort: 7, dither: 1 },
-    jpeg: { quality: 85, mozjpeg: true, chromaSubsampling: '4:2:0' },
+    // Keep the authored/Web backgrounds untouched while using a slightly
+    // tighter WeChat-only JPEG delivery. This recovers the headroom needed by
+    // the current startup art without changing dimensions or runtime URLs.
+    jpeg: { quality: 82, mozjpeg: true, chromaSubsampling: '4:2:0' },
+    startupJpegPath: 'startup-v1/loading-background.jpg',
+    startupJpeg: { quality: 75, mozjpeg: true, chromaSubsampling: '4:2:0' },
     pngPaths: [
       'booster-purchase-reference-v1/panel.png',
       'league-supplied-v1/stage-background.png',
@@ -179,6 +184,11 @@ export async function encodeWechatImage(source, path) {
     const encoded = await sharp(bytes).jpeg(audited.jpeg).toBuffer();
     const previous = compactTheme(path) ? await sharp(bytes).jpeg(jpegOptions).toBuffer() : bytes;
     return encoded.length < previous.length ? encoded : previous;
+  }
+  if (key === audited.startupJpegPath && /\.jpg$/i.test(path)) {
+    const bytes = await readFile(source);
+    if (!(await sharp(bytes).stats()).isOpaque) throw new Error('Startup JPEG background must be fully opaque');
+    return sharp(bytes).jpeg(audited.startupJpeg).toBuffer();
   }
   if (eventUiPng(path)) {
     const bytes = await readFile(source);

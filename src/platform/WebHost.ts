@@ -81,7 +81,7 @@ export class WebHost implements GameHost {
 
   constructor() {
     this.canvas = document.createElement("canvas");
-    this.canvas.setAttribute("aria-label", "方块出逃游戏画布");
+    this.canvas.setAttribute("aria-label", "脑王的诞生游戏画布");
     this.context = this.canvas.getContext("2d", { alpha: false })!;
     document.body.append(this.canvas);
     this.resize();

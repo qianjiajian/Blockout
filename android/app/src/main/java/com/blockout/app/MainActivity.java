@@ -2,6 +2,7 @@ package com.blockout.app;
 
 import android.app.Activity;
 import android.content.pm.PackageInfo;
+import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,6 +12,9 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
+import android.view.WindowInsetsController;
+import android.view.Window;
+import android.view.WindowManager;
 import android.webkit.RenderProcessGoneDetail;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -40,16 +44,9 @@ public final class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setStatusBarColor(BACKGROUND);
-        getWindow().setNavigationBarColor(BACKGROUND);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            getWindow().setDecorFitsSystemWindows(false);
-        } else {
-            getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-        }
+        WebView.setWebContentsDebuggingEnabled(
+                (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0);
+        enterImmersiveMode();
         content = new FrameLayout(this);
         content.setBackgroundColor(BACKGROUND);
         content.setOnApplyWindowInsetsListener((view, insets) -> applySafeInsets(insets));
@@ -61,25 +58,63 @@ public final class MainActivity extends Activity {
         startWebView();
     }
 
-    // Native padding also protects devices whose WebView does not yet forward
-    // system bars through CSS safe-area-inset. Zero the used insets for children
-    // so newer WebViews do not apply the same space for a second time.
+    /** Keep the game in immersive mode after MIUI/system gestures temporarily reveal bars. */
+    @SuppressWarnings("deprecation")
+    private void enterImmersiveMode() {
+        Window window = getWindow();
+        window.setStatusBarColor(BACKGROUND);
+        window.setNavigationBarColor(BACKGROUND);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            WindowManager.LayoutParams attributes = window.getAttributes();
+            attributes.layoutInDisplayCutoutMode =
+                    WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+            window.setAttributes(attributes);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.setDecorFitsSystemWindows(false);
+            WindowInsetsController controller = window.getInsetsController();
+            if (controller != null) {
+                controller.setSystemBarsBehavior(
+                        WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+                controller.hide(WindowInsets.Type.systemBars());
+            }
+            return;
+        }
+        int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        window.getDecorView().setSystemUiVisibility(flags);
+    }
+
+    // Native padding protects a physical display cutout on devices whose
+    // WebView does not forward it through CSS safe-area-inset. The immersive
+    // system bars stay hidden and their insets are consumed for the child.
     @SuppressWarnings("deprecation")
     private WindowInsets applySafeInsets(WindowInsets insets) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            int safeTypes = WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout();
-            android.graphics.Insets safe = insets.getInsets(safeTypes);
-            content.setPadding(safe.left, safe.top, safe.right, safe.bottom);
+            // System bars are deliberately hidden by immersive mode. Only a
+            // physical display cutout still needs layout padding; applying
+            // status/navigation insets here would recreate the black bands
+            // that edge-to-edge mode is meant to remove.
+            int systemBars = WindowInsets.Type.systemBars();
+            int cutoutType = WindowInsets.Type.displayCutout();
+            android.graphics.Insets cutout = insets.getInsets(cutoutType);
+            content.setPadding(cutout.left, cutout.top, cutout.right, cutout.bottom);
             return new WindowInsets.Builder(insets)
-                    .setInsets(safeTypes, android.graphics.Insets.NONE)
-                    .setInsetsIgnoringVisibility(safeTypes, android.graphics.Insets.NONE)
+                    .setInsets(systemBars, android.graphics.Insets.NONE)
+                    .setInsetsIgnoringVisibility(systemBars, android.graphics.Insets.NONE)
+                    .setInsets(cutoutType, android.graphics.Insets.NONE)
+                    .setInsetsIgnoringVisibility(cutoutType, android.graphics.Insets.NONE)
                     .setDisplayCutout(null)
                     .build();
         }
-        int left = insets.getSystemWindowInsetLeft();
-        int top = insets.getSystemWindowInsetTop();
-        int right = insets.getSystemWindowInsetRight();
-        int bottom = insets.getSystemWindowInsetBottom();
+        int left = 0;
+        int top = 0;
+        int right = 0;
+        int bottom = 0;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             DisplayCutout cutout = insets.getDisplayCutout();
             if (cutout != null) {
@@ -223,7 +258,14 @@ public final class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        enterImmersiveMode();
         if (webView != null) webView.onResume();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus && !destroyed) enterImmersiveMode();
     }
 
     @Override

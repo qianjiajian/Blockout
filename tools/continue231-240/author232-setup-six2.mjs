@@ -1,0 +1,1 @@
+import fs from'node:fs';import assert from'node:assert/strict';let text=fs.readFileSync(new URL('./author232-six.mjs',import.meta.url),'utf8');const old="!ord.has(i)&&b.id!=='l232-b21'";assert(text.includes(old));text=text.replace(old,"!ord.has(i)&&b.id!=='l232-b21'&&b.y<7");fs.writeFileSync(new URL('./author232-six2.mjs',import.meta.url),text,{flag:'wx'});
